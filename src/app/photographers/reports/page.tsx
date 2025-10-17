@@ -354,7 +354,7 @@ export default function ReportsPage() {
                       <span>Report Preview</span>
                     </CardTitle>
                     <CardDescription>
-                      What's included in your report
+                      What&apos;s included in your report
                     </CardDescription>
                   </CardHeader>
                   <CardContent>

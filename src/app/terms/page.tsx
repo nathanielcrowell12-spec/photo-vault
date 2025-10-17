@@ -162,7 +162,7 @@ export default function TermsPage() {
                   <li>• <strong>Year 1:</strong> Client pays $100 upfront → Photographer gets $50 commission</li>
                   <li>• <strong>Year 2+:</strong> Client pays $8/month ongoing → Photographer gets $4/month passive commission</li>
                   <li>• PhotoVault handles all billing - no payment processing needed</li>
-                  <li>• Replaces photographer's existing photo sharing software</li>
+                  <li>• Replaces photographer&apos;s existing photo sharing software</li>
                   <li>• Commission stops if client gallery is inactive for 6+ months</li>
                   <li>• <strong>NEW SESSION RULE:</strong> New photo session resets commission cycle</li>
                 </ul>

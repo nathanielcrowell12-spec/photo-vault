@@ -242,7 +242,7 @@ export default function ClientSupportPage() {
                 <span>Contact Support</span>
               </CardTitle>
               <CardDescription>
-                Can't find what you're looking for? Send us a message
+                Can&apos;t find what you&apos;re looking for? Send us a message
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -405,7 +405,7 @@ export default function ClientSupportPage() {
                 <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                   <p className="text-sm text-blue-800 dark:text-blue-200">
                     <strong>Emergency Support:</strong> For urgent issues outside business hours, 
-                    please email support@photovault.com and we'll respond as soon as possible.
+                    please email support@photovault.com and we&apos;ll respond as soon as possible.
                   </p>
                 </div>
               </div>

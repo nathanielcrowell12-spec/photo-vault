@@ -245,7 +245,7 @@ export default function PlatformConnectionModal({
                     Do you have a {platform} account? Click here
                   </Button>
                   <p className="text-xs text-center text-muted-foreground mt-2">
-                    Most customers don't need this - only if you created your own account
+                    Most customers don&apos;t need this - only if you created your own account
                   </p>
                 </div>
               </>

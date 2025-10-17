@@ -149,7 +149,7 @@ export default function ConnectPage() {
                 <span>Connect Gallery Link</span>
               </CardTitle>
               <CardDescription>
-                Paste your photographer's gallery link to connect it to PhotoVault
+                Paste your photographer&apos;s gallery link to connect it to PhotoVault
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -199,7 +199,7 @@ export default function ConnectPage() {
                 <span>Find Your Photographer</span>
               </CardTitle>
               <CardDescription>
-                Search for your photographer if you don't have the gallery link
+                Search for your photographer if you don&apos;t have the gallery link
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -311,7 +311,7 @@ export default function ConnectPage() {
                 </div>
                 <h3 className="font-semibold mb-2">Find Your Gallery</h3>
                 <p className="text-sm text-slate-600 dark:text-slate-300">
-                  Look for gallery links in your email or photographer's website
+                  Look for gallery links in your email or photographer&apos;s website
                 </p>
               </div>
               <div className="text-center">
@@ -320,7 +320,7 @@ export default function ConnectPage() {
                 </div>
                 <h3 className="font-semibold mb-2">Connect to PhotoVault</h3>
                 <p className="text-sm text-slate-600 dark:text-slate-300">
-                  Paste the gallery link and we'll import all your photos
+                  Paste the gallery link and we&apos;ll import all your photos
                 </p>
               </div>
               <div className="text-center">

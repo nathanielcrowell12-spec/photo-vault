@@ -129,7 +129,7 @@ export default function PhotographersPage() {
                 Expired Galleries Are Costing You Clients
               </h2>
               <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto font-light">
-                Your clients lose access to their photos after 6-12 months. They can't share memories, order prints, or refer you to friends. You're missing opportunities every day.
+                Your clients lose access to their photos after 6-12 months. They can&apos;t share memories, order prints, or refer you to friends. You&apos;re missing opportunities every day.
               </p>
             </div>
 
@@ -153,7 +153,7 @@ export default function PhotographersPage() {
                   </div>
                   <h3 className="text-lg font-semibold mb-3 text-foreground">Lost Engagement</h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">
-                    Clients can't share your photos after galleries expire. No social media buzz, no word-of-mouth referrals.
+                    Clients can&apos;t share your photos after galleries expire. No social media buzz, no word-of-mouth referrals.
                   </p>
                 </CardContent>
               </Card>
@@ -165,7 +165,7 @@ export default function PhotographersPage() {
                   </div>
                   <h3 className="text-lg font-semibold mb-3 text-foreground">Missed Revenue</h3>
                   <p className="text-muted-foreground text-sm leading-relaxed">
-                    No re-orders, no anniversary sessions, no referrals. You're leaving money on the table every month.
+                    No re-orders, no anniversary sessions, no referrals. You&apos;re leaving money on the table every month.
                   </p>
                 </CardContent>
               </Card>
@@ -177,7 +177,7 @@ export default function PhotographersPage() {
         <section className="section-spacing-sm">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-5 text-foreground tracking-tight">
-              Your Clients' Photos. Always There. Always Branded.
+              Your Clients&apos; Photos. Always There. Always Branded.
             </h2>
             <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto font-light">
               PhotoVault gives your clients permanent access to their galleries while keeping your branding front and center. Automated engagement keeps you top-of-mind for future bookings.
@@ -402,7 +402,7 @@ export default function PhotographersPage() {
                     ))}
                   </div>
                   <p className="text-slate-700 dark:text-slate-300 mb-4 italic">
-                    "{testimonial.quote}"
+                    &quot;{testimonial.quote}&quot;
                   </p>
                   <div>
                     <p className="font-semibold text-slate-800 dark:text-white">{testimonial.author}</p>

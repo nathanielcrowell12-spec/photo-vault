@@ -209,7 +209,7 @@ export default function CommissionDetailsPage() {
                           <span className="text-purple-600">-$528</span>
                         </div>
                         <div className="text-xs text-slate-500 mt-2">
-                          *Platform fee covers ALL clients, this is just one client's contribution
+                          *Platform fee covers ALL clients, this is just one client&apos;s contribution
                         </div>
                       </div>
                     </div>
@@ -222,7 +222,7 @@ export default function CommissionDetailsPage() {
                       Scenario 2: Client Goes Inactive, Then Returns
                     </h3>
                     <div className="space-y-3 text-sm">
-                      <p className="text-slate-600 dark:text-slate-400">Mike's family stops paying after year 1, then books another session 6 months later with you (same photographer).</p>
+                      <p className="text-slate-600 dark:text-slate-400">Mike&apos;s family stops paying after year 1, then books another session 6 months later with you (same photographer).</p>
                       
                       <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg space-y-2">
                         <div><strong>Initial Session (Year 1):</strong></div>

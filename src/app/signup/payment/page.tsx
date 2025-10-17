@@ -151,7 +151,7 @@ export default function PaymentPage() {
                 <CardContent className="p-8">
                   {/* Features */}
                   <div className="space-y-4 mb-8">
-                    <h3 className="font-semibold text-foreground mb-4">What's Included:</h3>
+                    <h3 className="font-semibold text-foreground mb-4">What&apos;s Included:</h3>
                     {[
                       'Unlimited photo storage',
                       'Connect to all photographer platforms',

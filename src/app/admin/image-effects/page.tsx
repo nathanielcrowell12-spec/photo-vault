@@ -332,7 +332,7 @@ element.addEventListener('mousemove', (e) => {
                 2. <strong className="text-foreground">Select an effect</strong> from the dropdown menu when uploading
               </p>
               <p>
-                3. <strong className="text-foreground">Tell me where to use them</strong> - I'll implement the effects for you
+                3. <strong className="text-foreground">Tell me where to use them</strong> - I&apos;ll implement the effects for you
               </p>
               <p className="text-sm pt-4 border-t border-border">
                 💡 <strong className="text-foreground">Pro Tip:</strong> Mix and match effects across different sections for variety. Hero sections work best with subtle parallax or Ken Burns, while cards shine with hover zoom or slide-up text.

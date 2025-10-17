@@ -140,9 +140,9 @@ export default function PhotoImportPage() {
               <div className="mt-8 p-4 bg-secondary/30 rounded-lg">
                 <h4 className="font-semibold text-foreground mb-2">💡 How It Works</h4>
                 <ol className="text-sm text-muted-foreground space-y-1 list-decimal list-inside">
-                  <li>Click on your photographer's platform</li>
+                  <li>Click on your photographer&apos;s platform</li>
                   <li>Enter your login credentials</li>
-                  <li>We'll securely import all your galleries</li>
+                  <li>We&apos;ll securely import all your galleries</li>
                   <li>View and organize your photos in PhotoVault</li>
                 </ol>
               </div>

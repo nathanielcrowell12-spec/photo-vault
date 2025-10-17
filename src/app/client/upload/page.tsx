@@ -88,6 +88,10 @@ export default function SmartphoneUploadPage() {
     )
   }
 
+  if (userType !== 'client') {
+    return null
+  }
+
   const handleFileSelect = useCallback((files: FileList) => {
     const newPhotos: UploadedPhoto[] = Array.from(files)
       .filter(file => file.type.startsWith('image/'))
@@ -140,10 +144,6 @@ export default function SmartphoneUploadPage() {
       handleFileSelect(e.dataTransfer.files)
     }
   }, [handleFileSelect])
-
-  if (userType !== 'client') {
-    return null
-  }
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {

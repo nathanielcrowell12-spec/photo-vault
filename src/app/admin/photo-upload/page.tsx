@@ -536,7 +536,7 @@ export default function PhotoUploadPage() {
                   public/images/{selectedCategory}/
                 </code>
                 <p className="text-muted-foreground text-xs">
-                  Let me know where you want to use them, and I'll add them to your website with the effects you selected!
+                  Let me know where you want to use them, and I&apos;ll add them to your website with the effects you selected!
                 </p>
               </CardContent>
             </Card>

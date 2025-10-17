@@ -240,7 +240,7 @@ export default function ImportPage() {
           <CardHeader>
             <CardTitle>Next Steps</CardTitle>
             <CardDescription>
-              Once you've connected your platforms, here's what happens next
+              Once you&apos;ve connected your platforms, here&apos;s what happens next
             </CardDescription>
           </CardHeader>
           <CardContent>

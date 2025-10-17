@@ -230,7 +230,7 @@ export default function PhotographerSignupPage() {
               <Card className="border-2 border-green-200 dark:border-green-800">
                 <CardContent className="pt-6">
                   <Badge className="mb-4 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-                    What's Included
+                    What&apos;s Included
                   </Badge>
                   <h2 className="text-2xl font-bold mb-4">Your Free Trial Includes</h2>
                   <div className="space-y-3">

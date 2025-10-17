@@ -362,7 +362,7 @@ export default function TestDashboard() {
                   <div>
                     <h4 className="font-medium">Photographer Customer View</h4>
                     <p className="text-sm text-slate-600 dark:text-slate-400">
-                      ✅ Added: "View as Customer" button for photographers
+                      ✅ Added: &quot;View as Customer&quot; button for photographers
                     </p>
                   </div>
                 </div>
@@ -389,7 +389,7 @@ export default function TestDashboard() {
                   <div>
                     <h4 className="font-medium">User Types</h4>
                     <p className="text-sm text-slate-600 dark:text-slate-400">
-                      ✅ Fixed: Updated AuthContext to use 'client' instead of 'consumer'
+                      ✅ Fixed: Updated AuthContext to use &apos;client&apos; instead of &apos;consumer&apos;
                     </p>
                   </div>
                 </div>
@@ -424,7 +424,7 @@ export default function TestDashboard() {
             <ol className="space-y-2 text-sm">
               <li className="flex items-start space-x-2">
                 <span className="font-semibold">1.</span>
-                <span>Click the "Test" button to open the page in a new tab</span>
+                <span>Click the &quot;Test&quot; button to open the page in a new tab</span>
               </li>
               <li className="flex items-start space-x-2">
                 <span className="font-semibold">2.</span>
@@ -440,7 +440,7 @@ export default function TestDashboard() {
               </li>
               <li className="flex items-start space-x-2">
                 <span className="font-semibold">5.</span>
-                <span>Report any failures to me and I'll fix them immediately!</span>
+                <span>Report any failures to me and I&apos;ll fix them immediately!</span>
               </li>
             </ol>
             <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
@@ -448,7 +448,7 @@ export default function TestDashboard() {
               <ul className="text-sm text-blue-700 dark:text-blue-300 space-y-1">
                 <li>• <strong>Customer Site:</strong> Test <code>/</code> - should have NO photographer links</li>
                 <li>• <strong>Photographer Site:</strong> Test <code>/photographers</code> - should have full compensation details</li>
-                <li>• <strong>Customer View Button:</strong> From photographer site, click "View as Customer"</li>
+                <li>• <strong>Customer View Button:</strong> From photographer site, click &quot;View as Customer&quot;</li>
                 <li>• <strong>Navigation:</strong> Should show different branding and buttons based on site type</li>
               </ul>
             </div>

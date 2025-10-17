@@ -244,7 +244,7 @@ export default function GalleryViewerPage() {
           <CardContent className="p-6 text-center">
             <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
             <h2 className="text-xl font-bold mb-2">Gallery Not Found</h2>
-            <p className="text-slate-600 mb-4">This gallery doesn't exist or you don't have access to it.</p>
+            <p className="text-slate-600 mb-4">This gallery doesn&apos;t exist or you don&apos;t have access to it.</p>
             <Button asChild>
               <Link href="/dashboard">
                 <ArrowLeft className="h-4 w-4 mr-2" />

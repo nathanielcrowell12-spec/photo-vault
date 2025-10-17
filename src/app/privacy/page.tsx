@@ -62,7 +62,7 @@ export default function PrivacyPage() {
             <Card>
               <CardContent className="pt-6 text-center">
                 <UserCheck className="h-12 w-12 mx-auto mb-4 text-purple-600" />
-                <h3 className="font-semibold mb-2">You're in Control</h3>
+                <h3 className="font-semibold mb-2">You&apos;re in Control</h3>
                 <p className="text-sm text-slate-600 dark:text-slate-400">
                   Manage your data preferences anytime
                 </p>
@@ -225,7 +225,7 @@ export default function PrivacyPage() {
 
             <Card>
               <CardHeader>
-                <CardTitle>Children's Privacy</CardTitle>
+                <CardTitle>Children&apos;s Privacy</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-slate-600 dark:text-slate-400">
@@ -249,7 +249,7 @@ export default function PrivacyPage() {
               <CardContent className="pt-6">
                 <h3 className="font-semibold mb-4 text-center">Questions About Privacy?</h3>
                 <p className="text-center text-slate-600 dark:text-slate-400 mb-4">
-                  We're here to help. Contact our privacy team anytime.
+                  We&apos;re here to help. Contact our privacy team anytime.
                 </p>
                 <div className="flex justify-center gap-4">
                   <Button asChild variant="outline">

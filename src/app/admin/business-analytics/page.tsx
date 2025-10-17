@@ -845,7 +845,7 @@ export default function BusinessAnalyticsPage() {
               <Card>
                 <CardHeader>
                   <CardTitle>Monthly Operating Expenses Breakdown</CardTitle>
-                  <CardDescription>Fixed costs that don't scale with customers</CardDescription>
+                  <CardDescription>Fixed costs that don&apos;t scale with customers</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3">

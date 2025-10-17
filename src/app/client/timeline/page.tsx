@@ -106,21 +106,21 @@ export default function PhotoTimelinePage() {
     )
   }
 
+  if (userType !== 'client') {
+    return null
+  }
+
   useEffect(() => {
     if (userType === 'client') {
       fetchTimelineData()
     }
-  }, [userType])
+  }, [userType, fetchTimelineData])
 
   useEffect(() => {
     if (userType === 'client') {
       applyFilters()
     }
-  }, [timelineData, filters, userType])
-
-  if (userType !== 'client') {
-    return null
-  }
+  }, [timelineData, filters, userType, applyFilters])
 
   const fetchTimelineData = async () => {
     // Simulate API call - in real implementation, this would fetch from database

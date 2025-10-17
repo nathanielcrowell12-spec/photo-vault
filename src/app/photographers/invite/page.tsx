@@ -75,7 +75,7 @@ export default function InvitePage() {
             <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
             <h2 className="text-2xl font-bold mb-2">Invitation Sent!</h2>
             <p className="text-slate-600 dark:text-slate-300 mb-6">
-              Your client invitation has been sent to {clientEmail}. They'll receive an email with access to their gallery.
+              Your client invitation has been sent to {clientEmail}. They&apos;ll receive an email with access to their gallery.
             </p>
             <div className="space-y-3">
               <Button asChild className="w-full">
@@ -125,7 +125,7 @@ export default function InvitePage() {
           <div className="mb-8">
             <h1 className="text-3xl font-bold mb-4">Invite Clients to PhotoVault</h1>
             <p className="text-lg text-slate-600 dark:text-slate-300">
-              Send branded invitations to your clients with PhotoVault access. Choose how they'll pay for their permanent gallery access.
+              Send branded invitations to your clients with PhotoVault access. Choose how they&apos;ll pay for their permanent gallery access.
             </p>
           </div>
 
@@ -138,7 +138,7 @@ export default function InvitePage() {
                   <span>Client Information</span>
                 </CardTitle>
                 <CardDescription>
-                  Enter your client's details and session information
+                  Enter your client&apos;s details and session information
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">

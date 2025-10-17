@@ -210,7 +210,7 @@ export default function TestImagesPage() {
             <div>
               <h3 className="font-semibold mb-2">Step 3: Download</h3>
               <code className="block bg-secondary p-3 rounded text-xs">
-                node scripts/add-image.js "URL" category custom-name
+                node scripts/add-image.js &quot;URL&quot; category custom-name
               </code>
             </div>
             

@@ -183,7 +183,7 @@ export function PricingComparison() {
           <h3 className="text-xl font-bold mb-2">Why Choose PhotoVault?</h3>
           <p className="text-slate-600 dark:text-slate-300 mb-4">
             While competitors charge $20-30/month with no earning potential, PhotoVault charges $22/month 
-            but you earn $50 + $4/month on every client. With just 6 clients, you're making more than you pay!
+            but you earn $50 + $4/month on every client. With just 6 clients, you&apos;re making more than you pay!
           </p>
           <div className="grid md:grid-cols-3 gap-4 text-sm">
             <div className="text-center">
