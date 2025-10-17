@@ -1,0 +1,16 @@
+{
+  "brand": "PhotoVault",
+  "type": "dual-platform photo storage and management",
+  "consumer_promise": "Find and keep every professional photo in one secure dashboard",
+  "photographer_promise": "Keep clients engaged forever and earn recurring revenue",
+  "consumer_keywords": ["find my photos", "photo storage", "photo gallery login", "family photo vault"],
+  "photographer_keywords": ["client retention", "photographer referral", "permanent galleries"],
+  "consumer_pricing": {"free_tier": true, "storage_upgrade": "premium"},
+  "photographer_pricing": {"yearOne": 40, "renewalPerMonth": 8},
+  "contact": "info@photovault.com",
+  "platforms_supported": ["Pixieset", "ShootProof", "SmugMug", "Pic-Time", "CloudSpot", "Zenfolio", "Lightfolio", "PicFlow", "Samaro", "PhotoShelter", "PassGallery", "SlickPic", "Pixpa", "Format", "Squarespace", "Adobe Portfolio", "FotoMerchant", "PhotoBiz", "Wix"],
+  "target_audience": {
+    "consumer": "Middle-income families (primarily mothers) with scattered photo galleries",
+    "photographer": "Independent photographers using existing gallery platforms"
+  }
+}

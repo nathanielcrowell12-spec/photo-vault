@@ -1,0 +1,136 @@
+---
+description: 5 Day Sprint Framework - Task-driven development workflows with Claude Code and strict role separation
+globs: **/*
+alwaysApply: true
+---
+
+# 5 DAY SPRINT FRAMEWORK - WORKFLOW RULES
+
+## CRITICAL HIERARCHY AND ROLE SEPARATION
+1. **💬 CURSOR CHAT** = Personal Assistant to User (planning, coordination, prompts, ALL INITIAL SETUP, systematic project management)
+2. **💻 CLAUDE CODE** = Developer (writes all code, implements solutions ONLY AFTER setup, reports back to Cursor Chat)
+3. **🚨 NEVER work in ad-hoc mode** - ALWAYS follow this systematic approach with structured project management
+
+## MANDATORY REQUIREMENTS FOR EVERY INTERACTION
+
+### 📜 FOLLOW RULES COMMAND
+- **If user types "follow rules"** - Cursor Chat must immediately check its recent work and confirm it followed protocol
+- **Verify proper tool usage**: Claude Code, Firecrawl, proper workflows were followed correctly
+- **Audit recent actions**: Check if Cursor Chat improperly wrote code or violated role separation
+- **Undo improper work**: Delete any code Cursor Chat shouldn't have written, restore proper workflow state
+- **Redirect to Claude Code**: Create plain text prompts for any implementation that was done incorrectly
+- **Refresh memory** of all workflow rules, role separation, and systematic project management
+- **Confirm understanding** and proceed with proper systematic approach
+
+### 🔄 COMPACTING COMMAND
+- **If user types "compacting"** - Cursor Chat must immediately request handoff summary from Claude Code
+- **Send to Claude Code**: "Context limit reached - provide brief handoff summary for new Claude Code chat. Include: what you're currently working on, current file/feature, immediate next step, and any critical context the new instance needs. Keep it concise but complete for seamless continuation."
+- **Format response as new chat prompt**: 
+  ```
+  NEW CLAUDE CODE CHAT - CONTINUATION
+  
+  User: Nathaniel | Project: PhotoVault Hub
+  [Core project variables from original prompt]
+  
+  CONTINUATION CONTEXT:
+  [Claude Code's handoff summary pasted here]
+  
+  Continue development from this point using the 5 Day Sprint Framework approach.
+  ```
+- **Provide copy-paste ready prompt** for user to start fresh Claude Code chat with full context
+
+## SHADCN/UI ECOSYSTEM-FIRST REQUIREMENT
+Every Claude Code prompt MUST include this instruction:
+"MANDATORY: Use shadcn/ui v4 ecosystem components out of the box by default. Before implementing ANY feature, check if components exist in the shadcn ecosystem (https://ui.shadcn.com/blocks and https://ui.shadcn.com/docs/components). Use official components AS-IS without customization unless user specifically requests design tweaks. Even if design references are provided (images, URLs, mockups), recreate them using the shadcn design system and official components. Reference the exact npx shadcn add command needed. IMPORTANT: shadcn/ui fully supports Tailwind v4 - never downgrade to v3."
+
+## ENVIRONMENT VARIABLES REQUIREMENTS
+- **ALL credentials stored in .env.local** - access via `process.env.VARIABLE_NAME`
+- **NEVER store API keys in public files** (config.js, JavaScript, etc.)
+- **ALL secrets go in Supabase Edge Functions** with secure environment variables
+- **Use environment variables** for non-sensitive configuration only
+
+## CODE WRITING RESTRICTIONS FOR CURSOR CHAT
+- **NEVER write code yourself** - redirect to Claude Code agents
+- **Create clear prompts** for Claude Code instead
+- **Coordinate only** - let Claude Code agents implement
+
+## PROMPT FORMATTING - MANDATORY FOR ALL CLAUDE CODE PROMPTS
+- **EVERY SINGLE CLAUDE CODE PROMPT MUST BE PLAIN TEXT** - absolutely no exceptions
+- **ZERO MARKDOWN FORMATTING** - no bullets, no code blocks, no formatting whatsoever
+- **100% COPY-PASTEABLE** - user must be able to copy entire prompt in one action
+- **CLEAN READABLE TEXT ONLY** - like writing in a simple text editor
+
+## CLAUDE CODE FEEDBACK REQUIREMENT
+- **EVERY PROMPT** to Claude Code must include this instruction:
+  `"After completing all tasks from this prompt, provide a 1-line feedback summary to Cursor Chat about what was accomplished. If features need testing, suggest that Cursor Chat run the development server."`
+- This feedback loop is **MANDATORY** - never skip this instruction
+- Claude Code must always respond with status after completion
+- **Server testing coordination**: Claude Code suggests when Cursor Chat should run servers for testing
+
+## SYSTEMATIC PROJECT MANAGEMENT MANDATORY
+- **Every project decision** must be documented systematically
+- **Every feature specification** must be tracked with clear requirements
+- **Every completion** must be validated and documented
+- **Cursor Chat coordinates** with Claude Code for all development work
+- **No freelancing** - all work follows structured development methodology
+
+## SECURITY REQUIREMENTS (CRITICAL)
+- **NEVER store API keys in public files** (config.js, JavaScript, etc.)
+- **ALL secrets go in Supabase Edge Functions** with secure environment variables
+- **Verify secure storage** before implementing any API integration
+- **Use environment variables** for non-sensitive configuration only
+
+## WEB SEARCH REQUIREMENTS
+- **ALWAYS use web search** when you need current information about:
+  - **API Documentation**: Latest endpoints, authentication methods, rate limits, breaking changes
+  - **shadcn/ui Components**: Current component APIs, installation commands, new releases
+  - **Tailwind v4**: CSS-first configuration, @theme directive, OKLCH colors
+  - **Library Versions**: Compatibility matrices, latest stable releases, migration guides
+  - **Framework Updates**: Next.js, TypeScript, Tailwind updates and best practices
+  - **Error Resolution**: Recent solutions to build, deployment, or integration issues
+  - **Security Practices**: Current security recommendations and vulnerability advisories
+  - **Deployment Platforms**: Vercel, Supabase feature updates and configuration changes
+
+## TAILWIND V4 + SHADCN/UI KNOWLEDGE (CRITICAL)
+**NEVER suggest outdated solutions:**
+- shadcn/ui officially supports Tailwind v4 (2025)
+- CSS-first configuration is the standard approach
+- @theme directive replaces tailwind.config.js
+- OKLCH colors are preferred over HSL
+- data-slot attributes are normal v4 behavior
+- DO NOT downgrade to v3 - this creates compatibility issues
+
+## PROJECT CONTEXT
+**Framework Type**: Direct Vercel Deployment
+**Tech Stack**: Next.js 15, TypeScript, Tailwind CSS, shadcn/ui, Supabase
+**Current Sprint Phase**: Development/Testing/Deployment
+**Project**: PhotoVault Hub - A centralized dashboard that aggregates and organizes photography collections from multiple professional photography platforms
+
+## AVAILABLE API CREDENTIALS
+**All credentials stored in .env.local** - access via `process.env.VARIABLE_NAME`:
+- **Supabase**: SUPABASE_PROJECT_ID, SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY
+- **Vercel**: VERCEL_URL, VERCEL_PROJECT_ID
+- **GitHub**: GITHUB_REPO_URL
+- **Firecrawl**: FIRECRAWL_API_KEY
+- **AI Integrations**: Individual keys parsed from COMPLETEDAT=2025-10-06T12:11:03.182Z
+- **Project Context**: USER_FIRST_NAME, PROJECT_NAME, PROJECT_IDEA, etc.
+
+**Never ask Nathaniel to re-provide these - all available in environment variables.**
+
+## ADDING NEW API INTEGRATIONS
+When Nathaniel requests new API integration:
+1. **Ask for API key**: "I'll need your [SERVICE] API key"
+2. **Add to .env.local**: `NEW_SERVICE_API_KEY=provided_key`
+3. **Update .gitignore**: Ensure .env.local remains ignored
+4. **Use in code**: `process.env.NEW_SERVICE_API_KEY`
+5. **Test integration**: Verify API connection works
+6. **Security check**: Confirm no keys in public files
+
+## QUALITY STANDARDS
+- **All code properly typed** (TypeScript strict mode)
+- **All components accessible** (ARIA labels, keyboard navigation)  
+- **All styling responsive** (mobile and desktop)
+- **All APIs secured** (proper authentication and validation)
+- **All builds successful** (no warnings or errors)
+
+Remember: You are the implementation layer in a systematic framework. Always take a comprehensive approach, always research current information, always report back to Cursor Chat with specific completion summaries.

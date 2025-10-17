@@ -1,0 +1,268 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 0.5rem;
+  
+  /* Pixieset-inspired Neutral Palette */
+  --background: #FFFFFF;
+  --foreground: #111111;
+  --card: #FFFFFF;
+  --card-foreground: #111111;
+  --popover: #FFFFFF;
+  --popover-foreground: #111111;
+  
+  /* Teal Accent (#00B3A4) */
+  --primary: #00B3A4;
+  --primary-foreground: #FFFFFF;
+  
+  /* Light Gray Backgrounds */
+  --secondary: #F7F7F7;
+  --secondary-foreground: #111111;
+  --muted: #F7F7F7;
+  --muted-foreground: #666666;
+  --accent: #00B3A4;
+  --accent-foreground: #FFFFFF;
+  
+  --destructive: #DC2626;
+  
+  /* Subtle Borders */
+  --border: #EAEAEA;
+  --input: #DADADA;
+  --ring: #00B3A4;
+  
+  /* Charts - Teal variations */
+  --chart-1: #00B3A4;
+  --chart-2: #00D9C5;
+  --chart-3: #008F84;
+  --chart-4: #00665D;
+  --chart-5: #004D46;
+  
+  /* Sidebar */
+  --sidebar: #F7F7F7;
+  --sidebar-foreground: #111111;
+  --sidebar-primary: #00B3A4;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: #EAEAEA;
+  --sidebar-accent-foreground: #111111;
+  --sidebar-border: #EAEAEA;
+  --sidebar-ring: #00B3A4;
+}
+
+.dark {
+  /* Dark mode - Pixieset style */
+  --background: #0A0A0A;
+  --foreground: #F7F7F7;
+  --card: #1A1A1A;
+  --card-foreground: #F7F7F7;
+  --popover: #1A1A1A;
+  --popover-foreground: #F7F7F7;
+  
+  /* Teal stays bright in dark mode */
+  --primary: #00D9C5;
+  --primary-foreground: #0A0A0A;
+  
+  --secondary: #2A2A2A;
+  --secondary-foreground: #F7F7F7;
+  --muted: #2A2A2A;
+  --muted-foreground: #999999;
+  --accent: #00D9C5;
+  --accent-foreground: #0A0A0A;
+  
+  --destructive: #EF4444;
+  
+  --border: #333333;
+  --input: #2A2A2A;
+  --ring: #00D9C5;
+  
+  /* Charts - Brighter in dark mode */
+  --chart-1: #00D9C5;
+  --chart-2: #00F5E1;
+  --chart-3: #00B3A4;
+  --chart-4: #008F84;
+  --chart-5: #00665D;
+  
+  /* Sidebar */
+  --sidebar: #1A1A1A;
+  --sidebar-foreground: #F7F7F7;
+  --sidebar-primary: #00D9C5;
+  --sidebar-primary-foreground: #0A0A0A;
+  --sidebar-accent: #2A2A2A;
+  --sidebar-accent-foreground: #F7F7F7;
+  --sidebar-border: #333333;
+  --sidebar-ring: #00D9C5;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "kern" 1, "liga" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.011em;
+  }
+  
+  /* Pixieset-inspired heading styles */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+    letter-spacing: -0.02em;
+  }
+  
+  /* Smooth scrolling */
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer utilities {
+  /* Pixieset-inspired section spacing */
+  .section-spacing {
+    @apply py-20 md:py-32;
+  }
+  
+  .section-spacing-sm {
+    @apply py-12 md:py-20;
+  }
+  
+  /* Container with Pixieset max-width */
+  .container-pixieset {
+    @apply max-w-[1200px] mx-auto px-4 md:px-6 lg:px-8;
+  }
+  
+  /* Fade-in animation */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+  }
+  
+  /* Cinematic image overlay */
+  .image-overlay {
+    @apply relative overflow-hidden;
+  }
+  
+  .image-overlay::after {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 transition-opacity duration-300;
+  }
+  
+  .image-overlay:hover::after {
+    @apply opacity-100;
+  }
+  
+  /* Pixieset-style buttons */
+  .btn-primary {
+    @apply bg-primary text-white font-medium px-6 py-3 rounded-lg hover:bg-primary/90 transition-colors duration-200;
+  }
+  
+  .btn-secondary {
+    @apply bg-secondary text-foreground font-medium px-6 py-3 rounded-lg hover:bg-secondary/80 transition-colors duration-200;
+  }
+  
+  .btn-outline {
+    @apply border border-border text-foreground font-medium px-6 py-3 rounded-lg hover:bg-secondary transition-colors duration-200;
+  }
+
+  /* Subtle shadow for cards */
+  .card-shadow {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  }
+  
+  .card-shadow-hover {
+    @apply transition-all duration-300;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02);
+  }
+  
+  .card-shadow-hover:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+    transform: translateY(-2px);
+  }
+
+  /* Pixieset-style image cards with hover effects */
+  .image-card {
+    @apply relative overflow-hidden rounded-lg transition-all duration-300;
+  }
+  
+  .image-card:hover {
+    transform: translateY(-4px);
+  }
+  
+  .image-card img {
+    @apply w-full h-full object-cover transition-transform duration-500;
+  }
+  
+  .image-card:hover img {
+    transform: scale(1.05);
+  }
+  
+  .image-card::after {
+    content: '';
+    @apply absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 transition-opacity duration-300;
+  }
+  
+  .image-card:hover::after {
+    @apply opacity-100;
+  }
+  
+  .image-card-content {
+    @apply absolute bottom-0 left-0 right-0 p-6 text-white transform translate-y-full transition-transform duration-300;
+  }
+  
+  .image-card:hover .image-card-content {
+    @apply translate-y-0;
+  }
+}
