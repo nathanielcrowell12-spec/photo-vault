@@ -155,7 +155,7 @@ async function processImportInBackground(
     }
 
     // Find the "Download to Device" link
-    const downloadUrl = await pixiesetClient.getDownloadToDeviceUrl()
+    const downloadUrl = await pixiesetClient.findZipDownloadUrl()
     if (!downloadUrl) {
       throw new Error('Could not find "Download to Device" link on the gallery page. The gallery may not allow downloads.')
     }
