@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
-import { PixiesetZipClient } from '@/lib/platforms/pixieset-zip-client'
+import { PixiesetClient } from '@/lib/platforms/pixieset-zip-client'
 import { ZipStreamService } from '@/lib/services/zip-stream-service'
 
 const supabase = createClient(
@@ -139,7 +139,7 @@ async function processImportInBackground(
     console.log(`PixiesetZipImport: Processing import for gallery ${galleryId}`)
 
     // Create Pixieset client
-    const pixiesetClient = new PixiesetZipClient({
+    const pixiesetClient = new PixiesetClient({
       platform: 'Pixieset',
       galleryUrl: galleryUrl,
       password: password,
