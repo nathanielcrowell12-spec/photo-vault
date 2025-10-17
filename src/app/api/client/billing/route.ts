@@ -166,7 +166,7 @@ export async function POST(request: NextRequest) {
         })
 
       case 'email_receipt':
-        const { payment_id } = data
+        const { payment_id: receipt_payment_id } = data
         // Send email receipt
         return NextResponse.json({
           success: true,
