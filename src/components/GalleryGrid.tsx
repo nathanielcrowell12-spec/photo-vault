@@ -370,6 +370,7 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
                       <img
                         src={gallery.cover_image_url}
                         alt={gallery.gallery_name}
+                        loading="lazy"
                         className={`w-full h-full object-cover transition-transform duration-200 ${isLocked ? '' : 'group-hover:scale-105'}`}
                       />
                     ) : (

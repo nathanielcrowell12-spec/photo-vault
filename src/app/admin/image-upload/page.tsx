@@ -249,6 +249,7 @@ export default function ImageUploadPage() {
                         <img
                           src={image.url}
                           alt={image.name}
+                          loading="lazy"
                           className="w-full h-32 object-cover"
                         />
                         
@@ -310,6 +311,7 @@ export default function ImageUploadPage() {
               <div className="p-4">
                 <img
                   src={uploadedImages.find(img => img.id === previewImage)?.url}
+                  loading="lazy"
                   alt="Preview"
                   className="max-w-full max-h-[70vh] object-contain mx-auto"
                 />

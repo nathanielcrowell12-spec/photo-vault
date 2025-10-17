@@ -381,6 +381,7 @@ export default function PhotoUploadPage() {
                         <img
                           src={image.preview}
                           alt={image.customName}
+                          loading="lazy"
                           className="w-24 h-24 object-cover rounded-lg"
                         />
 

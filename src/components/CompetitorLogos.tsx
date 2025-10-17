@@ -138,6 +138,7 @@ export default function CompetitorLogos({
                     <img 
                       src={logo.logoUrl} 
                       alt={`${logo.name} logo`}
+                      loading="lazy"
                       className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
                       onError={(e) => {
                         // Fallback to a generic logo if image fails to load

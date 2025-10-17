@@ -267,6 +267,7 @@ export default function PhotographersPage() {
                     <img 
                       src={item.image} 
                       alt={item.title}
+                      loading="lazy"
                       className="w-full h-full object-cover"
                     />
                     <div className="image-card-content">

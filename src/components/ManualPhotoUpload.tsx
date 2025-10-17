@@ -219,6 +219,7 @@ export default function ManualPhotoUpload({ galleryId, userId, onUploadComplete 
                     <img
                       src={file.preview}
                       alt={file.file.name}
+                      loading="lazy"
                       className="w-full h-full object-cover"
                     />
                     

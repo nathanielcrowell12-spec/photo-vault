@@ -74,6 +74,7 @@ export default function TestImagesPage() {
                 <img
                   src={img.src}
                   alt={img.title}
+                  loading="lazy"
                   className="w-full h-full object-cover"
                 />
                 <div className="image-card-content">
@@ -94,6 +95,7 @@ export default function TestImagesPage() {
           <div className="relative h-64 rounded-lg overflow-hidden">
             <img
               src="/images/hero/rio-aerial-landscape.jpg"
+              loading="lazy"
               alt="Rio aerial landscape"
               className="w-full h-full object-cover"
             />
@@ -135,6 +137,7 @@ export default function TestImagesPage() {
                   <img
                     src={img.src}
                     alt={img.title}
+                    loading="lazy"
                     className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
                   />
                 </div>
@@ -171,6 +174,7 @@ export default function TestImagesPage() {
                   <img
                     src={img.src}
                     alt={img.title}
+                    loading="lazy"
                     className="w-24 h-24 rounded-full object-cover"
                   />
                   <div>
@@ -252,6 +256,7 @@ export default function TestImagesPage() {
   <img
     src="/images/hero/your-hero-image.jpg"
     alt="Hero background"
+    loading="lazy"
     className="w-full h-full object-cover"
   />
   <div className="absolute inset-0 flex items-center justify-center">
@@ -274,6 +279,7 @@ export default function TestImagesPage() {
   <img
     src="/images/cards/elegant-accessories-bejeweled-sandals.jpg"
     alt="Card image"
+    loading="lazy"
     className="w-full h-full object-cover"
   />
   <div className="image-card-content">

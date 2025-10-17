@@ -401,6 +401,7 @@ export default function GalleryViewerPage() {
                   <img
                     src={photo.thumbnail_url || photo.photo_url}
                     alt={photo.original_filename || `Photo ${index + 1}`}
+                    loading="lazy"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
@@ -446,6 +447,7 @@ export default function GalleryViewerPage() {
             <div className="max-w-7xl max-h-screen p-8">
               <img
                 src={photos[selectedPhotoIndex].photo_url}
+                loading="lazy"
                 alt={photos[selectedPhotoIndex].original_filename || `Photo ${selectedPhotoIndex + 1}`}
                 className="max-w-full max-h-[90vh] object-contain"
               />

@@ -284,6 +284,7 @@ element.addEventListener('mousemove', (e) => {
                   <img
                     src={effect.example}
                     alt={effect.name}
+                    loading="lazy"
                     className="w-full h-full object-cover"
                   />
                   <div className="absolute inset-0 flex items-center justify-center bg-black/50">
