@@ -68,14 +68,16 @@ export default function ClientBillingPage() {
   const [payments, setPayments] = useState<ClientPayment[]>([])
   const [loading, setLoading] = useState(true)
 
+  useEffect(() => {
+    if (userType === 'client') {
+      fetchBillingData()
+    }
+  }, [userType])
+
   if (userType !== 'client') {
     router.push('/dashboard')
     return null
   }
-
-  useEffect(() => {
-    fetchBillingData()
-  }, [])
 
   const fetchBillingData = async () => {
     try {

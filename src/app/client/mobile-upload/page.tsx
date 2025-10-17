@@ -78,11 +78,6 @@ export default function MobileUploadPage() {
     signal: 4
   })
 
-  if (userType !== 'client') {
-    router.push('/dashboard')
-    return null
-  }
-
   const handleFileSelect = useCallback((files: FileList) => {
     const newPhotos: MobilePhoto[] = Array.from(files)
       .filter(file => file.type.startsWith('image/'))
@@ -115,6 +110,11 @@ export default function MobileUploadPage() {
       })
     }
   }, [uploadSession])
+
+  if (userType !== 'client') {
+    router.push('/dashboard')
+    return null
+  }
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {

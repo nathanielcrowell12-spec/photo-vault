@@ -56,14 +56,16 @@ export default function ClientPaymentPage() {
   const [processing, setProcessing] = useState(false)
   const [galleryAccess, setGalleryAccess] = useState<GalleryAccess | null>(null)
 
+  useEffect(() => {
+    if (userType === 'client') {
+      fetchGalleryAccess()
+    }
+  }, [userType])
+
   if (userType !== 'client') {
     router.push('/dashboard')
     return null
   }
-
-  useEffect(() => {
-    fetchGalleryAccess()
-  }, [])
 
   const fetchGalleryAccess = async () => {
     // Simulate fetching gallery access data
