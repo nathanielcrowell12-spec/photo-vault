@@ -59,7 +59,7 @@ export default function GalleryEditModal({ gallery, isOpen, onClose, onSave }: G
     if (isOpen && isPhotographer && user?.id) {
       fetchClients()
     }
-  }, [isOpen, isPhotographer, user?.id])
+  }, [isOpen, isPhotographer, user?.id, fetchClients])
 
   // Update form when gallery changes
   useEffect(() => {

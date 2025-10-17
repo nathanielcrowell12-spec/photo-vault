@@ -73,7 +73,7 @@ export default function GalleryViewerPage() {
     } else if (user) {
       fetchGallery()
     }
-  }, [user, authLoading, galleryId])
+  }, [user, authLoading, galleryId, fetchGallery, router])
 
   const fetchGallery = async () => {
     try {
@@ -224,7 +224,7 @@ export default function GalleryViewerPage() {
       window.addEventListener('keydown', handleKeyDown)
       return () => window.removeEventListener('keydown', handleKeyDown)
     }
-  }, [viewMode, selectedPhotoIndex])
+  }, [viewMode, selectedPhotoIndex, nextPhoto, prevPhoto])
 
   if (loading || authLoading) {
     return (

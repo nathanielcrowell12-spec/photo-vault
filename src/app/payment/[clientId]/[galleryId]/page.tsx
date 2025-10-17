@@ -62,7 +62,7 @@ export default function PaymentPage() {
 
   useEffect(() => {
     fetchPaymentData()
-  }, [clientId, galleryId])
+  }, [clientId, galleryId, fetchPaymentData])
 
   const fetchPaymentData = async () => {
     try {

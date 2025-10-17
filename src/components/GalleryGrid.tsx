@@ -55,11 +55,11 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
     if (isPhotographer && user?.id) {
       fetchClients()
     }
-  }, [userId, isPhotographer, user?.id])
+  }, [userId, isPhotographer, user?.id, fetchClients, fetchGalleries])
 
   useEffect(() => {
     filterAndSortGalleries()
-  }, [galleries, sortBy, filterBy, clientFilter, searchTerm])
+  }, [galleries, sortBy, filterBy, clientFilter, searchTerm, filterAndSortGalleries])
 
   const fetchClients = async () => {
     try {

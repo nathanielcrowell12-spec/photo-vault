@@ -30,7 +30,7 @@ export default function PaymentGuard({
     if (!loading && user && userType === 'client') {
       checkPaymentStatus()
     }
-  }, [loading, user, userType, paymentStatus])
+  }, [loading, user, userType, paymentStatus, checkPaymentStatus])
 
   const checkPaymentStatus = () => {
     // Check if customer is in grace period (6 months after last payment)

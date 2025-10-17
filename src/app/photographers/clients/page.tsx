@@ -88,7 +88,7 @@ export default function ClientsPage() {
         fetchGalleries()
       }
     }
-  }, [user, userType, authLoading])
+  }, [user, userType, authLoading, fetchClients, fetchGalleries, router])
 
   // Show loading or redirect if not photographer
   if (userType !== 'photographer') {

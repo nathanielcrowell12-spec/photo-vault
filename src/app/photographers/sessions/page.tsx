@@ -71,7 +71,7 @@ export default function SessionsPage() {
     }
     fetchSessions()
     fetchClients()
-  }, [userType, router])
+  }, [userType, router, fetchSessions])
 
   // Show loading or redirect if not photographer
   if (userType !== 'photographer') {
