@@ -32,7 +32,8 @@ import {
   Edit,
   Trash2,
   Search,
-  UserPlus
+  UserPlus,
+  Upload
 } from 'lucide-react'
 import Link from 'next/link'
 import { supabase } from '@/lib/supabase'

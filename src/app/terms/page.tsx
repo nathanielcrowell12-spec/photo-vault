@@ -11,7 +11,8 @@ import {
   AlertTriangle,
   DollarSign,
   Clock,
-  Shield
+  Shield,
+  Users
 } from "lucide-react";
 import { PAYMENT_OPTIONS, COMMISSION_RULES } from "@/lib/payment-models";
 

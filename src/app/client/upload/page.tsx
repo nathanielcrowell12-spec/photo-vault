@@ -29,7 +29,8 @@ import {
   Share2,
   Trash2,
   Eye,
-  EyeOff
+  EyeOff,
+  Plus
 } from 'lucide-react'
 import Link from 'next/link'
 import PaymentGuard from '@/components/PaymentGuard'

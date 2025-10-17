@@ -215,7 +215,7 @@ export function formatAmount(amountInCents: number): string {
 /**
  * Convert dollars to cents
  */
-export function dollarsToC ents(dollars: number): number {
+export function dollarsToCents(dollars: number): number {
   return Math.round(dollars * 100)
 }
 
