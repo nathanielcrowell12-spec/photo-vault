@@ -24,7 +24,7 @@ export async function GET() {
 }
 
 // POST /api/competitor-logos - Force update competitor logos (admin only)
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     // In a real implementation, you'd check for admin authentication here
     // const session = await getServerSession(authOptions)

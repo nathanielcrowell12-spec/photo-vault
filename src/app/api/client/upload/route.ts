@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
     const sessionId = uuidv4()
     const sessionName = session_name || `Smartphone Upload ${new Date().toLocaleDateString()}`
     
-    const { data: session, error: sessionError } = await supabase
+    const { error: sessionError } = await supabase
       .from('upload_sessions')
       .insert({
         id: sessionId,
@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
         const filename = `${photoId}_${timestamp}.${fileExtension}`
         
         // Upload to Supabase Storage
-        const { data: uploadData, error: uploadError } = await supabase.storage
+        const { error: uploadError } = await supabase.storage
           .from('client-photos')
           .upload(`${client_id}/${filename}`, imageData, {
             contentType: photo.type,
@@ -110,7 +110,7 @@ export async function POST(request: NextRequest) {
 
         // Generate thumbnail (in real implementation, this would use image processing)
         const thumbnailFilename = `thumb_${filename}`
-        const { data: thumbnailUploadData, error: thumbnailError } = await supabase.storage
+        const { error: thumbnailError } = await supabase.storage
           .from('client-photos')
           .upload(`${client_id}/thumbnails/${thumbnailFilename}`, imageData, {
             contentType: photo.type,
@@ -139,7 +139,6 @@ export async function POST(request: NextRequest) {
         // Create gallery if auto-organize is enabled
         let galleryId = null
         if (auto_organize) {
-          const monthYear = `${organizationDate.getFullYear()}-${String(organizationDate.getMonth() + 1).padStart(2, '0')}`
           const galleryName = `Smartphone Photos - ${organizationDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long' })}`
           
           // Check if gallery already exists for this month
@@ -179,7 +178,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Store photo record
-        const { data: photoRecord, error: photoError } = await supabase
+        const { error: photoError } = await supabase
           .from('photos')
           .insert({
             id: photoId,
@@ -282,7 +281,7 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function extractPhotoMetadata(imageData: Buffer) {
+async function extractPhotoMetadata(_imageData: Buffer) {
   // In a real implementation, this would use a library like 'exif-reader' or 'piexifjs'
   // to extract EXIF data from the image
   try {

@@ -14,8 +14,6 @@ import {
   TrendingUp,
   Users,
   Calculator,
-  PieChart,
-  BarChart3,
   Target,
   Zap,
   AlertCircle,
@@ -72,7 +70,6 @@ export default function BusinessAnalyticsPage() {
 
   // Revenue model
   const PHOTOGRAPHER_SUBSCRIPTION = 22 // per month
-  const CUSTOMER_PAYMENT = 8 // per month
   const PHOTOVAULT_SHARE = 4 // 50% of customer payment
   const PHOTOGRAPHER_SHARE = 4 // 50% of customer payment
 

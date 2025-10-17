@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabase'
  * Send Photo Vault metrics to Helm Project
  * This endpoint collects Photo Vault data and sends it to the Mission Control dashboard
  */
-export async function POST(request: NextRequest) {
+export async function POST(_request: NextRequest) {
   try {
     // Collect Photo Vault metrics
     const metrics = await collectPhotoVaultMetrics()

@@ -16,7 +16,6 @@ import {
   X, 
   Check, 
   Eye,
-  Download,
   Sparkles,
   ExternalLink,
   Wand2,
