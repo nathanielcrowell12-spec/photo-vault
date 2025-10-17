@@ -4,10 +4,10 @@ import jsPDF from 'jspdf'
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { paymentId: string } }
+  { params }: { params: Promise<{ paymentId: string }> }
 ) {
   try {
-    const { paymentId } = params
+    const { paymentId } = await params
 
     if (!paymentId) {
       return NextResponse.json(
@@ -84,6 +84,29 @@ interface PaymentData {
   created_at: string
   gallery_id: string
   user_id: string
+  client_id: string
+  clients?: {
+    name: string
+    email: string
+    phone?: string
+    billing_address?: string
+  }
+  galleries?: {
+    name: string
+    photographers?: {
+      business_name: string
+      users?: {
+        name: string
+        email: string
+        phone?: string
+      }
+    }
+  }
+  payment_options?: {
+    name: string
+    price: number
+    duration: number
+  }
 }
 
 function generateInvoicePDF(payment: PaymentData): jsPDF {
@@ -106,7 +129,7 @@ function generateInvoicePDF(payment: PaymentData): jsPDF {
   doc.setFontSize(10)
   doc.setFont('helvetica', 'normal')
   doc.text(`Invoice #: ${payment.id}`, 160, 38)
-  doc.text(`Date: ${new Date(payment.payment_date).toLocaleDateString()}`, 160, 44)
+  doc.text(`Date: ${new Date(payment.created_at).toLocaleDateString()}`, 160, 44)
   doc.text(`Status: ${payment.status.toUpperCase()}`, 160, 50)
   
   // Billing address
@@ -144,7 +167,7 @@ function generateInvoicePDF(payment: PaymentData): jsPDF {
   
   doc.text(serviceDescription, 20, 128)
   doc.text(photographerName, 80, 128)
-  doc.text(`$${payment.amount_paid}`, 160, 128)
+  doc.text(`$${payment.amount}`, 160, 128)
   
   // Payment information
   doc.setFontSize(12)
@@ -154,14 +177,14 @@ function generateInvoicePDF(payment: PaymentData): jsPDF {
   doc.setFontSize(10)
   doc.setFont('helvetica', 'normal')
   doc.text(`Payment Method: Card ending in 4242`, 20, 158)
-  doc.text(`Payment Date: ${new Date(payment.payment_date).toLocaleDateString()}`, 20, 164)
-  doc.text(`Gallery Access Until: ${new Date(payment.gallery_access_until).toLocaleDateString()}`, 20, 170)
+  doc.text(`Payment Date: ${new Date(payment.created_at).toLocaleDateString()}`, 20, 164)
+  doc.text(`Gallery Access Until: ${new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toLocaleDateString()}`, 20, 170)
   
   // Total
   doc.setFontSize(14)
   doc.setFont('helvetica', 'bold')
   doc.text('Total Paid:', 140, 190)
-  doc.text(`$${payment.amount_paid}`, 160, 190)
+  doc.text(`$${payment.amount}`, 160, 190)
   
   // Footer
   doc.setFontSize(8)

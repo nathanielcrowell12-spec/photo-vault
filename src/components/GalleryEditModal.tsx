@@ -105,7 +105,7 @@ export default function GalleryEditModal({ gallery, isOpen, onClose, onSave }: G
         : []
 
       // Prepare update data
-      const updateData: any = {
+      const updateData: Record<string, unknown> = {
         gallery_name: formData.gallery_name,
         gallery_description: formData.gallery_description,
         photographer_name: formData.photographer_name,

@@ -204,9 +204,10 @@ export default function TusZipUploadModal({
         onClose()
       }, 2000)
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Supabase upload failed:', err)
-      setError(err.message || 'Failed to upload')
+      const errorMessage = err instanceof Error ? err.message : 'Failed to upload'
+      setError(errorMessage)
       setUploading(false)
     }
   }

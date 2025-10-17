@@ -117,9 +117,6 @@ export async function POST(request: NextRequest) {
               try {
                 // Extract photo data
                 const photoData = await file.async('arraybuffer')
-                const photoBlob = new Blob([photoData], { 
-                  type: getMimeType(name) 
-                })
 
                 // Generate unique filename
                 const timestamp = Date.now()
@@ -129,6 +126,9 @@ export async function POST(request: NextRequest) {
                 const storagePath = `${userId}/${galleryId}/${filename}`
 
                 // Upload to Supabase storage
+                const photoBlob = new Blob([photoData], { 
+                  type: getMimeType(name) 
+                })
                 const { error: uploadError } = await supabase.storage
                   .from('photos')
                   .upload(storagePath, photoBlob, {

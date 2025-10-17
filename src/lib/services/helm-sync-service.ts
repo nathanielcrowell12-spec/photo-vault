@@ -88,7 +88,7 @@ class HelmSyncService {
   /**
    * Get Helm Project system status
    */
-  async getHelmProjectStatus(): Promise<any> {
+  async getHelmProjectStatus(): Promise<Record<string, unknown>> {
     try {
       const [systemHealth, autonomyMetrics, personaStatus] = await Promise.all([
         helmClient.getSystemHealth(),

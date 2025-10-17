@@ -274,7 +274,7 @@ export class ZipStreamService {
     platformPhotoId: string
     width?: number
     height?: number
-    exifData?: any
+    exifData?: Record<string, unknown>
   }>> {
     // For now, we'll use a simple approach
     // In a real implementation, you'd use a ZIP streaming library like yauzl or adm-zip

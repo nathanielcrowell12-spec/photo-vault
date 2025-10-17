@@ -8,8 +8,8 @@ interface AuthContextType {
   user: User | null
   session: Session | null
   loading: boolean
-  signUp: (email: string, password: string, userType: 'client' | 'photographer' | 'admin', fullName?: string) => Promise<{ error: any }>
-  signIn: (email: string, password: string) => Promise<{ error: any }>
+  signUp: (email: string, password: string, userType: 'client' | 'photographer' | 'admin', fullName?: string) => Promise<{ error: unknown }>
+  signIn: (email: string, password: string) => Promise<{ error: unknown }>
   signOut: () => Promise<void>
   userType: 'client' | 'photographer' | 'admin' | null
   userFullName: string | null
@@ -227,7 +227,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     if (data.user && !error) {
       // Create user profile
-      const profileData: any = {
+      const profileData: Record<string, unknown> = {
         id: data.user.id,
         user_type: userType,
         payment_status: 'pending' // New users start as pending payment

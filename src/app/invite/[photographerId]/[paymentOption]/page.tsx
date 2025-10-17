@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -93,7 +94,7 @@ export default function InviteAcceptancePage() {
               This invitation link is invalid or has expired. Please contact your photographer for a new invitation.
             </p>
             <Button asChild>
-              <a href="/">Go to PhotoVault</a>
+              <Link href="/">Go to PhotoVault</Link>
             </Button>
           </CardContent>
         </Card>
@@ -280,7 +281,7 @@ export default function InviteAcceptancePage() {
             <CardContent>
               <div className="space-y-4 text-sm text-slate-600 dark:text-slate-300">
                 <p>
-                  By accepting this invitation, you agree to PhotoVault's terms of service and commission structure. 
+                  By accepting this invitation, you agree to PhotoVault&apos;s terms of service and commission structure. 
                   Your photographer will receive commission on your subscription as long as you maintain active payments.
                 </p>
                 <div className="bg-orange-50 dark:bg-orange-900/20 p-3 rounded-lg">

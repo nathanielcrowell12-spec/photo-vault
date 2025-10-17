@@ -319,7 +319,7 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
             </Select>
           )}
 
-          <Select value={sortBy} onValueChange={(value: any) => setSortBy(value)}>
+          <Select value={sortBy} onValueChange={(value: 'date' | 'photographer' | 'platform' | 'name') => setSortBy(value)}>
             <SelectTrigger className="w-[140px]">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>

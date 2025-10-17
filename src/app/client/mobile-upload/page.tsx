@@ -374,7 +374,7 @@ export default function MobileUploadPage() {
                       size="sm"
                       onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
                     >
-                      <Image className="h-4 w-4" />
+                      <Image className="h-4 w-4" alt="" />
                     </Button>
                   </div>
                 </CardHeader>
@@ -461,7 +461,7 @@ export default function MobileUploadPage() {
                           // Mobile Grid View
                           <div className="aspect-square bg-slate-200 dark:bg-slate-700 relative">
                             <div className="w-full h-full flex items-center justify-center">
-                              <Image className="h-6 w-6 text-slate-400" />
+                              <Image className="h-6 w-6 text-slate-400" alt="" />
                             </div>
                             
                             {/* Upload Progress Overlay */}
@@ -514,7 +514,7 @@ export default function MobileUploadPage() {
                           // Mobile List View
                           <div className="flex items-center space-x-3 p-3">
                             <div className="w-12 h-12 bg-slate-200 dark:bg-slate-700 rounded-lg flex items-center justify-center">
-                              <Image className="h-5 w-5 text-slate-400" />
+                              <Image className="h-5 w-5 text-slate-400" alt="" />
                             </div>
                             <div className="flex-1 min-w-0">
                               <h4 className="font-medium text-sm truncate">{photo.file.name}</h4>

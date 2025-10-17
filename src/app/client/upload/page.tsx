@@ -399,7 +399,7 @@ export default function SmartphoneUploadPage() {
                         size="sm"
                         onClick={() => setViewMode('grid')}
                       >
-                        <Image className="h-4 w-4" />
+                        <Image className="h-4 w-4" alt="" />
                       </Button>
                       <Button
                         variant={viewMode === 'list' ? 'default' : 'outline'}
@@ -479,7 +479,7 @@ export default function SmartphoneUploadPage() {
                           // Grid View
                           <div className="aspect-square bg-slate-200 dark:bg-slate-700 relative">
                             <div className="w-full h-full flex items-center justify-center">
-                              <Image className="h-8 w-8 text-slate-400" />
+                              <Image className="h-8 w-8 text-slate-400" alt="" />
                             </div>
                             
                             {/* Upload Progress Overlay */}
@@ -537,7 +537,7 @@ export default function SmartphoneUploadPage() {
                           // List View
                           <div className="flex items-center space-x-4 p-4">
                             <div className="w-16 h-16 bg-slate-200 dark:bg-slate-700 rounded-lg flex items-center justify-center">
-                              <Image className="h-6 w-6 text-slate-400" />
+                              <Image className="h-6 w-6 text-slate-400" alt="" />
                             </div>
                             <div className="flex-1">
                               <h4 className="font-medium">{photo.file.name}</h4>

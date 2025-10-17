@@ -8,7 +8,7 @@ export interface PlatformCredentials {
   email?: string
   password?: string
   apiKey?: string
-  [key: string]: any // Allow platform-specific fields
+  [key: string]: unknown // Allow platform-specific fields
 }
 
 export interface GalleryMetadata {
@@ -34,7 +34,7 @@ export interface PhotoMetadata {
   dateTaken?: Date
   dateUploaded?: Date
   caption?: string
-  exifData?: Record<string, any>
+  exifData?: Record<string, unknown>
 }
 
 export interface ImportProgress {

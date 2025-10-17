@@ -98,7 +98,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Import photos
-    const result = await importer.importPhotos(connection_data, client_id)
+    const connectionDataWithPlatform: ConnectionData = {
+      platform,
+      ...connection_data
+    }
+    const result = await importer.importPhotos(connectionDataWithPlatform, client_id)
 
     if (result.success) {
       // Store imported data in database
@@ -160,7 +164,7 @@ function getPlatformImporter(platform: string): PlatformImporter | null {
 class PixiesetImporter implements PlatformImporter {
   name = 'Pixieset'
 
-  async importPhotos(connectionData: ConnectionData, clientId: string): Promise<ImportResult> {
+  async importPhotos(_connectionData: ConnectionData, _clientId: string): Promise<ImportResult> {
     try {
       // Simulate Pixieset API integration
       // In real implementation, this would use Pixieset's API or web scraping
@@ -191,7 +195,7 @@ class PixiesetImporter implements PlatformImporter {
         photos_imported: mockGalleries.reduce((sum, gallery) => sum + gallery.photos.length, 0),
         galleries: mockGalleries
       }
-    } catch (error) {
+    } catch {
       return {
         success: false,
         galleries_imported: 0,
@@ -206,7 +210,7 @@ class PixiesetImporter implements PlatformImporter {
 class ShootProofImporter implements PlatformImporter {
   name = 'ShootProof'
 
-  async importPhotos(connectionData: ConnectionData, clientId: string): Promise<ImportResult> {
+  async importPhotos(_connectionData: ConnectionData, _clientId: string): Promise<ImportResult> {
     try {
       // Simulate ShootProof API integration
       const mockGalleries = [
@@ -235,7 +239,7 @@ class ShootProofImporter implements PlatformImporter {
         photos_imported: mockGalleries.reduce((sum, gallery) => sum + gallery.photos.length, 0),
         galleries: mockGalleries
       }
-    } catch (error) {
+    } catch {
       return {
         success: false,
         galleries_imported: 0,
@@ -250,7 +254,7 @@ class ShootProofImporter implements PlatformImporter {
 class SmugMugImporter implements PlatformImporter {
   name = 'SmugMug'
 
-  async importPhotos(connectionData: ConnectionData, clientId: string): Promise<ImportResult> {
+  async importPhotos(_connectionData: ConnectionData, _clientId: string): Promise<ImportResult> {
     try {
       // Simulate SmugMug API integration
       const mockGalleries = [
@@ -279,7 +283,7 @@ class SmugMugImporter implements PlatformImporter {
         photos_imported: mockGalleries.reduce((sum, gallery) => sum + gallery.photos.length, 0),
         galleries: mockGalleries
       }
-    } catch (error) {
+    } catch {
       return {
         success: false,
         galleries_imported: 0,
@@ -294,7 +298,7 @@ class SmugMugImporter implements PlatformImporter {
 class PicTimeImporter implements PlatformImporter {
   name = 'Pic-Time'
 
-  async importPhotos(connectionData: ConnectionData, clientId: string): Promise<ImportResult> {
+  async importPhotos(_connectionData: ConnectionData, _clientId: string): Promise<ImportResult> {
     try {
       // Simulate Pic-Time gallery URL parsing
       const mockGalleries = [
@@ -323,7 +327,7 @@ class PicTimeImporter implements PlatformImporter {
         photos_imported: mockGalleries.reduce((sum, gallery) => sum + gallery.photos.length, 0),
         galleries: mockGalleries
       }
-    } catch (error) {
+    } catch {
       return {
         success: false,
         galleries_imported: 0,
@@ -338,7 +342,7 @@ class PicTimeImporter implements PlatformImporter {
 class CloudSpotImporter implements PlatformImporter {
   name = 'CloudSpot'
 
-  async importPhotos(connectionData: ConnectionData, clientId: string): Promise<ImportResult> {
+  async importPhotos(_connectionData: ConnectionData, _clientId: string): Promise<ImportResult> {
     // Similar implementation for CloudSpot
     return {
       success: true,
@@ -352,7 +356,7 @@ class CloudSpotImporter implements PlatformImporter {
 class PassGalleryImporter implements PlatformImporter {
   name = 'Pass Gallery'
 
-  async importPhotos(connectionData: ConnectionData, clientId: string): Promise<ImportResult> {
+  async importPhotos(_connectionData: ConnectionData, _clientId: string): Promise<ImportResult> {
     // Similar implementation for Pass Gallery
     return {
       success: true,
@@ -366,7 +370,7 @@ class PassGalleryImporter implements PlatformImporter {
 class SlickPicImporter implements PlatformImporter {
   name = 'SlickPic'
 
-  async importPhotos(connectionData: ConnectionData, clientId: string): Promise<ImportResult> {
+  async importPhotos(_connectionData: ConnectionData, _clientId: string): Promise<ImportResult> {
     // Similar implementation for SlickPic
     return {
       success: true,
@@ -380,7 +384,7 @@ class SlickPicImporter implements PlatformImporter {
 class ZenfolioImporter implements PlatformImporter {
   name = 'Zenfolio'
 
-  async importPhotos(connectionData: ConnectionData, clientId: string): Promise<ImportResult> {
+  async importPhotos(_connectionData: ConnectionData, _clientId: string): Promise<ImportResult> {
     // Similar implementation for Zenfolio
     return {
       success: true,
@@ -394,7 +398,7 @@ class ZenfolioImporter implements PlatformImporter {
 class PicDropImporter implements PlatformImporter {
   name = 'PicDrop'
 
-  async importPhotos(connectionData: ConnectionData, clientId: string): Promise<ImportResult> {
+  async importPhotos(_connectionData: ConnectionData, _clientId: string): Promise<ImportResult> {
     // Similar implementation for PicDrop
     return {
       success: true,
@@ -407,11 +411,19 @@ class PicDropImporter implements PlatformImporter {
 
 interface ImportedGallery {
   id: string
-  title: string
+  name: string
+  photographer_name: string
+  photographer_business: string
+  session_date: string
+  session_type: string
+  location?: string
   photos: Array<{
     id: string
     url: string
+    thumbnail_url: string
     filename: string
+    size: number
+    created_at: string
   }>
 }
 

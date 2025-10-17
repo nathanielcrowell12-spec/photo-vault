@@ -10,7 +10,7 @@ export interface UnifiedPhoto {
   width: number
   height: number
   metadata: {
-    exifData?: any
+    exifData?: Record<string, unknown>
     takenAt?: string
     camera?: string
     location?: string
@@ -115,7 +115,7 @@ export abstract class UnifiedPlatformClient {
   /**
    * Get platform-specific error messages
    */
-  getErrorMessage(error: any): string {
+  getErrorMessage(error: unknown): string {
     const errorString = error?.message || error?.toString() || 'Unknown error'
     
     // Platform-specific error handling
@@ -153,13 +153,13 @@ export abstract class UnifiedPlatformClient {
 /**
  * Factory function to create platform clients
  */
-export function createPlatformClient(credentials: PlatformCredentials): UnifiedPlatformClient {
+export async function createPlatformClient(credentials: PlatformCredentials): Promise<UnifiedPlatformClient> {
   switch (credentials.platform.toLowerCase()) {
     case 'pixieset':
-      const { PixiesetClient } = require('./pixieset-zip-client')
+      const { PixiesetClient } = await import('./pixieset-zip-client')
       return new PixiesetClient(credentials)
     case 'smugmug':
-      const { SmugMugClient } = require('./smugmug-client')
+      const { SmugMugClient } = await import('./smugmug-client')
       return new SmugMugClient(credentials)
     default:
       throw new Error(`Unsupported platform: ${credentials.platform}`)

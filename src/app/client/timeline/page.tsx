@@ -262,7 +262,7 @@ export default function PhotoTimelinePage() {
       photographer_business: business,
       session_name: session,
       session_date: new Date().toISOString(),
-      session_type: type as any,
+      session_type: type as 'wedding' | 'family' | 'portrait' | 'event' | 'other',
       location,
       tags: ['professional', type],
       is_favorite: Math.random() > 0.8,

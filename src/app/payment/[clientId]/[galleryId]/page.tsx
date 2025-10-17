@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useParams, useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -165,7 +166,7 @@ export default function PaymentPage() {
               This payment link is invalid or has expired. Please contact your photographer for a new payment link.
             </p>
             <Button asChild>
-              <a href="/">Go to PhotoVault</a>
+              <Link href="/">Go to PhotoVault</Link>
             </Button>
           </CardContent>
         </Card>

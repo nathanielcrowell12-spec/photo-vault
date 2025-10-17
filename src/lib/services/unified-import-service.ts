@@ -308,7 +308,7 @@ export class UnifiedImportService {
     data: ArrayBuffer
     width: number
     height: number
-    metadata: any
+    metadata: Record<string, unknown>
   }>> {
     // For now, we'll use a simple approach
     // In a real implementation, you'd use a ZIP streaming library like yauzl or adm-zip

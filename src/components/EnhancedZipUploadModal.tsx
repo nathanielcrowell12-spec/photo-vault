@@ -193,9 +193,10 @@ export default function EnhancedZipUploadModal({
         onClose()
       }, 2000)
 
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Upload failed:', err)
-      setError(err.message || 'Upload failed')
+      const errorMessage = err instanceof Error ? err.message : 'Upload failed'
+      setError(errorMessage)
       setUploading(false)
     }
   }

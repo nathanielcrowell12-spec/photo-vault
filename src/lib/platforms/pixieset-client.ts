@@ -173,7 +173,7 @@ export class PixiesetClient extends BasePlatformClient {
       const photos = data.photos || data
 
       // Map Pixieset photos to our standard format
-      return photos.map((photo: any, index: number) => ({
+      return photos.map((photo: Record<string, unknown>, index: number) => ({
         id: photo.id || `${index}`,
         filename: photo.filename || photo.name || `photo-${index}.jpg`,
         url: photo.url || photo.original_url || photo.download_url,
