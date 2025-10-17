@@ -171,7 +171,7 @@ async function processImportInBackground(
       userId,
       galleryId,
       {
-        galleryName: galleryMetadata?.name || 'Pixieset Gallery',
+        galleryName: (galleryMetadata?.name as string) || 'Pixieset Gallery',
         photographerName: galleryMetadata?.photographerName,
         sessionDate: galleryMetadata?.sessionDate,
         location: galleryMetadata?.location,
