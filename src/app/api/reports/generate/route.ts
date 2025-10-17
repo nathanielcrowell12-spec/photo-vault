@@ -207,14 +207,18 @@ export async function POST(request: NextRequest) {
         .lt('payment_period_start', start_date)
 
       const historicalUpfront = historicalPayments?.reduce((sum, payment) => {
-        const isUpfront = payment.client_payments?.payment_options?.name?.includes('upfront') || 
-                         payment.client_payments?.payment_options?.name?.includes('Annual')
+        const paymentOptions = payment.client_payments?.payment_options
+        const isUpfront = paymentOptions?.some((option: any) => 
+          option?.name?.includes('upfront') || option?.name?.includes('Annual')
+        )
         return sum + (isUpfront ? payment.commission_amount : 0)
       }, 0) || 0
 
       const historicalRecurring = historicalPayments?.reduce((sum, payment) => {
-        const isRecurring = payment.client_payments?.payment_options?.name?.includes('ongoing') || 
-                           payment.client_payments?.payment_options?.name?.includes('monthly')
+        const paymentOptions = payment.client_payments?.payment_options
+        const isRecurring = paymentOptions?.some((option: any) => 
+          option?.name?.includes('ongoing') || option?.name?.includes('monthly')
+        )
         return sum + (isRecurring ? payment.commission_amount : 0)
       }, 0) || 0
 
