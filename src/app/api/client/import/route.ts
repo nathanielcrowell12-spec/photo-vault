@@ -458,7 +458,7 @@ async function storeImportedData(clientId: string, platform: string, galleries: 
   }
 }
 
-function encryptCredentials(credentials: any): string {
+function encryptCredentials(credentials: Record<string, string>): string {
   // In real implementation, this would use proper encryption
   // For now, just base64 encode (NOT secure for production)
   return Buffer.from(JSON.stringify(credentials)).toString('base64')

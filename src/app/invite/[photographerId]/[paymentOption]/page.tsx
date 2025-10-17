@@ -263,7 +263,7 @@ export default function InviteAcceptancePage() {
               <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
                 <p className="text-blue-800 dark:text-blue-200 mb-2">
                   <strong>Good news!</strong> Your photographer receives commission from your PhotoVault subscription, 
-                  so they're incentivized to provide you with excellent service.
+                  so they&apos;re incentivized to provide you with excellent service.
                 </p>
                 <p className="text-sm text-blue-700 dark:text-blue-300">
                   This partnership ensures your photographer continues to support your photo storage needs.
@@ -285,7 +285,7 @@ export default function InviteAcceptancePage() {
                 </p>
                 <div className="bg-orange-50 dark:bg-orange-900/20 p-3 rounded-lg">
                   <p className="text-orange-800 dark:text-orange-200 font-medium">
-                    Important: If you stop paying for 6+ months, your gallery becomes inactive and your photographer's commission stops.
+                    Important: If you stop paying for 6+ months, your gallery becomes inactive and your photographer&apos;s commission stops.
                   </p>
                 </div>
                 <p>
@@ -325,7 +325,7 @@ export default function InviteAcceptancePage() {
               </Button>
               
               <p className="text-xs text-slate-500 mt-4">
-                You'll be redirected to create your PhotoVault account
+                You&apos;ll be redirected to create your PhotoVault account
               </p>
             </CardContent>
           </Card>

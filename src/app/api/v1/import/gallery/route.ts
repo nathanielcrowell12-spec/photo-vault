@@ -145,7 +145,7 @@ async function processImportInBackground(
   accessType: 'guest' | 'account',
   userId: string,
   galleryId: string,
-  galleryMetadata: any
+  galleryMetadata: Record<string, unknown>
 ) {
   try {
     console.log(`UnifiedImport: Processing import for gallery ${galleryId} from ${platform}`)
