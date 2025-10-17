@@ -26,7 +26,13 @@ export default function ImportPage() {
   const router = useRouter()
   const [connecting, setConnecting] = useState<string | null>(null)
   const [connectedPlatforms, setConnectedPlatforms] = useState<string[]>([])
-  const [importedGalleries, setImportedGalleries] = useState<any[]>([])
+  const [importedGalleries, setImportedGalleries] = useState<Array<{
+    id: string
+    name: string
+    platform: string
+    photo_count: number
+    created_at: string
+  }>>([])
 
   if (userType !== 'photographer') {
     router.push('/dashboard')

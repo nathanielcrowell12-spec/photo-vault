@@ -61,7 +61,16 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function initiateUpload({ fileName, fileSize, totalChunks, userId, galleryName, platform }: any) {
+interface UploadParams {
+  fileName: string
+  fileSize: number
+  totalChunks: number
+  userId: string
+  galleryName: string
+  platform: string
+}
+
+async function initiateUpload({ fileName, fileSize, totalChunks, userId, galleryName, platform }: UploadParams) {
   // Create gallery record
   const { data: gallery, error: galleryError } = await supabase
     .from('galleries')
@@ -103,7 +112,14 @@ async function initiateUpload({ fileName, fileSize, totalChunks, userId, gallery
   })
 }
 
-async function uploadChunk({ sessionId, chunkIndex, totalChunks, formData }: any) {
+interface ChunkUploadParams {
+  sessionId: string
+  chunkIndex: number
+  totalChunks: number
+  formData: FormData
+}
+
+async function uploadChunk({ sessionId, chunkIndex, totalChunks, formData }: ChunkUploadParams) {
   console.log(`[CHUNK UPLOAD] Starting chunk ${chunkIndex} for session ${sessionId}`)
   
   const session = uploadSessions.get(sessionId)

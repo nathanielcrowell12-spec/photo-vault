@@ -112,7 +112,19 @@ export async function POST(request: NextRequest) {
   }
 }
 
-async function sendPaymentReminder(client: any, gallery: any, emailService: EmailReportService): Promise<boolean> {
+interface ClientData {
+  id: string
+  email: string
+  name: string
+}
+
+interface GalleryData {
+  id: string
+  name: string
+  photographer_id: string
+}
+
+async function sendPaymentReminder(client: ClientData, gallery: GalleryData, emailService: EmailReportService): Promise<boolean> {
   const subject = `Payment Reminder - ${gallery?.name || 'Your Photo Gallery'}`
   const htmlContent = `
     <!DOCTYPE html>
@@ -176,7 +188,7 @@ async function sendPaymentReminder(client: any, gallery: any, emailService: Emai
   }
 }
 
-async function sendPaymentConfirmation(client: any, gallery: any, emailService: EmailReportService): Promise<boolean> {
+async function sendPaymentConfirmation(client: ClientData, gallery: GalleryData, emailService: EmailReportService): Promise<boolean> {
   const subject = `Payment Confirmed - Welcome to PhotoVault!`
   const htmlContent = `
     <!DOCTYPE html>
@@ -247,7 +259,7 @@ async function sendPaymentConfirmation(client: any, gallery: any, emailService: 
   }
 }
 
-async function sendGalleryAccessNotification(client: any, gallery: any, emailService: EmailReportService): Promise<boolean> {
+async function sendGalleryAccessNotification(client: ClientData, gallery: GalleryData, emailService: EmailReportService): Promise<boolean> {
   const subject = `New Gallery Access - ${gallery?.name || 'Your Photos'}`
   const htmlContent = `
     <!DOCTYPE html>
@@ -309,7 +321,7 @@ async function sendGalleryAccessNotification(client: any, gallery: any, emailSer
   }
 }
 
-async function sendAccessExpiringNotification(client: any, gallery: any, emailService: EmailReportService): Promise<boolean> {
+async function sendAccessExpiringNotification(client: ClientData, gallery: GalleryData, emailService: EmailReportService): Promise<boolean> {
   const subject = `Gallery Access Expiring Soon - ${gallery?.name || 'Your Photos'}`
   const htmlContent = `
     <!DOCTYPE html>
@@ -372,7 +384,7 @@ async function sendAccessExpiringNotification(client: any, gallery: any, emailSe
   }
 }
 
-async function sendCustomNotification(client: any, message: string, emailService: EmailReportService): Promise<boolean> {
+async function sendCustomNotification(client: ClientData, message: string, emailService: EmailReportService): Promise<boolean> {
   const subject = `Message from PhotoVault`
   const htmlContent = `
     <!DOCTYPE html>

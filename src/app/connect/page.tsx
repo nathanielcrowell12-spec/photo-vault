@@ -31,7 +31,12 @@ export default function ConnectPage() {
   const [galleryUrl, setGalleryUrl] = useState('')
   const [accessCode, setAccessCode] = useState('')
   const [connecting, setConnecting] = useState(false)
-  const [connectedGalleries, setConnectedGalleries] = useState<any[]>([])
+  const [connectedGalleries, setConnectedGalleries] = useState<Array<{
+    id: string
+    name: string
+    platform: string
+    url: string
+  }>>([])
   const [searchMode, setSearchMode] = useState<'url' | 'search'>('url')
 
   if (!user) {

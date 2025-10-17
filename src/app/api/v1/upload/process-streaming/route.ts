@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     async start(controller) {
       try {
         // Send helper function
-        const send = (data: any) => {
+        const send = (data: Record<string, unknown>) => {
           controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`))
         }
 
@@ -207,8 +207,14 @@ export async function POST(request: NextRequest) {
   })
 }
 
+interface PhotoEntry {
+  fileName: string
+  fileSize: number
+  isDirectory: boolean
+}
+
 async function processPhotoEntry(
-  entry: any, 
+  entry: PhotoEntry, 
   galleryId: string, 
   userId: string, 
   onComplete: () => void

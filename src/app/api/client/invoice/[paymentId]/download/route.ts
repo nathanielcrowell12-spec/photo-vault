@@ -77,7 +77,16 @@ export async function GET(
   }
 }
 
-function generateInvoicePDF(payment: any): jsPDF {
+interface PaymentData {
+  id: string
+  amount: number
+  status: string
+  created_at: string
+  gallery_id: string
+  user_id: string
+}
+
+function generateInvoicePDF(payment: PaymentData): jsPDF {
   const doc = new jsPDF()
   
   // Header

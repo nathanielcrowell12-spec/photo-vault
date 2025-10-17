@@ -25,8 +25,19 @@ export default function InviteAcceptancePage() {
   const params = useParams()
   const router = useRouter()
   const [loading, setLoading] = useState(true)
-  const [photographerInfo, setPhotographerInfo] = useState<any>(null)
-  const [paymentOption, setPaymentOption] = useState<any>(null)
+  const [photographerInfo, setPhotographerInfo] = useState<{
+    id: string
+    name: string
+    business_name?: string
+    email: string
+  } | null>(null)
+  const [paymentOption, setPaymentOption] = useState<{
+    id: string
+    name: string
+    description: string
+    price: number
+    duration_months: number
+  } | null>(null)
   const [accepting, setAccepting] = useState(false)
 
   const photographerId = params.photographerId as string

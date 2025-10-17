@@ -54,7 +54,7 @@ export default function DashboardPage() {
     }
   }, [user, loading, router])
 
-  const handleDirectImport = async (credentials: any) => {
+  const handleDirectImport = async (credentials: Record<string, string>) => {
     try {
       console.log('=== DIRECT IMPORT START ===')
       console.log('Credentials received:', JSON.stringify(credentials, null, 2))
@@ -126,7 +126,7 @@ export default function DashboardPage() {
     }
   }
 
-  const handlePlatformConnect = async (credentials: any) => {
+  const handlePlatformConnect = async (credentials: Record<string, string>) => {
     console.log('=== HANDLE PLATFORM CONNECT CALLED ===')
     console.log('Raw credentials:', credentials)
     console.log('Platform value:', credentials.platform)
