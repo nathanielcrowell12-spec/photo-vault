@@ -446,7 +446,7 @@ export default function DashboardPage() {
                 </Button>
               </div>
               <p className="text-sm text-slate-600 dark:text-slate-400 mt-4">
-                💡 <strong>Tip:</strong> When you switch views, you'll see exactly what that user type sees. Use the "Back to Admin" button in the navigation to return to admin view.
+                💡 <strong>Tip:</strong> When you switch views, you&apos;ll see exactly what that user type sees. Use the &quot;Back to Admin&quot; button in the navigation to return to admin view.
               </p>
             </CardContent>
           </Card>
@@ -805,7 +805,7 @@ export default function DashboardPage() {
                     </div>
                     <div className="flex-1">
                       <p className="font-medium">Commission earned</p>
-                      <p className="text-sm text-slate-600 dark:text-slate-400">$50 from Jessica's gallery renewal</p>
+                      <p className="text-sm text-slate-600 dark:text-slate-400">$50 from Jessica&apos;s gallery renewal</p>
                     </div>
                     <span className="text-sm text-slate-500">1 day ago</span>
                   </div>

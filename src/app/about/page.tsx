@@ -49,7 +49,7 @@ export default function AboutPage() {
                 PhotoVault was created to solve a simple but critical problem: families were losing access to their precious memories when photo gallery links expired or photographers changed platforms.
               </p>
               <p className="text-lg">
-                We've built a local photo network where all your memories from every photographer in your area are accessible in one place, forever.
+                We&apos;ve built a local photo network where all your memories from every photographer in your area are accessible in one place, forever.
               </p>
             </CardContent>
           </Card>
@@ -151,7 +151,7 @@ export default function AboutPage() {
           <div className="text-center bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-lg p-8">
             <h2 className="text-2xl font-bold mb-4">Ready to Join PhotoVault?</h2>
             <p className="text-lg text-slate-600 dark:text-slate-300 mb-6">
-              Whether you're a family looking to preserve memories or a photographer growing your business
+              Whether you&apos;re a family looking to preserve memories or a photographer growing your business
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-700">
