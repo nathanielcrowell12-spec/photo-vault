@@ -77,7 +77,7 @@ export default function DashboardPage() {
       const requestBody = {
         platform: credentials.platform,
         galleryUrl: credentials.galleryUrl,
-        password: credentials.password || credentials.galleryPassword,
+        password: credentials.password,
         accessType: 'guest',
         galleryMetadata: {
           galleryName: galleryName,
