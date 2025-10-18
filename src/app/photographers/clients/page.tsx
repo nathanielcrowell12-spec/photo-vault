@@ -88,20 +88,6 @@ export default function ClientsPage() {
         fetchGalleries()
       }
     }
-  }, [user, userType, authLoading, fetchClients, fetchGalleries, router])
-
-  // Show loading or redirect if not photographer
-  if (userType !== 'photographer') {
-    return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-slate-600 dark:text-slate-300">Redirecting...</p>
-        </div>
-      </div>
-    )
-  }
-
   const fetchClients = async () => {
     try {
       setLoading(true)
@@ -119,25 +105,7 @@ export default function ClientsPage() {
         return
       }
 
-      // For each client, count their galleries
-      const clientsWithCounts = await Promise.all(
-        (clientsData || []).map(async (client) => {
-          // Check if client has a user_id (registered PhotoVault user)
-          const { data: galleries } = await supabase
-            .from('galleries')
-            .select('id, photo_count')
-            .eq('photographer_id', user?.id)
-            .or(`user_id.eq.${client.id}`)
-
-          return {
-            ...client,
-            gallery_count: galleries?.length || 0,
-            photo_count: galleries?.reduce((sum, g) => sum + (g.photo_count || 0), 0) || 0
-          }
-        })
-      )
-
-      setClients(clientsWithCounts)
+      setClients(clientsData || [])
     } catch (error) {
       console.error('Error fetching clients:', error)
       setClients([])
@@ -148,7 +116,7 @@ export default function ClientsPage() {
 
   const fetchGalleries = async () => {
     try {
-      // Fetch photographer's galleries
+      // Fetch photographer's galleries from database
       const { data: galleriesData, error } = await supabase
         .from('galleries')
         .select('*')
@@ -161,32 +129,38 @@ export default function ClientsPage() {
         return
       }
 
-      // Map galleries with client info
-      const galleriesWithClients = await Promise.all(
-        (galleriesData || []).map(async (gallery) => {
-          if (gallery.user_id) {
-            const { data: client } = await supabase
-              .from('clients')
-              .select('name')
-              .eq('id', gallery.user_id)
-              .eq('photographer_id', user?.id)
-              .single()
-
-            return {
-              ...gallery,
-              client_id: gallery.user_id,
-              client_name: client?.name || 'Unknown'
-            }
-          }
-          return gallery
-        })
-      )
-
-      setGalleries(galleriesWithClients)
+      setGalleries(galleriesData || [])
     } catch (error) {
       console.error('Error fetching galleries:', error)
       setGalleries([])
     }
+  }
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/login')
+    } else if (user && userType === 'photographer') {
+      if (authLoading) {
+        // Still loading auth state
+      } else {
+        fetchClients()
+        fetchGalleries()
+      }
+    } else if (user && userType !== 'photographer') {
+      router.push('/dashboard')
+    }
+  }, [user, userType, authLoading, fetchClients, fetchGalleries, router])
+
+  // Show loading or redirect if not photographer
+  if (userType !== 'photographer') {
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-slate-600 dark:text-slate-300">Redirecting...</p>
+        </div>
+      </div>
+    )
   }
 
   const handleCreateClient = async () => {
@@ -600,3 +574,4 @@ export default function ClientsPage() {
     </div>
   )
 }
+
