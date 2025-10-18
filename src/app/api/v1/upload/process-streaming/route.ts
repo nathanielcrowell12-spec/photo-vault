@@ -3,6 +3,10 @@ import { createClient } from '@supabase/supabase-js'
 import unzipper from 'unzipper'
 import { Readable } from 'stream'
 
+// Runtime configuration for streaming upload processing
+export const runtime = 'nodejs'
+export const maxDuration = 300 // 5 minutes for large file processing
+
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -102,7 +106,8 @@ export async function POST(request: NextRequest) {
         })
 
         // Second pass: process files with streaming
-        const processStream = Readable.fromWeb(zipData.stream())
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const processStream = Readable.fromWeb(zipData.stream() as any)
         const parser = processStream.pipe(unzipper.Parse())
 
         const uploadPromises: Promise<void>[] = []
@@ -213,6 +218,7 @@ interface PhotoEntry {
   fileName: string
   fileSize: number
   isDirectory: boolean
+  on: (event: string, callback: (data?: any) => void) => void
 }
 
 async function processPhotoEntry(
