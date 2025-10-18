@@ -37,7 +37,7 @@ export default function InviteAcceptancePage() {
     name: string
     description: string
     price: number
-    duration_months: number
+    duration: number
   } | null>(null)
   const [accepting, setAccepting] = useState(false)
 
