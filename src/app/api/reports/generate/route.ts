@@ -208,16 +208,16 @@ export async function POST(request: NextRequest) {
 
       const historicalUpfront = historicalPayments?.reduce((sum, payment) => {
         const paymentOptions = payment.client_payments?.payment_options
-        const isUpfront = paymentOptions?.some((option: any) => 
-          option?.name?.includes('upfront') || option?.name?.includes('Annual')
+        const isUpfront = paymentOptions?.some((option: Record<string, unknown>) => 
+          (option?.name as string)?.includes('upfront') || (option?.name as string)?.includes('Annual')
         )
         return sum + (isUpfront ? payment.commission_amount : 0)
       }, 0) || 0
 
       const historicalRecurring = historicalPayments?.reduce((sum, payment) => {
         const paymentOptions = payment.client_payments?.payment_options
-        const isRecurring = paymentOptions?.some((option: any) => 
-          option?.name?.includes('ongoing') || option?.name?.includes('monthly')
+        const isRecurring = paymentOptions?.some((option: Record<string, unknown>) => 
+          (option?.name as string)?.includes('ongoing') || (option?.name as string)?.includes('monthly')
         )
         return sum + (isRecurring ? payment.commission_amount : 0)
       }, 0) || 0
