@@ -460,7 +460,7 @@ export default function MobileUploadPage() {
                           // Mobile Grid View
                           <div className="aspect-square bg-slate-200 dark:bg-slate-700 relative">
                             <div className="w-full h-full flex items-center justify-center">
-                              <Image className="h-6 w-6 text-slate-400" alt="" />
+                              <Image className="h-6 w-6 text-slate-400" />
                             </div>
                             
                             {/* Upload Progress Overlay */}
