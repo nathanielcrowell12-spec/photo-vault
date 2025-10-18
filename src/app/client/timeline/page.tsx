@@ -99,7 +99,7 @@ export default function PhotoTimelinePage() {
     if (userType === 'client') {
       fetchTimelineData()
     }
-  }, [userType, fetchTimelineData])
+  }, [userType])
 
   useEffect(() => {
     if (userType === 'client') {
