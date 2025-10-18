@@ -69,7 +69,7 @@ export async function POST(request: NextRequest) {
 
         // Process and upload each photo
         let uploadedCount = 0
-        let firstPhotoUrl = null // Track first photo for cover image
+        let firstPhotoUrl: string | null = null // Track first photo for cover image
         const batchSize = 10 // Process 10 photos at a time
         
         for (let i = 0; i < imageFiles.length; i += batchSize) {
