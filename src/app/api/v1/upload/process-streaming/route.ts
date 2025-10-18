@@ -45,7 +45,7 @@ export async function POST(request: NextRequest) {
         send({ message: 'Converting to stream for processing...', progress: 20 })
 
         // Convert blob to readable stream
-        const zipStream = Readable.fromWeb(zipData.stream() as ReadableStream<any>)
+        const zipStream = Readable.fromWeb(zipData.stream() as ReadableStream<Uint8Array>)
         
         send({ message: 'Extracting photos from ZIP (streaming)...', progress: 30 })
 
