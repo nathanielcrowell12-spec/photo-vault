@@ -31,6 +31,7 @@ interface PhotoSession {
   photographer_id: string
   session_date: string
   session_type: string
+  description?: string
   gallery_id?: string
   commission_reset: boolean
   created_at: string
