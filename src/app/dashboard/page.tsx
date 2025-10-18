@@ -33,7 +33,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import CompetitorLogos from '@/components/CompetitorLogos'
-import PlatformConnectionModal from '@/components/PlatformConnectionModal'
+import PlatformConnectionModal, { PlatformCredentials } from '@/components/PlatformConnectionModal'
 import UnifiedPlatformModal from '@/components/UnifiedPlatformModal'
 import GalleryGrid from '@/components/GalleryGrid'
 import PaymentGuard from '@/components/PaymentGuard'
@@ -126,7 +126,7 @@ export default function DashboardPage() {
     }
   }
 
-  const handlePlatformConnect = async (credentials: Record<string, string>) => {
+  const handlePlatformConnect = async (credentials: PlatformCredentials) => {
     console.log('=== HANDLE PLATFORM CONNECT CALLED ===')
     console.log('Raw credentials:', credentials)
     console.log('Platform value:', credentials.platform)
