@@ -124,11 +124,11 @@ export default function InviteAcceptancePage() {
             <CardContent className="p-8">
               <div className="flex items-center space-x-4 mb-6">
                 <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-3xl">
-                  {photographerInfo.avatar}
+                  📸
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold">{photographerInfo.name}</h1>
-                  <p className="text-slate-600 dark:text-slate-300">{photographerInfo.business}</p>
+                  <p className="text-slate-600 dark:text-slate-300">{photographerInfo.business_name}</p>
                   <p className="text-sm text-slate-500">{photographerInfo.email}</p>
                 </div>
               </div>
