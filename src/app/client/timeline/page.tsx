@@ -90,10 +90,10 @@ export default function PhotoTimelinePage() {
   const [isPlaying, setIsPlaying] = useState(false)
 
   useEffect(() => {
-    if (!loading && userType !== 'client' && userType !== null) {
+    if (userType !== 'client' && userType !== null) {
       router.push('/dashboard')
     }
-  }, [loading, userType, router])
+  }, [userType, router])
 
   useEffect(() => {
     if (userType === 'client') {
