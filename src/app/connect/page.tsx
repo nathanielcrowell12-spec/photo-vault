@@ -248,10 +248,10 @@ export default function ConnectPage() {
                     </div>
                     <h3 className="font-semibold mb-2">{gallery.name}</h3>
                     <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
-                      by {gallery.photographer}
+                      Connected via {gallery.platform}
                     </p>
                     <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
-                      {gallery.photo_count} photos • {new Date(gallery.date).toLocaleDateString()}
+                      Gallery URL: {gallery.url}
                     </p>
                     <div className="flex items-center justify-between">
                       <Button size="sm" variant="outline">
