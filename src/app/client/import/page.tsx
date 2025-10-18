@@ -47,7 +47,7 @@ export default function PhotoImportPage() {
     return null
   }
 
-  const handlePlatformConnect = async (credentials: Record<string, unknown>) => {
+  const handlePlatformConnect = async (credentials: PlatformCredentials) => {
     // TODO: Implement actual API connection
     console.log('Connecting to platform:', credentials)
     
