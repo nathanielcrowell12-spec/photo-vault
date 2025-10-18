@@ -50,7 +50,7 @@ export default function InviteAcceptancePage() {
       setPhotographerInfo({
         name: 'Emma Photography',
         email: 'emma@emmaphotography.com',
-        business: 'Emma Photography Studio',
+        business_name: 'Emma Photography Studio',
         avatar: '📸'
       })
       setPaymentOption(getPaymentOptionById(paymentOptionId))
