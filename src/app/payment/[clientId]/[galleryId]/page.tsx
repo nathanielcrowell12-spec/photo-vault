@@ -61,10 +61,6 @@ export default function PaymentPage() {
   const clientId = params.clientId as string
   const galleryId = params.galleryId as string
 
-  useEffect(() => {
-    fetchPaymentData()
-  }, [clientId, galleryId, fetchPaymentData])
-
   const fetchPaymentData = async () => {
     try {
       // In a real implementation, you would fetch this data from the API
@@ -103,6 +99,10 @@ export default function PaymentPage() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    fetchPaymentData()
+  }, [clientId, galleryId, fetchPaymentData])
 
   const handlePayment = async () => {
     setProcessing(true)
