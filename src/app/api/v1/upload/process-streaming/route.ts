@@ -70,7 +70,8 @@ export async function POST(request: NextRequest) {
         // First pass: count total files
         send({ message: 'Scanning ZIP file...', progress: 35 })
         
-        const countStream = Readable.fromWeb(zipData.stream())
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const countStream = Readable.fromWeb(zipData.stream() as any)
         const countParser = countStream.pipe(unzipper.Parse())
 
         await new Promise((resolve, reject) => {
