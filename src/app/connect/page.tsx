@@ -56,11 +56,8 @@ export default function ConnectPage() {
       const mockGallery = {
         id: `gallery-${Date.now()}`,
         name: 'Wedding Photos - Sarah & John',
-        photographer: 'Emma Photography',
         platform: 'Pixieset',
-        photo_count: 245,
-        date: '2024-10-15',
-        connected_at: new Date().toISOString()
+        url: galleryUrl
       }
       
       setConnectedGalleries(prev => [...prev, mockGallery])
