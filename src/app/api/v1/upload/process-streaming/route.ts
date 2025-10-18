@@ -218,7 +218,8 @@ interface PhotoEntry {
   fileName: string
   fileSize: number
   isDirectory: boolean
-  on: (event: string, callback: (data?: any) => void) => void
+  path: string
+  on: (event: string, callback: (data?: Buffer) => void) => void
 }
 
 async function processPhotoEntry(
@@ -232,8 +233,10 @@ async function processPhotoEntry(
     const chunks: Buffer[] = []
     
     await new Promise<void>((resolve, reject) => {
-      entry.on('data', (chunk: Buffer) => {
-        chunks.push(chunk)
+      entry.on('data', (chunk?: Buffer) => {
+        if (chunk) {
+          chunks.push(chunk)
+        }
       })
       
       entry.on('end', () => {

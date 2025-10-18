@@ -18,6 +18,7 @@ import {
 import Link from 'next/link'
 import CompetitorLogos from '@/components/CompetitorLogos'
 import PlatformConnectionModal from '@/components/PlatformConnectionModal'
+// Use the PlatformCredentials from the modal component
 import PaymentGuard from '@/components/PaymentGuard'
 
 export default function PhotoImportPage() {
@@ -46,7 +47,7 @@ export default function PhotoImportPage() {
     return null
   }
 
-  const handlePlatformConnect = async (credentials: Record<string, string>) => {
+  const handlePlatformConnect = async (credentials: any) => {
     // TODO: Implement actual API connection
     console.log('Connecting to platform:', credentials)
     
