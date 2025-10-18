@@ -28,7 +28,7 @@ export default function LoginPage() {
 
     if (error) {
       setError(typeof error === 'object' && error !== null && 'message' in error 
-        ? (error as any).message 
+        ? (error as { message: string }).message 
         : 'An error occurred during login')
     } else {
       // Redirect based on user type will be handled by AuthProvider
