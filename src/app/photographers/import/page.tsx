@@ -59,13 +59,15 @@ export default function ImportPage() {
           id: `${platformName}-1`,
           name: `Wedding Gallery - ${platformName}`,
           photo_count: 245,
-          platform: platformName
+          platform: platformName,
+          created_at: new Date().toISOString()
         },
         {
           id: `${platformName}-2`, 
           name: `Family Session - ${platformName}`,
           photo_count: 89,
-          platform: platformName
+          platform: platformName,
+          created_at: new Date().toISOString()
         }
       ]
       
