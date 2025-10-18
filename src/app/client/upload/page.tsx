@@ -399,7 +399,7 @@ export default function SmartphoneUploadPage() {
                         size="sm"
                         onClick={() => setViewMode('grid')}
                       >
-                        <Image className="h-4 w-4" alt="" />
+                        <Image className="h-4 w-4" />
                       </Button>
                       <Button
                         variant={viewMode === 'list' ? 'default' : 'outline'}
