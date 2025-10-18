@@ -446,7 +446,7 @@ export default function ReportsPage() {
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="email-report-type">Report Type</Label>
-                      <Select value={reportType} onValueChange={(value: string) => setReportType(value)}>
+                      <Select value={reportType} onValueChange={(value: string) => setReportType(value as 'monthly' | 'quarterly' | 'yearly' | 'custom')}>
                         <SelectTrigger>
                           <SelectValue placeholder="Select report type" />
                         </SelectTrigger>
