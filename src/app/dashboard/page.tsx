@@ -68,8 +68,8 @@ export default function DashboardPage() {
       console.log('User ID:', user.id)
 
       // Extract gallery name and photographer from URL
-      const galleryName = extractGalleryNameFromUrl(credentials.galleryUrl)
-      const photographerName = extractPhotographerNameFromUrl(credentials.galleryUrl)
+      const galleryName = credentials.galleryUrl ? extractGalleryNameFromUrl(credentials.galleryUrl) : 'Unknown Gallery'
+      const photographerName = credentials.galleryUrl ? extractPhotographerNameFromUrl(credentials.galleryUrl) : 'Unknown Photographer'
 
       console.log('Extracted gallery name:', galleryName)
       console.log('Extracted photographer:', photographerName)
