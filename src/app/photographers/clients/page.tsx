@@ -53,22 +53,23 @@ interface Client {
 interface Gallery {
   id: string
   gallery_name: string
+  gallery_description?: string
+  photo_count?: number
   session_date?: string
-  photo_count: number
+  user_id?: string
   client_id?: string
   client_name?: string
 }
 
 export default function ClientsPage() {
-  const { user, userType, loading: authLoading } = useAuth()
+  const { user, userType, authLoading } = useAuth()
   const router = useRouter()
   const [clients, setClients] = useState<Client[]>([])
   const [galleries, setGalleries] = useState<Gallery[]>([])
   const [loading, setLoading] = useState(true)
-  const [searchTerm, setSearchTerm] = useState('')
   const [showAddModal, setShowAddModal] = useState(false)
-  const [formError, setFormError] = useState('')
   const [formLoading, setFormLoading] = useState(false)
+  const [formError, setFormError] = useState('')
   const [newClient, setNewClient] = useState({
     name: '',
     email: '',
@@ -77,17 +78,6 @@ export default function ClientsPage() {
     sendInvite: true
   })
 
-  useEffect(() => {
-    if (!authLoading) {
-      if (!user) {
-        router.push('/login')
-      } else if (userType !== 'photographer') {
-        router.push('/dashboard')
-      } else {
-        fetchClients()
-        fetchGalleries()
-      }
-    }
   const fetchClients = async () => {
     try {
       setLoading(true)
@@ -227,350 +217,272 @@ export default function ClientsPage() {
       <header className="border-b bg-white dark:bg-slate-900">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <Button asChild variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" asChild>
               <Link href="/dashboard">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Dashboard
               </Link>
             </Button>
-            <Separator orientation="vertical" className="h-6" />
-            <div className="flex items-center space-x-2">
-              <Camera className="h-6 w-6 text-blue-600" />
-              <span className="text-xl font-bold">Client Management</span>
+            <div>
+              <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Clients</h1>
+              <p className="text-slate-600 dark:text-slate-400">Manage your photography clients</p>
             </div>
           </div>
-          <Badge variant="outline" className="bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-200">
-            Photographer
-          </Badge>
+          <Button onClick={() => setShowAddModal(true)}>
+            <UserPlus className="h-4 w-4 mr-2" />
+            Add Client
+          </Button>
         </div>
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto">
-          {/* Introduction */}
-          <div className="mb-8">
-            <h1 className="text-3xl font-bold mb-4">Client Management</h1>
-            <p className="text-lg text-slate-600 dark:text-slate-300">
-              Create client accounts, upload galleries, and send payment reminders. PhotoVault handles all billing automatically.
-            </p>
-          </div>
-
-          {/* Quick Stats */}
-          <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <Card>
-              <CardContent className="p-6 text-center">
-                <Users className="h-8 w-8 mx-auto mb-2 text-blue-600" />
-                <div className="text-2xl font-bold">{clients.length}</div>
-                <p className="text-sm text-slate-600 dark:text-slate-400">Total Clients</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-6 text-center">
-                <Camera className="h-8 w-8 mx-auto mb-2 text-green-600" />
-                <div className="text-2xl font-bold">{galleries.length}</div>
-                <p className="text-sm text-slate-600 dark:text-slate-400">Total Galleries</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="p-6 text-center">
-                <ImageIcon className="h-8 w-8 mx-auto mb-2 text-purple-600" />
-                <div className="text-2xl font-bold">
-                  {clients.reduce((sum, c) => sum + (c.photo_count || 0), 0)}
-                </div>
-                <p className="text-sm text-slate-600 dark:text-slate-400">Total Photos</p>
-              </CardContent>
-            </Card>
-          </div>
-
-          <div className="grid lg:grid-cols-2 gap-8">
-            {/* Create New Client */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Plus className="h-5 w-5 text-blue-600" />
-                  <span>Create New Client</span>
-                </CardTitle>
-                <CardDescription>
-                  Add a new client and prepare for photo session
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {formError && (
-                  <Alert variant="destructive">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription>{formError}</AlertDescription>
-                  </Alert>
-                )}
-
-                <div className="space-y-2">
-                  <Label htmlFor="client-name">Client Name *</Label>
-                  <Input
-                    id="client-name"
-                    required
-                    placeholder="e.g., Sarah & John Smith"
-                    value={newClient.name}
-                    onChange={(e) => setNewClient(prev => ({ ...prev, name: e.target.value }))}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="client-email">Email Address *</Label>
-                  <Input
-                    id="client-email"
-                    type="email"
-                    required
-                    placeholder="client@email.com"
-                    value={newClient.email}
-                    onChange={(e) => setNewClient(prev => ({ ...prev, email: e.target.value }))}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="client-phone">Phone Number (Optional)</Label>
-                  <Input
-                    id="client-phone"
-                    placeholder="(555) 123-4567"
-                    value={newClient.phone}
-                    onChange={(e) => setNewClient(prev => ({ ...prev, phone: e.target.value }))}
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="client-notes">Notes (Optional)</Label>
-                  <Textarea
-                    id="client-notes"
-                    placeholder="Session details, special requests, etc."
-                    value={newClient.notes}
-                    onChange={(e) => setNewClient(prev => ({ ...prev, notes: e.target.value }))}
-                    rows={3}
-                  />
-                </div>
-
-                <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
-                  <input
-                    type="checkbox"
-                    id="sendInvite"
-                    checked={newClient.sendInvite}
-                    onChange={(e) => setNewClient(prev => ({ ...prev, sendInvite: e.target.checked }))}
-                    className="h-4 w-4"
-                  />
-                  <Label htmlFor="sendInvite" className="text-sm cursor-pointer">
-                    Send invitation email to join PhotoVault
-                  </Label>
-                </div>
-                
-                <Button 
-                  onClick={handleCreateClient}
-                  disabled={formLoading || !newClient.name || !newClient.email}
-                  className="w-full bg-blue-600 hover:bg-blue-700"
-                >
-                  {formLoading ? (
-                    <>
-                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                      Creating Client...
-                    </>
-                  ) : (
-                    <>
-                      <UserPlus className="h-4 w-4 mr-2" />
-                      Create Client Account
-                    </>
-                  )}
-                </Button>
-              </CardContent>
-            </Card>
-
-            {/* Payment Reminder Info */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
-                  <Mail className="h-5 w-5 text-green-600" />
-                  <span>Payment Reminders</span>
-                </CardTitle>
-                <CardDescription>
-                  How PhotoVault handles billing for you
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
-                  <h3 className="font-semibold text-green-800 dark:text-green-200 mb-2">
-                    💰 Automatic Billing Process
-                  </h3>
-                  <ol className="space-y-2 text-sm text-green-700 dark:text-green-300">
-                    <li>1. You create client account and upload photos</li>
-                    <li>2. PhotoVault sends payment reminder email to client</li>
-                    <li>3. Client pays PhotoVault $8/month directly</li>
-                    <li>4. You receive $4/month commission automatically</li>
-                    <li>5. Client gets gallery access after payment</li>
-                  </ol>
-                </div>
-                
-                <div className="space-y-3">
-                  <h4 className="font-semibold">Benefits for You:</h4>
-                  <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-300">
-                    <li>• No payment processing needed</li>
-                    <li>• Automatic commission payments</li>
-                    <li>• Professional payment reminders</li>
-                    <li>• Client retention through PhotoVault</li>
-                  </ul>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Clients List */}
-          <Card className="mt-8">
-            <CardHeader>
-              <CardTitle>Your Clients</CardTitle>
-              <CardDescription>
-                Manage client accounts and track payment status
-              </CardDescription>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Clients</CardTitle>
+              <Users className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              {loading ? (
-                <div className="text-center py-8">
-                  <Loader2 className="h-8 w-8 animate-spin text-primary mx-auto mb-4" />
-                  <p className="text-slate-600 dark:text-slate-300">Loading clients...</p>
-                </div>
-              ) : clients.length === 0 ? (
-                <div className="text-center py-12">
-                  <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-                  <h3 className="text-lg font-medium mb-2">No clients yet</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Add your first client using the form above
-                  </p>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {clients.map((client) => (
-                    <div key={client.id} className="border rounded-lg p-4 hover:border-primary/50 transition-colors">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <h3 className="font-semibold text-lg">{client.name}</h3>
-                            <Badge variant={client.status === 'active' ? 'default' : 'outline'}>
-                              {client.status}
-                            </Badge>
-                          </div>
-                          
-                          <div className="space-y-1 text-sm text-muted-foreground mb-3">
-                            <div className="flex items-center gap-2">
-                              <Mail className="h-4 w-4" />
-                              <a href={`mailto:${client.email}`} className="hover:text-primary">
-                                {client.email}
-                              </a>
-                            </div>
-                            {client.phone && (
-                              <div className="flex items-center gap-2">
-                                <Phone className="h-4 w-4" />
-                                <a href={`tel:${client.phone}`} className="hover:text-primary">
-                                  {client.phone}
-                                </a>
-                              </div>
-                            )}
-                            <div className="flex items-center gap-2">
-                              <Calendar className="h-4 w-4" />
-                              <span>Added {new Date(client.created_at).toLocaleDateString()}</span>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center gap-4 text-sm">
-                            <div className="flex items-center gap-1">
-                              <ImageIcon className="h-4 w-4 text-muted-foreground" />
-                              <span className="font-medium">{client.gallery_count || 0}</span>
-                              <span className="text-muted-foreground">
-                                {client.gallery_count === 1 ? 'gallery' : 'galleries'}
-                              </span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <ImageIcon className="h-4 w-4 text-muted-foreground" />
-                              <span className="font-medium">{client.photo_count || 0}</span>
-                              <span className="text-muted-foreground">photos</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                          <Button size="sm" variant="outline" onClick={() => handleContactClient(client)}>
-                            <Mail className="h-4 w-4 mr-2" />
-                            Contact
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <div className="text-2xl font-bold">{clients.length}</div>
             </CardContent>
           </Card>
 
-          {/* Galleries List */}
-          <Card className="mt-8">
-            <CardHeader>
-              <CardTitle>Recent Galleries</CardTitle>
-              <CardDescription>
-                Your latest photo galleries
-              </CardDescription>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Active Galleries</CardTitle>
+              <Camera className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              {galleries.length === 0 ? (
-                <div className="text-center py-12">
-                  <Camera className="h-12 w-12 text-muted-foreground mx-auto mb-4 opacity-50" />
-                  <h3 className="text-lg font-medium mb-2">No galleries yet</h3>
-                  <p className="text-muted-foreground mb-4">
-                    Upload your first gallery to get started
-                  </p>
-                  <Button asChild>
-                    <Link href="/dashboard">
-                      <Upload className="h-4 w-4 mr-2" />
-                      Go to Dashboard
-                    </Link>
-                  </Button>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  {galleries.slice(0, 5).map((gallery) => (
-                    <div key={gallery.id} className="border rounded-lg p-4 hover:border-primary/50 transition-colors">
-                      <div className="flex items-center justify-between">
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <h3 className="font-semibold">{gallery.gallery_name}</h3>
-                            {gallery.client_name && (
-                              <Badge variant="outline" className="text-xs">
-                                {gallery.client_name}
-                              </Badge>
-                            )}
-                          </div>
-                          <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                            <span>{gallery.photo_count} photos</span>
-                            {gallery.session_date && (
-                              <>
-                                <span>•</span>
-                                <span>{new Date(gallery.session_date).toLocaleDateString()}</span>
-                              </>
-                            )}
-                          </div>
+              <div className="text-2xl font-bold">{galleries.length}</div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Total Photos</CardTitle>
+              <ImageIcon className="h-4 w-4 text-muted-foreground" />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold">
+                {galleries.reduce((sum, gallery) => sum + (gallery.photo_count || 0), 0)}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Clients List */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Your Clients</CardTitle>
+            <CardDescription>
+              Manage your photography clients and their galleries
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="h-6 w-6 animate-spin" />
+                <span className="ml-2">Loading clients...</span>
+              </div>
+            ) : clients.length === 0 ? (
+              <div className="text-center py-8">
+                <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-medium mb-2">No clients yet</h3>
+                <p className="text-muted-foreground mb-4">
+                  Start by adding your first photography client
+                </p>
+                <Button onClick={() => setShowAddModal(true)}>
+                  <UserPlus className="h-4 w-4 mr-2" />
+                  Add Your First Client
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {clients.map((client) => (
+                  <div key={client.id} className="border rounded-lg p-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <div className="flex items-center gap-3 mb-2">
+                          <h3 className="font-medium">{client.name}</h3>
+                          <Badge variant={client.status === 'active' ? 'default' : 'secondary'}>
+                            {client.status}
+                          </Badge>
                         </div>
+                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                          <span className="flex items-center gap-1">
+                            <Mail className="h-3 w-3" />
+                            {client.email}
+                          </span>
+                          {client.phone && (
+                            <span className="flex items-center gap-1">
+                              <Phone className="h-3 w-3" />
+                              {client.phone}
+                            </span>
+                          )}
+                          <span className="flex items-center gap-1">
+                            <Calendar className="h-3 w-3" />
+                            {new Date(client.created_at).toLocaleDateString()}
+                          </span>
+                        </div>
+                        {client.client_notes && (
+                          <p className="text-sm text-muted-foreground mt-2">
+                            {client.client_notes}
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Button size="sm" variant="outline" onClick={() => handleContactClient(client)}>
+                          <Mail className="h-4 w-4 mr-2" />
+                          Contact
+                        </Button>
                         <Button size="sm" variant="outline" asChild>
-                          <Link href={`/gallery/${gallery.id}`}>
+                          <Link href={`/gallery/${client.id}`}>
                             <Eye className="h-4 w-4 mr-2" />
-                            View Gallery
+                            View Galleries
                           </Link>
                         </Button>
                       </div>
                     </div>
-                  ))}
-                  {galleries.length > 5 && (
-                    <div className="text-center pt-4">
-                      <Button variant="outline" asChild>
-                        <Link href="/dashboard">
-                          View All Galleries
-                        </Link>
-                      </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Recent Galleries */}
+        {galleries.length > 0 && (
+          <Card className="mt-8">
+            <CardHeader>
+              <CardTitle>Recent Galleries</CardTitle>
+              <CardDescription>
+                Your latest photography galleries
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {galleries.slice(0, 6).map((gallery) => (
+                  <div key={gallery.id} className="border rounded-lg p-4">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-medium">{gallery.gallery_name}</h4>
+                      <Badge variant="outline">
+                        {gallery.photo_count || 0} photos
+                      </Badge>
                     </div>
-                  )}
-                </div>
-              )}
+                    <p className="text-sm text-muted-foreground mb-3">
+                      {gallery.gallery_description}
+                    </p>
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <span>{gallery.photo_count} photos</span>
+                      {gallery.session_date && (
+                        <>
+                          <span>•</span>
+                          <span>{new Date(gallery.session_date).toLocaleDateString()}</span>
+                        </>
+                      )}
+                    </div>
+                    <Button size="sm" variant="outline" asChild className="mt-3">
+                      <Link href={`/gallery/${gallery.id}`}>
+                        <Eye className="h-4 w-4 mr-2" />
+                        View Gallery
+                      </Link>
+                    </Button>
+                  </div>
+                ))}
+                {galleries.length > 6 && (
+                  <div className="text-center pt-4">
+                    <Button variant="outline" asChild>
+                      <Link href="/dashboard">
+                        View All Galleries
+                      </Link>
+                    </Button>
+                  </div>
+                )}
+              </div>
             </CardContent>
           </Card>
-        </div>
+        )}
       </main>
+
+      {/* Add Client Modal */}
+      {showAddModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white dark:bg-slate-800 rounded-lg p-6 w-full max-w-md">
+            <h2 className="text-xl font-bold mb-4">Add New Client</h2>
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="name">Name *</Label>
+                <Input
+                  id="name"
+                  value={newClient.name}
+                  onChange={(e) => setNewClient({ ...newClient, name: e.target.value })}
+                  placeholder="Client name"
+                />
+              </div>
+              <div>
+                <Label htmlFor="email">Email *</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={newClient.email}
+                  onChange={(e) => setNewClient({ ...newClient, email: e.target.value })}
+                  placeholder="client@example.com"
+                />
+              </div>
+              <div>
+                <Label htmlFor="phone">Phone</Label>
+                <Input
+                  id="phone"
+                  value={newClient.phone}
+                  onChange={(e) => setNewClient({ ...newClient, phone: e.target.value })}
+                  placeholder="(555) 123-4567"
+                />
+              </div>
+              <div>
+                <Label htmlFor="notes">Notes</Label>
+                <Textarea
+                  id="notes"
+                  value={newClient.notes}
+                  onChange={(e) => setNewClient({ ...newClient, notes: e.target.value })}
+                  placeholder="Any additional notes about this client..."
+                />
+              </div>
+              {formError && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{formError}</AlertDescription>
+                </Alert>
+              )}
+            </div>
+            <div className="flex gap-3 mt-6">
+              <Button
+                variant="outline"
+                onClick={() => setShowAddModal(false)}
+                disabled={formLoading}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleCreateClient}
+                disabled={formLoading || !newClient.name || !newClient.email}
+              >
+                {formLoading ? (
+                  <>
+                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    Adding...
+                  </>
+                ) : (
+                  <>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Client
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
