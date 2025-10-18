@@ -122,3 +122,4 @@ interface AuthContextType {
 
 ---
 *This lexicon will be updated as interfaces evolve and new usage patterns are discovered.*
+
