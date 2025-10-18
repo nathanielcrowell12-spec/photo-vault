@@ -105,7 +105,7 @@ export default function PhotoTimelinePage() {
     if (userType === 'client') {
       applyFilters()
     }
-  }, [timelineData, filters, userType, applyFilters])
+  }, [timelineData, filters, userType])
 
   if (loading) {
     return (
