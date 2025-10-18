@@ -479,7 +479,7 @@ export default function SmartphoneUploadPage() {
                           // Grid View
                           <div className="aspect-square bg-slate-200 dark:bg-slate-700 relative">
                             <div className="w-full h-full flex items-center justify-center">
-                              <Image className="h-8 w-8 text-slate-400" alt="" />
+                              <Image className="h-8 w-8 text-slate-400" />
                             </div>
                             
                             {/* Upload Progress Overlay */}
