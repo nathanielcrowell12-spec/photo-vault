@@ -373,7 +373,7 @@ export default function MobileUploadPage() {
                       size="sm"
                       onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
                     >
-                      <Image className="h-4 w-4" alt="" />
+                      <Image className="h-4 w-4" />
                     </Button>
                   </div>
                 </CardHeader>
