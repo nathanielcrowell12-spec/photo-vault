@@ -48,6 +48,7 @@ export default function InviteAcceptancePage() {
     // Simulate fetching photographer info and payment option
     setTimeout(() => {
       setPhotographerInfo({
+        id: photographerId,
         name: 'Emma Photography',
         email: 'emma@emmaphotography.com',
         business_name: 'Emma Photography Studio'
