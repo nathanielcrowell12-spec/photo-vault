@@ -169,11 +169,11 @@ async function processImportInBackground(
       userId,
       galleryId,
       {
-        galleryName: galleryMetadata?.galleryName,
-        photographerName: galleryMetadata?.photographerName,
-        sessionDate: galleryMetadata?.sessionDate,
-        location: galleryMetadata?.location,
-        people: galleryMetadata?.people
+        galleryName: galleryMetadata?.galleryName as string | undefined,
+        photographerName: galleryMetadata?.photographerName as string | undefined,
+        sessionDate: galleryMetadata?.sessionDate as string | undefined,
+        location: galleryMetadata?.location as string | undefined,
+        people: galleryMetadata?.people as string[] | undefined
       }
     )
 
