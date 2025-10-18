@@ -293,10 +293,11 @@ export async function processScheduledReports() {
 
       } catch (error) {
         console.error(`Error processing scheduled report ${scheduledReport.id}:`, error)
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error'
         results.push({
           id: scheduledReport.id,
           status: 'failed',
-          error: error.message
+          error: errorMessage
         })
       }
     }
