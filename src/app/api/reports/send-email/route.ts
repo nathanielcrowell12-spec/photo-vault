@@ -150,8 +150,8 @@ export async function POST(request: NextRequest) {
         date: payment.payment_period_start,
         clientName: payment.client_payments?.clients?.name || 'Unknown Client',
         amount: payment.commission_amount,
-        type: payment.client_payments?.payment_options?.name?.includes('upfront') || 
-              payment.client_payments?.payment_options?.name?.includes('Annual') ? 'upfront' : 'recurring',
+        type: (payment.client_payments?.payment_options?.name?.includes('upfront') || 
+               payment.client_payments?.payment_options?.name?.includes('Annual') ? 'upfront' : 'recurring') as 'upfront' | 'recurring',
         status: payment.status
       })) || []
 
