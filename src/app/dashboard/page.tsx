@@ -171,7 +171,7 @@ export default function DashboardPage() {
           gallery_description: `Connected from ${credentials.platform}`,
           platform: credentials.platform,
           gallery_url: credentials.galleryUrl,
-          gallery_password: credentials.password || credentials.galleryPassword,
+          gallery_password: credentials.password,
           photo_count: 0, // Will be updated when we fetch actual data
           session_date: new Date().toISOString().split('T')[0],
           is_imported: false,
