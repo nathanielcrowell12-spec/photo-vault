@@ -1,4 +1,4 @@
--- Add temp_zip_path column to galleries table for fast upload system
+w-- Add temp_zip_path column to galleries table for fast upload system
 -- This column stores the temporary path of uploaded ZIP files before processing
 
 -- Add the column if it doesn't exist
