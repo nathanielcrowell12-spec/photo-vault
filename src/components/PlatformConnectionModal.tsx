@@ -15,7 +15,7 @@ interface PlatformConnectionModalProps {
   onConnect: (credentials: PlatformCredentials) => Promise<void>
 }
 
-interface PlatformCredentials {
+export interface PlatformCredentials {
   platform: string
   platformUrl?: string
   username?: string
