@@ -54,7 +54,7 @@ export default function DashboardPage() {
     }
   }, [user, loading, router])
 
-  const handleDirectImport = async (credentials: Record<string, string>) => {
+  const handleDirectImport = async (credentials: PlatformCredentials) => {
     try {
       console.log('=== DIRECT IMPORT START ===')
       console.log('Credentials received:', JSON.stringify(credentials, null, 2))
