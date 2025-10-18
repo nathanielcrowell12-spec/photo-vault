@@ -151,7 +151,7 @@ async function processImportInBackground(
     console.log(`UnifiedImport: Processing import for gallery ${galleryId} from ${platform}`)
 
     // Create platform client using factory
-    const platformClient = createPlatformClient({
+    const platformClient = await createPlatformClient({
       platform: platform,
       galleryUrl: galleryUrl,
       password: password,
