@@ -38,6 +38,7 @@ export default function InviteAcceptancePage() {
     description: string
     price: number
     duration: number
+    terms: string[]
   } | null>(null)
   const [accepting, setAccepting] = useState(false)
 
