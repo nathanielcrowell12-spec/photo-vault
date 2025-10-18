@@ -207,7 +207,8 @@ export async function POST(request: NextRequest) {
         .lt('payment_period_start', start_date)
 
       const historicalUpfront = historicalPayments?.reduce((sum, payment) => {
-        const paymentOptions = payment.client_payments?.payment_options
+        const clientPayment = payment.client_payments as Record<string, unknown> | null
+        const paymentOptions = clientPayment?.payment_options as Array<Record<string, unknown>> | undefined
         const isUpfront = paymentOptions?.some((option: Record<string, unknown>) => 
           (option?.name as string)?.includes('upfront') || (option?.name as string)?.includes('Annual')
         )
@@ -215,7 +216,8 @@ export async function POST(request: NextRequest) {
       }, 0) || 0
 
       const historicalRecurring = historicalPayments?.reduce((sum, payment) => {
-        const paymentOptions = payment.client_payments?.payment_options
+        const clientPayment = payment.client_payments as Record<string, unknown> | null
+        const paymentOptions = clientPayment?.payment_options as Array<Record<string, unknown>> | undefined
         const isRecurring = paymentOptions?.some((option: Record<string, unknown>) => 
           (option?.name as string)?.includes('ongoing') || (option?.name as string)?.includes('monthly')
         )
