@@ -280,7 +280,7 @@ export default function ReportsPage() {
                   <CardContent className="space-y-6">
                     <div className="space-y-2">
                       <Label htmlFor="report-type">Report Type</Label>
-                      <Select value={reportType} onValueChange={(value: string) => setReportType(value)}>
+                      <Select value={reportType} onValueChange={(value: string) => setReportType(value as 'monthly' | 'quarterly' | 'yearly' | 'custom')}>
                         <SelectTrigger>
                           <SelectValue placeholder="Select report type" />
                         </SelectTrigger>
