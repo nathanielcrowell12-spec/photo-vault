@@ -513,7 +513,7 @@ export default function MobileUploadPage() {
                           // Mobile List View
                           <div className="flex items-center space-x-3 p-3">
                             <div className="w-12 h-12 bg-slate-200 dark:bg-slate-700 rounded-lg flex items-center justify-center">
-                              <Image className="h-5 w-5 text-slate-400" alt="" />
+                              <Image className="h-5 w-5 text-slate-400" />
                             </div>
                             <div className="flex-1 min-w-0">
                               <h4 className="font-medium text-sm truncate">{photo.file.name}</h4>
