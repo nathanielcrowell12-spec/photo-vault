@@ -53,7 +53,7 @@ export default function InviteAcceptancePage() {
         email: 'emma@emmaphotography.com',
         business_name: 'Emma Photography Studio'
       })
-      setPaymentOption(getPaymentOptionById(paymentOptionId))
+      setPaymentOption(getPaymentOptionById(paymentOptionId) || null)
       setLoading(false)
     }, 1000)
   }, [photographerId, paymentOptionId])
