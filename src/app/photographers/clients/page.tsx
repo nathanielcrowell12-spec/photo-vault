@@ -62,7 +62,7 @@ interface Gallery {
 }
 
 export default function ClientsPage() {
-  const { user, userType, authLoading } = useAuth()
+  const { user, userType, loading: authLoading } = useAuth()
   const router = useRouter()
   const [clients, setClients] = useState<Client[]>([])
   const [galleries, setGalleries] = useState<Gallery[]>([])
