@@ -537,7 +537,7 @@ export default function SmartphoneUploadPage() {
                           // List View
                           <div className="flex items-center space-x-4 p-4">
                             <div className="w-16 h-16 bg-slate-200 dark:bg-slate-700 rounded-lg flex items-center justify-center">
-                              <Image className="h-6 w-6 text-slate-400" alt="" />
+                              <Image className="h-6 w-6 text-slate-400" />
                             </div>
                             <div className="flex-1">
                               <h4 className="font-medium">{photo.file.name}</h4>
