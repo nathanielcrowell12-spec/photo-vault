@@ -67,14 +67,6 @@ export default function GalleryViewerPage() {
 
   const galleryId = params.galleryId as string
 
-  useEffect(() => {
-    if (!authLoading && !user) {
-      router.push('/login')
-    } else if (user) {
-      fetchGallery()
-    }
-  }, [user, authLoading, galleryId, fetchGallery, router])
-
   const fetchGallery = async () => {
     try {
       setLoading(true)
@@ -114,6 +106,14 @@ export default function GalleryViewerPage() {
       setLoading(false)
     }
   }
+
+  useEffect(() => {
+    if (!authLoading && !user) {
+      router.push('/login')
+    } else if (user) {
+      fetchGallery()
+    }
+  }, [user, authLoading, galleryId, fetchGallery, router])
 
   const handleImportPhotos = async () => {
     if (!user || !gallery) return
