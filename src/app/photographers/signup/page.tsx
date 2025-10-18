@@ -46,7 +46,9 @@ export default function PhotographerSignupPage() {
       const { error } = await signUp(formData.email, formData.password, 'photographer', formData.businessName || formData.fullName)
 
       if (error) {
-        setError(error.message || 'An error occurred during signup')
+        setError(typeof error === 'object' && error !== null && 'message' in error
+          ? (error as { message: string }).message
+          : 'An error occurred during signup')
       } else {
         router.push('/dashboard')
       }
