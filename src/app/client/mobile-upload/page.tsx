@@ -33,7 +33,6 @@ import {
   Battery,
   BatteryLow,
   Signal,
-  SignalOff,
   Plus
 } from 'lucide-react'
 import Link from 'next/link'
