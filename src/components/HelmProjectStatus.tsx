@@ -53,8 +53,8 @@ export function HelmProjectStatus({ className }: HelmProjectStatusProps) {
 
     try {
       const status = await helmSyncService.getHelmProjectStatus()
-      setSystemHealth(status.systemHealth)
-      setAutonomyMetrics(status.autonomyMetrics)
+      setSystemHealth(status.systemHealth as SystemHealth | null)
+      setAutonomyMetrics(status.autonomyMetrics as AutonomyMetrics | null)
     } catch (err) {
       setError('Failed to fetch Helm Project status')
       console.error('Error fetching Helm Project status:', err)

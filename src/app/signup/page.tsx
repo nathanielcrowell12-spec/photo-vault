@@ -47,7 +47,9 @@ export default function SignupPage() {
       const { error } = await signUp(formData.email, formData.password, userType, formData.fullName)
 
       if (error) {
-        setError(error.message || 'An error occurred during signup')
+        setError(typeof error === 'object' && error !== null && 'message' in error
+          ? (error as { message: string }).message
+          : 'An error occurred during signup')
       } else {
         // Redirect to payment page for customers
         router.push('/signup/payment')

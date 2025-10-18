@@ -160,7 +160,7 @@ export default function EnhancedZipUploadModal({
         phase: 'upload',
         progress: 0,
         message: 'Uploading ZIP file...',
-        method: processingMethod
+        method: processingMethod === 'super-fast' ? 'standard' : processingMethod
       })
 
       uploadControllerRef.current = new AbortController()
@@ -175,7 +175,7 @@ export default function EnhancedZipUploadModal({
         phase: 'processing',
         progress: 0,
         message: `Processing ZIP file using ${processingMethod} method...`,
-        method: processingMethod
+        method: processingMethod === 'super-fast' ? 'standard' : processingMethod
       })
 
       processingControllerRef.current = new AbortController()
@@ -558,7 +558,7 @@ export default function EnhancedZipUploadModal({
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium flex items-center gap-2">
                   {uploadProgress.phase === 'upload' ? 'Uploading ZIP...' : 'Processing Photos...'}
-                  {uploadProgress.method === 'super-fast' && (
+                  {processingMethod === 'super-fast' && (
                     <Zap className="h-3 w-3 text-purple-600" />
                   )}
                   {uploadProgress.method === 'streaming' && (

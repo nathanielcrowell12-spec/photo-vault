@@ -181,8 +181,8 @@ export class PixiesetClient extends BasePlatformClient {
         width: photo.width,
         height: photo.height,
         fileSize: photo.file_size || photo.size,
-        dateTaken: photo.taken_at ? new Date(photo.taken_at) : undefined,
-        dateUploaded: photo.uploaded_at ? new Date(photo.uploaded_at) : undefined,
+        dateTaken: photo.taken_at && typeof photo.taken_at === 'string' ? new Date(photo.taken_at) : undefined,
+        dateUploaded: photo.uploaded_at && typeof photo.uploaded_at === 'string' ? new Date(photo.uploaded_at) : undefined,
         caption: photo.caption || photo.description,
         exifData: photo.exif || {}
       }))

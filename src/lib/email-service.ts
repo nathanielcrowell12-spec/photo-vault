@@ -36,7 +36,7 @@ export class EmailReportService {
   private transporter: nodemailer.Transporter
 
   constructor(config: EmailConfig) {
-    this.transporter = nodemailer.createTransporter(config)
+    this.transporter = nodemailer.createTransport(config)
   }
 
   async sendMonthlyReport(data: EmailReportData): Promise<boolean> {

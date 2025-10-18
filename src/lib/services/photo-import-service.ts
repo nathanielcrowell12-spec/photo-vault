@@ -1,7 +1,7 @@
 // Photo Import Service
 // Handles the complete import workflow for any platform
 
-import { BasePlatformClient, PhotoInfo } from '../platforms/base-platform'
+import { BasePlatformClient, PhotoMetadata } from '../platforms/base-platform'
 import { createClient } from '@supabase/supabase-js'
 
 export interface ImportProgress {

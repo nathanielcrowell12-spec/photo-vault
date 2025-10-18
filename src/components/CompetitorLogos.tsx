@@ -115,64 +115,108 @@ export default function CompetitorLogos({
       {/* Competitor logos grid */}
       <div className="grid md:grid-cols-4 gap-4">
         {logos.map((logo, index) => {
-          const CardWrapper = onPlatformClick ? 'div' : Link
-          const wrapperProps = onPlatformClick 
-            ? { onClick: () => onPlatformClick(logo.name), className: "block cursor-pointer" }
-            : { href: "/client/import", className: "block" }
-
           return (
-            <CardWrapper 
-              key={logo.id}
-              {...wrapperProps}
-            >
-              <Card 
-                className={`cursor-pointer card-shadow-hover border border-border group transition-all hover:scale-105 ${
-                  logo.name === 'Pic-Time' 
-                    ? 'hover:border-primary' 
-                    : 'border-green-200 bg-green-50/50 dark:bg-green-900/10'
-                }`}
-              >
-                <CardContent className="p-4 text-center">
-                  {/* Logo Image */}
-                  <div className="relative h-12 mb-3 overflow-hidden rounded">
-                    <img 
-                      src={logo.logoUrl} 
-                      alt={`${logo.name} logo`}
-                      loading="lazy"
-                      className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
-                      onError={(e) => {
-                        // Fallback to a generic logo if image fails to load
-                        e.currentTarget.src = `https://via.placeholder.com/200x60/00B3A4/FFFFFF?text=${logo.name}`
-                      }}
-                    />
-                  </div>
-
-                  {/* Platform Name */}
-                  <h3 className="font-semibold mb-2 text-foreground text-sm">{logo.name}</h3>
-
-                  {/* Status Badge */}
-                  <Badge 
-                    className={`text-xs ${
-                      logo.name === 'Pic-Time'
-                        ? 'bg-primary/10 text-primary border-primary/20'
-                        : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+            <div key={logo.id} className="block">
+              {onPlatformClick ? (
+                <div onClick={() => onPlatformClick(logo.name)} className="cursor-pointer">
+                  <Card 
+                    className={`cursor-pointer card-shadow-hover border border-border group transition-all hover:scale-105 ${
+                      logo.name === 'Pic-Time' 
+                        ? 'hover:border-primary' 
+                        : 'border-green-200 bg-green-50/50 dark:bg-green-900/10'
                     }`}
                   >
-                    {logo.name === 'Pic-Time' ? (
-                      <>
-                        <Clock className="h-3 w-3 mr-1" />
-                        Ready to Import
-                      </>
-                    ) : (
-                      <>
-                        <CheckCircle className="h-3 w-3 mr-1" />
-                        Connected
-                      </>
-                    )}
-                  </Badge>
-                </CardContent>
-              </Card>
-            </CardWrapper>
+                    <CardContent className="p-4 text-center">
+                      {/* Logo Image */}
+                      <div className="relative h-12 mb-3 flex items-center justify-center">
+                        <img
+                          src={logo.logoUrl}
+                          alt={`${logo.name} logo`}
+                          className="max-h-full max-w-full object-contain"
+                          onError={(e) => {
+                            // Fallback to a generic logo if image fails to load
+                            e.currentTarget.src = `https://via.placeholder.com/200x60/00B3A4/FFFFFF?text=${logo.name}`
+                          }}
+                        />
+                      </div>
+
+                      {/* Platform Name */}
+                      <h3 className="font-semibold mb-2 text-foreground text-sm">{logo.name}</h3>
+
+                      {/* Status Badge */}
+                      <Badge 
+                        className={`text-xs ${
+                          logo.name === 'Pic-Time'
+                            ? 'bg-primary/10 text-primary border-primary/20'
+                            : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                        }`}
+                      >
+                        {logo.name === 'Pic-Time' ? (
+                          <>
+                            <Clock className="h-3 w-3 mr-1" />
+                            Ready to Import
+                          </>
+                        ) : (
+                          <>
+                            <CheckCircle className="h-3 w-3 mr-1" />
+                            Connected
+                          </>
+                        )}
+                      </Badge>
+                    </CardContent>
+                  </Card>
+                </div>
+              ) : (
+                <Link href="/client/import" className="block">
+                  <Card 
+                    className={`cursor-pointer card-shadow-hover border border-border group transition-all hover:scale-105 ${
+                      logo.name === 'Pic-Time' 
+                        ? 'hover:border-primary' 
+                        : 'border-green-200 bg-green-50/50 dark:bg-green-900/10'
+                    }`}
+                  >
+                    <CardContent className="p-4 text-center">
+                      {/* Logo Image */}
+                      <div className="relative h-12 mb-3 flex items-center justify-center">
+                        <img
+                          src={logo.logoUrl}
+                          alt={`${logo.name} logo`}
+                          className="max-h-full max-w-full object-contain"
+                          onError={(e) => {
+                            // Fallback to a generic logo if image fails to load
+                            e.currentTarget.src = `https://via.placeholder.com/200x60/00B3A4/FFFFFF?text=${logo.name}`
+                          }}
+                        />
+                      </div>
+
+                      {/* Platform Name */}
+                      <h3 className="font-semibold mb-2 text-foreground text-sm">{logo.name}</h3>
+
+                      {/* Status Badge */}
+                      <Badge 
+                        className={`text-xs ${
+                          logo.name === 'Pic-Time'
+                            ? 'bg-primary/10 text-primary border-primary/20'
+                            : 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+                        }`}
+                      >
+                        {logo.name === 'Pic-Time' ? (
+                          <>
+                            <Clock className="h-3 w-3 mr-1" />
+                            Ready to Import
+                          </>
+                        ) : (
+                          <>
+                            <CheckCircle className="h-3 w-3 mr-1" />
+                            Connected
+                          </>
+                        )}
+                      </Badge>
+                    </CardContent>
+                  </Card>
+                </Link>
+              )}
+            </div>
           )
         })}
         

@@ -50,17 +50,6 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
   const [showEditModal, setShowEditModal] = useState(false)
   const isPhotographer = userType === 'photographer'
 
-  useEffect(() => {
-    fetchGalleries()
-    if (isPhotographer && user?.id) {
-      fetchClients()
-    }
-  }, [userId, isPhotographer, user?.id, fetchClients, fetchGalleries])
-
-  useEffect(() => {
-    filterAndSortGalleries()
-  }, [galleries, sortBy, filterBy, clientFilter, searchTerm, filterAndSortGalleries])
-
   const fetchClients = async () => {
     try {
       const { data, error } = await supabase
@@ -197,6 +186,17 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
 
     setFilteredGalleries(filtered)
   }
+
+  useEffect(() => {
+    fetchGalleries()
+    if (isPhotographer && user?.id) {
+      fetchClients()
+    }
+  }, [userId, isPhotographer, user?.id, fetchClients, fetchGalleries])
+
+  useEffect(() => {
+    filterAndSortGalleries()
+  }, [galleries, sortBy, filterBy, clientFilter, searchTerm, filterAndSortGalleries])
 
   const getPlatformColor = (platform: string) => {
     const colors: { [key: string]: string } = {

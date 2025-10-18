@@ -54,6 +54,22 @@ export default function GalleryEditModal({ gallery, isOpen, onClose, onSave }: G
   const [error, setError] = useState<string | null>(null)
   const isPhotographer = userType === 'photographer'
 
+  const fetchClients = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('clients')
+        .select('id, name, email')
+        .eq('photographer_id', user?.id)
+        .eq('status', 'active')
+        .order('name')
+
+      if (error) throw error
+      setClients(data || [])
+    } catch (err) {
+      console.error('Error fetching clients:', err)
+    }
+  }
+
   // Fetch photographer's clients
   useEffect(() => {
     if (isOpen && isPhotographer && user?.id) {
@@ -75,22 +91,6 @@ export default function GalleryEditModal({ gallery, isOpen, onClose, onSave }: G
       })
     }
   }, [gallery])
-
-  const fetchClients = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('clients')
-        .select('id, name, email')
-        .eq('photographer_id', user?.id)
-        .eq('status', 'active')
-        .order('name')
-
-      if (error) throw error
-      setClients(data || [])
-    } catch (err) {
-      console.error('Error fetching clients:', err)
-    }
-  }
 
   const handleSave = async () => {
     if (!gallery) return

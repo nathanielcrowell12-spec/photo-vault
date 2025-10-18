@@ -60,6 +60,13 @@ export abstract class UnifiedPlatformClient {
   }
 
   /**
+   * Get platform name
+   */
+  getPlatform(): string {
+    return this.credentials.platform
+  }
+
+  /**
    * Set callback for progress updates
    */
   onProgress(callback: (progress: ImportProgress) => void) {
@@ -116,7 +123,9 @@ export abstract class UnifiedPlatformClient {
    * Get platform-specific error messages
    */
   getErrorMessage(error: unknown): string {
-    const errorString = error?.message || error?.toString() || 'Unknown error'
+    const errorString = (typeof error === 'object' && error !== null && 'message' in error)
+      ? (error as { message: string }).message
+      : error?.toString() || 'Unknown error'
     
     // Platform-specific error handling
     switch (this.credentials.platform.toLowerCase()) {

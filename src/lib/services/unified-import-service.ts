@@ -40,18 +40,18 @@ export class UnifiedImportService {
     }
   ): Promise<{ success: boolean; photosImported: number; error?: string }> {
     try {
-      console.log(`UnifiedImportService: Starting import for gallery ${galleryId} from ${platformClient.credentials.platform}`)
+      console.log(`UnifiedImportService: Starting import for gallery ${galleryId} from ${platformClient.getPlatform()}`)
 
       // Step 1: Authenticate
       this.updateProgress({
         stage: 'authenticating',
         progress: 10,
-        message: `Authenticating with ${platformClient.credentials.platform}...`
+        message: `Authenticating with ${platformClient.getPlatform()}...`
       })
 
       const isAuthenticated = await platformClient.authenticate()
       if (!isAuthenticated) {
-        throw new Error(`Failed to authenticate with ${platformClient.credentials.platform}`)
+        throw new Error(`Failed to authenticate with ${platformClient.getPlatform()}`)
       }
 
       // Step 2: Get gallery metadata
@@ -214,7 +214,7 @@ export class UnifiedImportService {
             location: userMetadata.location,
             people: userMetadata.people,
             import_method: 'unified_zip_stream',
-            platform: platformClient.credentials.platform,
+            platform: platformClient.getPlatform(),
             total_photos_found: photos.length,
             photos_imported: successCount,
             photos_failed: failCount
@@ -250,7 +250,7 @@ export class UnifiedImportService {
           metadata: { 
             error: errorMessage,
             import_method: 'unified_zip_stream',
-            platform: platformClient.credentials.platform
+             platform: platformClient.getPlatform()
           }
         })
         .eq('id', galleryId)

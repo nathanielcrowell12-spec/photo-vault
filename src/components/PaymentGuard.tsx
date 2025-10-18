@@ -26,12 +26,6 @@ export default function PaymentGuard({
   const [isGracePeriod, setIsGracePeriod] = useState(false)
   const [isExpired, setIsExpired] = useState(false)
 
-  useEffect(() => {
-    if (!loading && user && userType === 'client') {
-      checkPaymentStatus()
-    }
-  }, [loading, user, userType, paymentStatus, checkPaymentStatus])
-
   const checkPaymentStatus = () => {
     // Check if customer is in grace period (6 months after last payment)
     // or if payments stopped >6 months ago (expired)
@@ -44,6 +38,12 @@ export default function PaymentGuard({
       setIsExpired(true)
     }
   }
+
+  useEffect(() => {
+    if (!loading && user && userType === 'client') {
+      checkPaymentStatus()
+    }
+  }, [loading, user, userType, paymentStatus, checkPaymentStatus])
 
   // Don't show payment guards for photographers or admins
   if (userType === 'photographer' || userType === 'admin') {
