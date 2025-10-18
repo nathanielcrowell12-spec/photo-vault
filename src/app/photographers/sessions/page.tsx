@@ -64,27 +64,6 @@ export default function SessionsPage() {
     description: ''
   })
 
-  useEffect(() => {
-    if (userType !== 'photographer') {
-      router.push('/dashboard')
-      return
-    }
-    fetchSessions()
-    fetchClients()
-  }, [userType, router, fetchSessions])
-
-  // Show loading or redirect if not photographer
-  if (userType !== 'photographer') {
-    return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-slate-600 dark:text-slate-300">Redirecting...</p>
-        </div>
-      </div>
-    )
-  }
-
   const fetchSessions = async () => {
     try {
       const response = await fetch(`/api/sessions/new-session?photographer_id=${user?.id}`)
@@ -118,6 +97,27 @@ export default function SessionsPage() {
       }
     ])
     setLoading(false)
+  }
+
+  useEffect(() => {
+    if (userType !== 'photographer') {
+      router.push('/dashboard')
+      return
+    }
+    fetchSessions()
+    fetchClients()
+  }, [userType, router, fetchSessions])
+
+  // Show loading or redirect if not photographer
+  if (userType !== 'photographer') {
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-slate-600 dark:text-slate-300">Redirecting...</p>
+        </div>
+      </div>
+    )
   }
 
   const handleCreateSession = async () => {
