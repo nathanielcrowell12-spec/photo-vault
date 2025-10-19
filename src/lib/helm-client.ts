@@ -201,4 +201,18 @@ const defaultConfig: HelmProjectConfig = {
   apiKey: process.env.HELM_PROJECT_API_KEY
 }
 
+// Check if Helm Project is available
+const isHelmProjectAvailable = async (): Promise<boolean> => {
+  try {
+    const response = await fetch(`${defaultConfig.baseUrl}/api/health`, {
+      method: 'GET',
+      signal: AbortSignal.timeout(2000) // 2 second timeout
+    })
+    return response.ok
+  } catch (error) {
+    console.log('Helm Project not available:', error)
+    return false
+  }
+}
+
 export const helmClient = new HelmProjectClient(defaultConfig)

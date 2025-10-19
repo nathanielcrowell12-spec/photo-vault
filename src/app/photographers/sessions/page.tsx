@@ -78,25 +78,8 @@ export default function SessionsPage() {
   }
 
   const fetchClients = async () => {
-    // Simulate fetching clients
-    setClients([
-      {
-        id: '1',
-        email: 'sarah@email.com',
-        name: 'Sarah & John Smith',
-        last_payment_date: '2024-01-15',
-        status: 'inactive',
-        commission_eligible: false
-      },
-      {
-        id: '2',
-        email: 'mike@email.com',
-        name: 'Mike Johnson Family',
-        last_payment_date: '2024-10-01',
-        status: 'active',
-        commission_eligible: true
-      }
-    ])
+    // No clients available yet
+    setClients([])
     setLoading(false)
   }
 

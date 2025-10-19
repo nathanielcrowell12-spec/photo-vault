@@ -91,46 +91,7 @@ export default function AnalyticsPage() {
       setLoading(true)
       // Simulate API call - in real implementation, this would call the API
       setTimeout(() => {
-        setAnalyticsData({
-          monthlyBreakdown: [
-            { month: 'Jan 2024', upfront: 150, recurring: 88, total: 238, newClients: 3, activeClients: 22 },
-            { month: 'Feb 2024', upfront: 200, recurring: 92, total: 292, newClients: 4, activeClients: 23 },
-            { month: 'Mar 2024', upfront: 250, recurring: 96, total: 346, newClients: 5, activeClients: 24 },
-            { month: 'Apr 2024', upfront: 300, recurring: 100, total: 400, newClients: 6, activeClients: 25 },
-            { month: 'May 2024', upfront: 350, recurring: 104, total: 454, newClients: 7, activeClients: 26 },
-            { month: 'Jun 2024', upfront: 400, recurring: 108, total: 508, newClients: 8, activeClients: 27 },
-            { month: 'Jul 2024', upfront: 450, recurring: 112, total: 562, newClients: 9, activeClients: 28 },
-            { month: 'Aug 2024', upfront: 500, recurring: 116, total: 616, newClients: 10, activeClients: 29 },
-            { month: 'Sep 2024', upfront: 450, recurring: 120, total: 570, newClients: 9, activeClients: 30 },
-            { month: 'Oct 2024', upfront: 400, recurring: 124, total: 524, newClients: 8, activeClients: 31 },
-            { month: 'Nov 2024', upfront: 350, recurring: 128, total: 478, newClients: 7, activeClients: 32 },
-            { month: 'Dec 2024', upfront: 300, recurring: 132, total: 432, newClients: 6, activeClients: 33 }
-          ],
-          growthMetrics: {
-            revenueGrowth: 12.5,
-            clientGrowth: 8.3,
-            recurringGrowth: 15.2
-          },
-          totals: {
-            totalRevenue: 5420,
-            totalUpfront: 4100,
-            totalRecurring: 1320,
-            totalNewClients: 82,
-            averageMonthlyRevenue: 452
-          },
-          projections: {
-            nextMonth: 485,
-            next3Months: 1455,
-            nextYear: 5820,
-            recurringRunRate: 1584
-          },
-          retentionMetrics: {
-            totalClients: 82,
-            activeClients: 76,
-            avgClientLifetime: 145,
-            avgClientValue: 66
-          }
-        })
+        setAnalyticsData(null)
         setLoading(false)
       }, 1000)
     } catch (error) {

@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -50,7 +50,7 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
   const [showEditModal, setShowEditModal] = useState(false)
   const isPhotographer = userType === 'photographer'
 
-  const fetchClients = async () => {
+  const fetchClients = useCallback(async () => {
     try {
       const { data, error } = await supabase
         .from('clients')
@@ -64,12 +64,14 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
     } catch (err) {
       console.error('Error fetching clients:', err)
     }
-  }
+  }, [user?.id])
 
-  const fetchGalleries = async () => {
+  const fetchGalleries = useCallback(async () => {
     try {
       setLoading(true)
       console.log('GalleryGrid: Fetching galleries for user:', userId)
+      console.log('GalleryGrid: Current user from context:', user?.email, user?.id)
+      console.log('GalleryGrid: User type:', userType)
       console.log('GalleryGrid: Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL)
       console.log('GalleryGrid: Using anon key:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.substring(0, 20) + '...')
       
@@ -136,9 +138,9 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
       setGalleries([])
       setLoading(false)
     }
-  }
+  }, [userId, isPhotographer])
 
-  const filterAndSortGalleries = () => {
+  const filterAndSortGalleries = useCallback(() => {
     let filtered = [...galleries]
 
     // Apply search filter
@@ -185,18 +187,18 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
     })
 
     setFilteredGalleries(filtered)
-  }
+  }, [galleries, searchTerm, filterBy, isPhotographer, clientFilter, sortBy])
 
   useEffect(() => {
     fetchGalleries()
     if (isPhotographer && user?.id) {
       fetchClients()
     }
-  }, [userId, isPhotographer, user?.id, fetchClients, fetchGalleries])
+  }, [userId, isPhotographer, user?.id])
 
   useEffect(() => {
     filterAndSortGalleries()
-  }, [galleries, sortBy, filterBy, clientFilter, searchTerm, filterAndSortGalleries])
+  }, [filterAndSortGalleries])
 
   const getPlatformColor = (platform: string) => {
     const colors: { [key: string]: string } = {

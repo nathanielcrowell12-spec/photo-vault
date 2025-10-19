@@ -29,14 +29,14 @@ export default function HomePage() {
           
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
             <Button size="lg" className="text-lg px-8 py-6" asChild>
-              <Link href="/auth/signup">
-                Start Free Trial
-                <ArrowRight className="ml-2 h-5 w-5" />
+              <Link href="/login">
+                Login
               </Link>
             </Button>
             <Button size="lg" variant="outline" className="text-lg px-8 py-6" asChild>
-              <Link href="/demo">
-                View Demo
+              <Link href="/auth/signup">
+                Create Account
+                <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
           </div>
@@ -167,12 +167,19 @@ export default function HomePage() {
           <p className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto">
             Join thousands of photographers who trust PhotoVault to manage their most important work.
           </p>
-          <Button size="lg" className="text-lg px-8 py-6 bg-white text-blue-600 hover:bg-gray-100" asChild>
-            <Link href="/auth/signup">
-              Get Started Free
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Link>
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button size="lg" className="text-lg px-8 py-6 bg-white text-blue-600 hover:bg-gray-100" asChild>
+              <Link href="/login">
+                Login
+              </Link>
+            </Button>
+            <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-white text-white hover:bg-white hover:text-blue-600" asChild>
+              <Link href="/auth/signup">
+                Create Account
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
+            </Button>
+          </div>
         </div>
       </section>
     </div>

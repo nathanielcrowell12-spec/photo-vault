@@ -46,17 +46,31 @@ export function HelmProjectStatus({ className }: HelmProjectStatusProps) {
   const [autonomyMetrics, setAutonomyMetrics] = useState<AutonomyMetrics | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [helmAvailable, setHelmAvailable] = useState<boolean | null>(null)
 
   const fetchHelmProjectStatus = async () => {
     setLoading(true)
     setError(null)
 
     try {
+      // First check if Helm Project is available
+      const response = await fetch('/api/helm/health', {
+        method: 'GET',
+        signal: AbortSignal.timeout(3000) // 3 second timeout
+      })
+      
+      if (!response.ok) {
+        throw new Error(`Helm Project not available (${response.status})`)
+      }
+
+      setHelmAvailable(true)
+      
       const status = await helmSyncService.getHelmProjectStatus()
       setSystemHealth(status.systemHealth as SystemHealth | null)
       setAutonomyMetrics(status.autonomyMetrics as AutonomyMetrics | null)
     } catch (err) {
-      setError('Failed to fetch Helm Project status')
+      setHelmAvailable(false)
+      setError(`Helm Project not available: ${err instanceof Error ? err.message : 'Connection failed'}`)
       console.error('Error fetching Helm Project status:', err)
     } finally {
       setLoading(false)
@@ -69,8 +83,8 @@ export function HelmProjectStatus({ className }: HelmProjectStatusProps) {
       await helmSyncService.syncWithHelmProject()
       await fetchHelmProjectStatus()
     } catch (err) {
-      setError('Failed to sync with Helm Project')
-      console.error('Error syncing with Helm Project:', err)
+      console.log('Sync failed (non-critical):', err)
+      // Don't set error state for sync failures - they're non-critical
     } finally {
       setLoading(false)
     }
@@ -135,8 +149,19 @@ export function HelmProjectStatus({ className }: HelmProjectStatusProps) {
         </CardHeader>
         <CardContent>
           {error && (
-            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
-              <p className="text-red-600 text-sm">{error}</p>
+            <div className="mb-4 p-4 bg-yellow-50 border border-yellow-200 rounded-md">
+              <div className="flex items-start space-x-3">
+                <Activity className="h-5 w-5 text-yellow-600 mt-0.5" />
+                <div>
+                  <h4 className="text-yellow-800 font-medium">Helm Project Connection</h4>
+                  <p className="text-yellow-700 text-sm mt-1">{error}</p>
+                  <div className="mt-2 text-xs text-yellow-600">
+                    <p>• Make sure Helm Project is running on port 3001</p>
+                    <p>• Check that the Helm Project API endpoints are accessible</p>
+                    <p>• This integration is optional - PhotoVault works independently</p>
+                  </div>
+                </div>
+              </div>
             </div>
           )}
 

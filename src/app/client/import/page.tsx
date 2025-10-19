@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -16,15 +16,11 @@ import {
   Camera
 } from 'lucide-react'
 import Link from 'next/link'
-import CompetitorLogos from '@/components/CompetitorLogos'
-import PlatformConnectionModal from '@/components/PlatformConnectionModal'
-import { PlatformCredentials } from '@/components/PlatformConnectionModal'
 import PaymentGuard from '@/components/PaymentGuard'
 
 export default function PhotoImportPage() {
   const { user, userType, loading } = useAuth()
   const router = useRouter()
-  const [selectedPlatform, setSelectedPlatform] = useState<string | null>(null)
 
   useEffect(() => {
     if (!loading && userType !== 'client' && userType !== null) {
@@ -47,19 +43,6 @@ export default function PhotoImportPage() {
     return null
   }
 
-  const handlePlatformConnect = async (credentials: PlatformCredentials) => {
-    // TODO: Implement actual API connection
-    console.log('Connecting to platform:', credentials)
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    
-    console.log('Connected successfully!')
-    
-    // TODO: Save connection to Supabase
-    // TODO: Start import process
-    // TODO: Redirect to galleries page
-  }
 
   return (
     <PaymentGuard requireActivePayment={true}>
@@ -77,7 +60,7 @@ export default function PhotoImportPage() {
             <Separator orientation="vertical" className="h-6" />
             <div className="flex items-center space-x-2">
               <Download className="h-6 w-6 text-primary" />
-              <span className="text-xl font-semibold tracking-tight">Import Your Photos</span>
+              <span className="text-xl font-semibold tracking-tight">Upload Your Photos</span>
             </div>
           </div>
           <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
@@ -97,11 +80,10 @@ export default function PhotoImportPage() {
                 <Camera className="h-10 w-10 text-primary" />
               </div>
               <h1 className="text-4xl md:text-5xl font-semibold mb-4 text-foreground tracking-tight">
-                Bring All Your Photos Together
+                Upload Your Photos
               </h1>
               <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed font-light">
-                Connect your existing photo galleries from photographers all over the city. 
-                Access all your memories in one beautiful, organized timeline.
+                Choose the best upload method for your photos. Upload directly from your computer or use our convenient web interface.
               </p>
               <div className="grid md:grid-cols-3 gap-4 mt-8">
                 <div className="flex items-center justify-center space-x-2">
@@ -120,45 +102,106 @@ export default function PhotoImportPage() {
             </CardContent>
           </Card>
 
-          {/* Platform Selection Grid */}
+          {/* Upload Options */}
           <Card className="card-shadow border border-border">
             <CardHeader>
               <CardTitle className="text-2xl">
-                Select Your Photo Platform
+                Upload Your Photos
               </CardTitle>
               <CardDescription>
-                Click on any platform to connect and import your photos
+                Choose the best upload method for your photos
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <CompetitorLogos 
-                onPlatformClick={(platform) => setSelectedPlatform(platform)}
-                showOtherOption={true}
-                showImportButton={false}
-                showUpdateButton={false}
-              />
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* Desktop App Upload */}
+                <Card className="relative overflow-hidden border-2 hover:border-blue-500 transition-colors cursor-pointer group" onClick={() => {
+                  // Try to launch the desktop app, fallback to download
+                  try {
+                    window.open('photovault-desktop://upload', '_self');
+                  } catch (error) {
+                    // If desktop app not installed, redirect to download
+                    window.open('/download-desktop-app', '_blank');
+                  }
+                }}>
+                  <div className="absolute top-0 right-0 bg-blue-600 text-white px-3 py-1 text-xs font-semibold">
+                    RECOMMENDED
+                  </div>
+                  <CardHeader className="text-center pb-4">
+                    <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-blue-200 transition-colors">
+                      <Camera className="h-8 w-8 text-blue-600" />
+                    </div>
+                    <CardTitle className="text-xl">Desktop App Upload</CardTitle>
+                    <CardDescription>
+                      Launch the desktop app for large uploads and faster speed
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                        <span className="text-sm">Up to 500MB per file</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                        <span className="text-sm">All formats including RAW</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-blue-600 rounded-full"></div>
+                        <span className="text-sm">Up to 10,000 files</span>
+                      </div>
+                    </div>
+                    <Button className="w-full bg-blue-600 hover:bg-blue-700">
+                      Launch Desktop App
+                    </Button>
+                  </CardContent>
+                </Card>
+
+                {/* Web Upload */}
+                <Card className="relative overflow-hidden border-2 hover:border-green-500 transition-colors cursor-pointer group" onClick={() => router.push('/client/upload')}>
+                  <CardHeader className="text-center pb-4">
+                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-green-200 transition-colors">
+                      <Heart className="h-8 w-8 text-green-600" />
+                    </div>
+                    <CardTitle className="text-xl">Online Upload</CardTitle>
+                    <CardDescription>
+                      For convenient, smaller uploads
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                        <span className="text-sm">Up to 25MB per file</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                        <span className="text-sm">No download required</span>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <div className="w-2 h-2 bg-green-600 rounded-full"></div>
+                        <span className="text-sm">Perfect for phone photos</span>
+                      </div>
+                    </div>
+                    <Button className="w-full bg-green-600 hover:bg-green-700">
+                      Start Web Upload
+                    </Button>
+                  </CardContent>
+                </Card>
+              </div>
               
               <div className="mt-8 p-4 bg-secondary/30 rounded-lg">
-                <h4 className="font-semibold text-foreground mb-2">💡 How It Works</h4>
-                <ol className="text-sm text-muted-foreground space-y-1 list-decimal list-inside">
-                  <li>Click on your photographer&apos;s platform</li>
-                  <li>Enter your login credentials</li>
-                  <li>We&apos;ll securely import all your galleries</li>
-                  <li>View and organize your photos in PhotoVault</li>
-                </ol>
+                <h4 className="font-semibold text-foreground mb-2">💡 Why We Moved Away from Platform Connections</h4>
+                <div className="text-sm text-muted-foreground space-y-2">
+                  <p>We previously supported direct connections to platforms like Pixieset, but many photography platforms have anti-bot protection that prevents automated imports.</p>
+                  <p><strong>Our solution:</strong> Upload your photos directly to PhotoVault using our desktop app or web interface. This gives you full control and ensures your photos are always accessible.</p>
+                </div>
               </div>
             </CardContent>
           </Card>
         </div>
       </main>
 
-      {/* Platform Connection Modal */}
-      <PlatformConnectionModal
-        platform={selectedPlatform}
-        isOpen={!!selectedPlatform}
-        onClose={() => setSelectedPlatform(null)}
-        onConnect={handlePlatformConnect}
-      />
       </div>
     </PaymentGuard>
   )

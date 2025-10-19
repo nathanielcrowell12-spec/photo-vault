@@ -59,11 +59,11 @@ export default function Application() {
           <h2 className="text-2xl font-bold mb-6">Connected Photography Platforms</h2>
           <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-4">
             {[
-              { name: "Pixieset", status: "connected", photos: 245 },
-              { name: "Pic-Time", status: "connected", photos: 189 },
-              { name: "CloudSpot", status: "connected", photos: 156 },
+              { name: "Pixieset", status: "pending", photos: 0 },
+              { name: "Pic-Time", status: "pending", photos: 0 },
+              { name: "CloudSpot", status: "pending", photos: 0 },
               { name: "ShootProof", status: "pending", photos: 0 },
-              { name: "SmugMug", status: "connected", photos: 312 }
+              { name: "SmugMug", status: "pending", photos: 0 }
             ].map((platform, index) => (
               <HoverCard key={index}>
                 <HoverCardTrigger asChild>
@@ -130,32 +130,11 @@ export default function Application() {
           </div>
           
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[
-              {
-                title: "Wedding - Sarah & John",
-                photographer: "Emma Photography",
-                platform: "Pixieset",
-                date: "Oct 15, 2024",
-                photos: 245,
-                cover: "https://images.unsplash.com/photo-1519741497674-611481863552?w=400&h=300&fit=crop"
-              },
-              {
-                title: "Family Portrait Session",
-                photographer: "Mike Studios",
-                platform: "Pic-Time",
-                date: "Oct 10, 2024",
-                photos: 89,
-                cover: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=300&fit=crop"
-              },
-              {
-                title: "Corporate Headshots",
-                photographer: "Professional Photos Co.",
-                platform: "CloudSpot",
-                date: "Oct 8, 2024",
-                photos: 156,
-                cover: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=400&h=300&fit=crop"
-              }
-            ].map((session, index) => (
+            <div className="text-center py-12 text-gray-500">
+              <Camera className="h-16 w-16 mx-auto mb-4 text-gray-300" />
+              <p className="text-lg font-medium mb-2">No photo sessions found</p>
+              <p className="text-sm">Connect your photography platforms to see sessions here</p>
+            </div>
               <Card key={index} className="overflow-hidden">
                 <div className="relative h-48 bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800">
                   <ImageIcon className="absolute inset-0 m-auto h-16 w-16 text-slate-400" />
@@ -308,28 +287,28 @@ export default function Application() {
           <Card>
             <CardContent className="p-6 text-center">
               <Users className="h-8 w-8 mx-auto mb-2 text-blue-600" />
-              <div className="text-2xl font-bold">5</div>
+              <div className="text-2xl font-bold">-</div>
               <p className="text-sm text-slate-600 dark:text-slate-400">Connected Platforms</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-6 text-center">
               <ImageIcon className="h-8 w-8 mx-auto mb-2 text-green-600" />
-              <div className="text-2xl font-bold">1,247</div>
+              <div className="text-2xl font-bold">-</div>
               <p className="text-sm text-slate-600 dark:text-slate-400">Total Photos</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-6 text-center">
               <Camera className="h-8 w-8 mx-auto mb-2 text-purple-600" />
-              <div className="text-2xl font-bold">23</div>
+              <div className="text-2xl font-bold">-</div>
               <p className="text-sm text-slate-600 dark:text-slate-400">Photo Sessions</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-6 text-center">
               <ExternalLink className="h-8 w-8 mx-auto mb-2 text-orange-600" />
-              <div className="text-2xl font-bold">8</div>
+              <div className="text-2xl font-bold">-</div>
               <p className="text-sm text-slate-600 dark:text-slate-400">Photographers</p>
             </CardContent>
           </Card>

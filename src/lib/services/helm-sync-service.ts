@@ -65,23 +65,37 @@ class HelmSyncService {
     try {
       console.log('Syncing with Helm Project...')
       
+      // First check if Helm Project is available
+      const healthResponse = await fetch('/api/helm/health', {
+        method: 'GET',
+        signal: AbortSignal.timeout(3000)
+      })
+
+      if (!healthResponse.ok) {
+        console.log('Helm Project not available, skipping sync')
+        return
+      }
+      
       // Send metrics to Helm Project
       const response = await fetch('/api/helm/metrics', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
-        }
+        },
+        signal: AbortSignal.timeout(5000)
       })
 
       if (!response.ok) {
-        throw new Error(`Sync failed: ${response.status}`)
+        console.log(`Helm Project sync failed with status ${response.status}, continuing without sync`)
+        return
       }
 
       const result = await response.json()
       console.log('Helm Project sync successful:', result.message)
 
     } catch (error) {
-      console.error('Failed to sync with Helm Project:', error)
+      console.log('Helm Project sync failed (non-critical):', error instanceof Error ? error.message : 'Unknown error')
+      // Don't throw the error - this is a non-critical operation
     }
   }
 
@@ -140,7 +154,7 @@ class HelmSyncService {
 // Create singleton instance
 export const helmSyncService = new HelmSyncService()
 
-// Auto-start in browser environment
-if (typeof window !== 'undefined') {
-  helmSyncService.start()
-}
+// Auto-start in browser environment - TEMPORARILY DISABLED
+// if (typeof window !== 'undefined') {
+//   helmSyncService.start()
+// }
