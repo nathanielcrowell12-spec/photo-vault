@@ -67,7 +67,7 @@ export default function UserTypeSelectionPage() {
                 <div className="mx-auto w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mb-4">
                   <Users className="h-8 w-8 text-pink-600" />
                 </div>
-                <CardTitle className="text-2xl">I'm a Customer</CardTitle>
+                <CardTitle className="text-2xl">I&apos;m a Customer</CardTitle>
                 <CardDescription className="text-base">
                   I want to find and organize my photos from photographers
                 </CardDescription>
@@ -112,7 +112,7 @@ export default function UserTypeSelectionPage() {
                 <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
                   <Camera className="h-8 w-8 text-blue-600" />
                 </div>
-                <CardTitle className="text-2xl">I'm a Photographer</CardTitle>
+                <CardTitle className="text-2xl">I&apos;m a Photographer</CardTitle>
                 <CardDescription className="text-base">
                   I want to manage and deliver photos to my clients
                 </CardDescription>

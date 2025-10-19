@@ -263,7 +263,7 @@ export default function DownloadDesktopAppPage() {
             <CardHeader>
               <CardTitle>Alternative Upload Options</CardTitle>
               <CardDescription>
-                Don't need the desktop app? Try these alternatives
+                Don&apos;t need the desktop app? Try these alternatives
               </CardDescription>
             </CardHeader>
             <CardContent>

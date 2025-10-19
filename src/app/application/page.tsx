@@ -135,37 +135,6 @@ export default function Application() {
               <p className="text-lg font-medium mb-2">No photo sessions found</p>
               <p className="text-sm">Connect your photography platforms to see sessions here</p>
             </div>
-              <Card key={index} className="overflow-hidden">
-                <div className="relative h-48 bg-gradient-to-br from-slate-200 to-slate-300 dark:from-slate-700 dark:to-slate-800">
-                  <ImageIcon className="absolute inset-0 m-auto h-16 w-16 text-slate-400" />
-                  <Badge className="absolute top-3 right-3 bg-white/90 text-slate-700">
-                    {session.platform}
-                  </Badge>
-                </div>
-                <CardContent className="p-4">
-                  <h3 className="font-semibold mb-2">{session.title}</h3>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
-                    by {session.photographer}
-                  </p>
-                  <div className="flex items-center justify-between text-sm">
-                    <span className="text-slate-500">{session.date}</span>
-                    <span className="font-medium">{session.photos} photos</span>
-                  </div>
-                  <div className="flex gap-2 mt-4">
-                    <Button size="sm" variant="outline" className="flex-1">
-                      <ExternalLink className="h-4 w-4 mr-1" />
-                      View
-                    </Button>
-                    <Button size="sm" variant="outline">
-                      <Download className="h-4 w-4" />
-                    </Button>
-                    <Button size="sm" variant="outline">
-                      <Share2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
           </div>
         </div>
 

@@ -70,7 +70,7 @@ export default function DesktopAuthCallbackPage() {
                 </h4>
                 <ol className="text-sm text-blue-700 dark:text-blue-200 space-y-1 list-decimal list-inside">
                   <li>Return to the PhotoVault Desktop App</li>
-                  <li>The app should now show you're signed in</li>
+                  <li>The app should now show you&apos;re signed in</li>
                   <li>You can now upload your photos</li>
                 </ol>
               </div>
