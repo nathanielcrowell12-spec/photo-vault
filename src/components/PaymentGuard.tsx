@@ -3,7 +3,7 @@
 import React from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Alert, AlertDescription } from '@/components/ui/alert'
@@ -26,7 +26,7 @@ export default function PaymentGuard({
   const [isGracePeriod, setIsGracePeriod] = useState(false)
   const [isExpired, setIsExpired] = useState(false)
 
-  const checkPaymentStatus = () => {
+  const checkPaymentStatus = useCallback(() => {
     // Check if customer is in grace period (6 months after last payment)
     // or if payments stopped >6 months ago (expired)
     // This would typically check last_payment_date from the database
@@ -37,7 +37,7 @@ export default function PaymentGuard({
     } else if (paymentStatus === 'inactive') {
       setIsExpired(true)
     }
-  }
+  }, [paymentStatus])
 
   useEffect(() => {
     if (!loading && user && userType === 'client') {

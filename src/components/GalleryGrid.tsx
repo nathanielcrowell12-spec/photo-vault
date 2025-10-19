@@ -138,7 +138,7 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
       setGalleries([])
       setLoading(false)
     }
-  }, [userId, isPhotographer])
+  }, [user?.email, user?.id, userType, userId, isPhotographer])
 
   const filterAndSortGalleries = useCallback(() => {
     let filtered = [...galleries]

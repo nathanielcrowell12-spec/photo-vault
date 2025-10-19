@@ -6,7 +6,6 @@ import { useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Separator } from '@/components/ui/separator'
 import { 
   Shield, 
   Users, 
@@ -19,13 +18,12 @@ import {
   Activity,
   AlertTriangle,
   CheckCircle,
-  XCircle
 } from 'lucide-react'
 import Link from 'next/link'
 import AccessGuard from '@/components/AccessGuard'
 
 export default function AdminDashboardPage() {
-  const { user, userType, loading, signOut } = useAuth()
+  const { user, loading, signOut } = useAuth()
   const router = useRouter()
 
   useEffect(() => {

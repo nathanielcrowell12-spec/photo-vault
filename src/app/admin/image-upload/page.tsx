@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import Image from 'next/image'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Upload, Image as ImageIcon, Folder, Trash2, Eye } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
@@ -246,10 +247,11 @@ export default function ImageUploadPage() {
                         key={image.id}
                         className="relative group border border-border rounded-lg overflow-hidden card-shadow-hover"
                       >
-                        <img
+                        <Image
                           src={image.url}
                           alt={image.name}
-                          loading="lazy"
+                          width={300}
+                          height={128}
                           className="w-full h-32 object-cover"
                         />
                         
@@ -309,9 +311,10 @@ export default function ImageUploadPage() {
                 </Button>
               </div>
               <div className="p-4">
-                <img
-                  src={uploadedImages.find(img => img.id === previewImage)?.url}
-                  loading="lazy"
+                <Image
+                  src={uploadedImages.find(img => img.id === previewImage)?.url || ''}
+                  width={800}
+                  height={600}
                   alt="Preview"
                   className="max-w-full max-h-[70vh] object-contain mx-auto"
                 />

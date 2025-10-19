@@ -6,7 +6,14 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "hygiene": "node scripts/hygiene.mjs",
+    "type-check": "tsc --noEmit",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "prompt:sync": "node scripts/sync-prompt.mjs",
+    "prompt:verify": "node scripts/verify-prompt.mjs",
+    "ci:gate": "npm run hygiene && npm run prompt:verify && npm run type-check"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.10",

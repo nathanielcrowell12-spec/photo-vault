@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import Image from 'next/image'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { 
@@ -378,10 +379,11 @@ export default function PhotoUploadPage() {
                         className="flex items-start gap-4 p-4 border border-border rounded-lg bg-card"
                       >
                         {/* Preview */}
-                        <img
+                        <Image
                           src={image.preview}
                           alt={image.customName}
-                          loading="lazy"
+                          width={96}
+                          height={96}
                           className="w-24 h-24 object-cover rounded-lg"
                         />
 

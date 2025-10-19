@@ -14,18 +14,13 @@ import {
   Star,
   Calendar,
   MessageSquare,
-  Settings,
-  Search,
-  Filter,
-  Grid3X3,
-  List
 } from 'lucide-react'
 import Link from 'next/link'
 import AccessGuard from '@/components/AccessGuard'
 import GalleryGrid from '@/components/GalleryGrid'
 
 export default function ClientDashboardPage() {
-  const { user, userType, loading, signOut } = useAuth()
+  const { user, loading, signOut } = useAuth()
   const router = useRouter()
 
   useEffect(() => {

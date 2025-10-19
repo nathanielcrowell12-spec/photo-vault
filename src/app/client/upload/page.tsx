@@ -149,7 +149,7 @@ export default function UploadPage() {
         upload_completed: false
       })
     }
-  }, [uploadSession, selectedUploadMethod])
+  }, [uploadSession, selectedUploadMethod, DESKTOP_UPLOAD_LIMITS, WEB_UPLOAD_LIMITS])
 
   const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault()
@@ -459,7 +459,7 @@ export default function UploadPage() {
                         <li>• Phone photos and videos</li>
                         <li>• Quick photo sharing</li>
                         <li>• Small to medium collections</li>
-                        <li>• When you can't install software</li>
+                        <li>• When you can&apos;t install software</li>
                       </ul>
                     </div>
 

@@ -32,7 +32,7 @@ export default function AccessGuard({
       return
     }
 
-    const accessRules = getUserAccessRules(user.email, userType)
+    const accessRules = getUserAccessRules(user.email || null, userType)
     
     if (!accessRules[requiredAccess]) {
       const redirectRoute = fallbackRoute || getDashboardRoute(userType)
@@ -71,7 +71,7 @@ export default function AccessGuard({
     )
   }
 
-  const accessRules = getUserAccessRules(user.email, userType)
+  const accessRules = getUserAccessRules(user.email || null, userType)
   
   if (!accessRules[requiredAccess]) {
     if (!showAccessDenied) {

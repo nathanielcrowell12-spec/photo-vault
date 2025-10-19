@@ -7,7 +7,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Camera, Users, Heart, ArrowRight, CheckCircle } from 'lucide-react'
 import Link from 'next/link'
-import { validateUserType } from '@/lib/access-control'
 
 export default function UserTypeSelectionPage() {
   const router = useRouter()
@@ -49,7 +48,7 @@ export default function UserTypeSelectionPage() {
             </Badge>
             <h1 className="text-4xl font-bold mb-4">How will you use PhotoVault?</h1>
             <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
-              Select the option that best describes how you'll use PhotoVault to get started with the right experience.
+              Select the option that best describes how you&apos;ll use PhotoVault to get started with the right experience.
             </p>
           </div>
 

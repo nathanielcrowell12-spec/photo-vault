@@ -1,13 +1,13 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { CheckCircle, XCircle, Loader2 } from 'lucide-react'
 
-export default function DesktopAuthCallbackPage() {
+function DesktopAuthCallbackContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { user, userType } = useAuth()
@@ -103,5 +103,21 @@ export default function DesktopAuthCallbackPage() {
         </CardContent>
       </Card>
     </div>
+  )
+}
+
+export default function DesktopAuthCallbackPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md">
+          <CardContent className="flex items-center justify-center p-8">
+            <Loader2 className="h-8 w-8 animate-spin" />
+          </CardContent>
+        </Card>
+      </div>
+    }>
+      <DesktopAuthCallbackContent />
+    </Suspense>
   )
 }

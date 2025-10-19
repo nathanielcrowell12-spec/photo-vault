@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -78,7 +78,7 @@ export default function ClientsPage() {
     sendInvite: true
   })
 
-  const fetchClients = async () => {
+  const fetchClients = useCallback(async () => {
     try {
       setLoading(true)
 
@@ -102,9 +102,9 @@ export default function ClientsPage() {
     } finally {
       setLoading(false)
     }
-  }
+  }, [user?.id])
 
-  const fetchGalleries = async () => {
+  const fetchGalleries = useCallback(async () => {
     try {
       // Fetch photographer's galleries from database
       const { data: galleriesData, error } = await supabase
@@ -124,7 +124,7 @@ export default function ClientsPage() {
       console.error('Error fetching galleries:', error)
       setGalleries([])
     }
-  }
+  }, [user?.id])
 
   useEffect(() => {
     if (!authLoading && !user) {

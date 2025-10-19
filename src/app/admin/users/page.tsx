@@ -38,10 +38,6 @@ import {
   Edit,
   Ban,
   CheckCircle,
-  AlertTriangle,
-  UserPlus,
-  Filter,
-  MoreHorizontal,
   Crown,
   Camera,
   Heart
@@ -64,7 +60,7 @@ interface UserProfile {
 }
 
 export default function UserProfilesPage() {
-  const { user, userType, loading } = useAuth()
+  const { user, loading } = useAuth()
   const router = useRouter()
   const [users, setUsers] = useState<UserProfile[]>([])
   const [filteredUsers, setFilteredUsers] = useState<UserProfile[]>([])

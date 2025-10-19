@@ -56,22 +56,6 @@ export default function TusZipUploadModal({
     }
   }, [])
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setDragActive(false)
-    
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      handleFile(e.dataTransfer.files[0])
-    }
-  }, [])
-
-  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      handleFile(e.target.files[0])
-    }
-  }
-
   const handleFile = (file: File) => {
     // Validate file type
     if (!file.name.toLowerCase().endsWith('.zip')) {
@@ -99,6 +83,22 @@ export default function TusZipUploadModal({
     console.log('File name:', file.name)
     console.log('File size:', file.size)
     console.log('File size in GB:', (file.size / 1024 / 1024 / 1024).toFixed(2))
+  }
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragActive(false)
+    
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleFile(e.dataTransfer.files[0])
+    }
+  }, [handleFile])
+
+  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      handleFile(e.target.files[0])
+    }
   }
 
   const handleSubmit = async () => {

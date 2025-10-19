@@ -62,22 +62,6 @@ export default function ChunkedZipUploadModal({
     }
   }, [])
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    setDragActive(false)
-    
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      handleFile(e.dataTransfer.files[0])
-    }
-  }, [])
-
-  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      handleFile(e.target.files[0])
-    }
-  }
-
   const handleFile = (file: File) => {
     // Validate file type
     if (!file.name.toLowerCase().endsWith('.zip')) {
@@ -107,6 +91,22 @@ export default function ChunkedZipUploadModal({
     console.log('File size in MB:', (file.size / 1024 / 1024).toFixed(2))
     console.log('Chunk size:', chunkSize / 1024 / 1024, 'MB')
     console.log('Total chunks:', Math.ceil(file.size / chunkSize))
+  }
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setDragActive(false)
+    
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleFile(e.dataTransfer.files[0])
+    }
+  }, [handleFile])
+
+  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      handleFile(e.target.files[0])
+    }
   }
 
   const handleSubmit = async () => {

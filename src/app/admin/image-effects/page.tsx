@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Sparkles, TrendingUp, Zap } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function ImageEffectsPage() {
   const effects = [
@@ -281,11 +282,11 @@ element.addEventListener('mousemove', (e) => {
               <CardContent className="space-y-4">
                 {/* Preview */}
                 <div className="relative h-48 rounded-lg overflow-hidden bg-secondary/30">
-                  <img
+                  <Image
                     src={effect.example}
                     alt={effect.name}
-                    loading="lazy"
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
                   />
                   <div className="absolute inset-0 flex items-center justify-center bg-black/50">
                     <Badge className="bg-white/90 text-foreground">
