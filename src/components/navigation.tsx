@@ -35,7 +35,7 @@ import {
 export function Navigation() {
   const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const { user, userType } = useAuth()
+  const { user, userType, loading } = useAuth()
   const { viewMode, setViewMode, isAdminView, isCustomerView, isPhotographerView } = useView()
   
   // Check if user is actually admin (restricted to nathaniel.crowell12@gmail.com)
@@ -105,7 +105,7 @@ export function Navigation() {
               {user ? (
                 // Authenticated user navigation based on role
                 <>
-                  {user && isActuallyAdmin && (
+                  {!loading && user && isActuallyAdmin && (
                     // Admin navigation
                     <>
                       {adminLinks.slice(0, 4).map((link) => (
@@ -193,7 +193,7 @@ export function Navigation() {
               {user ? (
                 // Authenticated user mobile navigation
                 <>
-                  {user && isActuallyAdmin && adminLinks.map((link) => (
+                  {!loading && user && isActuallyAdmin && adminLinks.map((link) => (
                     <Button
                       key={link.href}
                       asChild
@@ -307,7 +307,7 @@ export function Navigation() {
       )}
 
       {/* Admin Dashboard Navigation */}
-      {user && isActuallyAdmin && pathname.startsWith('/admin/') && (
+      {!loading && user && isActuallyAdmin && pathname.startsWith('/admin/') && (
         <div className="border-b bg-slate-50 dark:bg-slate-800/50">
           <div className="container mx-auto px-4">
             <div className="flex items-center space-x-1 overflow-x-auto py-2">
