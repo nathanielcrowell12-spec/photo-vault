@@ -1,6 +1,6 @@
 'use client'
 
-import { createContext, useContext, useEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useState, useRef } from 'react'
 import { User, Session } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabase'
 import { validateUserType } from '@/lib/access-control'
@@ -29,12 +29,75 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [paymentStatus, setPaymentStatus] = useState<string | null>(null)
   const [isPaymentActive, setIsPaymentActive] = useState(false)
   
+  // Prevent multiple simultaneous fetches
+  const isFetchingRef = useRef(false)
+  const initializedRef = useRef(false)
+  
   // Development mode - bypass authentication (DISABLED - using real Supabase auth)
-  const isDevMode = false // Set to true only for quick UI testing without Supabase
+  const isDevMode = false
+
+  const fetchUserType = async (userId: string) => {
+    // Prevent concurrent fetches
+    if (isFetchingRef.current) {
+      console.log('AuthContext: Fetch already in progress, skipping')
+      return
+    }
+
+    isFetchingRef.current = true
+
+    try {
+      const currentUser = await supabase.auth.getUser()
+      const userEmail = currentUser.data.user?.email
+      const isAdminUser = userEmail === 'nathaniel.crowell12@gmail.com'
+
+      if (isAdminUser) {
+        setUserType('admin')
+        setUserFullName('Admin User')
+        setPaymentStatus('admin_bypass')
+        setIsPaymentActive(true)
+        return
+      }
+
+      const { data, error } = await supabase
+        .from('user_profiles')
+        .select('user_type, business_name, full_name, payment_status, last_payment_date')
+        .eq('id', userId)
+        .maybeSingle()
+
+      if (error) {
+        console.error('Error fetching user profile:', error)
+        setUserType('client')
+        setUserFullName(null)
+        setPaymentStatus('pending')
+        setIsPaymentActive(false)
+        return
+      }
+
+      if (data) {
+        setUserType(data.user_type)
+        setUserFullName(data.full_name || data.business_name || null)
+        setPaymentStatus(data.payment_status)
+        setIsPaymentActive(true)
+      } else {
+        setUserType('client')
+        setUserFullName(null)
+        setPaymentStatus('active')
+        setIsPaymentActive(true)
+      }
+    } catch (error) {
+      console.error('Error fetching user type:', error)
+      setUserType('client')
+      setUserFullName(null)
+      setPaymentStatus('active')
+      setIsPaymentActive(true)
+    } finally {
+      isFetchingRef.current = false
+    }
+  }
 
   useEffect(() => {
     if (isDevMode) {
-      // Development mode - create mock user
+      // Dev mode setup (unchanged)
       const mockUser = {
         id: 'dev-user-1',
         email: 'photographer@dev.com',
@@ -70,155 +133,90 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       setUser(mockUser)
       setSession(mockSession)
-      setUserType('admin') // Default to admin for development
+      setUserType('admin')
       setLoading(false)
+      initializedRef.current = true
       return
     }
 
-    // Production mode - use Supabase
-    supabase.auth.getSession().then(({ data: { session }, error }) => {
-      if (error) {
-        console.error('AuthContext: Session error:', error)
-        // Clear corrupted session
-        supabase.auth.signOut()
-        setSession(null)
-        setUser(null)
-        setUserType(null)
-        setUserFullName(null)
-        setPaymentStatus(null)
-        setIsPaymentActive(false)
-      } else {
-        setSession(session)
-        setUser(session?.user ?? null)
-        if (session?.user) {
-          fetchUserType(session.user.id)
-        }
-      }
-      setLoading(false)
-    }).catch((error) => {
-      console.error('AuthContext: Session fetch error:', error)
-      // Clear session on error
-      supabase.auth.signOut()
-      setSession(null)
-      setUser(null)
-      setUserType(null)
-      setUserFullName(null)
-      setPaymentStatus(null)
-      setIsPaymentActive(false)
-      setLoading(false)
-    })
-
-    // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      console.log('AuthContext: Auth state change:', event, session?.user?.id)
-      
-      // Prevent unnecessary state updates during loading
-      if (loading && event === 'INITIAL_SESSION') {
-        return
-      }
-      
-      // Batch state updates to prevent multiple re-renders
-      const updateAuthState = async () => {
-        if (event === 'SIGNED_OUT') {
+    // Initial session check
+    const initializeAuth = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession()
+        
+        if (error) {
+          console.error('AuthContext: Session error:', error)
+          await supabase.auth.signOut()
           setSession(null)
           setUser(null)
           setUserType(null)
           setUserFullName(null)
           setPaymentStatus(null)
           setIsPaymentActive(false)
-          setLoading(false)
-        } else if (event === 'TOKEN_REFRESHED' && session) {
-          // Only update session for token refresh, don't refetch user data
-          setSession(session)
-          setUser(session.user)
-          setLoading(false)
-        } else if ((event === 'SIGNED_IN' || event === 'INITIAL_SESSION') && session) {
+        } else if (session?.user) {
           setSession(session)
           setUser(session.user)
           await fetchUserType(session.user.id)
-          setLoading(false)
-        } else {
-          setLoading(false)
         }
+      } catch (error) {
+        console.error('AuthContext: Session fetch error:', error)
+        await supabase.auth.signOut()
+        setSession(null)
+        setUser(null)
+        setUserType(null)
+        setUserFullName(null)
+        setPaymentStatus(null)
+        setIsPaymentActive(false)
+      } finally {
+        setLoading(false)
+        initializedRef.current = true
+      }
+    }
+
+    initializeAuth()
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('AuthContext: Auth state change:', event)
+      
+      // Skip initial session if we already initialized
+      if (event === 'INITIAL_SESSION' && initializedRef.current) {
+        return
       }
       
-      // Use setTimeout to batch the state updates
-      setTimeout(updateAuthState, 0)
+      if (event === 'SIGNED_OUT') {
+        setSession(null)
+        setUser(null)
+        setUserType(null)
+        setUserFullName(null)
+        setPaymentStatus(null)
+        setIsPaymentActive(false)
+      } else if (event === 'TOKEN_REFRESHED' && session) {
+        // Only update session, don't refetch user data
+        setSession(session)
+        setUser(session.user)
+      } else if (event === 'SIGNED_IN' && session) {
+        setSession(session)
+        setUser(session.user)
+        await fetchUserType(session.user.id)
+      }
     })
 
     return () => subscription.unsubscribe()
-  }, [isDevMode])
-
-  const fetchUserType = async (userId: string) => {
-    try {
-      // Get current user email for admin check
-      const currentUser = await supabase.auth.getUser()
-      const userEmail = currentUser.data.user?.email
-      const isAdminUser = userEmail === 'nathaniel.crowell12@gmail.com'
-
-      // If admin user, set admin type immediately
-      if (isAdminUser) {
-        setUserType('admin')
-        setUserFullName('Admin User')
-        setPaymentStatus('admin_bypass')
-        setIsPaymentActive(true)
-        return
-      }
-
-      // Try to fetch user profile
-      const { data, error } = await supabase
-        .from('user_profiles')
-        .select('user_type, business_name, full_name, payment_status, last_payment_date')
-        .eq('id', userId)
-        .maybeSingle() // Use maybeSingle instead of single to handle missing records
-
-      if (error) {
-        console.error('Error fetching user profile:', error)
-        // Set default values if profile doesn't exist
-        setUserType('client') // Default to client
-        setUserFullName(null)
-        setPaymentStatus('pending')
-        setIsPaymentActive(false)
-        return
-      }
-
-      if (data) {
-        setUserType(data.user_type)
-        setUserFullName(data.full_name || data.business_name || null)
-        setPaymentStatus(data.payment_status)
-        
-        // TEMPORARILY BYPASS PAYMENT - Mark all users as paid
-        setIsPaymentActive(true)
-      } else {
-        // No profile found, set defaults - TEMPORARILY MARK AS PAID
-        setUserType('client')
-        setUserFullName(null)
-        setPaymentStatus('active')
-        setIsPaymentActive(true)
-      }
-    } catch (error) {
-      console.error('Error fetching user type:', error)
-      // Set safe defaults on any error - TEMPORARILY MARK AS PAID
-      setUserType('client')
-      setUserFullName(null)
-      setPaymentStatus('active')
-      setIsPaymentActive(true)
-    }
-  }
+  }, []) // Empty dependency array - only run once
 
   const signUp = async (email: string, password: string, userType: 'client' | 'photographer' | 'admin', fullName?: string) => {
-    // Automatically set admin access for nathaniel.crowell12@gmail.com
     const actualUserType = email === 'nathaniel.crowell12@gmail.com' ? 'admin' : userType
     
-    // Validate user type access
     const validation = validateUserType(actualUserType, email)
     if (!validation.valid) {
       return { error: { message: validation.message } }
     }
+
     if (isDevMode) {
-      // Development mode - simulate successful signup
+      // Dev mode implementation unchanged
       const mockUser = {
         id: `dev-user-${Date.now()}`,
         email,
@@ -271,14 +269,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })
 
     if (data.user && !error) {
-      // Create user profile
       const profileData: Record<string, unknown> = {
         id: data.user.id,
         user_type: actualUserType,
-        payment_status: 'active' // TEMPORARILY MARK NEW USERS AS PAID
+        payment_status: 'active'
       }
       
-      // Use full_name for clients, business_name for photographers
       if (actualUserType === 'client') {
         profileData.full_name = fullName
       } else {
@@ -289,11 +285,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       if (profileError) {
         console.error('Error creating user profile:', profileError)
-        // Still return success but log the error
-        // The user is created in auth, just missing profile
       }
 
-      // If photographer, create photographer profile
       if (userType === 'photographer') {
         const { error: photographerError } = await supabase.from('photographers').insert({
           id: data.user.id,
@@ -305,7 +298,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       }
       
-      // Manually set the user data since profile creation might have failed
       setUser(data.user)
       setUserType(userType)
       setUserFullName(fullName || null)
@@ -318,15 +310,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signIn = async (email: string, password: string) => {
     try {
-      // Prevent multiple simultaneous sign-in attempts
-      if (loading) {
-        return { error: { message: 'Sign in already in progress' } }
-      }
-
       setLoading(true)
 
       if (isDevMode) {
-        // Development mode - simulate successful signin
+        // Dev mode - create mock user based on email
         const mockUser = {
           id: `dev-user-${Date.now()}`,
           email,
@@ -389,54 +376,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return { error: null }
     } catch (error) {
       setLoading(false)
-      console.error('Sign in error:', error)
       return { error }
     }
   }
 
   const signOut = async () => {
-    console.log('AuthContext: Starting sign out...')
-    
-    if (isDevMode) {
-      console.log('AuthContext: Development mode sign out')
-      // Development mode - clear mock data
+    try {
+      await supabase.auth.signOut()
       setUser(null)
       setSession(null)
       setUserType(null)
       setUserFullName(null)
       setPaymentStatus(null)
       setIsPaymentActive(false)
-      console.log('AuthContext: Development mode sign out complete')
-      return
-    }
-
-    console.log('AuthContext: Real Supabase sign out')
-    // Real Supabase sign out
-    const { error } = await supabase.auth.signOut()
-    
-    if (!error) {
-      console.log('AuthContext: Supabase sign out successful, clearing state')
-      // Clear all user state
-      setUser(null)
-      setSession(null)
-      setUserType(null)
-      setUserFullName(null)
-      setPaymentStatus(null)
-      setIsPaymentActive(false)
-      console.log('AuthContext: State cleared successfully')
-    } else {
-      console.error('AuthContext: Error signing out:', error)
-      // Still clear state even if Supabase sign out failed
-      setUser(null)
-      setSession(null)
-      setUserType(null)
-      setUserFullName(null)
-      setPaymentStatus(null)
-      setIsPaymentActive(false)
+    } catch (error) {
+      console.error('Error signing out:', error)
     }
   }
 
-  const value = {
+  const value: AuthContextType = {
     user,
     session,
     loading,
