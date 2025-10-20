@@ -362,7 +362,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         setUser(mockUser)
         setSession(mockSession)
-        setUserType(email.includes('photo') ? 'photographer' : 'client')
+        
+        // Properly determine user type
+        if (email === 'nathaniel.crowell12@gmail.com') {
+          setUserType('admin')
+        } else {
+          // For dev mode, try to fetch user type from database or default to client
+          await fetchUserType(mockUser.id)
+        }
+        
         setLoading(false)
         return { error: null }
       }
