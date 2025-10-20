@@ -118,39 +118,11 @@ export default function UserProfilesPage() {
       if (error) {
         console.error('Database error:', error)
         
-        // If database is completely unavailable, show mock data for testing
+        // If database is unavailable, show empty state
         const errorObj = error as { message?: string; code?: string }
         if (errorObj.message === 'Database query timeout' || errorObj.code === 'PGRST301') {
-          console.log('Database unavailable, showing mock data')
-          const mockUsers: UserProfile[] = [
-            {
-              id: 'mock-admin-1',
-              email: 'nathaniel.crowell12@gmail.com',
-              user_type: 'admin' as const,
-              full_name: 'Nathaniel Crowell',
-              business_name: null,
-              payment_status: 'active',
-              last_payment_date: new Date().toISOString(),
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString(),
-              is_suspended: false,
-              suspension_reason: null
-            },
-            {
-              id: 'mock-client-1',
-              email: 'client@example.com',
-              user_type: 'client' as const,
-              full_name: 'John Smith',
-              business_name: null,
-              payment_status: 'active',
-              last_payment_date: new Date().toISOString(),
-              created_at: new Date().toISOString(),
-              updated_at: new Date().toISOString(),
-              is_suspended: false,
-              suspension_reason: null
-            }
-          ]
-          setUsers(mockUsers)
+          console.log('Database unavailable, showing empty state')
+          setUsers([])
           return
         }
         
@@ -175,24 +147,9 @@ export default function UserProfilesPage() {
     } catch (error) {
       console.error('Error fetching users:', error)
       
-      // If there's a complete failure, show mock data
-      console.log('Complete fetch failure, showing mock data')
-      const mockUsers: UserProfile[] = [
-        {
-          id: 'mock-admin-1',
-          email: 'nathaniel.crowell12@gmail.com',
-          user_type: 'admin' as const,
-          full_name: 'Nathaniel Crowell',
-          business_name: null,
-          payment_status: 'active',
-          last_payment_date: new Date().toISOString(),
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-          is_suspended: false,
-          suspension_reason: null
-        }
-      ]
-      setUsers(mockUsers)
+      // If there's a complete failure, show empty state
+      console.log('Complete fetch failure, showing empty state')
+      setUsers([])
     } finally {
       setLoadingUsers(false)
     }
