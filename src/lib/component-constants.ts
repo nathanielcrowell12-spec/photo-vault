@@ -55,3 +55,31 @@ export const ERROR_TYPES = {
   SAVE_ERROR: 'saveError',
   VALIDATION_ERROR: 'validationError'
 } as const
+
+// UI Constants
+export const UI_CONSTANTS = {
+  // Icon sizes
+  ICON_SIZE_LARGE: 'h-12 w-12',
+  ICON_SIZE_SMALL: 'h-4 w-4',
+  
+  // Positioning
+  BADGE_TOP_RIGHT: 'top-2 right-2',
+  
+  // Transition durations
+  TRANSITION_DURATION_FAST: 'duration-200',
+  TRANSITION_DURATION_NORMAL: 'duration-300',
+  
+  // UI Text
+  PHOTOGRAPHER_BY_PREFIX: 'by',
+  IMPORT_PHOTOS_TEXT: 'Import Photos',
+  EDIT_TEXT: 'Edit'
+} as const
+
+// Navigation utilities
+export const NavigationUtils = {
+  openExternalLink: (url: string, target: string = '_blank') => {
+    if (typeof window !== 'undefined') {
+      window.open(url, target)
+    }
+  }
+} as const

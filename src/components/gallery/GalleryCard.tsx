@@ -6,16 +6,18 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Calendar, Camera, User, ExternalLink, Edit } from 'lucide-react'
 import { Gallery } from '@/types/gallery'
-import { NAVIGATION_ROUTES } from '@/lib/component-constants'
+import { NAVIGATION_ROUTES, UI_CONSTANTS, NavigationUtils } from '@/lib/component-constants'
+import { ImageWithFallback } from '@/components/ui/ImageWithFallback'
 
 interface GalleryCardProps {
   gallery: Gallery
   isPhotographer: boolean
   onEdit: (gallery: Gallery) => void
   onNavigate: (url: string) => void
+  onImageError?: (galleryId: string, imageUrl: string) => void
 }
 
-export function GalleryCard({ gallery, isPhotographer, onEdit, onNavigate }: GalleryCardProps) {
+export function GalleryCard({ gallery, isPhotographer, onEdit, onNavigate, onImageError }: GalleryCardProps) {
   const handleImportClick = () => {
     onNavigate(NAVIGATION_ROUTES.CLIENT_IMPORT)
   }
@@ -24,27 +26,32 @@ export function GalleryCard({ gallery, isPhotographer, onEdit, onNavigate }: Gal
     onEdit(gallery)
   }
 
+  const handleExternalLinkClick = () => {
+    if (gallery.gallery_url) {
+      NavigationUtils.openExternalLink(gallery.gallery_url)
+    }
+  }
+
+  const handleImageError = () => {
+    onImageError?.(gallery.id, gallery.cover_image_url || '')
+  }
+
   return (
-    <Card className="group hover:shadow-lg transition-shadow duration-200">
+    <Card className={`group hover:shadow-lg transition-shadow ${UI_CONSTANTS.TRANSITION_DURATION_FAST}`}>
       <CardContent className="p-4">
         {/* Cover Image */}
         <div className="relative mb-4 rounded-lg overflow-hidden bg-gray-100 aspect-video">
-          {gallery.cover_image_url ? (
-            <img
-              src={gallery.cover_image_url}
-              alt={gallery.gallery_name}
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
-            />
-          ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <Camera className="h-12 w-12 text-gray-400" />
-            </div>
-          )}
+          <ImageWithFallback
+            src={gallery.cover_image_url}
+            alt={gallery.gallery_name}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+            onError={handleImageError}
+          />
           
           {/* Platform Badge */}
           <Badge 
             variant="secondary" 
-            className="absolute top-2 right-2 bg-white/90 text-gray-800"
+            className={`absolute ${UI_CONSTANTS.BADGE_TOP_RIGHT} bg-white/90 text-gray-800`}
           >
             {gallery.platform}
           </Badge>
@@ -65,12 +72,12 @@ export function GalleryCard({ gallery, isPhotographer, onEdit, onNavigate }: Gal
           <div className="flex items-center justify-between text-sm text-gray-500">
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-1">
-                <Camera className="h-4 w-4" />
+                <Camera className={UI_CONSTANTS.ICON_SIZE_SMALL} />
                 <span>{gallery.photo_count}</span>
               </div>
               {gallery.session_date && (
                 <div className="flex items-center space-x-1">
-                  <Calendar className="h-4 w-4" />
+                  <Calendar className={UI_CONSTANTS.ICON_SIZE_SMALL} />
                   <span>{new Date(gallery.session_date).toLocaleDateString()}</span>
                 </div>
               )}
@@ -80,8 +87,8 @@ export function GalleryCard({ gallery, isPhotographer, onEdit, onNavigate }: Gal
           {/* Photographer Info (for clients) */}
           {!isPhotographer && gallery.photographer_name && (
             <div className="flex items-center space-x-2 text-sm text-gray-600">
-              <User className="h-4 w-4" />
-              <span>by {gallery.photographer_name}</span>
+              <User className={UI_CONSTANTS.ICON_SIZE_SMALL} />
+              <span>{UI_CONSTANTS.PHOTOGRAPHER_BY_PREFIX} {gallery.photographer_name}</span>
             </div>
           )}
 
@@ -95,16 +102,16 @@ export function GalleryCard({ gallery, isPhotographer, onEdit, onNavigate }: Gal
                   onClick={handleEditClick}
                   className="flex-1"
                 >
-                  <Edit className="h-4 w-4 mr-1" />
-                  Edit
+                  <Edit className={`${UI_CONSTANTS.ICON_SIZE_SMALL} mr-1`} />
+                  {UI_CONSTANTS.EDIT_TEXT}
                 </Button>
                 {gallery.gallery_url && (
                   <Button 
                     size="sm" 
                     variant="outline"
-                    onClick={() => window.open(gallery.gallery_url, '_blank')}
+                    onClick={handleExternalLinkClick}
                   >
-                    <ExternalLink className="h-4 w-4" />
+                    <ExternalLink className={UI_CONSTANTS.ICON_SIZE_SMALL} />
                   </Button>
                 )}
               </>
@@ -114,7 +121,7 @@ export function GalleryCard({ gallery, isPhotographer, onEdit, onNavigate }: Gal
                 onClick={handleImportClick}
                 className="flex-1"
               >
-                Import Photos
+                {UI_CONSTANTS.IMPORT_PHOTOS_TEXT}
               </Button>
             )}
           </div>
