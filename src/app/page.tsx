@@ -34,6 +34,11 @@ export default function HomePage() {
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Link>
             </Button>
+            <Button size="lg" variant="outline" className="text-lg px-8 py-6" asChild>
+              <Link href="/login">
+                Sign In
+              </Link>
+            </Button>
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
@@ -167,6 +172,11 @@ export default function HomePage() {
               <Link href="/auth/signup">
                 Get Started
                 <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
+            </Button>
+            <Button size="lg" variant="outline" className="text-lg px-8 py-6 border-white text-white hover:bg-white hover:text-blue-600" asChild>
+              <Link href="/login">
+                Sign In
               </Link>
             </Button>
           </div>
