@@ -37,10 +37,6 @@ const nextConfig: NextConfig = {
   // Performance optimizations
   experimental: {
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
-    turbopack: {
-      // Silence root inference warning by setting explicit root to the app
-      root: __dirname,
-    },
   },
 };
 
