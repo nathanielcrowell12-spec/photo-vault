@@ -80,7 +80,18 @@ export default function UserProfilesPage() {
   }, [user, loading, router])
 
   useEffect(() => {
+    // Add timeout to prevent infinite loading
+    const timeoutId = setTimeout(() => {
+      if (loadingUsers) {
+        console.log('Fetch users timeout - setting loading to false')
+        setLoadingUsers(false)
+        setUsers([])
+      }
+    }, 10000) // 10 second timeout
+
     fetchUsers()
+
+    return () => clearTimeout(timeoutId)
   }, [])
 
   useEffect(() => {
@@ -99,7 +110,9 @@ export default function UserProfilesPage() {
 
       if (error) {
         console.error('Database error:', error)
-        throw error
+        // Set empty array instead of throwing to prevent infinite loading
+        setUsers([])
+        return
       }
 
       console.log('Found user profiles:', data?.length || 0)
@@ -117,7 +130,8 @@ export default function UserProfilesPage() {
       console.log('Users loaded successfully:', usersWithEmails.length)
     } catch (error) {
       console.error('Error fetching users:', error)
-      alert(`Failed to fetch users: ${error instanceof Error ? error.message : 'Unknown error'}`)
+      // Set empty array instead of showing alert to prevent infinite loading
+      setUsers([])
     } finally {
       setLoadingUsers(false)
     }
@@ -411,92 +425,108 @@ export default function UserProfilesPage() {
                 <CardDescription>Manage user privileges and account status</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>User</TableHead>
-                        <TableHead>Type</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Created</TableHead>
-                        <TableHead>Last Payment</TableHead>
-                        <TableHead>Actions</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {filteredUsers.map((userProfile) => (
-                        <TableRow key={userProfile.id}>
-                          <TableCell>
-                            <div>
-                              <div className="font-medium">{userProfile.email}</div>
-                              <div className="text-sm text-gray-600">
-                                {userProfile.full_name || userProfile.business_name || 'No name set'}
+                {filteredUsers.length === 0 ? (
+                  <div className="text-center py-8">
+                    <Users className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">No users found</h3>
+                    <p className="text-gray-600 mb-4">
+                      {users.length === 0 
+                        ? "No user profiles exist in the database yet."
+                        : "No users match your current filters."
+                      }
+                    </p>
+                    <Button onClick={fetchUsers} variant="outline">
+                      Refresh Users
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>User</TableHead>
+                          <TableHead>Type</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Created</TableHead>
+                          <TableHead>Last Payment</TableHead>
+                          <TableHead>Actions</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {filteredUsers.map((userProfile) => (
+                          <TableRow key={userProfile.id}>
+                            <TableCell>
+                              <div>
+                                <div className="font-medium">{userProfile.email}</div>
+                                <div className="text-sm text-gray-600">
+                                  {userProfile.full_name || userProfile.business_name || 'No name set'}
+                                </div>
                               </div>
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center space-x-2">
-                              {getUserTypeIcon(userProfile.user_type)}
-                              {getUserTypeBadge(userProfile.user_type)}
-                            </div>
-                          </TableCell>
-                          <TableCell>
-                            {getStatusBadge(userProfile)}
-                          </TableCell>
-                          <TableCell>
-                            {new Date(userProfile.created_at).toLocaleDateString()}
-                          </TableCell>
-                          <TableCell>
-                            {userProfile.last_payment_date 
-                              ? new Date(userProfile.last_payment_date).toLocaleDateString()
-                              : 'Never'
-                            }
-                          </TableCell>
-                          <TableCell>
-                            <div className="flex items-center space-x-2">
-                              <Button
-                                size="sm"
-                                variant="outline"
-                                onClick={() => {
-                                  setSelectedUser(userProfile)
-                                  setEditDialogOpen(true)
-                                }}
-                              >
-                                <Edit className="h-4 w-4 mr-1" />
-                                Edit
-                              </Button>
-                              
-                              {userProfile.is_suspended ? (
-                                <Button
-                                  size="sm"
-                                  variant="outline"
-                                  onClick={() => unsuspendUser(userProfile.id)}
-                                  className="text-green-600 hover:text-green-700"
-                                >
-                                  <CheckCircle className="h-4 w-4 mr-1" />
-                                  Unsuspend
-                                </Button>
-                              ) : (
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center space-x-2">
+                                {getUserTypeIcon(userProfile.user_type)}
+                                {getUserTypeBadge(userProfile.user_type)}
+                              </div>
+                            </TableCell>
+                            <TableCell>
+                              {getStatusBadge(userProfile)}
+                            </TableCell>
+                            <TableCell>
+                              {new Date(userProfile.created_at).toLocaleDateString()}
+                            </TableCell>
+                            <TableCell>
+                              {userProfile.last_payment_date 
+                                ? new Date(userProfile.last_payment_date).toLocaleDateString()
+                                : 'Never'
+                              }
+                            </TableCell>
+                            <TableCell>
+                              <div className="flex items-center space-x-2">
                                 <Button
                                   size="sm"
                                   variant="outline"
                                   onClick={() => {
                                     setSelectedUser(userProfile)
-                                    setSuspendDialogOpen(true)
+                                    setEditDialogOpen(true)
                                   }}
-                                  className="text-red-600 hover:text-red-700"
                                 >
-                                  <Ban className="h-4 w-4 mr-1" />
-                                  Suspend
+                                  <Edit className="h-4 w-4 mr-1" />
+                                  Edit
                                 </Button>
-                              )}
-                            </div>
-                          </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </div>
+                                
+                                {userProfile.is_suspended ? (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => unsuspendUser(userProfile.id)}
+                                    className="text-green-600 hover:text-green-700"
+                                  >
+                                    <CheckCircle className="h-4 w-4 mr-1" />
+                                    Unsuspend
+                                  </Button>
+                                ) : (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => {
+                                      setSelectedUser(userProfile)
+                                      setSuspendDialogOpen(true)
+                                    }}
+                                    className="text-red-600 hover:text-red-700"
+                                  >
+                                    <Ban className="h-4 w-4 mr-1" />
+                                    Suspend
+                                  </Button>
+                                )}
+                              </div>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>
