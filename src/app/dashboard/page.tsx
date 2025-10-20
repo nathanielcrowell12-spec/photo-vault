@@ -1,52 +1,30 @@
 'use client'
 
 import { useAuth } from '@/contexts/AuthContext'
-import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
-import { getDashboardRoute } from '@/lib/access-control'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { useDashboardRouting } from '@/hooks/useDashboardRouting'
+import { DashboardLoadingCard } from '@/components/dashboard/DashboardLoadingCard'
 
 export default function DashboardPage() {
   const { user, userType, loading } = useAuth()
-  const router = useRouter()
+  const { isRedirecting, shouldShowLoading, redirectMessage } = useDashboardRouting(user, userType, loading)
 
-  useEffect(() => {
-    if (!loading) {
-      if (!user) {
-        router.push('/login')
-        return
-      }
-      
-      // Only redirect if we have a valid user type
-      if (userType && userType !== null) {
-        const dashboardRoute = getDashboardRoute(userType)
-        if (dashboardRoute !== '/dashboard') {
-          router.push(dashboardRoute)
-        }
-      }
-      // If userType is null, stay on this page and show loading
-    }
-  }, [user, userType, loading, router])
+  if (shouldShowLoading) {
+    const title = loading ? 'Loading Dashboard' : isRedirecting ? 'Redirecting...' : 'Setting Up Your Account'
+    const description = loading 
+      ? 'Redirecting you to your personalized dashboard...' 
+      : isRedirecting 
+        ? redirectMessage
+        : 'Please wait while we configure your account...'
 
-  if (loading || !userType) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <Card className="w-full max-w-md">
-          <CardHeader>
-            <CardTitle>{loading ? 'Loading Dashboard' : 'Setting Up Your Account'}</CardTitle>
-            <CardDescription>
-              {loading ? 'Redirecting you to your personalized dashboard...' : 'Please wait while we configure your account...'}
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center justify-center">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    )
+    return <DashboardLoadingCard title={title} description={description} />
   }
 
-  return null
+  // This should rarely be reached, but provides fallback feedback
+  return (
+    <DashboardLoadingCard 
+      title="Dashboard" 
+      description="Welcome to your dashboard. If you're seeing this, please refresh the page." 
+      showSpinner={false} 
+    />
+  )
 }
