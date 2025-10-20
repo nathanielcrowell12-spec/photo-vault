@@ -6,6 +6,11 @@
 interface HelmProjectConfig {
   baseUrl: string
   apiKey?: string
+  signals?: {
+    prompt_version?: string
+    prompt_hash?: string
+    tenant_id?: string
+  }
 }
 
 interface SystemHealth {
