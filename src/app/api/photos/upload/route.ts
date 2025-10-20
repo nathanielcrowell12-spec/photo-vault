@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { generateRandomId } from '@/lib/api-constants'
 import { createClient } from '@supabase/supabase-js'
 
 const supabase = createClient(
@@ -41,7 +42,7 @@ export async function POST(request: NextRequest) {
     for (let i = 0; i < files.length; i++) {
       const file = files[i]
       const timestamp = Date.now()
-      const randomId = Math.random().toString(36).substring(7)
+      const randomId = generateRandomId()
       const fileName = `${timestamp}-${randomId}-${file.name}`
       
       // Upload original photo

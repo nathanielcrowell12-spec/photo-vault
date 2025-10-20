@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { generateRandomId } from '@/lib/api-constants'
 import { createClient } from '@supabase/supabase-js'
 
 const supabase = createClient(
@@ -29,7 +30,7 @@ export async function POST(request: NextRequest) {
 
     // Generate unique filename for storage
     const timestamp = Date.now()
-    const randomStr = Math.random().toString(36).substring(7)
+    const randomStr = generateRandomId()
     const ext = fileName.split('.').pop()
     const storageFileName = `${timestamp}-${randomStr}.${ext}`
     const storagePath = `temp-uploads/${userId}/${storageFileName}`

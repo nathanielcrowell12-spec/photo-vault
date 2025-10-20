@@ -1,10 +1,48 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { supabase } from '@/lib/supabase'
+import { HEALTH_CHECK_TIMEOUT_MS, HEALTH_CHECK_QUERY_LIMIT } from '@/lib/api-constants'
 
 /**
  * Health Check Endpoint
  * Implements MBP v4.3 requirement for health-check endpoints
  * Provides system status and basic diagnostics
  */
+
+/**
+ * Check Supabase database health
+ */
+async function checkSupabaseHealth(): Promise<string> {
+  try {
+    const { error } = await supabase
+      .from('users')
+      .select('count')
+      .limit(HEALTH_CHECK_QUERY_LIMIT)
+    return error ? 'error' : 'connected'
+  } catch (error) {
+    return 'error'
+  }
+}
+
+/**
+ * Check Helm Project connection health
+ */
+async function checkHelmProjectHealth(): Promise<string> {
+  if (!process.env.NEXT_PUBLIC_HELM_PROJECT_URL) {
+    return 'not_configured'
+  }
+  
+  try {
+    const helmUrl = process.env.NEXT_PUBLIC_HELM_PROJECT_URL
+    const response = await fetch(`${helmUrl}/api/health`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json' },
+      signal: AbortSignal.timeout(HEALTH_CHECK_TIMEOUT_MS)
+    })
+    return response.ok ? 'connected' : 'error'
+  } catch (error) {
+    return 'disconnected'
+  }
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -18,31 +56,9 @@ export async function GET(request: NextRequest) {
       version: process.env.npm_package_version || '1.0.0',
     }
     
-    // Check Supabase connection
-    let supabaseStatus = 'unknown'
-    try {
-      const { supabase } = await import('@/lib/supabase')
-      const { error } = await supabase.from('users').select('count').limit(1)
-      supabaseStatus = error ? 'error' : 'connected'
-    } catch (error) {
-      supabaseStatus = 'error'
-    }
-    
-    // Check Helm Project connection (if configured)
-    let helmStatus = 'not_configured'
-    if (process.env.NEXT_PUBLIC_HELM_PROJECT_URL) {
-      try {
-        const helmUrl = process.env.NEXT_PUBLIC_HELM_PROJECT_URL
-        const response = await fetch(`${helmUrl}/api/health`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' },
-          signal: AbortSignal.timeout(5000)
-        })
-        helmStatus = response.ok ? 'connected' : 'error'
-      } catch (error) {
-        helmStatus = 'disconnected'
-      }
-    }
+    // Check service health
+    const supabaseStatus = await checkSupabaseHealth()
+    const helmStatus = await checkHelmProjectHealth()
     
     const responseTime = Date.now() - startTime
     

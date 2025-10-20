@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { generateRandomId } from '@/lib/api-constants'
 import { createClient } from '@supabase/supabase-js'
 
 // Runtime configuration for upload handling
@@ -96,7 +97,7 @@ async function initiateUpload({ fileName, fileSize, totalChunks, userId, gallery
   }
 
   // Create upload session
-  const sessionId = `${userId}-${Date.now()}-${Math.random().toString(36).substring(7)}`
+  const sessionId = `${userId}-${Date.now()}-${generateRandomId()}`
   
   uploadSessions.set(sessionId, {
     userId,

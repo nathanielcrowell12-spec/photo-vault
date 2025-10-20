@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { helmClient } from '@/lib/helm-client'
 import { supabase } from '@/lib/supabase'
+import { 
+  DEFAULT_UPTIME_PERCENTAGE, 
+  DEFAULT_RESPONSE_TIME_MS, 
+  MAX_PHOTOS_THRESHOLD,
+  ERROR_CODES 
+} from '@/lib/api-constants'
 
 /**
  * Send Photo Vault metrics to Helm Project
@@ -18,8 +24,8 @@ export async function POST(_request: NextRequest) {
     await helmClient.sendHealthStatus({
       service: 'photovault',
       status: 'healthy',
-      uptime: 99.9,
-      response_time: 45
+      uptime: DEFAULT_UPTIME_PERCENTAGE,
+      response_time: DEFAULT_RESPONSE_TIME_MS
     })
 
     return NextResponse.json({
@@ -30,8 +36,13 @@ export async function POST(_request: NextRequest) {
 
   } catch (error) {
     console.error('Failed to send metrics to Helm Project:', error)
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     return NextResponse.json(
-      { error: 'Failed to send metrics to Helm Project' },
+      { 
+        error: 'Failed to send metrics to Helm Project',
+        details: errorMessage,
+        code: ERROR_CODES.HELM_METRICS_SEND_FAILED
+      },
       { status: 500 }
     )
   }
@@ -91,7 +102,7 @@ async function collectPhotoVaultMetrics() {
     const totalRevenue = revenueData?.reduce((sum, payment) => sum + payment.commission_amount, 0) || 0
 
     // Calculate system load (mock calculation)
-    const systemLoad = Math.min(100, (totalPhotos || 0) / 1000 * 100)
+    const systemLoad = Math.min(100, (totalPhotos || 0) / MAX_PHOTOS_THRESHOLD * 100)
 
     return {
       revenue: totalRevenue,

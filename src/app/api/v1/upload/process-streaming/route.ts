@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { generateRandomId } from '@/lib/api-constants'
 import { createClient } from '@supabase/supabase-js'
 import unzipper from 'unzipper'
 import { Readable } from 'stream'
@@ -253,7 +254,7 @@ async function processPhotoEntry(
 
     // Generate unique filename
     const timestamp = Date.now()
-    const randomStr = Math.random().toString(36).substring(7)
+    const randomStr = generateRandomId()
     const ext = entry.path.split('.').pop()
     const filename = `${timestamp}-${randomStr}.${ext}`
     const finalStoragePath = `${userId}/${galleryId}/${filename}`

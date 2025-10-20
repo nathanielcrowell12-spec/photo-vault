@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import JSZip from 'jszip'
+import { generateRandomId } from '@/lib/api-constants'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -93,7 +94,7 @@ export async function POST(request: NextRequest) {
 
                 // Generate unique filename
                 const timestamp = Date.now()
-                const randomStr = Math.random().toString(36).substring(7)
+                const randomStr = generateRandomId()
                 const ext = name.split('.').pop()
                 const filename = `${timestamp}-${randomStr}.${ext}`
                 
