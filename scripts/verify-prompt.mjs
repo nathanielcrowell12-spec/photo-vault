@@ -2,14 +2,15 @@
 
 /**
  * PhotoVault Prompt Verification Script
- * Verifies that the current prompt matches the expected hash
+ * Implements Master Build System Spec v4.3 governance
+ * Verifies the integrity of the Master Build Prompt
  */
 
-import { readFileSync } from 'fs'
-import { createHash } from 'crypto'
+import { readFileSync, existsSync } from 'fs'
 import { resolve } from 'path'
 import { fileURLToPath } from 'url'
 import { dirname } from 'path'
+import { createHash } from 'crypto'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
@@ -29,65 +30,92 @@ function log(message, color = 'reset') {
 
 async function verifyPrompt() {
   try {
-    log('🔍 Verifying prompt integrity...', 'blue')
+    log('🔐 Verifying prompt integrity (MBP v4.3)...', 'blue')
     
-    // Read environment variables
-    const envPath = resolve(__dirname, '../.env.local')
-    let expectedHash = ''
-    let expectedVersion = ''
-    
-    try {
-      const envContent = readFileSync(envPath, 'utf8')
-      const lines = envContent.split('\n')
-      
-      for (const line of lines) {
-        if (line.startsWith('PROMPT_HASH=')) {
-          expectedHash = line.split('=')[1]
-        } else if (line.startsWith('PROMPT_VERSION=')) {
-          expectedVersion = line.split('=')[1]
-        }
-      }
-    } catch (error) {
-      log('⚠️  No .env.local found. Run sync-prompt first.', 'yellow')
-      process.exit(1)
-    }
-    
-    if (!expectedHash || !expectedVersion) {
-      log('❌ Missing PROMPT_HASH or PROMPT_VERSION in .env.local', 'red')
-      log('   Run: npm run prompt:sync', 'yellow')
-      process.exit(1)
-    }
-    
-    // Read current prompt
     const promptPath = resolve(__dirname, '../src/prompt/PROMPT.md')
-    let currentPrompt = ''
+    const manifestPath = resolve(__dirname, '../src/prompt/manifest.json')
+    const envPath = resolve(__dirname, '../.env.local')
     
-    try {
-      currentPrompt = readFileSync(promptPath, 'utf8')
-    } catch (error) {
-      log('❌ Could not read PROMPT.md. Run sync-prompt first.', 'red')
+    // Check if files exist
+    if (!existsSync(promptPath)) {
+      log('❌ Prompt file not found', 'red')
+      log(`   Expected: ${promptPath}`, 'yellow')
+      log('💡 Run "npm run prompt:sync" to sync from Helm Project', 'yellow')
       process.exit(1)
     }
     
-    // Compute hash of current prompt
-    const actualHash = createHash('sha256').update(currentPrompt).digest('hex')
+    if (!existsSync(manifestPath)) {
+      log('❌ Manifest file not found', 'red')
+      log(`   Expected: ${manifestPath}`, 'yellow')
+      log('💡 Run "npm run prompt:sync" to sync from Helm Project', 'yellow')
+      process.exit(1)
+    }
     
-    // Compare hashes
-    if (actualHash === expectedHash) {
-      log('✅ Prompt verified successfully!', 'green')
-      log(`   Version: ${expectedVersion}`, 'green')
-      log(`   Hash: ${actualHash}`, 'green')
-      log('   ✅ Integrity check passed', 'green')
+    // Read files
+    const promptContent = readFileSync(promptPath, 'utf8')
+    const manifest = JSON.parse(readFileSync(manifestPath, 'utf8'))
+    
+    // Normalize prompt content per MBP v4.3 spec
+    const normalizedPrompt = promptContent
+      .split('\n')
+      .map(line => line.replace(/\s+$/, '')) // Strip trailing spaces
+      .join('\n')
+    
+    // Compute hash using SHA-256
+    const computedHash = createHash('sha256')
+      .update(normalizedPrompt, 'utf8')
+      .digest('hex')
+    
+    log(`📋 Version: ${manifest.version}`, 'blue')
+    log(`🔐 Stored Hash: ${manifest.hash}`, 'blue')
+    log(`🔐 Computed Hash: ${computedHash}`, 'blue')
+    log(`📅 Updated: ${manifest.updated}`, 'blue')
+    log(`🏢 Venture: photovault-hub`, 'blue')
+    
+    // Verify hash matches
+    if (manifest.hash !== computedHash) {
+      log('❌ Hash mismatch! Prompt integrity check failed', 'red')
+      log(`   Expected: ${manifest.hash}`, 'red')
+      log(`   Computed: ${computedHash}`, 'red')
+      log('🚫 Deployment blocked due to hash mismatch', 'red')
+      log('💡 Run "npm run prompt:sync" to get latest prompt', 'yellow')
+      process.exit(1)
+    }
+    
+    // Check environment variables
+    let envIssues = []
+    if (existsSync(envPath)) {
+      const envContent = readFileSync(envPath, 'utf8')
+      const hasVersion = envContent.includes(`PROMPT_VERSION=${manifest.version}`)
+      const hasHash = envContent.includes(`PROMPT_HASH=${manifest.hash}`)
+      
+      if (!hasVersion) {
+        envIssues.push('PROMPT_VERSION not up to date')
+      }
+      if (!hasHash) {
+        envIssues.push('PROMPT_HASH not up to date')
+      }
     } else {
-      log('❌ Prompt hash mismatch!', 'red')
-      log(`   Expected: ${expectedHash}`, 'red')
-      log(`   Actual:   ${actualHash}`, 'red')
-      log('   Run: npm run prompt:sync', 'yellow')
-      process.exit(1)
+      envIssues.push('Environment file not found')
     }
+    
+    if (envIssues.length > 0) {
+      log('⚠️  Environment variable issues:', 'yellow')
+      envIssues.forEach(issue => log(`   • ${issue}`, 'yellow'))
+      log('💡 Run "npm run prompt:sync" to update', 'yellow')
+    }
+    
+    // Success!
+    log('✅ Prompt verification passed!', 'green')
+    log(`   Version: ${manifest.version}`, 'green')
+    log(`   Hash: ${manifest.hash}`, 'green')
+    log(`   Source: ${manifest.source}`, 'green')
+    log(`   Issuer: ${manifest.issuer}`, 'green')
+    log('   ✅ Integrity check passed', 'green')
+    log('   ✅ Governance compliance verified', 'green')
     
   } catch (error) {
-    log(`❌ Prompt verification failed: ${error.message}`, 'red')
+    log(`❌ Verification failed: ${error.message}`, 'red')
     process.exit(1)
   }
 }

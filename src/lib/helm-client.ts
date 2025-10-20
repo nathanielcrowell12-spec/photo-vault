@@ -198,6 +198,12 @@ export class HelmProjectClient {
 // Default configuration
 const defaultConfig: HelmProjectConfig = {
   baseUrl: process.env.NEXT_PUBLIC_HELM_PROJECT_URL || 'http://localhost:3001',
+  // MBP v4.3 Signals configuration
+  signals: {
+    prompt_version: process.env.PROMPT_VERSION || '4.3',
+    prompt_hash: process.env.PROMPT_HASH || 'not_set',
+    tenant_id: 'photovault-hub',
+  },
   apiKey: process.env.HELM_PROJECT_API_KEY
 }
 
