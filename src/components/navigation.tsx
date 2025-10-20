@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { useView } from '@/contexts/ViewContext'
+import { isAdminUser } from '@/lib/access-control'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -36,6 +37,9 @@ export function Navigation() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { user, userType } = useAuth()
   const { viewMode, setViewMode, isAdminView, isCustomerView, isPhotographerView } = useView()
+  
+  // Check if user is actually admin (restricted to nathaniel.crowell12@gmail.com)
+  const isActuallyAdmin = isAdminUser(user?.email, userType)
 
   const isActive = (path: string) => pathname === path
   const isPhotographerSite = pathname.startsWith('/photographers') || pathname.startsWith('/dashboard')
@@ -85,14 +89,14 @@ export function Navigation() {
             {/* Logo */}
             <Link href={
               user 
-                ? (userType === 'admin' ? '/admin/dashboard' : 
+                ? (isActuallyAdmin ? '/admin/dashboard' : 
                    userType === 'photographer' ? '/photographer/dashboard' : 
                    userType === 'client' ? '/client/dashboard' : '/')
                 : '/'
             } className="flex items-center space-x-2">
               <Camera className="h-7 w-7 text-primary" />
               <span className="text-xl font-semibold tracking-tight">
-                PhotoVault{userType === 'admin' ? " Admin" : userType === 'photographer' ? " Pro" : ""}
+                PhotoVault{isActuallyAdmin ? " Admin" : userType === 'photographer' ? " Pro" : ""}
               </span>
             </Link>
 
@@ -101,7 +105,7 @@ export function Navigation() {
               {user ? (
                 // Authenticated user navigation based on role
                 <>
-                  {userType === 'admin' && (
+                  {isActuallyAdmin && (
                     // Admin navigation
                     <>
                       {adminLinks.slice(0, 4).map((link) => (
@@ -161,12 +165,6 @@ export function Navigation() {
               ) : (
                 // Public navigation
                 <>
-                  <Button asChild variant="ghost" size="sm">
-                    <Link href="/login">
-                      <Heart className="h-4 w-4 mr-2" />
-                      Find My Photos
-                    </Link>
-                  </Button>
                   <Button asChild variant="default" size="sm">
                     <Link href="/auth/signup">
                       Get Started
@@ -195,7 +193,7 @@ export function Navigation() {
               {user ? (
                 // Authenticated user mobile navigation
                 <>
-                  {userType === 'admin' && adminLinks.map((link) => (
+                  {isActuallyAdmin && adminLinks.map((link) => (
                     <Button
                       key={link.href}
                       asChild
@@ -309,7 +307,7 @@ export function Navigation() {
       )}
 
       {/* Admin Dashboard Navigation */}
-      {userType === 'admin' && pathname.startsWith('/admin/') && (
+      {isActuallyAdmin && pathname.startsWith('/admin/') && (
         <div className="border-b bg-slate-50 dark:bg-slate-800/50">
           <div className="container mx-auto px-4">
             <div className="flex items-center space-x-1 overflow-x-auto py-2">
