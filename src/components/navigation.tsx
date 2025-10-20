@@ -39,7 +39,7 @@ export function Navigation() {
   const { viewMode, setViewMode, isAdminView, isCustomerView, isPhotographerView } = useView()
   
   // Check if user is actually admin (restricted to nathaniel.crowell12@gmail.com)
-  const isActuallyAdmin = isAdminUser(user?.email, userType)
+  const isActuallyAdmin = isAdminUser(user?.email || null, userType)
 
   const isActive = (path: string) => pathname === path
   const isPhotographerSite = pathname.startsWith('/photographers') || pathname.startsWith('/dashboard')
