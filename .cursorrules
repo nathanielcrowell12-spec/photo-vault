@@ -164,4 +164,226 @@ function isUserType(value: string): value is UserType {
 }
 ```
 
+## React & Hooks Standards
+
+### Dependency Arrays
+- ALWAYS include all dependencies in useEffect, useCallback, useMemo arrays
+- If a function is used in a hook, wrap it in useCallback first
+- If an object/array is used in a hook dependency, wrap it in useMemo
+- Pattern:
+```typescript
+// BAD
+useEffect(() => {
+  fetchData()
+}, []) // Missing fetchData dependency
+
+// GOOD
+const fetchData = useCallback(() => {
+  // fetch logic
+}, [dependency1, dependency2])
+
+useEffect(() => {
+  fetchData()
+}, [fetchData])
+
+// GOOD - Object in dependency
+const config = useMemo(() => ({
+  maxSize: 100,
+  format: 'jpeg'
+}), [])
+
+const processFile = useCallback((file) => {
+  // uses config
+}, [config])
+```
+
+### Component Props
+- ALWAYS define explicit TypeScript interfaces for component props
+- NEVER use inline prop types
+- Pattern:
+```typescript
+// BAD
+export function MyComponent({ data, onSubmit }: { data: any, onSubmit: Function }) {}
+
+// GOOD
+interface MyComponentProps {
+  data: DataType;
+  onSubmit: (id: string) => void;
+}
+
+export function MyComponent({ data, onSubmit }: MyComponentProps) {}
+```
+
+## Database & API Standards
+
+### Supabase Query Pattern
+- ALWAYS destructure both `data` and `error` from Supabase queries
+- ALWAYS check for error first, then null data, before accessing properties
+- NEVER access query results directly without null checks
+- Pattern:
+```typescript
+// REQUIRED PATTERN
+const { data, error } = await supabase
+  .from('table')
+  .select('*')
+  .eq('id', id)
+
+if (error) {
+  console.error('Query failed:', error)
+  // handle error
+  return
+}
+
+if (!data) {
+  // handle no data
+  return
+}
+
+// NOW safe to use data
+console.log(data.property)
+```
+
+### API Route Error Handling
+- ALWAYS wrap async operations in try-catch
+- ALWAYS type catch errors as `unknown`, then narrow to Error
+- ALWAYS log errors before returning response
+- Pattern:
+```typescript
+export async function POST(request: Request) {
+  try {
+    // operation
+    return NextResponse.json({ success: true })
+  } catch (error: unknown) {
+    const message = error instanceof Error 
+      ? error.message 
+      : 'An unexpected error occurred'
+    
+    console.error('Operation failed:', error)
+    return NextResponse.json(
+      { error: message },
+      { status: 500 }
+    )
+  }
+}
+```
+
+## Import Cleanup Standards
+
+### Unused Imports
+- BEFORE committing, remove ALL unused imports
+- This includes:
+  - Unused icon imports from lucide-react
+  - Unused UI component imports
+  - Unused type imports
+  - Variables prefixed with `_` that are truly never used (remove the variable entirely)
+
+### Unused Variables
+- If a destructured variable is intentionally unused, prefix with `_`
+- If prefixed with `_` and ESLint still complains, remove it entirely
+- Pattern:
+```typescript
+// If you need some but not all destructured values
+const { data, error: _error } = await query() // keeping _error for clarity
+
+// If you truly don't need it
+const { data } = await query() // just remove error entirely
+```
+
+## Accessibility Standards
+
+### Images
+- EVERY <img> or <Image> must have an `alt` prop
+- Use descriptive text for meaningful images
+- Use empty string `alt=""` for decorative images only
+- Pattern:
+```typescript
+// Meaningful image
+<Image src={photo.url} alt={`Photo from ${photo.session_name}`} />
+
+// Decorative image
+<Image src={decorativeIcon} alt="" />
+```
+
+### Next.js Image Optimization
+- Prefer Next.js `<Image />` component over `<img>` tag
+- Only use `<img>` when absolutely necessary (external URLs, dynamic sources)
+- Always provide width/height or fill prop
+
+## Environment Variables
+
+### Never Use process.env Directly
+- ALWAYS create and use a validated env.ts file
+- Pattern:
+```typescript
+// lib/env.ts
+import { z } from 'zod'
+
+const envSchema = z.object({
+  NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
+  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
+  STRIPE_SECRET_KEY: z.string().min(1),
+})
+
+export const env = envSchema.parse(process.env)
+
+// In other files
+import { env } from '@/lib/env'
+const supabaseUrl = env.NEXT_PUBLIC_SUPABASE_URL // NOT process.env.NEXT_PUBLIC_SUPABASE_URL
+```
+
+## Code Organization
+
+### File Structure
+- Keep components under 300 lines
+- Extract complex logic into custom hooks
+- Extract business logic into lib/services
+- Extract constants into separate const files
+
+### Function Organization
+- Pure functions at top of file
+- React components below
+- Helper functions at bottom
+- Exports at very bottom
+
+## Pre-Commit Checklist (For Cursor to Verify)
+
+Before generating final code, verify:
+- [ ] No TypeScript errors
+- [ ] No unused imports
+- [ ] All images have alt props
+- [ ] All Supabase queries have error checks
+- [ ] All useEffect/useCallback have correct dependencies
+- [ ] All catch blocks properly type and handle errors
+- [ ] No direct process.env usage
+- [ ] No `any` types used
+
+## Common Fixes
+
+### "Property does not exist on possibly null"
+Add null check before accessing:
+```typescript
+if (!data) return
+// now safe to access data.property
+```
+
+### "React Hook has missing dependency"
+Either add the dependency OR wrap it in useCallback/useMemo
+
+### "Argument type X not assignable to Y"
+Use explicit type assertion: `variable as ExpectedType`
+
+### "Image missing alt prop"
+Add alt attribute with descriptive or empty string
+
+---
+
+## When in Doubt
+
+1. **Type Safety:** Be explicit, never implicit
+2. **Error Handling:** Check everything, fail gracefully
+3. **React Hooks:** Include all dependencies
+4. **Database Queries:** Check error, then null, then use data
+5. **Imports:** If unused, delete it
+
 Remember: You are the implementation layer in a systematic framework. Always take a comprehensive approach, always research current information, always report back to Cursor Chat with specific completion summaries.
