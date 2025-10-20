@@ -42,7 +42,7 @@ export function corsHandler(options: CorsOptions = {}) {
       const response = new NextResponse(null, { status: 200 })
       
       // Set CORS headers
-      if (origin && isOriginAllowed(origin, config.origin)) {
+      if (origin && config.origin && isOriginAllowed(origin, config.origin)) {
         response.headers.set('Access-Control-Allow-Origin', origin)
       }
       
@@ -72,7 +72,7 @@ export function corsHandler(options: CorsOptions = {}) {
 export function addCorsHeaders(response: NextResponse, origin: string | null, options: CorsOptions = {}) {
   const config = { ...defaultOptions, ...options }
   
-  if (origin && isOriginAllowed(origin, config.origin)) {
+  if (origin && config.origin && isOriginAllowed(origin, config.origin)) {
     response.headers.set('Access-Control-Allow-Origin', origin)
   }
   
