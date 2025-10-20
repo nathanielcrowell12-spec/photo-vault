@@ -3,9 +3,19 @@ import { supabase } from '@/lib/supabase'
 import { Gallery, Client } from '@/types/gallery'
 import { DESCRIPTION_TEXTAREA_ROWS, ERROR_TYPES } from '@/lib/component-constants'
 
+interface GalleryFormData {
+  gallery_name: string
+  gallery_description: string
+  photographer_name: string
+  session_date: string
+  location: string
+  people: string
+  client_id: string
+}
+
 interface UseGalleryEditModalReturn {
-  formData: any
-  setFormData: (data: any) => void
+  formData: GalleryFormData
+  setFormData: (data: GalleryFormData) => void
   clients: Client[]
   loading: boolean
   saving: boolean

@@ -9,9 +9,19 @@ import { Calendar, User, MapPin, Users } from 'lucide-react'
 import { Client } from '@/types/gallery'
 import { DESCRIPTION_TEXTAREA_ROWS } from '@/lib/component-constants'
 
+interface GalleryFormData {
+  gallery_name: string
+  gallery_description: string
+  photographer_name: string
+  session_date: string
+  location: string
+  people: string
+  client_id: string
+}
+
 interface GalleryEditFormProps {
-  formData: any
-  setFormData: (data: any) => void
+  formData: GalleryFormData
+  setFormData: (data: GalleryFormData) => void
   clients: Client[]
   isPhotographer: boolean
 }

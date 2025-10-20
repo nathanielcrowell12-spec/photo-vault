@@ -10,7 +10,7 @@ interface UseDashboardRoutingReturn {
 }
 
 export function useDashboardRouting(
-  user: any,
+  user: unknown,
   userType: string | null,
   loading: boolean
 ): UseDashboardRoutingReturn {

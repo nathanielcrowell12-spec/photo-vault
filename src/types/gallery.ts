@@ -11,6 +11,10 @@ export interface Gallery {
   created_at: string
   user_id?: string
   client_id?: string
+  metadata?: {
+    location?: string
+    people?: string[]
+  }
 }
 
 export interface Client {
