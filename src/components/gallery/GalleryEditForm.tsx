@@ -28,7 +28,7 @@ interface GalleryEditFormProps {
 
 export function GalleryEditForm({ formData, setFormData, clients, isPhotographer }: GalleryEditFormProps) {
   const handleInputChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }))
+    setFormData((prev: GalleryFormData) => ({ ...prev, [field]: value }))
   }
 
   return (
