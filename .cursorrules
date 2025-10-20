@@ -133,4 +133,35 @@ When Nathaniel requests new API integration:
 - **All APIs secured** (proper authentication and validation)
 - **All builds successful** (no warnings or errors)
 
+## TypeScript Type Safety Standards
+
+### Type Assertions
+- When passing variables to functions expecting specific types, use explicit type assertions
+- Pattern: `functionName(variable as ExpectedType)`
+- Example: `getDashboardRoute(userType as UserType)`
+
+### Type Safety Rules
+1. NEVER use `any` - always define proper interfaces
+2. ALL function parameters must have explicit types
+3. ALL function return values must have explicit types
+4. Use `unknown` instead of `any` for truly unknown data
+5. Use type guards (`value is Type`) when validating runtime data
+6. When TypeScript can't infer a type but you know it's correct, use `as TypeName`
+
+### Common Patterns
+```typescript
+// Computed property with type safety
+const handleChange = (field: keyof FormData, value: string) => {
+  setFormData({ ...formData, [field]: value })
+}
+
+// Type assertion when needed
+const route = getDashboardRoute(userType as UserType)
+
+// Type guard (preferred when possible)
+function isUserType(value: string): value is UserType {
+  return ['photographer', 'client', 'admin'].includes(value)
+}
+```
+
 Remember: You are the implementation layer in a systematic framework. Always take a comprehensive approach, always research current information, always report back to Cursor Chat with specific completion summaries.
