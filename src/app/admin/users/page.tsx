@@ -2,7 +2,7 @@
 
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -92,7 +92,7 @@ export default function UserProfilesPage() {
     fetchUsers()
 
     return () => clearTimeout(timeoutId)
-  }, [])
+  }, [loadingUsers])
 
   useEffect(() => {
     filterUsers()
@@ -113,7 +113,7 @@ export default function UserProfilesPage() {
         setTimeout(() => reject(new Error('Database query timeout')), 5000)
       )
 
-      const { data, error } = await Promise.race([queryPromise, timeoutPromise]) as any
+      const { data, error } = await Promise.race([queryPromise, timeoutPromise]) as { data: UserProfile[] | null; error: any }
 
       if (error) {
         console.error('Database error:', error)
@@ -162,7 +162,7 @@ export default function UserProfilesPage() {
 
       // For now, let's just use the user profiles without trying to get emails from auth
       // This avoids potential admin API issues
-      const usersWithEmails = data?.map((userProfile: any) => ({
+      const usersWithEmails = data?.map((userProfile: UserProfile) => ({
         ...userProfile,
         email: `user-${userProfile.id.slice(0, 8)}@example.com`, // Temporary placeholder
         is_suspended: userProfile.payment_status === 'suspended' || false,
@@ -197,7 +197,7 @@ export default function UserProfilesPage() {
     }
   }
 
-  const filterUsers = () => {
+  const filterUsers = useCallback(() => {
     let filtered = users
 
     // Search filter
@@ -226,7 +226,7 @@ export default function UserProfilesPage() {
     }
 
     setFilteredUsers(filtered)
-  }
+  }, [users, searchTerm, filterType, filterStatus])
 
   const updateUserType = async (userId: string, newUserType: 'client' | 'photographer' | 'admin') => {
     try {
