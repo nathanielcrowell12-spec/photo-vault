@@ -31,7 +31,7 @@ function log(message, color = 'reset') {
 // Helm Project paths
 const HELM_PROJECT_PATH = resolve(__dirname, '../../../Helm Project')
 const PROMPT_SOURCE = join(HELM_PROJECT_PATH, 'docs', 'build', 'MASTER_BUILD_PROMPT_v4.3.txt')
-const MANIFEST_SOURCE = join(HELM_PROJECT_PATH, 'manifest.json')
+const MANIFEST_SOURCE = join(HELM_PROJECT_PATH, 'prompt-registry', 'manifest.json')
 const EXPORT_SOURCE = join(HELM_PROJECT_PATH, 'prompt-registry', 'export.local.json')
 
 // PhotoVault paths
@@ -104,7 +104,7 @@ async function syncPrompt() {
         prompt: promptBody,
         version: manifest.version,
         hash: manifest.hash,
-        updated_at: manifest.updated,
+        updated_at: manifest.updated_at,
         source: manifest.source
       }
       

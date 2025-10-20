@@ -69,7 +69,7 @@ async function verifyPrompt() {
     log(`📋 Version: ${manifest.version}`, 'blue')
     log(`🔐 Stored Hash: ${manifest.hash}`, 'blue')
     log(`🔐 Computed Hash: ${computedHash}`, 'blue')
-    log(`📅 Updated: ${manifest.updated}`, 'blue')
+    log(`📅 Updated: ${manifest.updated ?? manifest.updated_at}`, 'blue')
     log(`🏢 Venture: photovault-hub`, 'blue')
     
     // Verify hash matches

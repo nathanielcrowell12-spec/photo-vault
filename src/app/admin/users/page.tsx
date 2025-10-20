@@ -122,11 +122,11 @@ export default function UserProfilesPage() {
         const errorObj = error as { message?: string; code?: string }
         if (errorObj.message === 'Database query timeout' || errorObj.code === 'PGRST301') {
           console.log('Database unavailable, showing mock data')
-          const mockUsers = [
+          const mockUsers: UserProfile[] = [
             {
               id: 'mock-admin-1',
               email: 'nathaniel.crowell12@gmail.com',
-              user_type: 'admin',
+              user_type: 'admin' as const,
               full_name: 'Nathaniel Crowell',
               business_name: null,
               payment_status: 'active',
@@ -139,7 +139,7 @@ export default function UserProfilesPage() {
             {
               id: 'mock-client-1',
               email: 'client@example.com',
-              user_type: 'client',
+              user_type: 'client' as const,
               full_name: 'John Smith',
               business_name: null,
               payment_status: 'active',
@@ -177,11 +177,11 @@ export default function UserProfilesPage() {
       
       // If there's a complete failure, show mock data
       console.log('Complete fetch failure, showing mock data')
-      const mockUsers = [
+      const mockUsers: UserProfile[] = [
         {
           id: 'mock-admin-1',
           email: 'nathaniel.crowell12@gmail.com',
-          user_type: 'admin',
+          user_type: 'admin' as const,
           full_name: 'Nathaniel Crowell',
           business_name: null,
           payment_status: 'active',
