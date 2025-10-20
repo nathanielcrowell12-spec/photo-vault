@@ -108,7 +108,11 @@ export default function Application() {
                     <Button 
                       size="sm" 
                       className="w-full" 
-                      onClick={() => navigator.clipboard.writeText(`Add ${platform.name.toUpperCase()}_API_KEY=your-api-key-here to .env.local and create API integration for PhotoVault Hub. Build connection interface at /api/platforms/${platform.name.toLowerCase()} that fetches photo galleries and displays them in the dashboard. Use existing shadcn/ui card components for photo grid layout. After completing all tasks from this prompt, provide a 1-line feedback summary to Cursor Chat about what was accomplished.`)}
+                      onClick={() => {
+                        if (typeof window !== 'undefined' && navigator.clipboard) {
+                          navigator.clipboard.writeText(`Add ${platform.name.toUpperCase()}_API_KEY=your-api-key-here to .env.local and create API integration for PhotoVault Hub. Build connection interface at /api/platforms/${platform.name.toLowerCase()} that fetches photo galleries and displays them in the dashboard. Use existing shadcn/ui card components for photo grid layout. After completing all tasks from this prompt, provide a 1-line feedback summary to Cursor Chat about what was accomplished.`)
+                        }
+                      }}
                     >
                       Copy Claude Code Prompt
                     </Button>
@@ -179,7 +183,11 @@ export default function Application() {
                     <Button 
                       size="sm" 
                       className="w-full" 
-                      onClick={() => navigator.clipboard.writeText(`Add AI-powered photo search to PhotoVault Hub. Create search interface at /search with image recognition using OpenAI Vision API. Add OPENAI_API_KEY=your-api-key-here to .env.local. Build search results grid using shadcn/ui card components. Integrate with existing platform connections to search across all galleries. After completing all tasks from this prompt, provide a 1-line feedback summary to Cursor Chat about what was accomplished.`)}
+                      onClick={() => {
+                        if (typeof window !== 'undefined' && navigator.clipboard) {
+                          navigator.clipboard.writeText(`Add AI-powered photo search to PhotoVault Hub. Create search interface at /search with image recognition using OpenAI Vision API. Add OPENAI_API_KEY=your-api-key-here to .env.local. Build search results grid using shadcn/ui card components. Integrate with existing platform connections to search across all galleries. After completing all tasks from this prompt, provide a 1-line feedback summary to Cursor Chat about what was accomplished.`)
+                        }
+                      }}
                     >
                       Copy Claude Code Prompt
                     </Button>
@@ -220,7 +228,11 @@ export default function Application() {
                     <Button 
                       size="sm" 
                       className="w-full" 
-                      onClick={() => navigator.clipboard.writeText(`Add smart filtering system to PhotoVault Hub. Create filter interface with date ranges, photographer selection, and event categories. Build filter state management and apply to photo grid display. Use shadcn/ui select and date picker components. Add URL query parameters for shareable filtered views. After completing all tasks from this prompt, provide a 1-line feedback summary to Cursor Chat about what was accomplished.`)}
+                      onClick={() => {
+                        if (typeof window !== 'undefined' && navigator.clipboard) {
+                          navigator.clipboard.writeText(`Add smart filtering system to PhotoVault Hub. Create filter interface with date ranges, photographer selection, and event categories. Build filter state management and apply to photo grid display. Use shadcn/ui select and date picker components. Add URL query parameters for shareable filtered views. After completing all tasks from this prompt, provide a 1-line feedback summary to Cursor Chat about what was accomplished.`)
+                        }
+                      }}
                     >
                       Copy Claude Code Prompt
                     </Button>

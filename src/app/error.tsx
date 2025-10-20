@@ -18,8 +18,8 @@ export default function Error({
       stack: error.stack,
       digest: error.digest,
       timestamp: new Date().toISOString(),
-      userAgent: navigator.userAgent,
-      url: window.location.href
+      userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
+      url: typeof window !== 'undefined' ? window.location.href : 'unknown'
     })
   }, [error])
 
@@ -48,7 +48,11 @@ export default function Error({
           
           <Button 
             variant="outline" 
-            onClick={() => window.location.href = '/'}
+            onClick={() => {
+              if (typeof window !== 'undefined') {
+                window.location.href = '/'
+              }
+            }}
             className="w-full"
           >
             Go to homepage

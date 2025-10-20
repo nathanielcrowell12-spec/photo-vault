@@ -208,7 +208,9 @@ export default function ClientsPage() {
   }
 
   const handleContactClient = (client: Client) => {
-    window.location.href = `mailto:${client.email}?subject=Message from your photographer`
+    if (typeof window !== 'undefined') {
+      window.location.href = `mailto:${client.email}?subject=Message from your photographer`
+    }
   }
 
   return (

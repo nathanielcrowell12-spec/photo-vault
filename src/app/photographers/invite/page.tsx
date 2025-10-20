@@ -64,7 +64,9 @@ export default function InvitePage() {
 
   const copyInvitationLink = () => {
     const link = `https://photovault.com/invite/${user?.id}/${selectedPaymentOption}`
-    navigator.clipboard.writeText(link)
+    if (typeof window !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(link)
+    }
   }
 
   if (sent) {

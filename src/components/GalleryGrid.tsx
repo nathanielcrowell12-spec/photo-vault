@@ -349,7 +349,11 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
             }
           </p>
           {!searchTerm && filterBy === 'all' && clientFilter === 'all' && !isPhotographer && (
-            <Button onClick={() => window.location.href = '/client/import'}>
+            <Button onClick={() => {
+              if (typeof window !== 'undefined') {
+                window.location.href = '/client/import'
+              }
+            }}>
               Import Photos
             </Button>
           )}
@@ -420,7 +424,11 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
                         <Button
                           size="sm"
                           className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                          onClick={() => window.location.href = `/gallery/${gallery.id}`}
+                          onClick={() => {
+                            if (typeof window !== 'undefined') {
+                              window.location.href = `/gallery/${gallery.id}`
+                            }
+                          }}
                         >
                           <ExternalLink className="h-4 w-4 mr-2" />
                           View Gallery

@@ -189,7 +189,9 @@ export default function ZipUploadModal({ platform, isOpen, onClose, onSuccess }:
                   onSuccess?.()
                   onClose()
                   resetForm()
-                  window.location.reload()
+                  if (typeof window !== 'undefined') {
+                    window.location.reload()
+                  }
                 }, 2000)
               }
             }

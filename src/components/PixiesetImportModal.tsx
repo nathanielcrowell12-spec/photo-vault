@@ -121,7 +121,9 @@ export default function PixiesetImportModal({ isOpen, onClose }: PixiesetImportM
           onClose()
           resetForm()
           // Refresh the page to show new gallery
-          window.location.reload()
+          if (typeof window !== 'undefined') {
+            window.location.reload()
+          }
         }, 2000)
       }, 5000)
 

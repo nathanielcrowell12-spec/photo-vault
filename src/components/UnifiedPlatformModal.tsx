@@ -136,7 +136,9 @@ export default function UnifiedPlatformModal({ platform, isOpen, onClose }: Unif
           onClose()
           resetForm()
           // Refresh the page to show new gallery
-          window.location.reload()
+          if (typeof window !== 'undefined') {
+            window.location.reload()
+          }
         }, 2000)
       }, 5000)
 
@@ -515,7 +517,9 @@ export default function UnifiedPlatformModal({ platform, isOpen, onClose }: Unif
           onSuccess={() => {
             setShowZipUpload(false)
             onClose()
-            window.location.reload()
+            if (typeof window !== 'undefined') {
+              window.location.reload()
+            }
           }}
         />
         
@@ -527,7 +531,9 @@ export default function UnifiedPlatformModal({ platform, isOpen, onClose }: Unif
           onSuccess={() => {
             setShowChunkedUpload(false)
             onClose()
-            window.location.reload()
+            if (typeof window !== 'undefined') {
+              window.location.reload()
+            }
           }}
         />
         
@@ -539,7 +545,9 @@ export default function UnifiedPlatformModal({ platform, isOpen, onClose }: Unif
           onSuccess={() => {
             setShowTusUpload(false)
             onClose()
-            window.location.reload()
+            if (typeof window !== 'undefined') {
+              window.location.reload()
+            }
           }}
         />
       </DialogContent>

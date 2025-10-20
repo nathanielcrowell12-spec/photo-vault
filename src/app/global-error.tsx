@@ -18,8 +18,8 @@ export default function GlobalError({
       stack: error.stack,
       digest: error.digest,
       timestamp: new Date().toISOString(),
-      userAgent: navigator.userAgent,
-      url: window.location.href,
+      userAgent: typeof navigator !== 'undefined' ? navigator.userAgent : 'unknown',
+      url: typeof window !== 'undefined' ? window.location.href : 'unknown',
       severity: 'critical'
     })
   }, [error])
@@ -52,7 +52,11 @@ export default function GlobalError({
               
               <Button 
                 variant="outline" 
-                onClick={() => window.location.href = '/'}
+                onClick={() => {
+                  if (typeof window !== 'undefined') {
+                    window.location.href = '/'
+                  }
+                }}
                 className="w-full"
               >
                 <Home className="h-4 w-4 mr-2" />
