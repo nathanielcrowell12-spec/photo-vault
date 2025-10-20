@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { getDashboardRoute } from '@/lib/access-control'
+import { getDashboardRoute, UserType } from '@/lib/access-control'
 import { NAVIGATION_ROUTES } from '@/lib/component-constants'
 
 interface UseDashboardRoutingReturn {
@@ -29,7 +29,7 @@ export function useDashboardRouting(
     }
 
     if (userType) {
-      const dashboardRoute = getDashboardRoute(userType)
+      const dashboardRoute = getDashboardRoute(userType as UserType)
       if (dashboardRoute !== NAVIGATION_ROUTES.DASHBOARD) {
         setIsRedirecting(true)
         setRedirectMessage('Redirecting to your dashboard...')
