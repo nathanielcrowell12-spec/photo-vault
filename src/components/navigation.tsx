@@ -105,7 +105,7 @@ export function Navigation() {
               {user ? (
                 // Authenticated user navigation based on role
                 <>
-                  {isActuallyAdmin && (
+                  {user && isActuallyAdmin && (
                     // Admin navigation
                     <>
                       {adminLinks.slice(0, 4).map((link) => (
@@ -193,7 +193,7 @@ export function Navigation() {
               {user ? (
                 // Authenticated user mobile navigation
                 <>
-                  {isActuallyAdmin && adminLinks.map((link) => (
+                  {user && isActuallyAdmin && adminLinks.map((link) => (
                     <Button
                       key={link.href}
                       asChild
@@ -307,7 +307,7 @@ export function Navigation() {
       )}
 
       {/* Admin Dashboard Navigation */}
-      {isActuallyAdmin && pathname.startsWith('/admin/') && (
+      {user && isActuallyAdmin && pathname.startsWith('/admin/') && (
         <div className="border-b bg-slate-50 dark:bg-slate-800/50">
           <div className="container mx-auto px-4">
             <div className="flex items-center space-x-1 overflow-x-auto py-2">
