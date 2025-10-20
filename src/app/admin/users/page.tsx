@@ -113,13 +113,14 @@ export default function UserProfilesPage() {
         setTimeout(() => reject(new Error('Database query timeout')), 5000)
       )
 
-      const { data, error } = await Promise.race([queryPromise, timeoutPromise]) as { data: UserProfile[] | null; error: any }
+      const { data, error } = await Promise.race([queryPromise, timeoutPromise]) as { data: UserProfile[] | null; error: unknown }
 
       if (error) {
         console.error('Database error:', error)
         
         // If database is completely unavailable, show mock data for testing
-        if (error.message === 'Database query timeout' || error.code === 'PGRST301') {
+        const errorObj = error as { message?: string; code?: string }
+        if (errorObj.message === 'Database query timeout' || errorObj.code === 'PGRST301') {
           console.log('Database unavailable, showing mock data')
           const mockUsers = [
             {
