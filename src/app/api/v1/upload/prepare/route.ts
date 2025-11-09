@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { generateRandomId } from '@/lib/api-constants'
 import { createClient } from '@supabase/supabase-js'
 
 const supabase = createClient(
@@ -9,69 +8,60 @@ const supabase = createClient(
 
 export async function POST(request: NextRequest) {
   try {
-    const { fileName, fileSize, userId, galleryName, platform } = await request.json()
+    const body = await request.json()
+    const { fileName, fileSize, userId, galleryName, platform, clientId } = body
+
+    console.log('[Upload Prepare] Request:', { fileName, fileSize, userId, galleryName, platform, clientId })
 
     // Validate inputs
-    if (!fileName || !userId || !galleryName) {
-      return NextResponse.json(
-        { error: 'Missing required fields: fileName, userId, galleryName' },
-        { status: 400 }
-      )
+    if (!fileName || !fileSize || !userId || !galleryName) {
+      return NextResponse.json({
+        error: 'Missing required fields'
+      }, { status: 400 })
     }
 
-    // Check file size (allow up to 2GB)
-    const maxSize = 2 * 1024 * 1024 * 1024 // 2GB
-    if (fileSize > maxSize) {
-      return NextResponse.json(
-        { error: `File too large. Maximum size is 2GB. Your file is ${(fileSize / 1024 / 1024 / 1024).toFixed(2)}GB.` },
-        { status: 400 }
-      )
-    }
-
-    // Generate unique filename for storage
-    const timestamp = Date.now()
-    const randomStr = generateRandomId()
-    const ext = fileName.split('.').pop()
-    const storageFileName = `${timestamp}-${randomStr}.${ext}`
-    const storagePath = `temp-uploads/${userId}/${storageFileName}`
-
-    // Create gallery record first
+    // Create gallery in database
     const { data: gallery, error: galleryError } = await supabase
       .from('galleries')
       .insert({
-        user_id: userId,
+        photographer_id: userId,
+        client_id: clientId || null,
+        user_id: clientId || null,
         gallery_name: galleryName,
-        gallery_description: `Imported from ${platform} ZIP file`,
-        platform: platform || 'ZIP Upload',
-        photo_count: 0,
-        is_imported: false,
-        cover_image_url: '/images/placeholder-family.svg',
-        import_started_at: new Date().toISOString()
+        photo_count: 1,
+        session_date: new Date().toISOString(),
+        is_imported: false
       })
-      .select('id')
+      .select()
       .single()
 
-    if (galleryError || !gallery) {
-      console.error('Error creating gallery:', galleryError)
-      return NextResponse.json(
-        { error: 'Failed to create gallery record' },
-        { status: 500 }
-      )
+    if (galleryError) {
+      console.error('[Upload Prepare] Gallery creation error:', galleryError)
+      return NextResponse.json({
+        error: 'Failed to create gallery',
+        details: galleryError.message
+      }, { status: 500 })
     }
 
-    // Return the storage path and gallery ID for chunked uploads
-    // No need for signed URL since chunks will be uploaded directly to gallery-imports bucket
-    return NextResponse.json({
-      success: true,
-      storagePath: storagePath,
-      galleryId: gallery.id
-    })
+    console.log('[Upload Prepare] Gallery created:', gallery.id)
 
-  } catch (error) {
-    console.error('Prepare upload error:', error)
-    return NextResponse.json(
-      { error: 'Internal server error' },
-      { status: 500 }
-    )
+    // Generate storage path
+    const fileExt = fileName.split('.').pop()
+    const timestamp = Date.now()
+    const random = Math.random().toString(36).substring(7)
+    const storagePath = `${gallery.id}/${timestamp}-${random}.${fileExt}`
+
+    return NextResponse.json({
+      galleryId: gallery.id,
+      storagePath,
+      fileName,
+      fileSize
+    })
+  } catch (error: any) {
+    console.error('[Upload Prepare] Error:', error)
+    return NextResponse.json({
+      error: 'Internal server error',
+      details: error.message
+    }, { status: 500 })
   }
 }

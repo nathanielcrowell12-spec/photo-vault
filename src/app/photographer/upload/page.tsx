@@ -360,13 +360,26 @@ export default function UploadPage() {
                       <Button
                         className="w-full"
                         variant="default"
-                        onClick={() => {
-                          // Try to launch the desktop app via custom protocol
-                          window.location.href = 'photovault://upload'
+                        disabled={!selectedClientId}
+                        onClick={async () => {
+                          if (!selectedClientId) {
+                            alert('Please select a client first')
+                            return
+                          }
+
+                          // Get current session and pass to desktop app
+                          const { data: { session } } = await supabase.auth.getSession()
+                          if (session?.access_token && user?.id) {
+                            // Pass auth token and client ID via protocol URL
+                            window.location.href = `photovault://auth?token=${encodeURIComponent(session.access_token)}&userId=${encodeURIComponent(user.id)}&clientId=${encodeURIComponent(selectedClientId)}`
+                          } else {
+                            // Fallback to just opening the app
+                            window.location.href = 'photovault://upload'
+                          }
                         }}
                       >
                         <Monitor className="h-4 w-4 mr-2" />
-                        Launch Desktop Tool
+                        {selectedClientId ? 'Launch Desktop Tool' : 'Select Client First'}
                       </Button>
                       <p className="text-xs text-gray-500 mt-2 text-center">
                         Don't have it? <Link href="/download-desktop-app" className="text-purple-600 hover:underline">Download here</Link>
