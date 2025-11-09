@@ -124,7 +124,7 @@ export function GalleryEditForm({ formData, setFormData, clients, isPhotographer
               <SelectValue placeholder="Select a client" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">No client assigned</SelectItem>
+              <SelectItem value="none">No client assigned</SelectItem>
               {clients.map((client) => (
                 <SelectItem key={client.id} value={client.id}>
                   {client.name}

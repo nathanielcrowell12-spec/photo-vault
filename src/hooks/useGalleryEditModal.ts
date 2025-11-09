@@ -39,7 +39,7 @@ export function useGalleryEditModal(
     session_date: '',
     location: '',
     people: '',
-    client_id: ''
+    client_id: 'none'
   })
   
   const [clients, setClients] = useState<Client[]>([])
@@ -57,7 +57,7 @@ export function useGalleryEditModal(
       session_date: '',
       location: '',
       people: '',
-      client_id: ''
+      client_id: 'none'
     })
     setError(null)
   }, [])
@@ -102,7 +102,7 @@ export function useGalleryEditModal(
     if (isPhotographer) {
       return {
         ...baseData,
-        client_id: formData.client_id || null,
+        client_id: formData.client_id === 'none' ? null : (formData.client_id || null),
         metadata: {
           location: formData.location,
           people: formData.people.split(',').map(p => p.trim()).filter(p => p)
@@ -156,7 +156,7 @@ export function useGalleryEditModal(
         session_date: gallery.session_date || '',
         location: gallery.metadata?.location || '',
         people: gallery.metadata?.people?.join(', ') || '',
-        client_id: gallery.client_id || ''
+        client_id: gallery.client_id || 'none'
       })
     } else if (!isOpen) {
       resetForm()

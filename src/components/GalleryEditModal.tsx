@@ -87,7 +87,7 @@ export default function GalleryEditModal({ gallery, isOpen, onClose, onSave }: G
         session_date: gallery.session_date || '',
         location: gallery.metadata?.location || '',
         people: gallery.metadata?.people?.join(', ') || '',
-        client_id: gallery.client_id || gallery.user_id || ''
+        client_id: gallery.client_id || gallery.user_id || 'none'
       })
     }
   }, [gallery])
@@ -119,9 +119,10 @@ export default function GalleryEditModal({ gallery, isOpen, onClose, onSave }: G
       }
 
       // If photographer, update client assignment
-      if (isPhotographer && formData.client_id) {
-        updateData.user_id = formData.client_id
-        updateData.client_id = formData.client_id
+      if (isPhotographer) {
+        const clientId = formData.client_id === 'none' ? null : formData.client_id
+        updateData.user_id = clientId
+        updateData.client_id = clientId
       }
 
       // Update gallery in database
@@ -195,7 +196,7 @@ export default function GalleryEditModal({ gallery, isOpen, onClose, onSave }: G
                   <SelectValue placeholder="Select a client (optional)" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="">None (Personal Gallery)</SelectItem>
+                  <SelectItem value="none">None (Personal Gallery)</SelectItem>
                   {clients.map((client) => (
                     <SelectItem key={client.id} value={client.id}>
                       {client.name} - {client.email}

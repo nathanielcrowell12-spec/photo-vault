@@ -18,7 +18,8 @@ import {
   FileUp,
   UserPlus,
   Download,
-  Monitor
+  Monitor,
+  X
 } from 'lucide-react'
 import Link from 'next/link'
 import { supabaseBrowser as supabase } from '@/lib/supabase-browser'
@@ -41,6 +42,7 @@ export default function UploadPage() {
   const [selectedClientId, setSelectedClientId] = useState('')
   const [galleryName, setGalleryName] = useState('')
   const [galleryDescription, setGalleryDescription] = useState('')
+  const [uploadCancelled, setUploadCancelled] = useState(false)
 
   const fetchClients = async () => {
     console.log('[Upload] fetchClients called, user.id:', user?.id)
@@ -93,6 +95,11 @@ export default function UploadPage() {
     }
   }
 
+  const handleCancelUpload = () => {
+    setUploadCancelled(true)
+    setUploadStatus('Cancelling upload...')
+  }
+
   const handleUpload = async () => {
     if (!selectedClientId || !galleryName || files.length === 0) {
       alert('Please select a client, enter a gallery name, and select files to upload')
@@ -101,10 +108,14 @@ export default function UploadPage() {
 
     setUploading(true)
     setUploadProgress(0)
+    setUploadCancelled(false)
 
     try {
       setUploadStatus('Creating gallery...')
       console.log('Step 1: Creating gallery record in database...')
+      console.log('User ID:', user?.id)
+      console.log('Client ID:', selectedClientId)
+      console.log('Gallery Name:', galleryName)
 
       // Create gallery in database
       const { data: gallery, error: galleryError } = await supabase
@@ -120,13 +131,24 @@ export default function UploadPage() {
         .select()
         .single()
 
+      console.log('Gallery creation response:', { data: gallery, error: galleryError })
+
       if (galleryError) {
-        console.error('Error creating gallery:', galleryError)
-        alert('Failed to create gallery. Please try again.')
+        console.error('❌ Error creating gallery:', galleryError)
+        console.error('Error code:', galleryError.code)
+        console.error('Error message:', galleryError.message)
+        console.error('Error details:', galleryError.details)
+        alert(`Failed to create gallery: ${galleryError.message}`)
         return
       }
 
-      console.log('Gallery created:', gallery)
+      if (!gallery) {
+        console.error('❌ No gallery returned from insert')
+        alert('Failed to create gallery. No data returned.')
+        return
+      }
+
+      console.log('✅ Gallery created successfully:', gallery)
       setUploadProgress(10)
 
       // Upload files to Supabase Storage
@@ -134,6 +156,12 @@ export default function UploadPage() {
       const uploadedFiles = []
 
       for (let i = 0; i < files.length; i++) {
+        // Check if upload was cancelled
+        if (uploadCancelled) {
+          console.log('Upload cancelled by user')
+          throw new Error('Upload cancelled by user')
+        }
+
         const file = files[i]
         const fileExt = file.name.split('.').pop()
         const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
@@ -141,21 +169,44 @@ export default function UploadPage() {
 
         setUploadStatus(`Uploading ${i + 1} of ${files.length}: ${file.name}`)
         console.log(`Uploading file ${i + 1}/${files.length}:`, file.name)
+        console.log(`File size: ${(file.size / 1024 / 1024).toFixed(2)}MB`)
+        console.log(`Upload path: ${filePath}`)
+        console.log(`Starting upload to 'photos' bucket...`)
 
-        // Upload to Supabase Storage
-        const { data: uploadData, error: uploadError } = await supabase.storage
+        // Upload to Supabase Storage with timeout
+        const uploadStartTime = Date.now()
+        const uploadTimeout = 120000 // 2 minutes timeout
+
+        const uploadPromise = supabase.storage
           .from('photos')
           .upload(filePath, file, {
             cacheControl: '3600',
             upsert: false
           })
 
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Upload timeout after 2 minutes')), uploadTimeout)
+        )
+
+        const { data: uploadData, error: uploadError } = await Promise.race([
+          uploadPromise,
+          timeoutPromise
+        ]).catch(err => {
+          console.error('Upload error or timeout:', err)
+          return { data: null, error: err }
+        }) as { data: any, error: any }
+
+        const uploadDuration = Date.now() - uploadStartTime
+
+        console.log(`Upload completed in ${uploadDuration}ms (${(uploadDuration / 1000).toFixed(1)}s)`)
+
         if (uploadError) {
-          console.error(`Error uploading ${file.name}:`, uploadError)
+          console.error(`❌ Error uploading ${file.name}:`, uploadError)
+          console.error('Upload error details:', uploadError)
           throw new Error(`Failed to upload ${file.name}: ${uploadError.message}`)
         }
 
-        console.log(`File uploaded successfully:`, uploadData)
+        console.log(`✅ File uploaded successfully:`, uploadData)
 
         // Get public URL
         const { data: { publicUrl } } = supabase.storage
@@ -177,6 +228,7 @@ export default function UploadPage() {
       // Create photo records in database
       setUploadStatus('Creating photo records...')
       setUploadProgress(95)
+      console.log('Step 2: Creating photo records in database...')
 
       const photoRecords = uploadedFiles.map(file => ({
         gallery_id: gallery.id,
@@ -188,13 +240,33 @@ export default function UploadPage() {
         is_private: false
       }))
 
-      // Insert photo records into gallery_photos table
-      const { error: photosError } = await supabase
+      console.log('Photo records to insert:', photoRecords)
+
+      // Insert photo records into gallery_photos table with timeout
+      const insertStartTime = Date.now()
+      const insertPromise = supabase
         .from('gallery_photos')
         .insert(photoRecords)
 
+      const insertTimeoutPromise = new Promise((_, reject) =>
+        setTimeout(() => reject(new Error('Database insert timeout after 30 seconds')), 30000)
+      )
+
+      const { error: photosError } = await Promise.race([
+        insertPromise,
+        insertTimeoutPromise
+      ]).catch(err => {
+        console.error('Database insert error or timeout:', err)
+        return { error: err }
+      }) as { error: any }
+
+      const insertDuration = Date.now() - insertStartTime
+      console.log(`Photo records insert completed in ${insertDuration}ms (${(insertDuration / 1000).toFixed(1)}s)`)
+      console.log('Photo records insert response:', photosError ? `Error: ${photosError.message}` : 'Success')
+
       if (photosError) {
-        console.error('Error creating photo records:', photosError)
+        console.error('❌ Error creating photo records:', photosError)
+        console.error('Error details:', photosError)
         alert(`⚠️ Photos uploaded to storage but failed to create database records.\n\nError: ${photosError.message}`)
         return
       }
@@ -297,7 +369,7 @@ export default function UploadPage() {
                         Launch Desktop Tool
                       </Button>
                       <p className="text-xs text-gray-500 mt-2 text-center">
-                        Don't have it? <a href="https://photovault.com/downloads" target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:underline">Download here</a>
+                        Don't have it? <Link href="/download-desktop-app" className="text-purple-600 hover:underline">Download here</Link>
                       </p>
                     </div>
                   </div>
@@ -456,32 +528,45 @@ export default function UploadPage() {
                 )}
 
                 {/* Upload Button */}
-                <div>
-                  <Button
-                    onClick={handleUpload}
-                    disabled={uploading || files.length === 0 || !selectedClientId || !galleryName}
-                    className="w-full"
-                    size="lg"
-                  >
-                    {uploading ? (
-                      <>
+                <div className="space-y-2">
+                  {uploading ? (
+                    <div className="flex gap-2">
+                      <Button
+                        disabled
+                        className="flex-1"
+                        size="lg"
+                      >
                         <FileUp className="h-4 w-4 mr-2 animate-spin" />
                         Uploading...
-                      </>
-                    ) : (
-                      <>
-                        <Upload className="h-4 w-4 mr-2" />
-                        {files.length === 0
-                          ? 'Select Photos to Upload'
-                          : !selectedClientId
-                          ? 'Select a Client First'
-                          : !galleryName
-                          ? 'Enter Gallery Name'
-                          : `Create Gallery with ${files.length} ${files.length === 1 ? 'photo' : 'photos'}`
-                        }
-                      </>
-                    )}
-                  </Button>
+                      </Button>
+                      <Button
+                        onClick={handleCancelUpload}
+                        variant="destructive"
+                        size="lg"
+                        className="px-6"
+                      >
+                        <X className="h-4 w-4 mr-2" />
+                        Cancel
+                      </Button>
+                    </div>
+                  ) : (
+                    <Button
+                      onClick={handleUpload}
+                      disabled={files.length === 0 || !selectedClientId || !galleryName}
+                      className="w-full"
+                      size="lg"
+                    >
+                      <Upload className="h-4 w-4 mr-2" />
+                      {files.length === 0
+                        ? 'Select Photos to Upload'
+                        : !selectedClientId
+                        ? 'Select a Client First'
+                        : !galleryName
+                        ? 'Enter Gallery Name'
+                        : `Create Gallery with ${files.length} ${files.length === 1 ? 'photo' : 'photos'}`
+                      }
+                    </Button>
+                  )}
                   {!uploading && (files.length === 0 || !selectedClientId || !galleryName) && (
                     <p className="text-sm text-orange-600 mt-2 text-center">
                       {!selectedClientId && '⚠️ Please select a client'}
