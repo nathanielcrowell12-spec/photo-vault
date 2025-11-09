@@ -1,29 +1,48 @@
+/**
+ * DEPRECATED: This file is being phased out.
+ *
+ * For new code, use:
+ * - Client-side: import { supabaseBrowser } from '@/lib/supabase-browser'
+ * - Server-side (API routes, Server Components): import { createServerSupabaseClient } from '@/lib/supabase-server'
+ *
+ * This file remains for backward compatibility with existing API routes.
+ */
+
 import { createClient } from '@supabase/supabase-js'
 
-// TEMPORARY TEST: Hardcoded values to bypass environment variables
-const supabaseUrl = 'https://gqmycgopitxpjkxzrnyv.supabase.co'
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdxbXljZ29waXR4cGpleHpybnl2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA5OTk2NjIsImV4cCI6MjA3NjU3NTY2Mn0.mUgIQ7V9CmquKalZduYTbD__1ETt-zfaHRZVp0xdwLQ'
+// Re-export createClient for use in other files
+export { createClient }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://gqmycgopitxpjkxzrnyv.supabase.co'
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdxbXljZ29waXR4cGpreHpybnl2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA5OTk2NjIsImV4cCI6MjA3NjU3NTY2Mn0.mUgIQ7V9CmquKalZduYTbD__1ETt-zfaHRZVp0xdwLQ'
+const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdxbXljZ29waXR4cGpreHpybnl2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MDk5OTY2MywiZXhwIjoyMDc2NTc1NjYzfQ.RzwmEr6SvpJmMJA2NTWNVT5ogQ7HYW65OS1gg6PUtCI'
+
+/**
+ * DEPRECATED: Server-side client with service role - bypasses RLS!
+ * For new code, use createServerSupabaseClient from '@/lib/supabase-server' instead.
+ * This uses service role key which bypasses Row Level Security.
+ */
+export const supabase = createClient(supabaseUrl, serviceRoleKey, {
   auth: {
-    persistSession: true,
-    autoRefreshToken: true,
-    detectSessionInUrl: true,
-    storage: typeof window !== 'undefined' ? window.localStorage : undefined,
-    storageKey: 'photovault-auth',
+    autoRefreshToken: false,
+    persistSession: false
   }
 })
 
 /**
- * Create a Supabase client for server-side operations
- * Uses service role key for elevated permissions
+ * DEPRECATED: Use createServerSupabaseClient from '@/lib/supabase-server' instead.
+ * Create a Supabase client for server-side operations with service role key.
+ * This bypasses RLS - use with caution!
  */
 export function createServerSupabaseClient() {
-  const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY
   if (!serviceRoleKey) {
     throw new Error('SUPABASE_SERVICE_ROLE_KEY is required for server-side operations')
   }
-  
+
+  if (!supabaseUrl) {
+    throw new Error('NEXT_PUBLIC_SUPABASE_URL is required for server-side operations')
+  }
+
   return createClient(supabaseUrl, serviceRoleKey, {
     auth: {
       autoRefreshToken: false,

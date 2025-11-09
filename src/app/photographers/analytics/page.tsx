@@ -8,8 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { 
-  ArrowLeft, 
+import {
+  ArrowLeft,
   DollarSign,
   TrendingUp,
   TrendingDown,
@@ -18,11 +18,28 @@ import {
   Target,
   BarChart3,
   PieChart,
-  LineChart,
+  LineChart as LineChartIcon,
   Download,
   RefreshCw
 } from 'lucide-react'
 import Link from 'next/link'
+import {
+  LineChart,
+  Line,
+  BarChart,
+  Bar,
+  AreaChart,
+  Area,
+  PieChart as RechartsPieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer
+} from 'recharts'
 
 interface AnalyticsData {
   monthlyBreakdown: Array<{
@@ -89,9 +106,50 @@ export default function AnalyticsPage() {
   const fetchAnalyticsData = async () => {
     try {
       setLoading(true)
-      // Simulate API call - in real implementation, this would call the API
+      // Simulate API call with mock data for testing
       setTimeout(() => {
-        setAnalyticsData(null)
+        const mockData: AnalyticsData = {
+          monthlyBreakdown: [
+            { month: 'Jan 2024', upfront: 500, recurring: 120, total: 620, newClients: 10, activeClients: 10 },
+            { month: 'Feb 2024', upfront: 650, recurring: 160, total: 810, newClients: 13, activeClients: 23 },
+            { month: 'Mar 2024', upfront: 800, recurring: 230, total: 1030, newClients: 16, activeClients: 39 },
+            { month: 'Apr 2024', upfront: 950, recurring: 310, total: 1260, newClients: 19, activeClients: 58 },
+            { month: 'May 2024', upfront: 1100, recurring: 400, total: 1500, newClients: 22, activeClients: 80 },
+            { month: 'Jun 2024', upfront: 1250, recurring: 500, total: 1750, newClients: 25, activeClients: 105 },
+            { month: 'Jul 2024', upfront: 1400, recurring: 620, total: 2020, newClients: 28, activeClients: 133 },
+            { month: 'Aug 2024', upfront: 1550, recurring: 750, total: 2300, newClients: 31, activeClients: 164 },
+            { month: 'Sep 2024', upfront: 1700, recurring: 900, total: 2600, newClients: 34, activeClients: 198 },
+            { month: 'Oct 2024', upfront: 1850, recurring: 1050, total: 2900, newClients: 37, activeClients: 235 },
+            { month: 'Nov 2024', upfront: 2000, recurring: 1220, total: 3220, newClients: 40, activeClients: 275 },
+            { month: 'Dec 2024', upfront: 2150, recurring: 1400, total: 3550, newClients: 43, activeClients: 318 }
+          ],
+          growthMetrics: {
+            revenueGrowth: 10.2,
+            clientGrowth: 7.5,
+            recurringGrowth: 14.8
+          },
+          totals: {
+            totalRevenue: 25560,
+            totalUpfront: 15900,
+            totalRecurring: 9660,
+            totalNewClients: 318,
+            averageMonthlyRevenue: 2130
+          },
+          projections: {
+            nextMonth: 3800,
+            next3Months: 12000,
+            nextYear: 50000,
+            recurringRunRate: 16800
+          },
+          retentionMetrics: {
+            totalClients: 318,
+            activeClients: 280,
+            avgClientLifetime: 245,
+            avgClientValue: 80.38
+          }
+        }
+
+        setAnalyticsData(mockData)
         setLoading(false)
       }, 1000)
     } catch (error) {
@@ -273,7 +331,7 @@ export default function AnalyticsPage() {
             <Card>
               <CardHeader>
                 <CardTitle className="flex items-center space-x-2">
-                  <LineChart className="h-5 w-5 text-blue-600" />
+                  <LineChartIcon className="h-5 w-5 text-blue-600" />
                   <span>Monthly Revenue Breakdown</span>
                 </CardTitle>
                 <CardDescription>
@@ -281,34 +339,34 @@ export default function AnalyticsPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  {analyticsData.monthlyBreakdown.slice(-6).map((month, index) => (
-                    <div key={index} className="space-y-2">
-                      <div className="flex justify-between text-sm">
-                        <span className="font-medium">{month.month}</span>
-                        <span className="font-bold">{formatCurrency(month.total)}</span>
-                      </div>
-                      <div className="flex space-x-2">
-                        <div className="flex-1 bg-green-100 dark:bg-green-900/20 rounded-full h-2">
-                          <div 
-                            className="bg-green-500 h-2 rounded-full" 
-                            style={{ width: `${(month.upfront / month.total) * 100}%` }}
-                          ></div>
-                        </div>
-                        <div className="flex-1 bg-blue-100 dark:bg-blue-900/20 rounded-full h-2">
-                          <div 
-                            className="bg-blue-500 h-2 rounded-full" 
-                            style={{ width: `${(month.recurring / month.total) * 100}%` }}
-                          ></div>
-                        </div>
-                      </div>
-                      <div className="flex justify-between text-xs text-slate-500">
-                        <span>Upfront: {formatCurrency(month.upfront)}</span>
-                        <span>Recurring: {formatCurrency(month.recurring)}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <ResponsiveContainer width="100%" height={300}>
+                  <AreaChart data={analyticsData.monthlyBreakdown.slice(-6)}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="month" />
+                    <YAxis />
+                    <Tooltip
+                      formatter={(value: number) => formatCurrency(value)}
+                      contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.95)', border: '1px solid #ccc' }}
+                    />
+                    <Legend />
+                    <Area
+                      type="monotone"
+                      dataKey="upfront"
+                      stackId="1"
+                      stroke="#10b981"
+                      fill="#10b981"
+                      name="Upfront Commission"
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="recurring"
+                      stackId="1"
+                      stroke="#3b82f6"
+                      fill="#3b82f6"
+                      name="Recurring Commission"
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
               </CardContent>
             </Card>
 
@@ -378,6 +436,46 @@ export default function AnalyticsPage() {
               </CardContent>
             </Card>
           </div>
+
+          {/* Client Growth Chart */}
+          <Card className="mt-8">
+            <CardHeader>
+              <CardTitle className="flex items-center space-x-2">
+                <Users className="h-5 w-5 text-blue-600" />
+                <span>Client Growth Over Time</span>
+              </CardTitle>
+              <CardDescription>
+                New clients vs total active clients
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={analyticsData.monthlyBreakdown}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="month" />
+                  <YAxis />
+                  <Tooltip
+                    contentStyle={{ backgroundColor: 'rgba(255, 255, 255, 0.95)', border: '1px solid #ccc' }}
+                  />
+                  <Legend />
+                  <Line
+                    type="monotone"
+                    dataKey="newClients"
+                    stroke="#10b981"
+                    strokeWidth={2}
+                    name="New Clients"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="activeClients"
+                    stroke="#3b82f6"
+                    strokeWidth={2}
+                    name="Total Active Clients"
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
 
           {/* Client Retention Metrics */}
           <Card className="mt-8">

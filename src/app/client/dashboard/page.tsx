@@ -6,14 +6,15 @@ import { useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { 
-  Heart, 
-  Download, 
+import {
+  Heart,
+  Download,
   Share2,
   Camera,
   Star,
   Calendar,
   MessageSquare,
+  Trash2,
 } from 'lucide-react'
 import Link from 'next/link'
 import AccessGuard from '@/components/AccessGuard'
@@ -45,9 +46,12 @@ export default function ClientDashboardPage() {
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <Heart className="h-8 w-8 text-pink-600" />
+                <img 
+                  src="/images/logos/photovault logo.png" 
+                  alt="PhotoVault" 
+                  className="h-10 w-auto"
+                />
                 <div>
-                  <h1 className="text-2xl font-bold">PhotoVault</h1>
                   <p className="text-sm text-gray-600">Your Personal Photo Gallery</p>
                 </div>
               </div>
@@ -75,12 +79,20 @@ export default function ClientDashboardPage() {
 
             {/* Gallery Grid - Moved to top */}
             <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Camera className="h-5 w-5 text-pink-600" />
-                  Your Photo Galleries
-                </CardTitle>
-                <CardDescription>Browse and download all your professional photos</CardDescription>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Camera className="h-5 w-5 text-pink-600" />
+                    Your Photo Galleries
+                  </CardTitle>
+                  <CardDescription>Browse and download all your professional photos</CardDescription>
+                </div>
+                <Button variant="outline" size="sm" asChild>
+                  <Link href="/client/deleted">
+                    <Trash2 className="h-4 w-4 mr-2" />
+                    Recently Deleted
+                  </Link>
+                </Button>
               </CardHeader>
               <CardContent>
                 {user && <GalleryGrid userId={user.id} />}

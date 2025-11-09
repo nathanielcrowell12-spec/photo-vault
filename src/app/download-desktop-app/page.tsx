@@ -32,7 +32,7 @@ export default function DownloadDesktopAppPage() {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <Button variant="ghost" size="sm" asChild>
-                <Link href="/client/import">
+                <Link href="/client/upload">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back to Upload Options
                 </Link>
@@ -78,7 +78,7 @@ export default function DownloadDesktopAppPage() {
                   Download for Windows
                 </Button>
                 <Button variant="outline" size="lg" asChild>
-                  <Link href="/client/import">
+                  <Link href="/client/upload">
                     Try Web Upload Instead
                   </Link>
                 </Button>
@@ -292,7 +292,7 @@ export default function DownloadDesktopAppPage() {
                       Connect your existing photo galleries from other photography platforms.
                     </p>
                     <Button variant="outline" size="sm" asChild>
-                      <Link href="/client/import">Import Photos</Link>
+                      <Link href="/client/upload">Upload Photos</Link>
                     </Button>
                   </div>
                 </div>

@@ -94,9 +94,9 @@ export default function TestDashboard() {
     { id: 'upload-3', category: 'Client Features', page: 'Upload Photos', url: '/client/upload', feature: 'Upload progress displays', status: 'pending' },
     { id: 'upload-4', category: 'Client Features', page: 'Upload Photos', url: '/client/upload', feature: 'Auto-organization works', status: 'pending' },
     
-    { id: 'import-1', category: 'Client Features', page: 'Import Photos', url: '/client/import', feature: 'Platform selection works', status: 'pending' },
-    { id: 'import-2', category: 'Client Features', page: 'Import Photos', url: '/client/import', feature: 'Connection forms work', status: 'pending' },
-    { id: 'import-3', category: 'Client Features', page: 'Import Photos', url: '/client/import', feature: 'Import progress displays', status: 'pending' },
+    { id: 'import-1', category: 'Client Features', page: 'Upload Photos', url: '/client/upload', feature: 'Platform selection works', status: 'pending' },
+    { id: 'import-2', category: 'Client Features', page: 'Upload Photos', url: '/client/upload', feature: 'Connection forms work', status: 'pending' },
+    { id: 'import-3', category: 'Client Features', page: 'Upload Photos', url: '/client/upload', feature: 'Import progress displays', status: 'pending' },
     
     { id: 'billing-1', category: 'Client Features', page: 'Billing', url: '/client/billing', feature: 'Payment history displays', status: 'pending' },
     { id: 'billing-2', category: 'Client Features', page: 'Billing', url: '/client/billing', feature: 'Active galleries show', status: 'pending' },

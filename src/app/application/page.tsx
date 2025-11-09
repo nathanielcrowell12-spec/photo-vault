@@ -35,8 +35,11 @@ export default function Application() {
             </Button>
             <Separator orientation="vertical" className="h-6" />
             <div className="flex items-center space-x-2">
-              <Camera className="h-6 w-6 text-blue-600" />
-              <span className="text-xl font-bold">PhotoVault Hub</span>
+              <img 
+                src="/images/logos/photovault logo.png" 
+                alt="PhotoVault Hub" 
+                className="h-8 w-auto"
+              />
             </div>
           </div>
           <Badge variant="outline" className="bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-200">

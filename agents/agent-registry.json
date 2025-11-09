@@ -1,0 +1,55 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2024-11-07",
+  "agents": [
+    {
+      "id": "01-photographer-acquisition",
+      "name": "Photographer Acquisition Agent",
+      "status": "planned",
+      "version": "0.0.0",
+      "description": "Finds and qualifies potential photographers to join PhotoVault platform",
+      "capabilities": [
+        "Web scraping photography directories",
+        "Lead qualification based on criteria",
+        "Automated outreach sequences",
+        "Follow-up tracking"
+      ],
+      "permissions": {
+        "read": ["public_directories", "contact_lists"],
+        "write": ["logs", "reports", "outreach_database"],
+        "execute": ["email_sending", "web_scraping"]
+      },
+      "dependencies": [],
+      "maintainer": "PhotoVault Team",
+      "createdDate": null,
+      "activatedDate": null
+    },
+    {
+      "id": "02-support-triage",
+      "name": "Support Triage Agent",
+      "status": "planned",
+      "version": "0.0.0",
+      "description": "Handles initial customer support inquiries and routes to appropriate channels",
+      "capabilities": [
+        "Classify support tickets by urgency",
+        "Answer common questions automatically",
+        "Route complex issues to human support",
+        "Track resolution times"
+      ],
+      "permissions": {
+        "read": ["support_tickets", "knowledge_base", "user_accounts"],
+        "write": ["ticket_responses", "logs", "reports"],
+        "execute": ["email_responses", "ticket_routing"]
+      },
+      "dependencies": [],
+      "maintainer": "PhotoVault Team",
+      "createdDate": null,
+      "activatedDate": null
+    }
+  ],
+  "notes": [
+    "Update status to 'active' when agent is deployed",
+    "Increment version when making changes",
+    "Log all permission changes in git commits"
+  ]
+}

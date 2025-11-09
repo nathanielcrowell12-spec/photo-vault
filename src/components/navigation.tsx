@@ -51,7 +51,6 @@ export function Navigation() {
     { href: '/client/dashboard', icon: Home, label: 'Dashboard' },
     { href: '/client/timeline', icon: Calendar, label: 'Timeline' },
     { href: '/client/upload', icon: Upload, label: 'Upload Photos' },
-    { href: '/client/import', icon: Download, label: 'Import Photos' },
     { href: '/client/billing', icon: CreditCard, label: 'Billing' },
     { href: '/client/support', icon: HelpCircle, label: 'Support' }
   ]
@@ -94,10 +93,16 @@ export function Navigation() {
                    userType === 'client' ? '/client/dashboard' : '/')
                 : '/'
             } className="flex items-center space-x-2">
-              <Camera className="h-7 w-7 text-primary" />
-              <span className="text-xl font-semibold tracking-tight">
-                PhotoVault{isActuallyAdmin ? " Admin" : userType === 'photographer' ? " Pro" : ""}
-              </span>
+              <img 
+                src="/images/logos/photovault logo.png" 
+                alt="PhotoVault" 
+                className="h-8 w-auto"
+              />
+              {(isActuallyAdmin || userType === 'photographer') && (
+                <span className="text-xl font-semibold tracking-tight ml-2">
+                  {isActuallyAdmin ? " Admin" : " Pro"}
+                </span>
+              )}
             </Link>
 
             {/* Desktop Navigation */}
@@ -367,11 +372,6 @@ export function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/client/import" className="text-muted-foreground hover:text-primary transition-colors">
-                    Import from Platforms
-                  </Link>
-                </li>
-                <li>
                   <Link href="/client/support" className="text-muted-foreground hover:text-primary transition-colors">
                     Help Center
                   </Link>
@@ -419,11 +419,6 @@ export function Footer() {
               <li>
                 <Link href="/client/upload" className="text-muted-foreground hover:text-primary transition-colors">
                   Upload Photos
-                </Link>
-              </li>
-              <li>
-                <Link href="/client/import" className="text-muted-foreground hover:text-primary transition-colors">
-                  Import from Platforms
                 </Link>
               </li>
               <li>

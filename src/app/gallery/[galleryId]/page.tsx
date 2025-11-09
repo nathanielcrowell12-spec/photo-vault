@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
@@ -23,7 +23,7 @@ import {
   Camera,
   Upload
 } from 'lucide-react'
-import { supabase } from '@/lib/supabase'
+import { supabaseBrowser as supabase } from '@/lib/supabase-browser'
 import Link from 'next/link'
 import ManualPhotoUpload from '@/components/ManualPhotoUpload'
 
@@ -67,9 +67,17 @@ export default function GalleryViewerPage() {
 
   const galleryId = params.galleryId as string
 
-  const fetchGallery = async () => {
+  const fetchGallery = useCallback(async () => {
     try {
       setLoading(true)
+      console.log('[Gallery] Fetching gallery:', galleryId)
+
+      // Check current auth state
+      const { data: { user: currentUser } } = await supabase.auth.getUser()
+      console.log('[Gallery] Current authenticated user:', {
+        userId: currentUser?.id,
+        email: currentUser?.email
+      })
 
       // Fetch gallery info
       const { data: galleryData, error: galleryError } = await supabase
@@ -78,7 +86,12 @@ export default function GalleryViewerPage() {
         .eq('id', galleryId)
         .single()
 
-      if (galleryError) throw galleryError
+      console.log('[Gallery] Gallery query result:', { galleryData, galleryError })
+
+      if (galleryError) {
+        console.error('[Gallery] Gallery error:', galleryError)
+        throw galleryError
+      }
 
       setGallery(galleryData)
 
@@ -87,25 +100,29 @@ export default function GalleryViewerPage() {
         .from('gallery_photos')
         .select('*')
         .eq('gallery_id', galleryId)
-        .order('taken_at', { ascending: true })
+        .order('created_at', { ascending: true })
 
-      if (photosError && !photosError.message.includes('Could not find')) {
-        throw photosError
+      console.log('[Gallery] Photos query result:', {
+        count: photosData?.length,
+        photosError,
+        photosData,
+        galleryId
+      })
+
+      if (photosError) {
+        console.error('[Gallery] Photos error:', photosError)
       }
 
       setPhotos(photosData || [])
-
-      // If photos haven't been imported yet, check if we should start import
-      if (!galleryData.is_imported && (!photosData || photosData.length === 0)) {
-        console.log('Gallery not imported yet - needs import')
-      }
+      console.log('[Gallery] Successfully loaded gallery with', photosData?.length || 0, 'photos')
 
     } catch (error) {
-      console.error('Error fetching gallery:', error)
+      console.error('[Gallery] Error fetching gallery:', error)
+      console.error('[Gallery] Error details:', JSON.stringify(error, null, 2))
     } finally {
       setLoading(false)
     }
-  }
+  }, [galleryId])
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -113,7 +130,8 @@ export default function GalleryViewerPage() {
     } else if (user) {
       fetchGallery()
     }
-  }, [user, authLoading, galleryId, fetchGallery, router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id, authLoading, galleryId])
 
   const handleImportPhotos = async () => {
     if (!user || !gallery) return
@@ -375,10 +393,9 @@ export default function GalleryViewerPage() {
             </div>
 
             {/* Manual Upload Component */}
-            {showManualUpload && user && (
+            {showManualUpload && (
               <ManualPhotoUpload
                 galleryId={galleryId}
-                userId={user.id}
                 onUploadComplete={() => {
                   setShowManualUpload(false)
                   fetchGallery()

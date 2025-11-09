@@ -37,7 +37,7 @@ function DesktopAuthCallbackContent() {
   }, [searchParams, user])
 
   const handleRetry = () => {
-    router.push('/client/import')
+    router.push('/client/upload')
   }
 
   const handleDownload = () => {

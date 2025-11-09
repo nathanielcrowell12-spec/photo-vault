@@ -167,7 +167,7 @@ export default function CompetitorLogos({
                   </Card>
                 </div>
               ) : (
-                <Link href="/client/import" className="block">
+                <Link href="/client/upload" className="block">
                   <Card 
                     className={`cursor-pointer card-shadow-hover border border-border group transition-all hover:scale-105 ${
                       logo.name === 'Pic-Time' 
@@ -246,7 +246,7 @@ export default function CompetitorLogos({
       {showImportButton && (
         <div className="mt-6 text-center">
           <Button asChild className="btn-primary">
-            <Link href="/client/import">
+            <Link href="/client/upload">
               <Download className="h-4 w-4 mr-2" />
               Import More Photos
             </Link>

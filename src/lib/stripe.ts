@@ -33,7 +33,8 @@ export const STRIPE_PRICES = {
 export const STRIPE_CONNECT_CLIENT_ID = process.env.STRIPE_CONNECT_CLIENT_ID || ''
 
 /**
- * Commission rate for photographers (50%)
+ * Commission rate for photographers (50% flat rate)
+ * PhotoVault uses a simple 50/50 split on all payments
  */
 export const PHOTOGRAPHER_COMMISSION_RATE = 0.50
 

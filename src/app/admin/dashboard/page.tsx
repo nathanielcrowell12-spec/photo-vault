@@ -1,8 +1,8 @@
 'use client'
 
-import { useAuth } from '@/contexts/AuthContext'
+import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -22,15 +22,198 @@ import {
 import Link from 'next/link'
 import AccessGuard from '@/components/AccessGuard'
 
+type DashboardStatusResponse = {
+  stats: {
+    totalUsers: number | null
+    activePhotographers: number | null
+    monthlyRevenue: number | null
+    systemUptime: string | null
+  }
+  statusCards: Array<{
+    id: string
+    title: string
+    state: 'operational' | 'warning' | 'pending' | 'error'
+    summary: string
+    detail: string
+    icon: string
+  }>
+}
+
+const STATUS_STYLES: Record<DashboardStatusResponse['statusCards'][number]['state'], { bg: string; border: string; text: string; badge: string }> = {
+  operational: {
+    bg: 'bg-green-50',
+    border: 'border-green-200',
+    text: 'text-green-700',
+    badge: 'bg-green-100 text-green-700',
+  },
+  warning: {
+    bg: 'bg-amber-50',
+    border: 'border-amber-200',
+    text: 'text-amber-700',
+    badge: 'bg-amber-100 text-amber-700',
+  },
+  pending: {
+    bg: 'bg-blue-50',
+    border: 'border-blue-200',
+    text: 'text-blue-700',
+    badge: 'bg-blue-100 text-blue-700',
+  },
+  error: {
+    bg: 'bg-red-50',
+    border: 'border-red-200',
+    text: 'text-red-700',
+    badge: 'bg-red-100 text-red-700',
+  },
+}
+
+const STATUS_ICON_MAP = {
+  Shield,
+  CheckCircle,
+  AlertTriangle,
+  Database,
+  Globe,
+  BarChart3,
+  Activity,
+  DollarSign,
+} as const
+
 export default function AdminDashboardPage() {
   const { user, loading, signOut } = useAuth()
   const router = useRouter()
+
+  const [statusLoading, setStatusLoading] = useState(true)
+  const [statusError, setStatusError] = useState<string | null>(null)
+  const [dashboardStatus, setDashboardStatus] = useState<DashboardStatusResponse | null>(null)
 
   useEffect(() => {
     if (!loading && !user) {
       router.push('/login')
     }
   }, [user, loading, router])
+
+  useEffect(() => {
+    if (loading || !user) {
+      return
+    }
+
+    let cancelled = false
+
+    const fetchStatus = async () => {
+      setStatusLoading(true)
+      setStatusError(null)
+      try {
+        const response = await fetch('/api/admin/dashboard/status', { cache: 'no-store' })
+        const payload = await response.json()
+        if (!response.ok || !payload.success) {
+          throw new Error(payload.error || 'Failed to load dashboard status')
+        }
+        if (!cancelled) {
+          setDashboardStatus(payload.data as DashboardStatusResponse)
+        }
+      } catch (error) {
+        console.error('[admin/dashboard] status fetch failed', error)
+        if (!cancelled) {
+          setDashboardStatus(null)
+          setStatusError(error instanceof Error ? error.message : 'Unknown error')
+        }
+      } finally {
+        if (!cancelled) {
+          setStatusLoading(false)
+        }
+      }
+    }
+
+    fetchStatus()
+
+    return () => {
+      cancelled = true
+    }
+  }, [loading, user])
+
+  const fallbackStatusCards = useMemo(
+    () => [
+      {
+        id: 'overall',
+        title: 'Platform',
+        state: 'pending' as const,
+        summary: 'Awaiting data',
+        detail: 'Live metrics will appear once Supabase connectivity is confirmed.',
+        icon: 'Shield',
+      },
+      {
+        id: 'database',
+        title: 'Database',
+        state: 'pending' as const,
+        summary: 'Awaiting data',
+        detail: 'Connect to Supabase to surface health insights here.',
+        icon: 'Database',
+      },
+      {
+        id: 'cdn',
+        title: 'CDN',
+        state: 'pending' as const,
+        summary: 'Integration pending',
+        detail: 'Connect CDN monitoring to surface delivery health.',
+        icon: 'Globe',
+      },
+      {
+        id: 'performance',
+        title: 'Performance',
+        state: 'pending' as const,
+        summary: 'Manual monitoring',
+        detail: 'Hook up performance telemetry to replace this note.',
+        icon: 'BarChart3',
+      },
+    ],
+    [],
+  )
+
+  const statusCards = dashboardStatus?.statusCards ?? fallbackStatusCards
+  const stats = dashboardStatus?.stats
+
+  const quickStats = useMemo(
+    () => [
+      {
+        label: 'Total Users',
+        value: stats?.totalUsers,
+        formatter: (value: number | string) => Number(value).toLocaleString(),
+        icon: Users,
+      },
+      {
+        label: 'Active Photographers',
+        value: stats?.activePhotographers,
+        formatter: (value: number | string) => Number(value).toLocaleString(),
+        icon: Camera,
+      },
+      {
+        label: 'Monthly Revenue',
+        value: stats?.monthlyRevenue,
+        formatter: (value: number | string) =>
+          new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(value)),
+        icon: DollarSign,
+      },
+      {
+        label: 'System Uptime',
+        value: stats?.systemUptime ?? null,
+        formatter: (value: number | string) => String(value),
+        icon: Activity,
+      },
+    ],
+    [stats?.activePhotographers, stats?.monthlyRevenue, stats?.systemUptime, stats?.totalUsers],
+  )
+
+  const renderStatValue = (
+    value: number | string | null | undefined,
+    formatter: (val: number | string) => string,
+  ) => {
+    if (statusLoading) {
+      return '...'
+    }
+    if (value === null || value === undefined) {
+      return '—'
+    }
+    return formatter(value)
+  }
 
   if (loading) {
     return (
@@ -86,38 +269,34 @@ export default function AdminDashboardPage() {
                 <CardDescription>Real-time system health and performance metrics</CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-                    <div className="flex items-center gap-2 mb-2">
-                      <CheckCircle className="h-4 w-4 text-green-600" />
-                      <span className="font-semibold text-green-800">System Online</span>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
+                  {statusError && (
+                    <div className="md:col-span-2 xl:col-span-4 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                      Unable to load live status: {statusError}
                     </div>
-                    <p className="text-sm text-green-600">All services operational</p>
+                  )}
+                  {statusCards.map((card) => {
+                    const styles = STATUS_STYLES[card.state]
+                    const IconComponent =
+                      STATUS_ICON_MAP[card.icon as keyof typeof STATUS_ICON_MAP] ?? Shield
+                    return (
+                      <div
+                        key={card.id}
+                        className={`p-4 rounded-lg border ${styles.border} ${styles.bg} flex flex-col gap-2`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center gap-2">
+                            <IconComponent className={`h-4 w-4 ${styles.text}`} />
+                            <span className="font-semibold text-slate-800">{card.title}</span>
                   </div>
-                  
-                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Database className="h-4 w-4 text-blue-600" />
-                      <span className="font-semibold text-blue-800">Database</span>
+                          <span className={`rounded-full px-2 py-1 text-xs font-medium ${styles.badge}`}>
+                            {card.summary}
+                          </span>
                     </div>
-                    <p className="text-sm text-blue-600">Connected & healthy</p>
+                        <p className="text-sm text-slate-600">{card.detail}</p>
                   </div>
-                  
-                  <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
-                    <div className="flex items-center gap-2 mb-2">
-                      <Globe className="h-4 w-4 text-purple-600" />
-                      <span className="font-semibold text-purple-800">CDN Status</span>
-                    </div>
-                    <p className="text-sm text-purple-600">Global delivery active</p>
-                  </div>
-                  
-                  <div className="bg-orange-50 p-4 rounded-lg border border-orange-200">
-                    <div className="flex items-center gap-2 mb-2">
-                      <BarChart3 className="h-4 w-4 text-orange-600" />
-                      <span className="font-semibold text-orange-800">Performance</span>
-                    </div>
-                    <p className="text-sm text-orange-600">Optimal response times</p>
-                  </div>
+                    )
+                  })}
                 </div>
               </CardContent>
             </Card>
@@ -241,53 +420,21 @@ export default function AdminDashboardPage() {
 
             {/* Quick Stats */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-              <Card>
+              {quickStats.map((stat) => (
+                <Card key={stat.label}>
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-sm font-medium text-gray-600">Total Users</p>
-                      <p className="text-2xl font-bold">-</p>
+                        <p className="text-sm font-medium text-gray-600">{stat.label}</p>
+                        <p className="text-2xl font-bold">
+                          {renderStatValue(stat.value, stat.formatter)}
+                        </p>
                     </div>
-                    <Users className="h-8 w-8 text-blue-600" />
+                      <stat.icon className="h-8 w-8 text-blue-600" />
                   </div>
                 </CardContent>
               </Card>
-
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">Active Photographers</p>
-                      <p className="text-2xl font-bold">-</p>
-                    </div>
-                    <Camera className="h-8 w-8 text-green-600" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">Monthly Revenue</p>
-                      <p className="text-2xl font-bold">-</p>
-                    </div>
-                    <DollarSign className="h-8 w-8 text-purple-600" />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm font-medium text-gray-600">System Uptime</p>
-                      <p className="text-2xl font-bold">-</p>
-                    </div>
-                    <Activity className="h-8 w-8 text-orange-600" />
-                  </div>
-                </CardContent>
-              </Card>
+              ))}
             </div>
           </div>
         </main>

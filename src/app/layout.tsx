@@ -4,6 +4,7 @@ import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ViewProvider } from "@/contexts/ViewContext";
 import { Navigation, Footer } from "@/components/navigation";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -124,6 +125,7 @@ export default function RootLayout({
                 {children}
               </main>
               <Footer />
+              <Toaster />
             </div>
           </ViewProvider>
         </AuthProvider>

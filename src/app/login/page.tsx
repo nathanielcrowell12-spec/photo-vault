@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -16,26 +16,42 @@ export default function LoginPage() {
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const { signIn } = useAuth()
-  const router = useRouter()
+  const [shouldRedirect, setShouldRedirect] = useState(false)
+  const { signIn, userType } = useAuth()
+
+  // Redirect when userType is available after login
+  useEffect(() => {
+    if (shouldRedirect && userType) {
+      console.log('[Login] User type loaded:', userType)
+      const dashboardRoute = userType === 'admin' ? '/admin/dashboard'
+                           : userType === 'photographer' ? '/photographer/dashboard'
+                           : userType === 'client' ? '/client/dashboard'
+                           : '/dashboard'
+      console.log('[Login] Redirecting to:', dashboardRoute)
+      window.location.href = dashboardRoute
+    }
+  }, [userType, shouldRedirect])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
     setError('')
 
+    console.log('[Login] Submitting login form...')
+
     const { error } = await signIn(email, password)
 
     if (error) {
-      setError(typeof error === 'object' && error !== null && 'message' in error 
-        ? (error as { message: string }).message 
-        : 'An error occurred during login')
+      const errorMessage = typeof error === 'object' && error !== null && 'message' in error
+        ? (error as { message: string }).message
+        : 'An error occurred during login'
+      console.error('[Login] Sign in error:', error)
+      setError(errorMessage)
+      setLoading(false)
     } else {
-      // Redirect based on user type will be handled by AuthProvider
-      router.push('/dashboard')
+      console.log('[Login] Sign in successful, waiting for user type...')
+      setShouldRedirect(true)
     }
-
-    setLoading(false)
   }
 
   return (
@@ -47,9 +63,12 @@ export default function LoginPage() {
             <ArrowLeft className="h-4 w-4" />
             <span>Back to Home</span>
           </Link>
-          <div className="flex items-center justify-center space-x-2 mb-5">
-            <Heart className="h-7 w-7 text-primary" />
-            <span className="text-xl font-semibold tracking-tight">PhotoVault</span>
+          <div className="flex items-center justify-center mb-5">
+            <img 
+              src="/images/logos/photovault logo.png" 
+              alt="PhotoVault" 
+              className="h-10 w-auto"
+            />
           </div>
           <h1 className="text-3xl font-semibold text-foreground mb-2 tracking-tight">Welcome Back</h1>
           <p className="text-muted-foreground">Sign in to access your photos</p>

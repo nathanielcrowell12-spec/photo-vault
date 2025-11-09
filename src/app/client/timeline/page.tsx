@@ -605,7 +605,7 @@ export default function PhotoTimelinePage() {
                   Try adjusting your filters or import photos from your photographers.
                 </p>
                 <Button asChild>
-                  <Link href="/client/import">Import Photos</Link>
+                  <Link href="/client/upload">Upload Photos</Link>
                 </Button>
               </CardContent>
             </Card>

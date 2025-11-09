@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import { Button } from '@/components/ui/button'
@@ -14,11 +14,11 @@ import Link from 'next/link'
 
 export default function SignupPage() {
   const router = useRouter()
-  const { signUp } = useAuth()
+  const { signUp, user, userType: currentUserType } = useAuth()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const userType = 'client' // Customer signup page - fixed to client
-  
+
   const [formData, setFormData] = useState({
     fullName: '',
     email: '',
@@ -26,6 +26,14 @@ export default function SignupPage() {
     password: '',
     confirmPassword: ''
   })
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user && currentUserType) {
+      console.log('[Signup] User already logged in, redirecting to dashboard')
+      router.push('/dashboard')
+    }
+  }, [user, currentUserType, router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

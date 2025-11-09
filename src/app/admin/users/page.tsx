@@ -40,7 +40,8 @@ import {
   CheckCircle,
   Crown,
   Camera,
-  Heart
+  Heart,
+  AlertTriangle,
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import AccessGuard from '@/components/AccessGuard'
@@ -72,6 +73,7 @@ export default function UserProfilesPage() {
   const [editDialogOpen, setEditDialogOpen] = useState(false)
   const [suspendDialogOpen, setSuspendDialogOpen] = useState(false)
   const [suspensionReason, setSuspensionReason] = useState('')
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
   useEffect(() => {
     if (!loading && !user) {
@@ -80,75 +82,39 @@ export default function UserProfilesPage() {
   }, [user, loading, router])
 
   useEffect(() => {
-    // Add timeout to prevent infinite loading
-    const timeoutId = setTimeout(() => {
-      if (loadingUsers) {
-        console.log('Fetch users timeout - setting loading to false')
-        setLoadingUsers(false)
-        setUsers([])
-      }
-    }, 10000) // 10 second timeout
-
     fetchUsers()
-
-    return () => clearTimeout(timeoutId)
-  }, [loadingUsers])
+  }, [])
 
   useEffect(() => {
     filterUsers()
-  }, [users, searchTerm, filterType, filterStatus])
+  }, [filterUsers])
 
   const fetchUsers = async () => {
     try {
       setLoadingUsers(true)
-      console.log('Fetching users from database...')
-      
-      // Add timeout to the Supabase query
-      const queryPromise = supabase
-        .from('user_profiles')
-        .select('*')
-        .order('created_at', { ascending: false })
+      setErrorMessage(null)
+      const response = await fetch('/api/admin/users', { cache: 'no-store' })
 
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error('Database query timeout')), 5000)
-      )
-
-      const { data, error } = await Promise.race([queryPromise, timeoutPromise]) as { data: UserProfile[] | null; error: unknown }
-
-      if (error) {
-        console.error('Database error:', error)
-        
-        // If database is unavailable, show empty state
-        const errorObj = error as { message?: string; code?: string }
-        if (errorObj.message === 'Database query timeout' || errorObj.code === 'PGRST301') {
-          console.log('Database unavailable, showing empty state')
-          setUsers([])
-          return
-        }
-        
-        // Set empty array for other errors
-        setUsers([])
-        return
+      if (!response.ok) {
+        const payload = await response.json().catch(() => null)
+        const apiError = payload?.error ?? 'Failed to load users'
+        throw new Error(apiError)
       }
 
-      console.log('Found user profiles:', data?.length || 0)
+      const payload = (await response.json()) as { data: UserProfile[] }
+      const data = payload?.data ?? []
 
-      // For now, let's just use the user profiles without trying to get emails from auth
-      // This avoids potential admin API issues
-      const usersWithEmails = data?.map((userProfile: UserProfile) => ({
+      const usersWithEmails = data.map((userProfile) => ({
         ...userProfile,
-        email: `user-${userProfile.id.slice(0, 8)}@example.com`, // Temporary placeholder
+        email: userProfile.email || `user-${userProfile.id.slice(0, 8)}@example.com`,
         is_suspended: userProfile.payment_status === 'suspended' || false,
-        suspension_reason: userProfile.payment_status === 'suspended' ? 'Administrative suspension' : null
-      })) || []
+        suspension_reason: userProfile.payment_status === 'suspended' ? userProfile.suspension_reason ?? 'Administrative suspension' : null,
+      }))
 
       setUsers(usersWithEmails)
-      console.log('Users loaded successfully:', usersWithEmails.length)
     } catch (error) {
       console.error('Error fetching users:', error)
-      
-      // If there's a complete failure, show empty state
-      console.log('Complete fetch failure, showing empty state')
+      setErrorMessage(error instanceof Error ? error.message : 'Unexpected error loading users')
       setUsers([])
     } finally {
       setLoadingUsers(false)
@@ -325,6 +291,20 @@ export default function UserProfilesPage() {
 
         <main className="container mx-auto px-4 py-8">
           <div className="max-w-7xl mx-auto space-y-6">
+            {errorMessage && (
+              <Card className="border border-red-200 bg-red-50">
+                <CardContent className="flex items-center justify-between p-4 text-sm text-red-700">
+                  <div className="flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4" />
+                    <span>{errorMessage}</span>
+                  </div>
+                  <Button variant="outline" size="sm" onClick={fetchUsers}>
+                    Retry
+                  </Button>
+                </CardContent>
+              </Card>
+            )}
+
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <Card>

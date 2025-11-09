@@ -129,7 +129,9 @@ export default function UserTypeSelectionPage() {
                     <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
                     <div>
                       <div className="font-medium">Bulk upload tools</div>
-                      <div className="text-sm text-slate-600 dark:text-slate-400">Upload thousands of photos in seconds</div>
+                      <div className="text-sm text-slate-600 dark:text-slate-400">
+                        Optimized, resumable uploads for large galleries without babysitting progress
+                      </div>
                     </div>
                   </div>
                   <div className="flex items-start space-x-3">

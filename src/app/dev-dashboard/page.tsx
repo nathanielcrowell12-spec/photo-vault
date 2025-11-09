@@ -47,9 +47,9 @@ export default function DevDashboard() {
       bgColor: 'bg-green-100 dark:bg-green-900/20'
     },
     {
-      title: 'Import from Platforms',
-      description: 'Import photos from Pixieset, ShootProof, SmugMug, etc.',
-      href: '/client/import',
+      title: 'Desktop Upload',
+      description: 'Launch the desktop app for large batch uploads.',
+      href: '/client/upload',
       icon: Download,
       color: 'text-blue-600',
       bgColor: 'bg-blue-100 dark:bg-blue-900/20'

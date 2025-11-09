@@ -19,7 +19,7 @@ interface GalleryCardProps {
 
 export function GalleryCard({ gallery, isPhotographer, onEdit, onNavigate, onImageError }: GalleryCardProps) {
   const handleImportClick = () => {
-    onNavigate(NAVIGATION_ROUTES.CLIENT_IMPORT)
+    onNavigate(NAVIGATION_ROUTES.CLIENT_UPLOAD)
   }
 
   const handleEditClick = () => {

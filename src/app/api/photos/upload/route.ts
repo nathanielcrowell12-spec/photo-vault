@@ -1,40 +1,57 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { generateRandomId } from '@/lib/api-constants'
-import { createClient } from '@supabase/supabase-js'
-
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+import { createServerSupabaseClient } from '@/lib/supabase-server'
 
 export async function POST(request: NextRequest) {
   try {
+    const supabase = await createServerSupabaseClient()
+
+    // Get authenticated user from session (cookies)
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: 'Unauthorized - Please sign in' },
+        { status: 401 }
+      )
+    }
+
     const formData = await request.formData()
     const galleryId = formData.get('galleryId') as string
-    const userId = formData.get('userId') as string
     const files = formData.getAll('photos') as File[]
 
-    if (!galleryId || !userId || files.length === 0) {
+    if (!galleryId || files.length === 0) {
       return NextResponse.json(
         { error: 'Missing required fields' },
         { status: 400 }
       )
     }
 
-    // Verify gallery belongs to user
+    // Verify gallery belongs to authenticated user
     const { data: gallery, error: galleryError } = await supabase
       .from('galleries')
       .select('*')
       .eq('id', galleryId)
-      .eq('user_id', userId)
+      .eq('user_id', user.id)
       .single()
 
     if (galleryError || !gallery) {
+      console.error('[Upload API] Gallery verification failed:', {
+        galleryId,
+        userId: user.id,
+        error: galleryError
+      })
       return NextResponse.json(
         { error: 'Gallery not found or access denied' },
         { status: 404 }
       )
     }
+
+    console.log('[Upload API] Gallery verified:', {
+      galleryId: gallery.id,
+      userId: user.id,
+      galleryName: gallery.gallery_name
+    })
 
     const uploadedPhotos = []
 
@@ -44,9 +61,9 @@ export async function POST(request: NextRequest) {
       const timestamp = Date.now()
       const randomId = generateRandomId()
       const fileName = `${timestamp}-${randomId}-${file.name}`
-      
-      // Upload original photo
-      const originalPath = `${userId}/${galleryId}/original/${fileName}`
+
+      // Upload original photo - use verified user.id and gallery.id from database
+      const originalPath = `${user.id}/${gallery.id}/original/${fileName}`
       const { data: uploadData, error: uploadError } = await supabase.storage
         .from('photos')
         .upload(originalPath, file, {
@@ -68,11 +85,11 @@ export async function POST(request: NextRequest) {
       // For now, use the original photo as thumbnail
       const thumbnailUrl = publicUrl
 
-      // Save to database
+      // Save to database - use verified gallery.id from database query
       const { data: photoData, error: photoError } = await supabase
         .from('gallery_photos')
         .insert({
-          gallery_id: galleryId,
+          gallery_id: gallery.id,  // Use verified gallery ID, not form data
           photo_url: publicUrl,
           thumbnail_url: thumbnailUrl,
           original_filename: file.name,
@@ -88,11 +105,11 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Update gallery photo count
+    // Update gallery photo count - use verified gallery.id
     const { data: photos } = await supabase
       .from('gallery_photos')
       .select('id')
-      .eq('gallery_id', galleryId)
+      .eq('gallery_id', gallery.id)
 
     await supabase
       .from('galleries')
@@ -101,7 +118,13 @@ export async function POST(request: NextRequest) {
         is_imported: true,
         import_completed_at: new Date().toISOString()
       })
-      .eq('id', galleryId)
+      .eq('id', gallery.id)
+
+    console.log('[Upload API] Upload complete:', {
+      galleryId: gallery.id,
+      uploadedCount: uploadedPhotos.length,
+      totalFiles: files.length
+    })
 
     return NextResponse.json({
       success: true,

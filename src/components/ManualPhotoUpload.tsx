@@ -17,7 +17,6 @@ import {
 
 interface ManualPhotoUploadProps {
   galleryId: string
-  userId: string
   onUploadComplete: () => void
 }
 
@@ -29,7 +28,7 @@ interface UploadingFile {
   error?: string
 }
 
-export default function ManualPhotoUpload({ galleryId, userId, onUploadComplete }: ManualPhotoUploadProps) {
+export default function ManualPhotoUpload({ galleryId, onUploadComplete }: ManualPhotoUploadProps) {
   const [files, setFiles] = useState<UploadingFile[]>([])
   const [isUploading, setIsUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
@@ -87,7 +86,7 @@ export default function ManualPhotoUpload({ galleryId, userId, onUploadComplete 
 
     const formData = new FormData()
     formData.append('galleryId', galleryId)
-    formData.append('userId', userId)
+    // userId is no longer needed - API gets it from session cookies
 
     files.forEach(f => {
       formData.append('photos', f.file)

@@ -1,0 +1,88 @@
+{
+  "agent": {
+    "id": "02-support-triage",
+    "name": "Support Triage Agent",
+    "version": "0.0.0",
+    "status": "template",
+    "created": null,
+    "lastModified": "2024-11-07"
+  },
+  "purpose": {
+    "primary": "Handle initial customer support inquiries and route appropriately",
+    "goals": [
+      "Classify incoming support tickets by urgency and category",
+      "Answer common questions automatically from knowledge base",
+      "Route complex issues to human support with context",
+      "Track response times and resolution rates"
+    ]
+  },
+  "tools": [
+    "ticket-reader",
+    "knowledge-base-search",
+    "email-responder",
+    "ticket-router",
+    "report-generator"
+  ],
+  "permissions": {
+    "read": [
+      "support_tickets",
+      "knowledge_base",
+      "user_account_info (limited)",
+      "previous_ticket_history"
+    ],
+    "write": [
+      "ticket_responses",
+      "ticket_status",
+      "activity_logs",
+      "weekly_reports"
+    ],
+    "forbidden": [
+      "user_passwords",
+      "payment_methods",
+      "direct_database_writes",
+      "account_deletions"
+    ]
+  },
+  "workflows": [
+    {
+      "name": "ticket-classification",
+      "file": "workflows/ticket-classification.md",
+      "trigger": "new_ticket",
+      "description": "Classify and prioritize new support tickets"
+    },
+    {
+      "name": "auto-response",
+      "file": "workflows/auto-response.md",
+      "trigger": "after_classification",
+      "description": "Attempt to answer ticket automatically"
+    },
+    {
+      "name": "escalation",
+      "file": "workflows/escalation.md",
+      "trigger": "manual_or_threshold",
+      "description": "Route ticket to human support"
+    }
+  },
+  "classification": {
+    "urgency": ["critical", "high", "medium", "low"],
+    "categories": [
+      "login_issues",
+      "photo_upload_problems",
+      "billing_questions",
+      "feature_requests",
+      "bug_reports",
+      "general_inquiry"
+    ],
+    "autoResolvable": ["password_reset", "basic_how_to", "account_questions"]
+  },
+  "limits": {
+    "maxAutoResponses": 100,
+    "escalationThreshold": 2,
+    "responseTimeTarget": "< 5 minutes"
+  },
+  "notes": [
+    "This is a template. Configure knowledge base before activation.",
+    "Test auto-responses thoroughly before going live.",
+    "Always err on the side of human escalation for sensitive issues."
+  ]
+}

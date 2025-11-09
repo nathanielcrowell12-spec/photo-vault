@@ -28,8 +28,12 @@ export default function PhotographersPage() {
         <div className="container-pixieset py-5 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
-              <Camera className="h-7 w-7 text-primary" />
-              <span className="text-xl font-semibold text-foreground tracking-tight">PhotoVault Pro</span>
+              <img 
+                src="/images/logos/photovault logo.png" 
+                alt="PhotoVault Pro" 
+                className="h-8 w-auto"
+              />
+              <span className="text-xl font-semibold text-foreground tracking-tight ml-2">Pro</span>
             </div>
           </div>
           <div className="flex items-center space-x-3">

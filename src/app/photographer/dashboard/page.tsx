@@ -130,8 +130,8 @@ export default function PhotographerDashboardPage() {
 
             {/* Main Actions */}
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-                <CardHeader>
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer flex flex-col">
+                <CardHeader className="flex-1">
                   <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
                     <Users className="w-6 h-6 text-blue-600" />
                   </div>
@@ -149,8 +149,8 @@ export default function PhotographerDashboardPage() {
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-                <CardHeader>
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer flex flex-col">
+                <CardHeader className="flex-1">
                   <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
                     <Upload className="w-6 h-6 text-green-600" />
                   </div>
@@ -168,8 +168,8 @@ export default function PhotographerDashboardPage() {
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-                <CardHeader>
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer flex flex-col">
+                <CardHeader className="flex-1">
                   <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
                     <Share2 className="w-6 h-6 text-purple-600" />
                   </div>
@@ -187,8 +187,8 @@ export default function PhotographerDashboardPage() {
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-                <CardHeader>
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer flex flex-col">
+                <CardHeader className="flex-1">
                   <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
                     <BarChart3 className="w-6 h-6 text-orange-600" />
                   </div>

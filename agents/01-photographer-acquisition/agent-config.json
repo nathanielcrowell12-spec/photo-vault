@@ -1,0 +1,97 @@
+{
+  "agent": {
+    "id": "01-photographer-acquisition",
+    "name": "Photographer Acquisition Agent",
+    "version": "0.0.0",
+    "status": "template",
+    "created": null,
+    "lastModified": "2024-11-07"
+  },
+  "purpose": {
+    "primary": "Find and qualify potential photographers to join PhotoVault",
+    "goals": [
+      "Scrape photography directories for leads",
+      "Qualify leads based on portfolio quality and client base",
+      "Execute automated outreach campaigns",
+      "Track responses and schedule follow-ups"
+    ]
+  },
+  "tools": [
+    "web-scraper",
+    "email-sender",
+    "database-writer",
+    "report-generator"
+  ],
+  "permissions": {
+    "read": [
+      "public_photography_directories",
+      "lead_qualification_criteria",
+      "outreach_templates",
+      "existing_photographer_database"
+    ],
+    "write": [
+      "prospect_database",
+      "activity_logs",
+      "weekly_reports",
+      "outreach_queue"
+    ],
+    "forbidden": [
+      "user_passwords",
+      "payment_information",
+      "production_database_direct_access"
+    ]
+  },
+  "workflows": [
+    {
+      "name": "directory-scraping",
+      "file": "workflows/directory-scraping.md",
+      "trigger": "scheduled_daily",
+      "description": "Scrape photography directories for new leads"
+    },
+    {
+      "name": "lead-qualification",
+      "file": "workflows/lead-qualification.md",
+      "trigger": "after_scraping",
+      "description": "Qualify scraped leads against criteria"
+    },
+    {
+      "name": "outreach-sequence",
+      "file": "workflows/outreach-sequences.md",
+      "trigger": "manual",
+      "description": "Execute outreach campaign to qualified leads"
+    }
+  ],
+  "templates": [
+    {
+      "name": "initial-outreach-email",
+      "file": "templates/outreach-email-v1.md",
+      "description": "First contact email to photographers"
+    },
+    {
+      "name": "follow-up-email",
+      "file": "templates/follow-up-email-v1.md",
+      "description": "Follow-up for non-responders after 7 days"
+    }
+  ],
+  "logging": {
+    "level": "verbose",
+    "dailyLogs": "logs/YYYY-MM-DD.jsonl",
+    "weeklyReport": "reports/week-WW-YYYY.md"
+  },
+  "limits": {
+    "maxLeadsPerDay": 100,
+    "maxEmailsPerDay": 50,
+    "retryAttempts": 3,
+    "cooldownPeriod": "24h"
+  },
+  "notifications": {
+    "successThreshold": 10,
+    "errorThreshold": 5,
+    "reportSchedule": "weekly"
+  },
+  "notes": [
+    "This is a template. Fill in actual values before activation.",
+    "Review and update qualification criteria regularly.",
+    "Monitor email deliverability and adjust templates as needed."
+  ]
+}

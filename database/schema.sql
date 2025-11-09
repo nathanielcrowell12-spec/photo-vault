@@ -253,8 +253,10 @@ ALTER TABLE client_invitations ENABLE ROW LEVEL SECURITY;
 -- RLS Policies (users can only access their own data)
 CREATE POLICY "Users can view own profile" ON user_profiles FOR SELECT USING (auth.uid() = id);
 CREATE POLICY "Users can update own profile" ON user_profiles FOR UPDATE USING (auth.uid() = id);
+CREATE POLICY "Users can insert own profile" ON user_profiles FOR INSERT WITH CHECK (auth.uid() = id);
 
 CREATE POLICY "Photographers can view own data" ON photographers FOR ALL USING (auth.uid() = id);
+CREATE POLICY "Photographers can insert own data" ON photographers FOR INSERT WITH CHECK (auth.uid() = id);
 CREATE POLICY "Clients can view own photographer data" ON photographers FOR SELECT USING (
   EXISTS (SELECT 1 FROM clients WHERE photographer_id = photographers.id AND id IN (
     SELECT client_id FROM photo_galleries WHERE client_id IN (

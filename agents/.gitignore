@@ -1,0 +1,47 @@
+# Agent Logs
+logs/
+*.log
+
+# Agent Data
+data/
+*.db
+*.sqlite
+
+# Credentials and Secrets
+credentials/
+secrets/
+.env
+*.key
+*.pem
+
+# Temporary Files
+tmp/
+temp/
+*.tmp
+
+# Agent-specific data
+*/data/
+*/logs/
+*/temp/
+
+# Database dumps
+*.sql.backup
+*.dump
+
+# API Keys and Tokens
+api-keys.json
+tokens.json
+
+# User-specific configurations
+local-config.json
+dev-config.json
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

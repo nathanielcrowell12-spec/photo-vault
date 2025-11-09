@@ -11,3 +11,4 @@ export async function GET() {
     keyPreview: supabaseAnonKey ? supabaseAnonKey.substring(0, 30) + '...' : 'undefined'
   })
 }
+

@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, useRef } from 'react'
 import { User, Session } from '@supabase/supabase-js'
-import { supabase } from '@/lib/supabase'
+import { supabaseBrowser as supabase } from '@/lib/supabase-browser'
 import { validateUserType } from '@/lib/access-control'
 
 interface AuthContextType {
@@ -39,18 +39,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const fetchUserType = async (userId: string) => {
     // Prevent concurrent fetches
     if (isFetchingRef.current) {
-      console.log('AuthContext: Fetch already in progress, skipping')
+      console.log('[AuthContext] Fetch already in progress, skipping')
       return
     }
 
     isFetchingRef.current = true
+    console.log('[AuthContext] Fetching user type for:', userId)
 
     try {
-      const currentUser = await supabase.auth.getUser()
-      const userEmail = currentUser.data.user?.email
+      // Get current session instead of calling getUser() which can return 403
+      const { data: { session } } = await supabase.auth.getSession()
+      const userEmail = session?.user?.email
       const isAdminUser = userEmail === 'nathaniel.crowell12@gmail.com'
 
+      console.log('[AuthContext] User email:', userEmail, 'Is admin:', isAdminUser)
+
       if (isAdminUser) {
+        console.log('[AuthContext] Setting admin user type')
         setUserType('admin')
         setUserFullName('Admin User')
         setPaymentStatus('admin_bypass')
@@ -64,8 +69,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         .eq('id', userId)
         .maybeSingle()
 
+      console.log('[AuthContext] Profile query result:', { data, error })
+
       if (error) {
-        console.error('Error fetching user profile:', error)
+        console.error('[AuthContext] Error fetching user profile:', error)
         setUserType('client')
         setUserFullName(null)
         setPaymentStatus('pending')
@@ -74,18 +81,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
 
       if (data) {
+        console.log('[AuthContext] Setting user type from profile:', data.user_type)
         setUserType(data.user_type)
         setUserFullName(data.full_name || data.business_name || null)
         setPaymentStatus(data.payment_status)
         setIsPaymentActive(true)
       } else {
+        console.log('[AuthContext] No profile found, defaulting to client')
         setUserType('client')
         setUserFullName(null)
         setPaymentStatus('active')
         setIsPaymentActive(true)
       }
     } catch (error) {
-      console.error('Error fetching user type:', error)
+      console.error('[AuthContext] Error fetching user type:', error)
       setUserType('client')
       setUserFullName(null)
       setPaymentStatus('active')
@@ -143,10 +152,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const initializeAuth = async () => {
       try {
         const { data: { session }, error } = await supabase.auth.getSession()
-        
+
         if (error) {
           console.error('AuthContext: Session error:', error)
-          await supabase.auth.signOut()
+          // Don't sign out - just clear state
           setSession(null)
           setUser(null)
           setUserType(null)
@@ -160,7 +169,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
       } catch (error) {
         console.error('AuthContext: Session fetch error:', error)
-        await supabase.auth.signOut()
+        // Don't sign out - just clear state
         setSession(null)
         setUser(null)
         setUserType(null)
@@ -290,11 +299,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (userType === 'photographer') {
         const { error: photographerError } = await supabase.from('photographers').insert({
           id: data.user.id,
-          business_name: fullName || 'My Photography Business',
+          // business_name is stored in user_profiles table, not photographers table
+          // photographers table has optional columns for CMS integration
         })
-        
+
         if (photographerError) {
           console.error('Error creating photographer profile:', photographerError)
+          console.error('Photographer error details:', JSON.stringify(photographerError, null, 2))
         }
       }
       
@@ -368,9 +379,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
 
       if (error) {
+        console.error('[AuthContext] Sign in error:', {
+          message: error.message,
+          status: error.status,
+          name: error.name,
+        })
         setLoading(false)
         return { error }
       }
+
+      console.log('[AuthContext] Sign in SUCCESS:', {
+        hasUser: !!data.user,
+        hasSession: !!data.session,
+        userId: data.user?.id,
+        email: data.user?.email,
+      })
+
+      // Manually set the session to ensure it's stored
+      if (data.session && data.user) {
+        setSession(data.session)
+        setUser(data.user)
+        await fetchUserType(data.user.id)
+      }
+
+      // Mark loading as complete
+      setLoading(false)
 
       // Success - the auth state change handler will handle the rest
       return { error: null }
@@ -382,6 +415,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const signOut = async () => {
     try {
+      console.log('[AuthContext] Signing out...')
       await supabase.auth.signOut()
       setUser(null)
       setSession(null)
@@ -389,8 +423,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUserFullName(null)
       setPaymentStatus(null)
       setIsPaymentActive(false)
+      console.log('[AuthContext] Sign out complete, redirecting to login...')
+
+      // Redirect to login page after sign out
+      if (typeof window !== 'undefined') {
+        window.location.href = '/login'
+      }
     } catch (error) {
-      console.error('Error signing out:', error)
+      console.error('[AuthContext] Error signing out:', error)
     }
   }
 

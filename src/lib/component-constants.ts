@@ -8,7 +8,6 @@ export const API_KEY_DISPLAY_LENGTH = 20
 
 // Navigation constants
 export const NAVIGATION_ROUTES = {
-  CLIENT_IMPORT: '/client/import',
   CLIENT_UPLOAD: '/client/upload',
   LOGIN: '/login',
   DASHBOARD: '/dashboard',

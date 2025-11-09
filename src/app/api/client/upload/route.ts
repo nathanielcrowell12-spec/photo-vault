@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { v4 as uuidv4 } from 'uuid'
 
 interface UploadRequest {
@@ -20,6 +20,18 @@ interface UploadRequest {
 
 export async function POST(request: NextRequest) {
   try {
+    const supabase = await createServerSupabaseClient()
+
+    // Get authenticated user from session
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: 'Unauthorized - Please sign in' },
+        { status: 401 }
+      )
+    }
+
     const body: UploadRequest = await request.json()
     const { client_id, photos, session_name, auto_organize } = body
 
@@ -30,16 +42,17 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Verify client exists
+    // Verify client exists and belongs to authenticated user
     const { data: client, error: clientError } = await supabase
       .from('clients')
       .select('*')
       .eq('id', client_id)
+      .eq('user_id', user.id)
       .single()
 
     if (clientError || !client) {
       return NextResponse.json(
-        { error: 'Client not found' },
+        { error: 'Client not found or access denied' },
         { status: 404 }
       )
     }
@@ -318,6 +331,18 @@ async function extractPhotoMetadata(_imageData: Buffer) {
 // GET endpoint to retrieve upload sessions
 export async function GET(request: NextRequest) {
   try {
+    const supabase = await createServerSupabaseClient()
+
+    // Get authenticated user from session
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: 'Unauthorized - Please sign in' },
+        { status: 401 }
+      )
+    }
+
     const { searchParams } = new URL(request.url)
     const clientId = searchParams.get('client_id')
 
@@ -325,6 +350,21 @@ export async function GET(request: NextRequest) {
       return NextResponse.json(
         { error: 'Client ID is required' },
         { status: 400 }
+      )
+    }
+
+    // Verify client belongs to authenticated user
+    const { data: client, error: clientError } = await supabase
+      .from('clients')
+      .select('id')
+      .eq('id', clientId)
+      .eq('user_id', user.id)
+      .single()
+
+    if (clientError || !client) {
+      return NextResponse.json(
+        { error: 'Client not found or access denied' },
+        { status: 404 }
       )
     }
 

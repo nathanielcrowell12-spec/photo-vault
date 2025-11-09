@@ -351,7 +351,7 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
           {!searchTerm && filterBy === 'all' && clientFilter === 'all' && !isPhotographer && (
             <Button onClick={() => {
               if (typeof window !== 'undefined') {
-                window.location.href = '/client/import'
+                window.location.href = '/client/upload'
               }
             }}>
               Import Photos
