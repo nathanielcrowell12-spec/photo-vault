@@ -247,21 +247,6 @@ export default function AdminDatabasePage() {
     }
   }
 
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
-        <div className="flex items-center gap-3 text-slate-600">
-          <Loader2 className="h-5 w-5 animate-spin" />
-          <span>Authenticating…</span>
-        </div>
-      </div>
-    )
-  }
-
-  if (!user || userType !== 'admin') {
-    return null
-  }
-
   const statusCards = status?.statusCards ?? []
   const maintenanceTasks = status?.maintenance ?? []
   const rlsPolicies = status?.rlsPolicies ?? []
@@ -287,6 +272,21 @@ export default function AdminDatabasePage() {
     ],
     [status?.metrics],
   )
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="flex items-center gap-3 text-slate-600">
+          <Loader2 className="h-5 w-5 animate-spin" />
+          <span>Authenticating…</span>
+        </div>
+      </div>
+    )
+  }
+
+  if (!user || userType !== 'admin') {
+    return null
+  }
 
   return (
     <AccessGuard requiredAccess="canAccessAdminDashboard">

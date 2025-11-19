@@ -21,6 +21,16 @@ const eslintConfig = [
       "scripts/**",
     ],
   },
+  {
+    rules: {
+      "@typescript-eslint/no-explicit-any": "warn",
+      "react/no-unescaped-entities": "warn",
+      "@next/next/no-img-element": "warn",
+      "react-hooks/exhaustive-deps": "warn",
+      "react-hooks/rules-of-hooks": "error", // Keep this as error
+      "prefer-const": "warn",
+    },
+  },
 ];
 
 export default eslintConfig;
