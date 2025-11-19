@@ -4,9 +4,10 @@ import { createClient } from '@/lib/supabase';
 
 export async function GET(
   request: Request,
-  { params }: { params: { slug: string } }
+  { params }: { params: Promise<{ slug: string }> }
 ) {
   const supabase = createServerSupabaseClient();
+  const { slug } = await params
   const { data, error } = await supabase
     .from('locations')
     .select(`
@@ -14,7 +15,7 @@ export async function GET(
       location_attributes (*),
       location_business_intelligence (*)
     `)
-    .eq('slug', params.slug)
+    .eq('slug', slug)
     .single();
 
   if (error) {

@@ -4,7 +4,7 @@ import { createServerSupabaseClient } from '@/lib/supabase';
 
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const supabase = createServerSupabaseClient();
   const {
@@ -15,11 +15,13 @@ export async function POST(
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  const { id } = await params
+
   // Restore the gallery
   const { error: galleryError } = await supabase
     .from('photo_galleries')
     .update({ status: 'active', deleted_at: null })
-    .eq('id', params.id)
+    .eq('id', id)
     .eq('user_id', user.id);
 
   if (galleryError) {
@@ -31,7 +33,7 @@ export async function POST(
   const { error: photosError } = await supabase
     .from('gallery_photos')
     .update({ status: 'active', deleted_at: null })
-    .eq('gallery_id', params.id);
+    .eq('gallery_id', id);
 
   if (photosError) {
     // Note: At this point, the gallery is restored but photos are not.
@@ -45,7 +47,7 @@ export async function POST(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   const supabase = createServerSupabaseClient();
   const {
@@ -56,12 +58,14 @@ export async function DELETE(
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
+  const { id } = await params
+
   // The trigger in the database will handle the soft delete.
   // We just need to execute a DELETE command, and the trigger will intercept it.
   const { error } = await supabase
     .from('photo_galleries')
     .delete()
-    .eq('id', params.id)
+    .eq('id', id)
     .eq('user_id', user.id); // Ensure users can only delete their own galleries
 
   if (error) {

@@ -13,11 +13,11 @@ const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
  */
 export async function GET(
   request: NextRequest,
-  { params }: { params: { conversationId: string } }
+  { params }: { params: Promise<{ conversationId: string }> }
 ) {
   try {
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
-    const conversationId = params.conversationId
+    const { conversationId } = await params
 
     // Get authenticated user
     const authHeader = request.headers.get('authorization')
@@ -92,11 +92,11 @@ export async function GET(
  */
 export async function POST(
   request: NextRequest,
-  { params }: { params: { conversationId: string } }
+  { params }: { params: Promise<{ conversationId: string }> }
 ) {
   try {
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
-    const conversationId = params.conversationId
+    const { conversationId } = await params
 
     // Get authenticated user
     const authHeader = request.headers.get('authorization')

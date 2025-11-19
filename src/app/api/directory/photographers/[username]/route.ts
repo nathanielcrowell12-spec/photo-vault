@@ -4,16 +4,17 @@ import { createClient } from '@/lib/supabase';
 
 export async function GET(
   request: Request,
-  { params }: { params: { username: string } }
+  { params }: { params: Promise<{ username: string }> }
 ) {
   const supabase = createClient();
+  const { username } = await params
   const { data, error } = await supabase
     .from('photographer_profiles')
     .select(`
       *,
       reviews (*)
     `)
-    .eq('username', params.username)
+    .eq('username', username)
     .single();
 
   if (error) {
