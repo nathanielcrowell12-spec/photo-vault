@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     let galleryInfo = null
     if (gallery_id) {
       const { data: gallery, error: galleryError } = await supabase
-        .from('galleries')
+        .from('photo_galleries')
         .select(`
           *,
           photographers:photographer_id (

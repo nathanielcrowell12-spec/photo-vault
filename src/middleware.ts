@@ -31,6 +31,8 @@ export async function middleware(req: NextRequest) {
 
   const { pathname } = req.nextUrl
 
+  console.log('[Middleware] Request to:', pathname, 'User:', user?.email || 'none')
+
   // Public routes that don't require authentication
   const publicRoutes = [
     '/',
@@ -46,6 +48,7 @@ export async function middleware(req: NextRequest) {
     '/photographers/signup',
     '/auth/desktop-callback',
     '/connect',
+    '/logout',
   ]
 
   // Check if current path is public
@@ -54,6 +57,25 @@ export async function middleware(req: NextRequest) {
   // Allow webhook routes (Stripe needs to access these)
   if (pathname.startsWith('/api/webhooks')) {
     return res
+  }
+
+  // Check for public API routes first (before auth check)
+  if (pathname.startsWith('/api')) {
+    const publicApiRoutes = [
+      '/api/health',
+      '/api/test-env',
+      '/api/test-supabase',
+      '/api/webhooks', // Stripe webhooks
+      '/api/cron', // Cron jobs
+      '/api/auth/check-session', // Desktop app auth check
+      '/api/auth/logout', // Logout endpoint
+      '/api/v1/upload', // Desktop app uploads
+    ]
+
+    const isPublicApi = publicApiRoutes.some(route => pathname.startsWith(route))
+    if (isPublicApi) {
+      return res
+    }
   }
 
   // Allow access to login page
@@ -73,12 +95,17 @@ export async function middleware(req: NextRequest) {
       return res
     }
 
-    // Redirect to login for protected routes
-    console.log('[Middleware] No user, redirecting to login from:', pathname)
-    const redirectUrl = req.nextUrl.clone()
-    redirectUrl.pathname = '/login'
-    redirectUrl.searchParams.set('redirectTo', pathname)
-    return NextResponse.redirect(redirectUrl)
+    // Redirect to login for protected routes (NOT API routes)
+    if (!pathname.startsWith('/api')) {
+      console.log('[Middleware] No user, redirecting to login from:', pathname)
+      const redirectUrl = req.nextUrl.clone()
+      redirectUrl.pathname = '/login'
+      redirectUrl.searchParams.set('redirectTo', pathname)
+      return NextResponse.redirect(redirectUrl)
+    }
+
+    // For API routes, return 401 instead of redirecting
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
   console.log('[Middleware] User authenticated:', user.email, 'accessing:', pathname)
@@ -157,6 +184,9 @@ export async function middleware(req: NextRequest) {
       '/api/test-supabase',
       '/api/webhooks', // Stripe webhooks
       '/api/cron', // Cron jobs
+      '/api/auth/check-session', // Desktop app auth check
+      '/api/auth/logout', // Logout endpoint
+      '/api/v1/upload', // Desktop app uploads
     ]
 
     const isPublicApi = publicApiRoutes.some(route => pathname.startsWith(route))
@@ -197,8 +227,8 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * - public folder
+     * - public folder (html, images, etc.)
      */
-    '/((?!_next/static|_next/image|favicon.ico|api/test-email|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|api/test-email|.*\\.(?:html|svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }

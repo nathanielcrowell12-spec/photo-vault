@@ -172,7 +172,7 @@ export class ZipStreamService {
 
       // Update gallery record
       await supabase
-        .from('galleries')
+        .from('photo_galleries')
         .update({
           is_imported: true,
           import_completed_at: new Date().toISOString(),
@@ -211,7 +211,7 @@ export class ZipStreamService {
 
       // Update gallery with error status
       await supabase
-        .from('galleries')
+        .from('photo_galleries')
         .update({
           import_started_at: null,
           metadata: { 

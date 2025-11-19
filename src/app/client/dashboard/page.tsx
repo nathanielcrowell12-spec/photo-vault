@@ -2,7 +2,7 @@
 
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -19,16 +19,26 @@ import {
 import Link from 'next/link'
 import AccessGuard from '@/components/AccessGuard'
 import GalleryGrid from '@/components/GalleryGrid'
+import MessagesButton from '@/components/MessagesButton'
+import MessagingPanel from '@/components/MessagingPanel'
 
 export default function ClientDashboardPage() {
   const { user, loading, signOut } = useAuth()
   const router = useRouter()
+  const [showMessages, setShowMessages] = useState(false)
 
   useEffect(() => {
     if (!loading && !user) {
       router.push('/login')
     }
   }, [user, loading, router])
+
+  const scrollToGalleries = () => {
+    const galleriesSection = document.getElementById('galleries-section')
+    if (galleriesSection) {
+      galleriesSection.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }
 
   if (loading) {
     return (
@@ -59,6 +69,7 @@ export default function ClientDashboardPage() {
                 <Badge variant="outline" className="bg-pink-50 text-pink-700">
                   Family Account
                 </Badge>
+                <MessagesButton variant="icon" />
                 <Button variant="outline" onClick={signOut}>
                   Sign Out
                 </Button>
@@ -78,7 +89,7 @@ export default function ClientDashboardPage() {
             </div>
 
             {/* Gallery Grid - Moved to top */}
-            <Card>
+            <Card id="galleries-section">
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
                   <CardTitle className="flex items-center gap-2">
@@ -100,7 +111,7 @@ export default function ClientDashboardPage() {
             </Card>
 
             {/* Quick Actions - Moved below galleries */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               <Card className="hover:shadow-lg transition-shadow cursor-pointer">
                 <CardHeader>
                   <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
@@ -122,38 +133,17 @@ export default function ClientDashboardPage() {
 
               <Card className="hover:shadow-lg transition-shadow cursor-pointer">
                 <CardHeader>
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-                    <Share2 className="w-6 h-6 text-green-600" />
-                  </div>
-                  <CardTitle>Import Photos</CardTitle>
-                  <CardDescription>
-                    Import photos from other photography platforms
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Button className="w-full" asChild>
-                    <Link href="/client/upload">
-                      Import Photos
-                    </Link>
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
-                <CardHeader>
                   <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
                     <Download className="w-6 h-6 text-purple-600" />
                   </div>
                   <CardTitle>Download Photos</CardTitle>
                   <CardDescription>
-                    Download your favorite photos in high resolution
+                    Download your photos from your galleries
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Button className="w-full" asChild>
-                    <Link href="/client/download">
-                      Download All
-                    </Link>
+                  <Button className="w-full" onClick={scrollToGalleries}>
+                    View Galleries
                   </Button>
                 </CardContent>
               </Card>
@@ -169,14 +159,21 @@ export default function ClientDashboardPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Button className="w-full" asChild>
-                    <Link href="/client/contact">
-                      Send Message
-                    </Link>
+                  <Button className="w-full" onClick={() => setShowMessages(true)}>
+                    Send Message
                   </Button>
                 </CardContent>
               </Card>
             </div>
+
+            {/* Messaging Panel Modal */}
+            {showMessages && (
+              <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                <div className="w-full max-w-4xl">
+                  <MessagingPanel onClose={() => setShowMessages(false)} />
+                </div>
+              </div>
+            )}
 
             {/* Quick Stats - Removed fake data */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">

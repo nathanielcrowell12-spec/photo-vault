@@ -263,9 +263,9 @@ export default function SubscriptionPage() {
                       <h4 className="font-semibold text-green-800 dark:text-green-200 mb-2">
                         Upfront Commission
                       </h4>
-                      <div className="text-2xl font-bold text-green-600 mb-2">$50</div>
+                      <div className="text-2xl font-bold text-green-600 mb-2">$25 or $50</div>
                       <p className="text-sm text-green-700 dark:text-green-300">
-                        Earn $50 commission for every new client who pays $100 upfront
+                        Earn $25 for 6-month packages ($50) or $50 for 1-year packages ($100)
                       </p>
                     </div>
                     <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
@@ -280,7 +280,7 @@ export default function SubscriptionPage() {
                   </div>
                   <div className="mt-6 text-center">
                     <div className="text-sm text-slate-600 dark:text-slate-400">
-                      <strong>Example:</strong> 25 clients = $1,250 upfront + $100/month passive income
+                      <strong>Example:</strong> 25 clients (1-year packages) = $1,250 upfront + $100/month passive income
                     </div>
                   </div>
                 </CardContent>
@@ -312,23 +312,40 @@ export default function SubscriptionPage() {
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-4">
                 {subscription.status === 'trial' && (
-                  <Button className="bg-green-600 hover:bg-green-700">
+                  <Button
+                    className="bg-green-600 hover:bg-green-700"
+                    onClick={() => alert('Payment integration coming soon! This will open a secure payment form to add your credit card.')}
+                  >
                     <CreditCard className="h-4 w-4 mr-2" />
                     Add Payment Method
                   </Button>
                 )}
                 {subscription.payment_method && (
-                  <Button variant="outline">
+                  <Button
+                    variant="outline"
+                    onClick={() => alert('Payment integration coming soon! This will allow you to update your payment method.')}
+                  >
                     <CreditCard className="h-4 w-4 mr-2" />
                     Update Payment Method
                   </Button>
                 )}
-                <Button variant="outline">
+                <Button
+                  variant="outline"
+                  onClick={() => alert('Billing history coming soon! This will show all your past invoices and payments.')}
+                >
                   <Shield className="h-4 w-4 mr-2" />
                   Billing History
                 </Button>
                 {subscription.status !== 'cancelled' && (
-                  <Button variant="outline" className="text-red-600 border-red-600 hover:bg-red-50">
+                  <Button
+                    variant="outline"
+                    className="text-red-600 border-red-600 hover:bg-red-50"
+                    onClick={() => {
+                      if (confirm('Are you sure you want to cancel your subscription? You will lose access to the photographer dashboard and commission program.')) {
+                        alert('Cancellation feature coming soon! This will process your subscription cancellation.')
+                      }
+                    }}
+                  >
                     Cancel Subscription
                   </Button>
                 )}
@@ -343,13 +360,18 @@ export default function SubscriptionPage() {
                       Our support team is here to help with any questions about your subscription or commission program.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                      <Button variant="outline">
+                      <Button
+                        variant="outline"
+                        onClick={() => alert('Support system coming soon! For now, please email support@photovault.com')}
+                      >
                         <Users className="h-4 w-4 mr-2" />
                         Contact Support
                       </Button>
-                      <Button variant="outline">
-                        <TrendingUp className="h-4 w-4 mr-2" />
-                        View Revenue Dashboard
+                      <Button variant="outline" asChild>
+                        <Link href="/photographers/revenue">
+                          <TrendingUp className="h-4 w-4 mr-2" />
+                          View Revenue Dashboard
+                        </Link>
                       </Button>
                     </div>
                   </div>

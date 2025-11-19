@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import AccessGuard from '@/components/AccessGuard'
@@ -15,28 +15,59 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Activity, BarChart3, Clock, LineChart, PieChart, Users } from 'lucide-react'
 
-const analyticsMetrics = [
-  { label: 'Total Users', value: '—', subtext: 'Lifetime registrations' },
-  { label: 'Photos Uploaded', value: '—', subtext: 'Across all galleries' },
-  { label: 'Storage Used', value: '—', subtext: 'Supabase storage footprint' },
-  { label: 'Active Today', value: '—', subtext: 'Unique active sessions' },
-]
-
-const recentEvents = [
-  { id: 'EVT-001', type: 'User Signup', description: 'New client registration', timestamp: '—' },
-  { id: 'EVT-002', type: 'Photo Upload', description: 'Gallery upload completed', timestamp: '—' },
-  { id: 'EVT-003', type: 'Enhancement', description: 'AI enhancement requested', timestamp: '—' },
-]
+type AnalyticsData = {
+  metrics: {
+    totalUsers: number
+    photosUploaded: number
+    storageUsed: string
+    activeToday: number
+  }
+  recentEvents: Array<{
+    id: string
+    type: string
+    description: string
+    timestamp: string
+  }>
+}
 
 export default function AnalyticsPage() {
   const { user, userType, loading } = useAuth()
   const router = useRouter()
+  const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null)
+  const [dataLoading, setDataLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!loading && (!user || userType !== 'admin')) {
       router.push('/login')
     }
   }, [loading, user, userType, router])
+
+  useEffect(() => {
+    if (loading || !user || userType !== 'admin') {
+      return
+    }
+
+    const fetchData = async () => {
+      setDataLoading(true)
+      setError(null)
+      try {
+        const response = await fetch('/api/admin/analytics', { cache: 'no-store' })
+        const payload = await response.json()
+        if (!response.ok || !payload.success) {
+          throw new Error(payload.error || 'Failed to load analytics data')
+        }
+        setAnalyticsData(payload.data)
+      } catch (err) {
+        console.error('[admin/analytics] Failed to fetch data', err)
+        setError(err instanceof Error ? err.message : 'Unknown error')
+      } finally {
+        setDataLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [loading, user, userType])
 
   if (loading) {
     return (
@@ -49,6 +80,38 @@ export default function AnalyticsPage() {
   if (!user || userType !== 'admin') {
     return null
   }
+
+  const analyticsMetrics = analyticsData
+    ? [
+        {
+          label: 'Total Users',
+          value: analyticsData.metrics.totalUsers.toString(),
+          subtext: 'Lifetime registrations',
+        },
+        {
+          label: 'Photos Uploaded',
+          value: analyticsData.metrics.photosUploaded.toLocaleString(),
+          subtext: 'Across all galleries',
+        },
+        {
+          label: 'Storage Used',
+          value: analyticsData.metrics.storageUsed,
+          subtext: 'Supabase storage footprint',
+        },
+        {
+          label: 'Active Today',
+          value: analyticsData.metrics.activeToday.toString(),
+          subtext: 'Unique active sessions',
+        },
+      ]
+    : [
+        { label: 'Total Users', value: '—', subtext: 'Lifetime registrations' },
+        { label: 'Photos Uploaded', value: '—', subtext: 'Across all galleries' },
+        { label: 'Storage Used', value: '—', subtext: 'Supabase storage footprint' },
+        { label: 'Active Today', value: '—', subtext: 'Unique active sessions' },
+      ]
+
+  const recentEvents = analyticsData?.recentEvents || []
 
   return (
     <AccessGuard requiredAccess="canAccessAdminDashboard">
@@ -152,17 +215,23 @@ export default function AnalyticsPage() {
                 </Button>
               </CardHeader>
               <CardContent className="space-y-4">
-                {recentEvents.map((event) => (
-                  <div key={event.id} className="rounded-lg border border-slate-200 bg-white p-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-semibold text-slate-800">{event.type}</p>
-                        <p className="text-sm text-slate-500">{event.description}</p>
-                      </div>
-                      <span className="text-xs text-slate-400">{event.timestamp}</span>
-                    </div>
+                {recentEvents.length === 0 ? (
+                  <div className="text-center py-8 text-slate-500">
+                    {dataLoading ? 'Loading...' : 'No recent activity'}
                   </div>
-                ))}
+                ) : (
+                  recentEvents.map((event) => (
+                    <div key={event.id} className="rounded-lg border border-slate-200 bg-white p-4">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="font-semibold text-slate-800">{event.type}</p>
+                          <p className="text-sm text-slate-500">{event.description}</p>
+                        </div>
+                        <span className="text-xs text-slate-400">{event.timestamp}</span>
+                      </div>
+                    </div>
+                  ))
+                )}
               </CardContent>
             </Card>
 

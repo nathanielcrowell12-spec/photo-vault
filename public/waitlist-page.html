@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>PhotoVault Waitlist</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#0f0fbd",
+            "background-light": "#f6f6f8",
+            "background-dark": "#101022",
+          },
+          fontFamily: {
+            "display": ["Manrope", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+<div class="relative flex min-h-screen w-full flex-col items-center justify-center bg-[#0A192F] p-4 group/design-root overflow-x-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-indigo-900/10 via-transparent to-amber-900/10 opacity-30"></div>
+<div class="relative flex w-full max-w-md flex-col items-center gap-4 rounded-xl bg-transparent px-2 py-8 sm:px-6">
+<!-- Logo -->
+<div class="flex items-center gap-2 pb-4">
+<span class="material-symbols-outlined text-4xl text-[#FFC107]">photo_camera</span>
+<span class="text-3xl font-bold tracking-tight text-white">PhotoVault</span>
+</div>
+<!-- Headline & Body Text -->
+<div class="text-center">
+<h1 class="text-white tracking-tight text-[32px] font-bold leading-tight">Join the PhotoVault Waitlist</h1>
+<p class="text-white/80 text-base font-normal leading-normal pt-2">Transform your client work into recurring revenue. Get early access when we launch.</p>
+</div>
+<!-- Form -->
+<form class="flex w-full flex-col gap-4 pt-4">
+<label class="flex w-full flex-col">
+<p class="text-white text-base font-medium leading-normal pb-2">Name</p>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-[#FFC107] border border-white/30 bg-white/5 focus:border-[#FFC107] h-14 placeholder:text-white/50 p-[15px] text-base font-normal leading-normal transition-colors" placeholder="Enter your full name" value=""/>
+</label>
+<label class="flex w-full flex-col">
+<p class="text-white text-base font-medium leading-normal pb-2">Email Address</p>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-[#FFC107] border border-white/30 bg-white/5 focus:border-[#FFC107] h-14 placeholder:text-white/50 p-[15px] text-base font-normal leading-normal transition-colors" placeholder="Enter your email address" type="email" value=""/>
+</label>
+<label class="flex w-full flex-col">
+<p class="text-white text-base font-medium leading-normal pb-2">Photography Specialty</p>
+<div class="relative w-full">
+<select class="form-select w-full appearance-none rounded-lg border border-white/30 bg-white/5 p-4 pr-10 text-base text-white focus:border-[#FFC107] focus:outline-none focus:ring-2 focus:ring-[#FFC107] transition-colors">
+<option class="bg-[#0A192F]">Select your specialty</option>
+<option class="bg-[#0A192F]">Wedding</option>
+<option class="bg-[#0A192F]">Portrait</option>
+<option class="bg-[#0A192F]">Family</option>
+<option class="bg-[#0A192F]">Newborn</option>
+<option class="bg-[#0A192F]">Commercial</option>
+<option class="bg-[#0A192F]">Events</option>
+<option class="bg-[#0A192F]">Other</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3">
+<span class="material-symbols-outlined text-white/70">unfold_more</span>
+</div>
+</div>
+</label>
+<!-- Trust Badge -->
+<div class="flex items-center justify-center gap-2 pt-2">
+<span class="material-symbols-outlined text-base text-white/70">shield_lock</span>
+<p class="text-white/70 text-sm font-normal">No credit card required. Free early access.</p>
+</div>
+<!-- Submit Button -->
+<button type="submit" class="flex w-full items-center justify-center rounded-lg bg-[#FFC107] py-4 text-center text-base font-bold text-black shadow-lg shadow-[#FFC107]/20 transition-transform duration-200 ease-in-out hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-[#FFC107] focus:ring-offset-2 focus:ring-offset-[#0A192F] mt-4">
+          Get Early Access
+        </button>
+</form>
+</div>
+</div>
+
+<script>
+document.querySelector('form').addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  const formData = new FormData(e.target);
+  const data = {
+    name: formData.get('name') || document.querySelector('input[placeholder="Enter your full name"]').value,
+    email: formData.get('email') || document.querySelector('input[type="email"]').value,
+    specialty: formData.get('specialty') || document.querySelector('select').value,
+    source: 'waitlist',
+    created_at: new Date().toISOString()
+  };
+
+  // TODO: Save to Supabase
+  console.log('Waitlist signup:', data);
+
+  // Redirect to thank you page
+  const position = Math.floor(Math.random() * 50) + 100;
+  window.location.href = '/thank-you.html?position=' + position;
+});
+</script>
+
+</body></html>

@@ -22,13 +22,13 @@ export async function POST(request: NextRequest) {
 
     // Create gallery in database
     const { data: gallery, error: galleryError } = await supabase
-      .from('galleries')
+      .from('photo_galleries')
       .insert({
         photographer_id: userId,
         client_id: clientId || null,
-        user_id: clientId || null,
+        platform: platform || 'photovault',
         gallery_name: galleryName,
-        photo_count: 1,
+        photo_count: 0,
         session_date: new Date().toISOString(),
         is_imported: false
       })

@@ -85,10 +85,6 @@ export default function UserProfilesPage() {
     fetchUsers()
   }, [])
 
-  useEffect(() => {
-    filterUsers()
-  }, [filterUsers])
-
   const fetchUsers = async () => {
     try {
       setLoadingUsers(true)
@@ -126,7 +122,7 @@ export default function UserProfilesPage() {
 
     // Search filter
     if (searchTerm) {
-      filtered = filtered.filter(user => 
+      filtered = filtered.filter(user =>
         user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.full_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.business_name?.toLowerCase().includes(searchTerm.toLowerCase())
@@ -151,6 +147,11 @@ export default function UserProfilesPage() {
 
     setFilteredUsers(filtered)
   }, [users, searchTerm, filterType, filterStatus])
+
+  // Apply filters whenever filter dependencies change
+  useEffect(() => {
+    filterUsers()
+  }, [filterUsers])
 
   const updateUserType = async (userId: string, newUserType: 'client' | 'photographer' | 'admin') => {
     try {

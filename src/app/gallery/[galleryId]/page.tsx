@@ -81,7 +81,7 @@ export default function GalleryViewerPage() {
 
       // Fetch gallery info
       const { data: galleryData, error: galleryError } = await supabase
-        .from('galleries')
+        .from('photo_galleries')
         .select('*')
         .eq('id', galleryId)
         .single()
@@ -97,7 +97,7 @@ export default function GalleryViewerPage() {
 
       // Fetch photos for this gallery
       const { data: photosData, error: photosError } = await supabase
-        .from('gallery_photos')
+        .from('photos')
         .select('*')
         .eq('gallery_id', galleryId)
         .order('created_at', { ascending: true })
@@ -174,7 +174,7 @@ export default function GalleryViewerPage() {
       // Poll for completion
       const checkCompletion = setInterval(async () => {
         const { data: updatedGallery } = await supabase
-          .from('galleries')
+          .from('photo_galleries')
           .select('is_imported, photo_count')
           .eq('id', galleryId)
           .single()
@@ -228,6 +228,42 @@ export default function GalleryViewerPage() {
   const prevPhoto = () => {
     if (selectedPhotoIndex !== null && selectedPhotoIndex > 0) {
       setSelectedPhotoIndex(selectedPhotoIndex - 1)
+    }
+  }
+
+  const downloadPhoto = async (photoUrl: string, filename: string) => {
+    try {
+      const response = await fetch(photoUrl)
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = filename
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      window.URL.revokeObjectURL(url)
+    } catch (error) {
+      console.error('Error downloading photo:', error)
+      alert('Failed to download photo')
+    }
+  }
+
+  const downloadAllPhotos = async () => {
+    if (!photos || photos.length === 0) {
+      alert('No photos to download')
+      return
+    }
+
+    if (confirm(`Download all ${photos.length} photos? This may take a while.`)) {
+      for (let i = 0; i < photos.length; i++) {
+        const photo = photos[i]
+        const filename = photo.original_filename || photo.filename || `photo-${i + 1}.jpg`
+        await downloadPhoto(photo.original_url || photo.photo_url, filename)
+        // Add delay between downloads to avoid overwhelming the browser
+        await new Promise(resolve => setTimeout(resolve, 500))
+      }
+      alert('All photos downloaded!')
     }
   }
 
@@ -302,9 +338,9 @@ export default function GalleryViewerPage() {
                 <Share2 className="h-4 w-4 mr-2" />
                 Share
               </Button>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" onClick={downloadAllPhotos} disabled={photos.length === 0}>
                 <Download className="h-4 w-4 mr-2" />
-                Download All
+                Download All ({photos.length})
               </Button>
             </div>
           </div>
@@ -438,15 +474,29 @@ export default function GalleryViewerPage() {
         {/* Slideshow/Lightbox Modal */}
         {viewMode === 'slideshow' && selectedPhotoIndex !== null && (
           <div className="fixed inset-0 bg-black z-50 flex items-center justify-center">
-            {/* Close Button */}
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute top-4 right-4 text-white hover:bg-white/20"
-              onClick={closeSlideshow}
-            >
-              <X className="h-6 w-6" />
-            </Button>
+            {/* Top Action Buttons */}
+            <div className="absolute top-4 right-4 flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-white hover:bg-white/20"
+                onClick={() => {
+                  const photo = photos[selectedPhotoIndex]
+                  const filename = photo.original_filename || photo.filename || `photo-${selectedPhotoIndex + 1}.jpg`
+                  downloadPhoto(photo.original_url || photo.photo_url, filename)
+                }}
+              >
+                <Download className="h-5 w-5" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-white hover:bg-white/20"
+                onClick={closeSlideshow}
+              >
+                <X className="h-6 w-6" />
+              </Button>
+            </div>
 
             {/* Previous Button */}
             {selectedPhotoIndex > 0 && (

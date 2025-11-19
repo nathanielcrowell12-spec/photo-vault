@@ -34,7 +34,7 @@ export default function RecentlyDeletedPage() {
       const fetchDeletedGalleries = async () => {
         setIsLoading(true);
         const { data, error } = await supabase
-          .from('galleries')
+          .from('photo_galleries')
           .select('id, gallery_name, deleted_at, photo_count')
           .eq('user_id', user.id)
           .eq('status', 'deleted')

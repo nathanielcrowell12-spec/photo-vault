@@ -79,7 +79,7 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
       // For photographers: fetch galleries where they are the photographer (photographer_id = userId)
       // For clients: fetch galleries where they are the user (user_id = userId)
       let query = supabase
-        .from('galleries')
+        .from('photo_galleries')
         .select('*')
       
       if (isPhotographer) {
@@ -87,7 +87,7 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
         query = query.eq('photographer_id', userId)
       } else {
         // Fetch galleries for this client
-        query = query.eq('user_id', userId)
+        query = query.eq('client_id', userId)
       }
       
       const { data: galleriesData, error } = await query.order('created_at', { ascending: false })
@@ -161,11 +161,11 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
     if (isPhotographer && clientFilter !== 'all') {
       if (clientFilter === 'unassigned') {
         // Show galleries with no client assignment
-        filtered = filtered.filter(gallery => !gallery.user_id && !gallery.client_id)
+        filtered = filtered.filter(gallery => !gallery.client_id)
       } else {
         // Show galleries for specific client
-        filtered = filtered.filter(gallery => 
-          gallery.user_id === clientFilter || gallery.client_id === clientFilter
+        filtered = filtered.filter(gallery =>
+          gallery.client_id === clientFilter
         )
       }
     }

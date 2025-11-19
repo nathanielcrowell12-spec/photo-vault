@@ -119,7 +119,7 @@ export default function UploadPage() {
 
       // Create gallery in database
       const { data: gallery, error: galleryError } = await supabase
-        .from('galleries')
+        .from('photo_galleries')
         .insert({
           photographer_id: user?.id,
           client_id: selectedClientId,
@@ -275,7 +275,7 @@ export default function UploadPage() {
 
       // Update gallery to mark as imported
       const { error: updateError } = await supabase
-        .from('galleries')
+        .from('photo_galleries')
         .update({
           is_imported: true,
           import_completed_at: new Date().toISOString()
@@ -370,7 +370,29 @@ export default function UploadPage() {
                           // Get current session and pass to desktop app
                           const { data: { session } } = await supabase.auth.getSession()
                           if (session?.access_token && user?.id) {
-                            // Pass auth token and client ID via protocol URL
+                            // Try local API first (for dev testing)
+                            try {
+                              const response = await fetch('http://localhost:57123/auth', {
+                                method: 'POST',
+                                headers: {
+                                  'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                  token: session.access_token,
+                                  userId: user.id,
+                                  clientId: selectedClientId
+                                })
+                              })
+
+                              if (response.ok) {
+                                console.log('Desktop app launched via local API')
+                                return
+                              }
+                            } catch (error) {
+                              console.log('Local API not available, trying protocol handler')
+                            }
+
+                            // Fallback to protocol handler (for production)
                             window.location.href = `photovault://auth?token=${encodeURIComponent(session.access_token)}&userId=${encodeURIComponent(user.id)}&clientId=${encodeURIComponent(selectedClientId)}`
                           } else {
                             // Fallback to just opening the app

@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
 
     // Verify gallery belongs to authenticated user
     const { data: gallery, error: galleryError } = await supabase
-      .from('galleries')
+      .from('photo_galleries')
       .select('*')
       .eq('id', galleryId)
       .eq('user_id', user.id)
@@ -112,7 +112,7 @@ export async function POST(request: NextRequest) {
       .eq('gallery_id', gallery.id)
 
     await supabase
-      .from('galleries')
+      .from('photo_galleries')
       .update({
         photo_count: photos?.length || 0,
         is_imported: true,

@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     const { data: photographer, error: photographerError } = await supabase
       .from('photographers')
       .select('*')
-      .eq('user_id', photographer_id)
+      .eq('id', photographer_id)
       .single()
 
     if (photographerError || !photographer) {
@@ -36,8 +36,8 @@ export async function POST(request: NextRequest) {
 
     // Fetch user data
     const { data: user, error: userError } = await supabase
-      .from('users')
-      .select('name, email')
+      .from('user_profiles')
+      .select('full_name, business_name')
       .eq('id', photographer_id)
       .single()
 
@@ -47,6 +47,10 @@ export async function POST(request: NextRequest) {
         { status: 404 }
       )
     }
+
+    // Get email from auth.users
+    const { data: authUser, error: authError } = await supabase.auth.admin.getUserById(photographer_id)
+    const userEmail = authUser?.user?.email || 'No email'
 
     // Fetch commission payments for the period
     const { data: commissionPayments, error: commissionError } = await supabase
@@ -172,9 +176,9 @@ export async function POST(request: NextRequest) {
     // Prepare report data
     const reportData: ReportData = {
       photographer: {
-        name: user.name || user.email,
-        email: user.email,
-        businessName: photographer.business_name
+        name: user.full_name || user.business_name || userEmail,
+        email: userEmail,
+        businessName: user.business_name
       },
       period: {
         start: start_date,

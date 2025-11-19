@@ -17,7 +17,7 @@ export async function POST(
 
   // Restore the gallery
   const { error: galleryError } = await supabase
-    .from('galleries')
+    .from('photo_galleries')
     .update({ status: 'active', deleted_at: null })
     .eq('id', params.id)
     .eq('user_id', user.id);
@@ -59,7 +59,7 @@ export async function DELETE(
   // The trigger in the database will handle the soft delete.
   // We just need to execute a DELETE command, and the trigger will intercept it.
   const { error } = await supabase
-    .from('galleries')
+    .from('photo_galleries')
     .delete()
     .eq('id', params.id)
     .eq('user_id', user.id); // Ensure users can only delete their own galleries

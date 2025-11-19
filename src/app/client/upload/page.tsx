@@ -189,14 +189,6 @@ export default function PhotoImportPage() {
                   </CardContent>
                 </Card>
               </div>
-              
-              <div className="mt-8 p-4 bg-secondary/30 rounded-lg">
-                <h4 className="font-semibold text-foreground mb-2">💡 Why We Moved Away from Platform Connections</h4>
-                <div className="text-sm text-muted-foreground space-y-2">
-                  <p>We previously supported direct connections to platforms like Pixieset, but many photography platforms have anti-bot protection that prevents automated imports.</p>
-                  <p><strong>Our solution:</strong> Upload your photos directly to PhotoVault using our desktop app or web interface. This gives you full control and ensures your photos are always accessible.</p>
-                </div>
-              </div>
             </CardContent>
           </Card>
         </div>

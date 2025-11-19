@@ -13,18 +13,29 @@ if (!process.env.STRIPE_SECRET_KEY) {
 }
 
 export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2025-09-30.clover',
+  apiVersion: '2024-11-20.acacia',
   typescript: true,
 })
+
+/**
+ * Pricing Plans
+ * Client: $10/month for gallery access
+ * (No photographer subscription - they earn via commission only)
+ */
+export const PRICING = {
+  CLIENT_MONTHLY: {
+    amount: 1000, // $10.00 in cents
+    currency: 'usd',
+    interval: 'month' as const,
+  },
+} as const
 
 /**
  * Stripe Price IDs from environment
  * These are created in Stripe Dashboard → Products
  */
 export const STRIPE_PRICES = {
-  CLIENT_FIRST_YEAR: process.env.STRIPE_CLIENT_FIRST_YEAR_PRICE_ID || '',
   CLIENT_MONTHLY: process.env.STRIPE_CLIENT_MONTHLY_PRICE_ID || '',
-  PHOTOGRAPHER: process.env.STRIPE_PHOTOGRAPHER_PRICE_ID || '',
 } as const
 
 /**
@@ -34,7 +45,8 @@ export const STRIPE_CONNECT_CLIENT_ID = process.env.STRIPE_CONNECT_CLIENT_ID || 
 
 /**
  * Commission rate for photographers (50% flat rate)
- * PhotoVault uses a simple 50/50 split on all payments
+ * PhotoVault uses a 50/50 split: photographers get 50%, platform gets 50%
+ * Example: Client pays $10/month → Photographer gets $5, PhotoVault gets $5
  */
 export const PHOTOGRAPHER_COMMISSION_RATE = 0.50
 

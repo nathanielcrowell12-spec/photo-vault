@@ -127,7 +127,7 @@ export function useGalleryEditModal(
       }
 
       const { error: saveError } = await supabase
-        .from('galleries')
+        .from('photo_galleries')
         .update(updateData)
         .eq('id', gallery.id)
 

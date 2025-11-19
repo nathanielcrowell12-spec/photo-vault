@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import AccessGuard from '@/components/AccessGuard'
@@ -23,39 +23,80 @@ import {
   Wallet,
 } from 'lucide-react'
 
-const revenueStats = [
-  { label: 'Total Revenue', value: '$0.00', subtext: 'All time' },
-  { label: 'This Month', value: '$0.00', subtext: 'November 2025' },
-  { label: 'This Year', value: '$0.00', subtext: '2025' },
-  { label: 'Average Order', value: '$0.00', subtext: 'Per transaction' },
-]
-
-const recentPayments = [
-  { id: 'INV-001', customer: 'Sample Client', amount: '$0.00', status: 'Pending', date: '—' },
-  { id: 'INV-002', customer: 'Sample Client', amount: '$0.00', status: 'Pending', date: '—' },
-  { id: 'INV-003', customer: 'Sample Client', amount: '$0.00', status: 'Pending', date: '—' },
-]
-
-const topPhotographers = [
-  { name: 'Photographer A', revenue: '$0.00', sessions: 0 },
-  { name: 'Photographer B', revenue: '$0.00', sessions: 0 },
-  { name: 'Photographer C', revenue: '$0.00', sessions: 0 },
-]
-
-const failedPayments = [
-  { id: 'INV-004', customer: 'Placeholder Client', amount: '$0.00', reason: 'Card declined', date: '—' },
-  { id: 'INV-005', customer: 'Placeholder Client', amount: '$0.00', reason: 'Insufficient funds', date: '—' },
-]
+type RevenueData = {
+  stats: {
+    totalRevenue: number
+    thisMonth: number
+    thisYear: number
+    averageOrder: number
+  }
+  recentPayments: Array<{
+    id: string
+    customer: string
+    amount: number
+    status: string
+    date: string
+  }>
+  topPhotographers: Array<{
+    name: string
+    revenue: number
+    sessions: number
+  }>
+  failedPayments: Array<{
+    id: string
+    customer: string
+    amount: number
+    reason: string
+    date: string
+  }>
+}
 
 export default function RevenuePage() {
   const { user, userType, loading } = useAuth()
   const router = useRouter()
+  const [revenueData, setRevenueData] = useState<RevenueData | null>(null)
+  const [dataLoading, setDataLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!loading && (!user || userType !== 'admin')) {
       router.push('/login')
     }
   }, [loading, user, userType, router])
+
+  useEffect(() => {
+    if (loading || !user || userType !== 'admin') {
+      return
+    }
+
+    const fetchData = async () => {
+      setDataLoading(true)
+      setError(null)
+      try {
+        const response = await fetch('/api/admin/revenue', { cache: 'no-store' })
+        const payload = await response.json()
+        if (!response.ok || !payload.success) {
+          throw new Error(payload.error || 'Failed to load revenue data')
+        }
+        setRevenueData(payload.data)
+      } catch (err) {
+        console.error('[admin/revenue] Failed to fetch data', err)
+        setError(err instanceof Error ? err.message : 'Unknown error')
+      } finally {
+        setDataLoading(false)
+      }
+    }
+
+    fetchData()
+  }, [loading, user, userType])
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2,
+    }).format(amount)
+  }
 
   if (loading) {
     return (
@@ -68,6 +109,32 @@ export default function RevenuePage() {
   if (!user || userType !== 'admin') {
     return null
   }
+
+  const revenueStats = revenueData
+    ? [
+        { label: 'Total Revenue', value: formatCurrency(revenueData.stats.totalRevenue), subtext: 'All time' },
+        {
+          label: 'This Month',
+          value: formatCurrency(revenueData.stats.thisMonth),
+          subtext: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
+        },
+        {
+          label: 'This Year',
+          value: formatCurrency(revenueData.stats.thisYear),
+          subtext: new Date().getFullYear().toString(),
+        },
+        { label: 'Average Order', value: formatCurrency(revenueData.stats.averageOrder), subtext: 'Per transaction' },
+      ]
+    : [
+        { label: 'Total Revenue', value: '$0.00', subtext: 'All time' },
+        { label: 'This Month', value: '$0.00', subtext: 'November 2025' },
+        { label: 'This Year', value: '$0.00', subtext: '2025' },
+        { label: 'Average Order', value: '$0.00', subtext: 'Per transaction' },
+      ]
+
+  const recentPayments = revenueData?.recentPayments || []
+  const topPhotographers = revenueData?.topPhotographers || []
+  const failedPayments = revenueData?.failedPayments || []
 
   return (
     <AccessGuard requiredAccess="canAccessAdminDashboard">
@@ -147,19 +214,35 @@ export default function RevenuePage() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 bg-white">
-                      {recentPayments.map((payment) => (
-                        <tr key={payment.id}>
-                          <td className="px-4 py-3 font-medium text-slate-700">{payment.id}</td>
-                          <td className="px-4 py-3 text-slate-600">{payment.customer}</td>
-                          <td className="px-4 py-3 text-slate-600">{payment.amount}</td>
-                          <td className="px-4 py-3">
-                            <span className="inline-flex rounded-full bg-amber-100 px-2 py-1 text-xs font-semibold text-amber-700">
-                              {payment.status}
-                            </span>
+                      {recentPayments.length === 0 ? (
+                        <tr>
+                          <td colSpan={5} className="px-4 py-8 text-center text-slate-500">
+                            {dataLoading ? 'Loading...' : 'No payments yet'}
                           </td>
-                          <td className="px-4 py-3 text-slate-500">{payment.date}</td>
                         </tr>
-                      ))}
+                      ) : (
+                        recentPayments.map((payment) => (
+                          <tr key={payment.id}>
+                            <td className="px-4 py-3 font-medium text-slate-700">{payment.id}</td>
+                            <td className="px-4 py-3 text-slate-600">{payment.customer}</td>
+                            <td className="px-4 py-3 text-slate-600">{formatCurrency(payment.amount)}</td>
+                            <td className="px-4 py-3">
+                              <span
+                                className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
+                                  payment.status === 'Active'
+                                    ? 'bg-green-100 text-green-700'
+                                    : payment.status === 'Inactive'
+                                    ? 'bg-amber-100 text-amber-700'
+                                    : 'bg-red-100 text-red-700'
+                                }`}
+                              >
+                                {payment.status}
+                              </span>
+                            </td>
+                            <td className="px-4 py-3 text-slate-500">{payment.date}</td>
+                          </tr>
+                        ))
+                      )}
                     </tbody>
                   </table>
                 </div>
@@ -179,15 +262,24 @@ export default function RevenuePage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {topPhotographers.map((photographer) => (
-                    <div key={photographer.name} className="flex items-center justify-between rounded-lg border border-slate-200 bg-white p-4">
-                      <div>
-                        <p className="font-semibold text-slate-800">{photographer.name}</p>
-                        <p className="text-xs text-slate-500">{photographer.sessions} sessions</p>
-                      </div>
-                      <span className="text-sm font-medium text-slate-700">{photographer.revenue}</span>
+                  {topPhotographers.length === 0 ? (
+                    <div className="text-center py-8 text-slate-500">
+                      {dataLoading ? 'Loading...' : 'No photographers yet'}
                     </div>
-                  ))}
+                  ) : (
+                    topPhotographers.map((photographer, index) => (
+                      <div
+                        key={`${photographer.name}-${index}`}
+                        className="flex items-center justify-between rounded-lg border border-slate-200 bg-white p-4"
+                      >
+                        <div>
+                          <p className="font-semibold text-slate-800">{photographer.name}</p>
+                          <p className="text-xs text-slate-500">{photographer.sessions} sessions</p>
+                        </div>
+                        <span className="text-sm font-medium text-slate-700">{formatCurrency(photographer.revenue)}</span>
+                      </div>
+                    ))
+                  )}
                   <Button variant="outline" className="w-full" disabled>
                     View full leaderboard
                     <ArrowRight className="ml-2 h-4 w-4" />
@@ -206,21 +298,27 @@ export default function RevenuePage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {failedPayments.map((payment) => (
-                    <div key={payment.id} className="rounded-lg border border-amber-200 bg-amber-50 p-4">
-                      <div className="flex items-center justify-between">
-                        <p className="font-semibold text-amber-800">{payment.id}</p>
-                        <span className="text-sm font-medium text-amber-700">{payment.amount}</span>
-                      </div>
-                      <p className="text-sm text-amber-700">{payment.customer}</p>
-                      <p className="text-xs text-amber-600">Reason: {payment.reason}</p>
-                      <div className="mt-3 flex justify-end">
-                        <Button size="sm" variant="outline" disabled className="cursor-not-allowed">
-                          Retry Payment
-                        </Button>
-                      </div>
+                  {failedPayments.length === 0 ? (
+                    <div className="text-center py-8 text-slate-500">
+                      {dataLoading ? 'Loading...' : 'No failed payments'}
                     </div>
-                  ))}
+                  ) : (
+                    failedPayments.map((payment) => (
+                      <div key={payment.id} className="rounded-lg border border-amber-200 bg-amber-50 p-4">
+                        <div className="flex items-center justify-between">
+                          <p className="font-semibold text-amber-800">{payment.id}</p>
+                          <span className="text-sm font-medium text-amber-700">{formatCurrency(payment.amount)}</span>
+                        </div>
+                        <p className="text-sm text-amber-700">{payment.customer}</p>
+                        <p className="text-xs text-amber-600">Reason: {payment.reason}</p>
+                        <div className="mt-3 flex justify-end">
+                          <Button size="sm" variant="outline" disabled className="cursor-not-allowed">
+                            Retry Payment
+                          </Button>
+                        </div>
+                      </div>
+                    ))
+                  )}
                 </CardContent>
               </Card>
             </div>

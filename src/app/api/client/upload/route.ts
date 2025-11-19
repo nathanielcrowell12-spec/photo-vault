@@ -156,7 +156,7 @@ export async function POST(request: NextRequest) {
           
           // Check if gallery already exists for this month
           const { data: existingGallery } = await supabase
-            .from('galleries')
+            .from('photo_galleries')
             .select('id')
             .eq('client_id', client_id)
             .eq('name', galleryName)
@@ -167,7 +167,7 @@ export async function POST(request: NextRequest) {
           } else {
             // Create new gallery
             const { data: newGallery, error: galleryError } = await supabase
-              .from('galleries')
+              .from('photo_galleries')
               .insert({
                 id: uuidv4(),
                 client_id,

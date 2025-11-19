@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
 
     // Create gallery record
     const { data: gallery, error: galleryError } = await supabase
-      .from('galleries')
+      .from('photo_galleries')
       .insert({
         user_id: userId,
         gallery_name: galleryMetadata?.galleryName || 'Pixieset Gallery',
@@ -98,7 +98,7 @@ export async function POST(request: NextRequest) {
       
       // Update gallery with error
       supabase
-        .from('galleries')
+        .from('photo_galleries')
         .update({
           import_started_at: null,
           metadata: { 
@@ -196,7 +196,7 @@ async function processImportInBackground(
     )
     
     await supabase
-      .from('galleries')
+      .from('photo_galleries')
       .update({
         import_started_at: null,
         metadata: { 

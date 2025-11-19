@@ -13,7 +13,11 @@ export async function POST(request: NextRequest) {
   const stream = new ReadableStream({
     async start(controller) {
       const send = (data: Record<string, unknown>) => {
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`))
+        try {
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify(data)}\n\n`))
+        } catch (err) {
+          // Controller already closed by client, ignore
+        }
       }
 
       try {
@@ -51,21 +55,45 @@ export async function POST(request: NextRequest) {
         }
 
         send({ message: 'Merging chunks...', progress: 15 })
-        const zipBuffer = Buffer.concat(chunks)
+        const fileBuffer = Buffer.concat(chunks)
 
-        send({ message: 'Loading ZIP file...', progress: 20 })
-        const zip = await JSZip.loadAsync(zipBuffer)
+        // Detect if file is a ZIP or an image
+        const isZip = fileBuffer[0] === 0x50 && fileBuffer[1] === 0x4B // PK signature
+        const imageFiles: Array<{ name: string; buffer: Buffer }> = []
 
-        // Get all image files
-        const imageFiles: { name: string; file: JSZip.JSZipObject }[] = []
-        
-        zip.forEach((relativePath, file) => {
-          if (!file.dir && /\.(jpg|jpeg|png|gif|webp)$/i.test(relativePath)) {
-            imageFiles.push({ name: relativePath, file })
+        if (isZip) {
+          send({ message: 'Loading ZIP file...', progress: 20 })
+          const zip = await JSZip.loadAsync(fileBuffer)
+
+          // Get all image files from ZIP
+          const zipImageFiles: { name: string; file: JSZip.JSZipObject }[] = []
+
+          zip.forEach((relativePath, file) => {
+            if (!file.dir && /\.(jpg|jpeg|png|gif|webp|heic|raw|cr2|nef|arw|dng)$/i.test(relativePath)) {
+              zipImageFiles.push({ name: relativePath, file })
+            }
+          })
+
+          // Extract images from ZIP
+          for (const { name, file } of zipImageFiles) {
+            const imageData = await file.async('arraybuffer')
+            imageFiles.push({
+              name: name.split('/').pop() || name,
+              buffer: Buffer.from(imageData)
+            })
           }
-        })
+        } else {
+          // Single image file
+          send({ message: 'Processing photo file...', progress: 20 })
+          // Get filename from storagePath
+          const fileName = storagePath.split('/').pop() || 'photo.jpg'
+          imageFiles.push({
+            name: fileName,
+            buffer: fileBuffer
+          })
+        }
 
-        send({ message: `Found ${imageFiles.length} images. Starting upload...`, progress: 25 })
+        send({ message: `Found ${imageFiles.length} image(s). Starting upload...`, progress: 25 })
 
         // Process and upload each photo
         let uploadedCount = 0
@@ -74,23 +102,19 @@ export async function POST(request: NextRequest) {
         
         for (let i = 0; i < imageFiles.length; i += batchSize) {
           const batch = imageFiles.slice(i, i + batchSize)
-          
-          await Promise.all(
-            batch.map(async ({ name, file }) => {
-              try {
-                const imageData = await file.async('arraybuffer')
-                const buffer = Buffer.from(imageData)
 
+          await Promise.all(
+            batch.map(async ({ name, buffer }) => {
+              try {
                 // Upload to Supabase Storage
-                const fileName = name.split('/').pop() || name
-                const sanitizedName = fileName.replace(/[^a-zA-Z0-9.-]/g, '_')
+                const sanitizedName = name.replace(/[^a-zA-Z0-9.-]/g, '_')
                 const timestamp = Date.now()
                 const photoPath = `galleries/${galleryId}/${timestamp}-${sanitizedName}`
 
                 const { error: uploadPhotoError } = await supabase.storage
                   .from('photos')
                   .upload(photoPath, buffer, {
-                    contentType: `image/${fileName.split('.').pop()}`,
+                    contentType: `image/${name.split('.').pop()}`,
                     upsert: false
                   })
 
@@ -109,14 +133,14 @@ export async function POST(request: NextRequest) {
                   firstPhotoUrl = publicUrl
                 }
 
-                // Create photo record in gallery_photos
+                // Create photo record in photos table
                 const { error: photoRecordError } = await supabase
-                  .from('gallery_photos')
+                  .from('photos')
                   .insert({
                     gallery_id: galleryId,
-                    photo_url: publicUrl,
+                    filename: sanitizedName,
+                    original_url: publicUrl,
                     thumbnail_url: publicUrl, // You can generate thumbnails later
-                    original_filename: sanitizedName,
                     file_size: buffer.length
                   })
 
@@ -145,24 +169,65 @@ export async function POST(request: NextRequest) {
         }
         await supabase.storage.from('gallery-imports').remove(filesToRemove)
 
-        // Update gallery with photo count and cover image
-        await supabase
-          .from('galleries')
+        // Get current gallery to check cover image
+        const { data: currentGallery } = await supabase
+          .from('photo_galleries')
+          .select('cover_image_url')
+          .eq('id', galleryId)
+          .single()
+
+        // Use RPC function for atomic increment to avoid race conditions
+        // First increment the photo count using the database function
+        console.log(`[Process] Incrementing photo count for gallery ${galleryId} by ${uploadedCount}`)
+        const { error: incrementError } = await supabase.rpc('increment_gallery_photo_count', {
+          gallery_id: galleryId,
+          count_increment: uploadedCount
+        })
+
+        if (incrementError) {
+          console.error('[Process] Error incrementing photo count:', incrementError)
+        } else {
+          console.log(`[Process] Successfully incremented photo count by ${uploadedCount}`)
+        }
+
+        // Then update the import status
+        const { error: statusError } = await supabase
+          .from('photo_galleries')
           .update({
-            photo_count: uploadedCount,
             is_imported: true,
-            import_completed_at: new Date().toISOString(),
-            cover_image_url: firstPhotoUrl || '/images/placeholder-family.svg'
+            import_completed_at: new Date().toISOString()
           })
           .eq('id', galleryId)
 
+        if (statusError) {
+          console.error('[Process] Error updating gallery status:', statusError)
+        }
+
+        // Update cover image separately if needed (less critical, not part of atomic operation)
+        if (!currentGallery?.cover_image_url || currentGallery.cover_image_url.includes('placeholder')) {
+          if (firstPhotoUrl) {
+            await supabase
+              .from('photo_galleries')
+              .update({ cover_image_url: firstPhotoUrl })
+              .eq('id', galleryId)
+          }
+        }
+
         send({ message: `Import complete! ${uploadedCount} photos imported.`, progress: 100 })
-        controller.close()
+        try {
+          controller.close()
+        } catch (err) {
+          // Controller already closed, ignore
+        }
 
       } catch (error) {
         console.error('Processing error:', error)
         send({ error: 'Failed to process ZIP file', progress: 0 })
-        controller.close()
+        try {
+          controller.close()
+        } catch (err) {
+          // Controller already closed, ignore
+        }
       }
     }
   })

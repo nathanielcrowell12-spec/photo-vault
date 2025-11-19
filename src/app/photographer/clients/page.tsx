@@ -43,11 +43,14 @@ interface Client {
   name: string
   email: string
   phone?: string
+  address?: string
   client_notes?: string
   status: string
   created_at: string
   gallery_count?: number
   photo_count?: number
+  primary_photographer_id?: string
+  photographer_id?: string
 }
 
 interface Gallery {
@@ -70,10 +73,14 @@ export default function ClientsPage() {
   const [showAddModal, setShowAddModal] = useState(false)
   const [formLoading, setFormLoading] = useState(false)
   const [formError, setFormError] = useState('')
+  const [searchQuery, setSearchQuery] = useState('')
+  const [linkExistingClient, setLinkExistingClient] = useState(false)
+  const [existingClientInfo, setExistingClientInfo] = useState<Client | null>(null)
   const [newClient, setNewClient] = useState({
     name: '',
     email: '',
     phone: '',
+    address: '',
     notes: '',
     sendInvite: true
   })
@@ -115,7 +122,7 @@ export default function ClientsPage() {
     try {
       // Fetch photographer's galleries from database
       const { data: galleriesData, error } = await supabase
-        .from('galleries')
+        .from('photo_galleries')
         .select('*')
         .eq('photographer_id', user.id)
         .order('created_at', { ascending: false })
@@ -178,52 +185,109 @@ export default function ClientsPage() {
     return null
   }
 
+  // Check if email already exists (email detection for cross-photographer linking)
+  const checkExistingEmail = async (email: string) => {
+    if (!email || !email.includes('@')) return
+
+    try {
+      // Check if this email exists for ANY photographer
+      const { data, error } = await supabase
+        .from('clients')
+        .select('*')
+        .eq('email', email.toLowerCase())
+        .single()
+
+      if (data && data.photographer_id !== user?.id) {
+        // Email exists and belongs to another photographer
+        setExistingClientInfo(data)
+        setLinkExistingClient(true)
+        setFormError(
+          `This email is already registered with another photographer. Creating this client will link them to your account while maintaining the existing primary photographer relationship.`
+        )
+      } else if (data && data.photographer_id === user?.id) {
+        // Email exists and belongs to this photographer
+        setFormError('You already have a client with this email address.')
+      } else {
+        // Email doesn't exist - new client
+        setExistingClientInfo(null)
+        setLinkExistingClient(false)
+        setFormError('')
+      }
+    } catch (error) {
+      // No existing client found
+      setExistingClientInfo(null)
+      setLinkExistingClient(false)
+      setFormError('')
+    }
+  }
+
   const handleCreateClient = async () => {
     if (!newClient.name || !newClient.email) return
 
     setFormError('')
     setFormLoading(true)
-    
+
     try {
-      // Create client record in database
-      const { data, error } = await supabase
-        .from('clients')
-        .insert({
-          photographer_id: user?.id,
-          name: newClient.name,
-          email: newClient.email,
-          phone: newClient.phone || null,
-          client_notes: newClient.notes || null,
-          status: 'active'
-        })
-        .select()
-        .single()
+      if (linkExistingClient && existingClientInfo) {
+        // Link to existing client - do NOT create new record
+        // The existing client keeps their primary_photographer_id
+        // This photographer can create galleries for them, but won't earn monthly commission
+        console.log('[Clients] Linking to existing client:', existingClientInfo.id)
 
-      if (error) {
-        if (error.code === '23505') { // Unique constraint violation
-          setFormError('A client with this email already exists')
-        } else {
-          throw error
+        // Note: No database changes needed. When photographer creates a gallery,
+        // they'll select this client via email detection in the gallery creation flow.
+        // The clients table maintains ONE record per email address.
+
+        setFormError('')
+        alert(`Client linked! Note: ${existingClientInfo.name} already has galleries with another photographer. You can create new galleries for them, but the original photographer will continue earning monthly commission.`)
+
+      } else {
+        // Create new client record
+        const { data, error } = await supabase
+          .from('clients')
+          .insert({
+            photographer_id: user?.id,
+            name: newClient.name,
+            email: newClient.email.toLowerCase(),
+            phone: newClient.phone || null,
+            address: newClient.address || null,
+            client_notes: newClient.notes || null,
+            status: 'active'
+          })
+          .select()
+          .single()
+
+        if (error) {
+          if (error.code === '23505') { // Unique constraint violation
+            setFormError('A client with this email already exists. Please check the email and try again.')
+          } else {
+            throw error
+          }
+          return
         }
-        return
+
+        console.log('[Clients] New client created:', data.id)
+
+        // TODO: Send invitation email if newClient.sendInvite is true
+        if (newClient.sendInvite) {
+          console.log('TODO: Send invitation email to', newClient.email)
+        }
       }
 
-      // TODO: Send invitation email if newClient.sendInvite is true
-      if (newClient.sendInvite) {
-        console.log('TODO: Send invitation email to', newClient.email)
-      }
-      
       // Reset form and refresh list
       setNewClient({
         name: '',
         email: '',
         phone: '',
+        address: '',
         notes: '',
         sendInvite: true
       })
+      setLinkExistingClient(false)
+      setExistingClientInfo(null)
       setShowAddModal(false)
       fetchClients()
-      
+
     } catch (error) {
       console.error('Error creating client:', error)
       setFormError('Failed to add client. Please try again.')
@@ -237,6 +301,13 @@ export default function ClientsPage() {
       window.location.href = `mailto:${client.email}?subject=Message from your photographer`
     }
   }
+
+  // Filter clients based on search query
+  const filteredClients = clients.filter(client =>
+    client.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    client.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    (client.phone && client.phone.includes(searchQuery))
+  )
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
@@ -301,10 +372,25 @@ export default function ClientsPage() {
         {/* Clients List */}
         <Card>
           <CardHeader>
-            <CardTitle>Your Clients</CardTitle>
-            <CardDescription>
-              Manage your photography clients and their galleries
-            </CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Your Clients</CardTitle>
+                <CardDescription>
+                  Manage your photography clients and their galleries
+                </CardDescription>
+              </div>
+              {clients.length > 0 && (
+                <div className="relative w-64">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search clients..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-8"
+                  />
+                </div>
+              )}
+            </div>
           </CardHeader>
           <CardContent>
             {loading ? (
@@ -324,9 +410,20 @@ export default function ClientsPage() {
                   Add Your First Client
                 </Button>
               </div>
+            ) : filteredClients.length === 0 ? (
+              <div className="text-center py-8">
+                <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-medium mb-2">No clients found</h3>
+                <p className="text-muted-foreground mb-4">
+                  Try adjusting your search query
+                </p>
+                <Button variant="outline" onClick={() => setSearchQuery('')}>
+                  Clear Search
+                </Button>
+              </div>
             ) : (
               <div className="space-y-4">
-                {clients.map((client) => (
+                {filteredClients.map((client) => (
                   <div key={client.id} className="border rounded-lg p-4">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
@@ -448,8 +545,14 @@ export default function ClientsPage() {
                   type="email"
                   value={newClient.email}
                   onChange={(e) => setNewClient({ ...newClient, email: e.target.value })}
+                  onBlur={(e) => checkExistingEmail(e.target.value)}
                   placeholder="client@example.com"
                 />
+                {linkExistingClient && existingClientInfo && (
+                  <p className="text-xs text-amber-600 mt-1">
+                    ℹ️ This client exists with {existingClientInfo.name}. You can still add them to your client list.
+                  </p>
+                )}
               </div>
               <div>
                 <Label htmlFor="phone">Phone</Label>
@@ -461,12 +564,23 @@ export default function ClientsPage() {
                 />
               </div>
               <div>
-                <Label htmlFor="notes">Notes</Label>
+                <Label htmlFor="address">Address</Label>
+                <Textarea
+                  id="address"
+                  value={newClient.address}
+                  onChange={(e) => setNewClient({ ...newClient, address: e.target.value })}
+                  placeholder="123 Main St, City, State ZIP"
+                  rows={2}
+                />
+              </div>
+              <div>
+                <Label htmlFor="notes">Notes (Private)</Label>
                 <Textarea
                   id="notes"
                   value={newClient.notes}
                   onChange={(e) => setNewClient({ ...newClient, notes: e.target.value })}
-                  placeholder="Any additional notes about this client..."
+                  placeholder="Any additional notes about this client (photographer only)..."
+                  rows={2}
                 />
               </div>
               {formError && (

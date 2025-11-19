@@ -106,52 +106,15 @@ export default function AnalyticsPage() {
   const fetchAnalyticsData = async () => {
     try {
       setLoading(true)
-      // Simulate API call with mock data for testing
-      setTimeout(() => {
-        const mockData: AnalyticsData = {
-          monthlyBreakdown: [
-            { month: 'Jan 2024', upfront: 500, recurring: 120, total: 620, newClients: 10, activeClients: 10 },
-            { month: 'Feb 2024', upfront: 650, recurring: 160, total: 810, newClients: 13, activeClients: 23 },
-            { month: 'Mar 2024', upfront: 800, recurring: 230, total: 1030, newClients: 16, activeClients: 39 },
-            { month: 'Apr 2024', upfront: 950, recurring: 310, total: 1260, newClients: 19, activeClients: 58 },
-            { month: 'May 2024', upfront: 1100, recurring: 400, total: 1500, newClients: 22, activeClients: 80 },
-            { month: 'Jun 2024', upfront: 1250, recurring: 500, total: 1750, newClients: 25, activeClients: 105 },
-            { month: 'Jul 2024', upfront: 1400, recurring: 620, total: 2020, newClients: 28, activeClients: 133 },
-            { month: 'Aug 2024', upfront: 1550, recurring: 750, total: 2300, newClients: 31, activeClients: 164 },
-            { month: 'Sep 2024', upfront: 1700, recurring: 900, total: 2600, newClients: 34, activeClients: 198 },
-            { month: 'Oct 2024', upfront: 1850, recurring: 1050, total: 2900, newClients: 37, activeClients: 235 },
-            { month: 'Nov 2024', upfront: 2000, recurring: 1220, total: 3220, newClients: 40, activeClients: 275 },
-            { month: 'Dec 2024', upfront: 2150, recurring: 1400, total: 3550, newClients: 43, activeClients: 318 }
-          ],
-          growthMetrics: {
-            revenueGrowth: 10.2,
-            clientGrowth: 7.5,
-            recurringGrowth: 14.8
-          },
-          totals: {
-            totalRevenue: 25560,
-            totalUpfront: 15900,
-            totalRecurring: 9660,
-            totalNewClients: 318,
-            averageMonthlyRevenue: 2130
-          },
-          projections: {
-            nextMonth: 3800,
-            next3Months: 12000,
-            nextYear: 50000,
-            recurringRunRate: 16800
-          },
-          retentionMetrics: {
-            totalClients: 318,
-            activeClients: 280,
-            avgClientLifetime: 245,
-            avgClientValue: 80.38
-          }
-        }
+      const response = await fetch('/api/photographer/analytics', { cache: 'no-store' })
+      const payload = await response.json()
 
-        setAnalyticsData(mockData)
-        setLoading(false)
-      }, 1000)
+      if (!response.ok || !payload.success) {
+        throw new Error(payload.error || 'Failed to load analytics data')
+      }
+
+      setAnalyticsData(payload.data)
+      setLoading(false)
     } catch (error) {
       console.error('Error fetching analytics data:', error)
       setLoading(false)

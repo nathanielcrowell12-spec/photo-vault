@@ -200,6 +200,43 @@ export default function RevenuePage() {
     })
   }
 
+  const exportToCSV = () => {
+    if (!revenueData) return
+
+    // Create CSV content
+    let csv = 'Revenue Summary\n\n'
+    csv += 'Metric,Amount\n'
+    csv += `Total Upfront Commission,${revenueData.summary.totalUpfrontCommission}\n`
+    csv += `Total Monthly Commission,${revenueData.summary.totalMonthlyCommission}\n`
+    csv += `Active Clients,${revenueData.summary.activeClientsCount}\n`
+    csv += `Monthly Recurring Clients,${revenueData.summary.monthlyRecurringClientsCount}\n`
+    csv += `Projected Monthly Recurring,${revenueData.summary.projectedMonthlyRecurring}\n`
+    csv += `Projected Yearly Total,${revenueData.summary.projectedYearlyTotal}\n\n`
+
+    csv += 'Recent Transactions\n'
+    csv += 'Date,Client,Type,Amount,Status\n'
+    revenueData.recentTransactions.forEach(transaction => {
+      csv += `${transaction.date},${transaction.clientName},${transaction.type},${transaction.amount},${transaction.status}\n`
+    })
+
+    csv += '\nTop Clients\n'
+    csv += 'Client,Total,Upfront,Recurring\n'
+    revenueData.topClients.forEach(client => {
+      csv += `${client.name},${client.total},${client.upfront},${client.recurring}\n`
+    })
+
+    // Create blob and download
+    const blob = new Blob([csv], { type: 'text/csv' })
+    const url = window.URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `photovault_revenue_${new Date().toISOString().split('T')[0]}.csv`
+    document.body.appendChild(a)
+    a.click()
+    window.URL.revokeObjectURL(url)
+    document.body.removeChild(a)
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
@@ -263,7 +300,7 @@ export default function RevenuePage() {
                 Reports
               </Link>
             </Button>
-            <Button variant="outline" size="sm">
+            <Button variant="outline" size="sm" onClick={exportToCSV}>
               <Download className="h-4 w-4 mr-2" />
               Export
             </Button>
@@ -303,7 +340,7 @@ export default function RevenuePage() {
                   </div>
                 </div>
                 <p className="text-xs text-slate-500 mt-2">
-                  $50 per new client
+                  $50 (6mo) or $100 (1yr) per client
                 </p>
               </CardContent>
             </Card>
@@ -386,7 +423,7 @@ export default function RevenuePage() {
                       <div>
                         <p className="font-medium">Upfront Commissions</p>
                         <p className="text-sm text-slate-600 dark:text-slate-400">
-                          $50 per new client
+                          $50 (6 months) or $100 (1 year)
                         </p>
                       </div>
                     </div>

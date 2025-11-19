@@ -90,7 +90,8 @@ export default function SessionsPage() {
     }
     fetchSessions()
     fetchClients()
-  }, [userType, router, fetchSessions])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userType, router, user?.id])
 
   // Show loading or redirect if not photographer
   if (userType !== 'photographer') {

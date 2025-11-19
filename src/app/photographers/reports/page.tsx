@@ -85,37 +85,13 @@ export default function ReportsPage() {
 
   const fetchReportHistory = async () => {
     try {
-      // Simulate API call - in real implementation, this would fetch from database
-      setReportHistory([
-        {
-          id: '1',
-          type: 'monthly',
-          period_start: '2024-09-01',
-          period_end: '2024-09-30',
-          status: 'completed',
-          created_at: '2024-10-01T10:00:00Z',
-          download_url: '/api/reports/download/1'
-        },
-        {
-          id: '2',
-          type: 'quarterly',
-          period_start: '2024-07-01',
-          period_end: '2024-09-30',
-          status: 'completed',
-          created_at: '2024-10-01T08:00:00Z',
-          download_url: '/api/reports/download/2'
-        },
-        {
-          id: '3',
-          type: 'yearly',
-          period_start: '2024-01-01',
-          period_end: '2024-12-31',
-          status: 'processing',
-          created_at: '2024-10-01T06:00:00Z'
-        }
-      ])
+      // Fetch report history from API
+      // For now, return empty array until report generation is implemented
+      // This will be populated when Stripe integration is complete
+      setReportHistory([])
     } catch (error) {
       console.error('Error fetching report history:', error)
+      setReportHistory([])
     }
   }
 

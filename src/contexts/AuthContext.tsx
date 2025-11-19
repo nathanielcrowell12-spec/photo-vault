@@ -416,7 +416,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     try {
       console.log('[AuthContext] Signing out...')
-      await supabase.auth.signOut()
+      const { error } = await supabase.auth.signOut()
+
+      if (error) {
+        console.error('[AuthContext] Supabase signOut error:', error)
+      }
+
+      console.log('[AuthContext] Clearing auth state...')
       setUser(null)
       setSession(null)
       setUserType(null)
@@ -427,10 +433,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       // Redirect to login page after sign out
       if (typeof window !== 'undefined') {
+        console.log('[AuthContext] Performing redirect to /login')
         window.location.href = '/login'
       }
     } catch (error) {
       console.error('[AuthContext] Error signing out:', error)
+      // Force redirect even on error
+      if (typeof window !== 'undefined') {
+        window.location.href = '/login'
+      }
     }
   }
 

@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
 
         // Get gallery info for user ID
         const { data: gallery } = await supabase
-          .from('galleries')
+          .from('photo_galleries')
           .select('user_id')
           .eq('id', galleryId)
           .single()
@@ -179,7 +179,7 @@ export async function POST(request: NextRequest) {
 
         // Update gallery with final photo count
         await supabase
-          .from('galleries')
+          .from('photo_galleries')
           .update({
             photo_count: uploadedCount,
             is_imported: true,

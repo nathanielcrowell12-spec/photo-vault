@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Beta Tester Application - PhotoVault</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#0f0fbd",
+            "background-light": "#f6f6f8",
+            "background-dark": "#101022",
+          },
+          fontFamily: {
+            "display": ["Manrope", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+<div class="relative flex min-h-screen w-full flex-col items-center justify-center bg-[#0A192F] p-4 group/design-root overflow-x-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-indigo-900/10 via-transparent to-amber-900/10 opacity-30"></div>
+<div class="relative flex w-full max-w-2xl flex-col items-center gap-6 rounded-xl bg-transparent px-4 py-12 sm:px-8">
+
+<!-- Logo -->
+<div class="flex items-center gap-2 pb-2">
+<span class="material-symbols-outlined text-5xl text-[#FFC107]">workspace_premium</span>
+<span class="text-3xl font-bold tracking-tight text-white">PhotoVault</span>
+</div>
+
+<!-- Badge -->
+<div class="bg-[#FFC107] text-black text-xs font-bold uppercase px-5 py-2 rounded-full">
+Beta Tester Application
+</div>
+
+<!-- Headline & Body Text -->
+<div class="text-center max-w-xl">
+<h1 class="text-white tracking-tight text-[38px] font-bold leading-tight mb-3">You're Invited to Beta Test PhotoVault</h1>
+<p class="text-white/80 text-lg font-normal leading-normal">Help us build the future of photographer-client relationships. Get exclusive lifetime benefits for your early feedback.</p>
+</div>
+
+<!-- Benefits Reminder -->
+<div class="w-full bg-white/5 border border-[#FFC107]/30 rounded-xl p-6">
+<h3 class="text-[#FFC107] font-semibold mb-4 text-center text-lg">Your Beta Tester Benefits:</h3>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
+<div class="flex items-center gap-2 text-white/90">
+<span class="material-symbols-outlined text-[#FFC107]" style="font-size: 18px;">check_circle</span>
+<span>Immediate platform access</span>
+</div>
+<div class="flex items-center gap-2 text-white/90">
+<span class="material-symbols-outlined text-[#FFC107]" style="font-size: 18px;">check_circle</span>
+<span>90% commission - LIFETIME</span>
+</div>
+<div class="flex items-center gap-2 text-white/90">
+<span class="material-symbols-outlined text-[#FFC107]" style="font-size: 18px;">check_circle</span>
+<span>Free during beta ($22/mo)</span>
+</div>
+<div class="flex items-center gap-2 text-white/90">
+<span class="material-symbols-outlined text-[#FFC107]" style="font-size: 18px;">check_circle</span>
+<span>Direct founder support</span>
+</div>
+</div>
+</div>
+
+<!-- Application Form -->
+<form class="flex w-full flex-col gap-5 pt-2" id="beta-form">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+<label class="flex w-full flex-col">
+<p class="text-white text-sm font-medium leading-normal pb-2">Full Name *</p>
+<input required class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-[#FFC107] border border-white/30 bg-white/5 focus:border-[#FFC107] h-12 placeholder:text-white/50 px-4 text-base font-normal leading-normal transition-colors" placeholder="John Smith" name="name"/>
+</label>
+<label class="flex w-full flex-col">
+<p class="text-white text-sm font-medium leading-normal pb-2">Email Address *</p>
+<input required type="email" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-[#FFC107] border border-white/30 bg-white/5 focus:border-[#FFC107] h-12 placeholder:text-white/50 px-4 text-base font-normal leading-normal transition-colors" placeholder="john@photography.com" name="email"/>
+</label>
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+<label class="flex w-full flex-col">
+<p class="text-white text-sm font-medium leading-normal pb-2">Phone Number *</p>
+<input required type="tel" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-[#FFC107] border border-white/30 bg-white/5 focus:border-[#FFC107] h-12 placeholder:text-white/50 px-4 text-base font-normal leading-normal transition-colors" placeholder="(555) 123-4567" name="phone"/>
+</label>
+<label class="flex w-full flex-col">
+<p class="text-white text-sm font-medium leading-normal pb-2">Business Name</p>
+<input class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-[#FFC107] border border-white/30 bg-white/5 focus:border-[#FFC107] h-12 placeholder:text-white/50 px-4 text-base font-normal leading-normal transition-colors" placeholder="Smith Photography" name="business_name"/>
+</label>
+</div>
+
+<label class="flex w-full flex-col">
+<p class="text-white text-sm font-medium leading-normal pb-2">Photography Specialty *</p>
+<div class="relative w-full">
+<select required class="form-select w-full appearance-none rounded-lg border border-white/30 bg-white/5 p-3.5 pr-10 text-base text-white focus:border-[#FFC107] focus:outline-none focus:ring-2 focus:ring-[#FFC107] transition-colors" name="specialty">
+<option class="bg-[#0A192F]" value="">Select your specialty</option>
+<option class="bg-[#0A192F]" value="wedding">Wedding</option>
+<option class="bg-[#0A192F]" value="portrait">Portrait</option>
+<option class="bg-[#0A192F]" value="family">Family</option>
+<option class="bg-[#0A192F]" value="newborn">Newborn</option>
+<option class="bg-[#0A192F]" value="commercial">Commercial</option>
+<option class="bg-[#0A192F]" value="events">Events</option>
+<option class="bg-[#0A192F]" value="other">Other</option>
+</select>
+<div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3">
+<span class="material-symbols-outlined text-white/70">unfold_more</span>
+</div>
+</div>
+</label>
+
+<label class="flex w-full flex-col">
+<p class="text-white text-sm font-medium leading-normal pb-2">How many clients do you photograph per year? *</p>
+<input required type="number" class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-[#FFC107] border border-white/30 bg-white/5 focus:border-[#FFC107] h-12 placeholder:text-white/50 px-4 text-base font-normal leading-normal transition-colors" placeholder="e.g., 25" name="clients_per_year"/>
+</label>
+
+<label class="flex w-full flex-col">
+<p class="text-white text-sm font-medium leading-normal pb-2">What's your biggest challenge with client photo delivery? *</p>
+<textarea required class="form-textarea flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-lg text-white focus:outline-0 focus:ring-2 focus:ring-[#FFC107] border border-white/30 bg-white/5 focus:border-[#FFC107] placeholder:text-white/50 p-4 text-base font-normal leading-normal transition-colors" placeholder="Tell us about your pain points with current photo delivery methods..." rows="5" name="challenge"></textarea>
+</label>
+
+<!-- Agreement Checkbox -->
+<label class="flex items-start gap-3">
+<input required type="checkbox" class="mt-1 rounded border-white/30 bg-white/5 text-[#FFC107] focus:ring-[#FFC107] focus:ring-offset-0" name="agreement"/>
+<p class="text-white/80 text-sm leading-relaxed">
+I understand that as a beta tester, I'll provide feedback on the platform and test features before public launch. I commit to uploading at least one gallery and inviting at least one test client during the beta period.
+</p>
+</label>
+
+<!-- Trust Badge -->
+<div class="flex items-center justify-center gap-2 pt-2">
+<span class="material-symbols-outlined text-base text-white/70">shield_lock</span>
+<p class="text-white/70 text-sm font-normal">Your information is secure. We'll review and respond within 48 hours.</p>
+</div>
+
+<!-- Submit Button -->
+<button type="submit" class="flex w-full items-center justify-center rounded-lg bg-[#FFC107] py-4 text-center text-base font-bold text-black shadow-lg shadow-[#FFC107]/20 transition-transform duration-200 ease-in-out hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-[#FFC107] focus:ring-offset-2 focus:ring-offset-[#0A192F] mt-2">
+Submit Beta Application
+</button>
+
+<p class="text-white/50 text-xs text-center">Only 10 spots available • Applications reviewed manually</p>
+</form>
+
+<!-- Back Link -->
+<div class="text-center pt-4">
+<a href="/thank-you.html" class="text-[#FFC107] hover:text-[#FFC107]/80 text-sm font-medium transition-colors">
+← Back to Waitlist Confirmation
+</a>
+</div>
+
+</div>
+</div>
+
+<script>
+document.getElementById('beta-form').addEventListener('submit', async function(e) {
+  e.preventDefault();
+
+  const formData = new FormData(e.target);
+  const data = Object.fromEntries(formData.entries());
+
+  // TODO: Send to Supabase
+  console.log('Beta application submitted:', data);
+
+  // For now, just redirect to a success message
+  alert('Thank you for applying! We\'ll review your application and respond within 48 hours.');
+  window.location.href = '/thank-you.html?beta=applied';
+});
+</script>
+
+</body></html>

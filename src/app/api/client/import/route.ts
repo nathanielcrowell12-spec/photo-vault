@@ -431,7 +431,7 @@ async function storeImportedData(clientId: string, platform: string, galleries: 
   for (const gallery of galleries) {
     // Store gallery
     const { data: storedGallery, error: galleryError } = await supabase
-      .from('galleries')
+      .from('photo_galleries')
       .insert({
         id: gallery.id,
         name: gallery.name,

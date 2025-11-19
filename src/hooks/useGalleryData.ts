@@ -29,7 +29,7 @@ export function useGalleryData(userId: string, userType: string): UseGalleryData
       console.log('GalleryGrid: User type:', userType)
       console.log('GalleryGrid: Using anon key:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.substring(0, API_KEY_DISPLAY_LENGTH) + '...')
       
-      let query = supabase.from('galleries').select('*')
+      let query = supabase.from('photo_galleries').select('*')
       
       if (isPhotographer) {
         query = query.eq('photographer_id', userId)

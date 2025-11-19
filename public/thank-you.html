@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>You're on the Waitlist! - PhotoVault</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#0f0fbd",
+            "background-light": "#f6f6f8",
+            "background-dark": "#101022",
+          },
+          fontFamily: {
+            "display": ["Manrope", "sans-serif"]
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="font-display bg-background-light dark:bg-background-dark">
+<div class="relative flex min-h-screen w-full flex-col items-center justify-center bg-[#0A192F] p-4 group/design-root overflow-x-hidden">
+<div class="absolute inset-0 bg-gradient-to-br from-indigo-900/10 via-transparent to-amber-900/10 opacity-30"></div>
+<div class="relative flex w-full max-w-2xl flex-col items-center gap-8 rounded-xl bg-transparent px-4 py-12 sm:px-8">
+
+<!-- Success Icon -->
+<div class="flex items-center justify-center w-24 h-24 rounded-full bg-[#FFC107]/20 border-4 border-[#FFC107]">
+<span class="material-symbols-outlined text-6xl text-[#FFC107]">check_circle</span>
+</div>
+
+<!-- Headline -->
+<div class="text-center">
+<h1 class="text-white tracking-tight text-[42px] font-bold leading-tight mb-3">You're on the List!</h1>
+<p class="text-white/80 text-xl font-medium leading-normal">Welcome to the PhotoVault waitlist</p>
+</div>
+
+<!-- Waitlist Position -->
+<div class="w-full bg-white/5 border border-white/20 rounded-xl p-8 text-center">
+<p class="text-white/60 text-sm font-medium uppercase tracking-wider mb-2">Your Waitlist Position</p>
+<p class="text-[#FFC107] text-6xl font-bold mb-2">#<span id="waitlist-position">---</span></p>
+<p class="text-white/70 text-sm">We'll notify you as we get closer to launch</p>
+</div>
+
+<!-- What Happens Next -->
+<div class="w-full bg-white/5 border border-white/20 rounded-xl p-8">
+<h2 class="text-white text-2xl font-bold mb-6 text-center">What Happens Next?</h2>
+<div class="space-y-6">
+<div class="flex items-start gap-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-[#FFC107]/20 flex items-center justify-center">
+<span class="text-[#FFC107] font-bold text-lg">1</span>
+</div>
+<div>
+<h3 class="text-white font-semibold text-lg mb-1">We'll email you when we launch</h3>
+<p class="text-white/70 text-sm">Launching Q1 2026. You'll be among the first to know.</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-[#FFC107]/20 flex items-center justify-center">
+<span class="text-[#FFC107] font-bold text-lg">2</span>
+</div>
+<div>
+<h3 class="text-white font-semibold text-lg mb-1">Early access for first 100 photographers</h3>
+<p class="text-white/70 text-sm">Get exclusive early-adopter benefits and pricing.</p>
+</div>
+</div>
+<div class="flex items-start gap-4">
+<div class="flex-shrink-0 w-10 h-10 rounded-full bg-[#FFC107]/20 flex items-center justify-center">
+<span class="text-[#FFC107] font-bold text-lg">3</span>
+</div>
+<div>
+<h3 class="text-white font-semibold text-lg mb-1">Exclusive beta pricing</h3>
+<p class="text-white/70 text-sm">Lock in special rates for being an early supporter.</p>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Beta Tester Upgrade Section -->
+<div class="w-full bg-gradient-to-br from-[#FFC107]/20 to-[#FFC107]/5 border-2 border-[#FFC107] rounded-xl p-8">
+<div class="flex items-center justify-center mb-4">
+<span class="bg-[#FFC107] text-black text-xs font-bold uppercase px-4 py-2 rounded-full">Limited Opportunity</span>
+</div>
+<h2 class="text-white text-2xl font-bold mb-3 text-center">Want to Test PhotoVault NOW?</h2>
+<p class="text-white/80 text-center mb-6">We're looking for 10 photographers to beta test the platform and give us feedback.</p>
+
+<div class="bg-[#0A192F]/50 rounded-lg p-6 mb-6">
+<h3 class="text-[#FFC107] font-semibold mb-3 text-lg">Beta Tester Benefits:</h3>
+<ul class="space-y-3">
+<li class="flex items-start gap-3 text-white/90">
+<span class="material-symbols-outlined text-[#FFC107] mt-0.5" style="font-size: 20px;">check</span>
+<span>Immediate access to the platform</span>
+</li>
+<li class="flex items-start gap-3 text-white/90">
+<span class="material-symbols-outlined text-[#FFC107] mt-0.5" style="font-size: 20px;">check</span>
+<span>Free platform fees during beta ($22/mo value)</span>
+</li>
+<li class="flex items-start gap-3 text-white/90">
+<span class="material-symbols-outlined text-[#FFC107] mt-0.5" style="font-size: 20px;">check</span>
+<span>90% commission (vs. 50% standard) - LIFETIME</span>
+</li>
+<li class="flex items-start gap-3 text-white/90">
+<span class="material-symbols-outlined text-[#FFC107] mt-0.5" style="font-size: 20px;">check</span>
+<span>Shape the product before public launch</span>
+</li>
+<li class="flex items-start gap-3 text-white/90">
+<span class="material-symbols-outlined text-[#FFC107] mt-0.5" style="font-size: 20px;">check</span>
+<span>Direct line to founder for support</span>
+</li>
+</ul>
+</div>
+
+<a href="/beta-signup.html" class="flex w-full items-center justify-center rounded-lg bg-[#FFC107] py-4 text-center text-lg font-bold text-black shadow-lg shadow-[#FFC107]/20 transition-transform duration-200 ease-in-out hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-[#FFC107] focus:ring-offset-2 focus:ring-offset-[#0A192F] no-underline">
+Yes, I Want Beta Access
+</a>
+<p class="text-white/50 text-xs text-center mt-3">Only 10 spots available</p>
+</div>
+
+<!-- Back to Home -->
+<div class="text-center">
+<a href="/landing-page.html" class="text-[#FFC107] hover:text-[#FFC107]/80 text-sm font-medium transition-colors">
+← Back to PhotoVault Home
+</a>
+</div>
+
+</div>
+</div>
+
+<script>
+// Get waitlist position from URL parameter or generate random for demo
+const urlParams = new URLSearchParams(window.location.search);
+const position = urlParams.get('position') || Math.floor(Math.random() * 50) + 100;
+document.getElementById('waitlist-position').textContent = position;
+</script>
+
+</body></html>

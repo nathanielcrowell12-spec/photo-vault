@@ -108,7 +108,7 @@ export default function ClientsPage() {
     try {
       // Fetch photographer's galleries from database
       const { data: galleriesData, error } = await supabase
-        .from('galleries')
+        .from('photo_galleries')
         .select('*')
         .eq('photographer_id', user?.id)
         .order('created_at', { ascending: false })

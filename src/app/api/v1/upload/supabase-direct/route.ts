@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
 
     // Create gallery record
     const { data: gallery, error: galleryError } = await supabase
-      .from('galleries')
+      .from('photo_galleries')
       .insert({
         user_id: userId,
         gallery_name: galleryName,

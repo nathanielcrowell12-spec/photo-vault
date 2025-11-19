@@ -127,7 +127,7 @@ export default function GalleryEditModal({ gallery, isOpen, onClose, onSave }: G
 
       // Update gallery in database
       const { error: updateError } = await supabase
-        .from('galleries')
+        .from('photo_galleries')
         .update(updateData)
         .eq('id', gallery.id)
 

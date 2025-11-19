@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
 
     // Get gallery info from database
     const { data: gallery, error: galleryError } = await supabase
-      .from('galleries')
+      .from('photo_galleries')
       .select('*')
       .eq('id', galleryId)
       .eq('user_id', userId)
@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
       console.error('Background import error:', error)
       // Update gallery with error status
       supabase
-        .from('galleries')
+        .from('photo_galleries')
         .update({
           import_started_at: null,
           metadata: { error: error.message }
@@ -145,7 +145,7 @@ async function importFromPixieset(subdomain: string, gallerySlug: string, passwo
 
   // 4. Mark gallery as imported
   await supabase
-    .from('galleries')
+    .from('photo_galleries')
     .update({
       is_imported: true,
       import_completed_at: new Date().toISOString()

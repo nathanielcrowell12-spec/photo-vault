@@ -58,10 +58,10 @@ export function Navigation() {
   const photographerLinks = [
     { href: '/photographer/dashboard', icon: Home, label: 'Dashboard' },
     { href: '/photographer/clients', icon: Users, label: 'Clients' },
-    { href: '/photographer/sessions', icon: Calendar, label: 'Sessions' },
-    { href: '/photographer/revenue', icon: DollarSign, label: 'Revenue' },
-    { href: '/photographer/reports', icon: FileText, label: 'Reports' },
-    { href: '/photographer/subscription', icon: Crown, label: 'Subscription' }
+    { href: '/photographers/sessions', icon: Calendar, label: 'Sessions' },
+    { href: '/photographers/revenue', icon: DollarSign, label: 'Revenue' },
+    { href: '/photographers/reports', icon: FileText, label: 'Reports' },
+    { href: '/photographers/subscription', icon: Crown, label: 'Subscription' }
   ]
 
   const adminLinks = [

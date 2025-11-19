@@ -72,10 +72,10 @@ export default function PhotographersPage() {
                 </div>
               </div>
               <div className="text-center md:text-left">
-                <div className="text-2xl md:text-3xl font-semibold text-primary mb-3">Earn $50 + $4/month</div>
+                <div className="text-2xl md:text-3xl font-semibold text-primary mb-3">Earn $25-$50 + $4/month</div>
                 <div className="text-lg text-foreground mb-2 font-medium">Commission Program</div>
                 <div className="text-sm text-muted-foreground">
-                  $50 upfront + $4/month passive income per client
+                  $25 (6mo) or $50 (1yr) upfront + $4/month passive income per client
                 </div>
               </div>
             </div>
@@ -318,13 +318,13 @@ export default function PhotographersPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="text-3xl font-semibold text-primary">$50 + $4/month</div>
+                  <div className="text-3xl font-semibold text-primary">$25-$50 + $4/month</div>
                   <p className="text-muted-foreground text-sm leading-relaxed">
-                    Earn $50 upfront commission + $4/month passive income for every client through PhotoVault.
+                    Earn $25 (6-month) or $50 (1-year) upfront commission + $4/month passive income for every client through PhotoVault.
                   </p>
                   <div className="bg-secondary/50 p-4 rounded-lg">
                     <p className="text-sm text-foreground">
-                      <strong>Example:</strong> 25 clients × $50 upfront = $1,250 + 25 clients × $4/month = $100/month passive income
+                      <strong>Example:</strong> 25 clients × $50 upfront (1-year) = $1,250 + 25 clients × $4/month = $100/month passive income
                     </p>
                   </div>
                   <div className="flex justify-end mt-4">
@@ -440,11 +440,11 @@ export default function PhotographersPage() {
               },
               {
                 question: "What's the commission program?",
-                answer: "Earn $50 upfront + $4/month passive income for every client. Plus $22/month platform fee with 14-day free trial."
+                answer: "Earn $25 (6-month) or $50 (1-year) upfront + $4/month passive income for every client. Plus $22/month platform fee with 14-day free trial."
               },
               {
                 question: "How does PhotoVault compare to Pixieset/ShootProof?",
-                answer: "PhotoVault charges $22/month vs $20-30/month competitors, but you earn $50 + $4/month commission on every client - making it profitable!"
+                answer: "PhotoVault charges $22/month vs $20-30/month competitors, but you earn $25-$50 + $4/month commission on every client - making it profitable!"
               },
               {
                 question: "What's included in the $22/month fee?",
@@ -467,7 +467,7 @@ export default function PhotographersPage() {
             Start Your 14-Day Free Trial Today
           </h2>
           <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Join hundreds of photographers earning $50 + $4/month commission on every client. 
+            Join hundreds of photographers earning $25-$50 + $4/month commission on every client.
             Replace expensive platforms with a profitable alternative.
           </p>
           <div className="flex justify-center">

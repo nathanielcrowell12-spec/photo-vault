@@ -21,6 +21,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import AccessGuard from '@/components/AccessGuard'
+import MessagesButton from '@/components/MessagesButton'
 
 type DashboardStatusResponse = {
   stats: {
@@ -241,6 +242,7 @@ export default function AdminDashboardPage() {
                 <Badge variant="outline" className="bg-blue-50 text-blue-700">
                   Admin Access
                 </Badge>
+                <MessagesButton variant="icon" />
                 <Button variant="outline" onClick={signOut}>
                   Sign Out
                 </Button>
@@ -314,8 +316,8 @@ export default function AdminDashboardPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Button className="w-full" asChild>
-                    <Link href="/admin/users">
+                  <Button className="w-full justify-center" asChild>
+                    <Link href="/admin/users" className="flex items-center justify-center">
                       Manage User Profiles
                     </Link>
                   </Button>
@@ -333,8 +335,8 @@ export default function AdminDashboardPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Button className="w-full" asChild>
-                    <Link href="/admin/analytics">
+                  <Button className="w-full justify-center" asChild>
+                    <Link href="/admin/analytics" className="flex items-center justify-center">
                       View Analytics
                     </Link>
                   </Button>
@@ -352,8 +354,8 @@ export default function AdminDashboardPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Button className="w-full" asChild>
-                    <Link href="/admin/settings">
+                  <Button className="w-full justify-center" asChild>
+                    <Link href="/admin/settings" className="flex items-center justify-center">
                       System Settings
                     </Link>
                   </Button>
@@ -371,8 +373,8 @@ export default function AdminDashboardPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Button className="w-full" asChild>
-                    <Link href="/admin/database">
+                  <Button className="w-full justify-center" asChild>
+                    <Link href="/admin/database" className="flex items-center justify-center">
                       Database Tools
                     </Link>
                   </Button>
@@ -381,8 +383,8 @@ export default function AdminDashboardPage() {
 
               <Card className="hover:shadow-lg transition-shadow cursor-pointer">
                 <CardHeader>
-                  <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4">
-                    <AlertTriangle className="w-6 h-6 text-red-600" />
+                  <div className="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center mb-4">
+                    <AlertTriangle className="w-6 h-6 text-amber-600" />
                   </div>
                   <CardTitle>Security & Logs</CardTitle>
                   <CardDescription>
@@ -390,8 +392,8 @@ export default function AdminDashboardPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Button className="w-full" asChild>
-                    <Link href="/admin/security">
+                  <Button className="w-full justify-center" asChild>
+                    <Link href="/admin/security" className="flex items-center justify-center">
                       Security Center
                     </Link>
                   </Button>
@@ -400,8 +402,8 @@ export default function AdminDashboardPage() {
 
               <Card className="hover:shadow-lg transition-shadow cursor-pointer">
                 <CardHeader>
-                  <div className="w-12 h-12 bg-teal-100 rounded-lg flex items-center justify-center mb-4">
-                    <DollarSign className="w-6 h-6 text-teal-600" />
+                  <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center mb-4">
+                    <DollarSign className="w-6 h-6 text-emerald-600" />
                   </div>
                   <CardTitle>Revenue Management</CardTitle>
                   <CardDescription>
@@ -409,8 +411,8 @@ export default function AdminDashboardPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <Button className="w-full" asChild>
-                    <Link href="/admin/revenue">
+                  <Button className="w-full justify-center" asChild>
+                    <Link href="/admin/revenue" className="flex items-center justify-center">
                       Revenue Dashboard
                     </Link>
                   </Button>

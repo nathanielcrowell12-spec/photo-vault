@@ -320,6 +320,7 @@ async function handlePaymentSucceeded(
   const subscription = await stripe.subscriptions.retrieve(subscriptionId)
   const photographerId = subscription.metadata?.photographer_id
   const clientId = subscription.metadata?.client_id
+  const galleryId = subscription.metadata?.gallery_id
 
   if (photographerId && clientId && paymentRecord) {
     const { createCommission } = await import('@/lib/server/commission-service')
@@ -343,6 +344,56 @@ async function handlePaymentSucceeded(
     }
   } else {
     console.warn('[Webhook] Missing photographer_id or client_id in subscription metadata')
+  }
+
+  // Send payment successful email to client
+  if (clientId && galleryId) {
+    const { data: clientData } = await supabase
+      .from('users')
+      .select(`
+        email,
+        full_name,
+        clients!inner(
+          photographer_id,
+          photographers!inner(
+            users!inner(full_name)
+          )
+        )
+      `)
+      .eq('id', clientId)
+      .single()
+
+    const { data: galleryData } = await supabase
+      .from('photo_galleries')
+      .select('name')
+      .eq('id', galleryId)
+      .single()
+
+    if (clientData && galleryData) {
+      const { EmailService } = await import('@/lib/email/email-service')
+
+      const nextBillingDate = new Date(invoice.period_end * 1000)
+      const planName = invoice.billing_reason === 'subscription_create'
+        ? 'Gallery Access - Monthly (First Payment)'
+        : 'Gallery Access - Monthly'
+
+      await EmailService.sendPaymentSuccessfulEmail({
+        customerName: clientData.full_name || 'Valued Customer',
+        customerEmail: clientData.email,
+        amountPaid: invoice.amount_paid / 100,
+        planName: planName,
+        galleryName: galleryData.name,
+        photographerName: clientData.clients.photographers.users.full_name,
+        receiptUrl: invoice.hosted_invoice_url || undefined,
+        nextBillingDate: nextBillingDate.toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        }),
+      })
+
+      console.log(`[Webhook] Sent payment successful email to ${clientData.email}`)
+    }
   }
 
   return `Payment succeeded for subscription ${subscriptionId}, commission ${photographerId && clientId ? 'created' : 'skipped'}`
@@ -384,16 +435,32 @@ async function handlePaymentFailed(
     created_at: new Date().toISOString()
   })
 
-  // Get user email for notification
+  // Get user and subscription details for notification
   const { data: subscription } = await supabase
     .from('subscriptions')
-    .select('user_id, users!inner(email)')
+    .select(`
+      user_id,
+      gallery_id,
+      users!inner(email, full_name),
+      photo_galleries!inner(name)
+    `)
     .eq('stripe_subscription_id', subscriptionId)
     .single()
 
   if (subscription) {
-    // TODO: Send email notification to user about failed payment
-    console.log(`[Webhook] TODO: Send payment failure email to ${subscription.users.email}`)
+    // Send payment failed email
+    const { EmailService } = await import('@/lib/email/email-service')
+
+    await EmailService.sendPaymentFailedEmail({
+      customerName: subscription.users.full_name || 'Valued Customer',
+      customerEmail: subscription.users.email,
+      amountDue: invoice.amount_due / 100,
+      galleryName: subscription.photo_galleries.name,
+      updatePaymentLink: `${process.env.NEXT_PUBLIC_SITE_URL}/client/billing`,
+      gracePeriodDays: 90,
+    })
+
+    console.log(`[Webhook] Sent payment failure email to ${subscription.users.email}`)
   }
 
   return `Payment failed for subscription ${subscriptionId}`

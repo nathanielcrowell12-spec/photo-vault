@@ -79,7 +79,7 @@ export class PhotoImportService {
 
       // Update gallery in database with metadata
       await this.supabase
-        .from('galleries')
+        .from('photo_galleries')
         .update({
           gallery_name: galleryMetadata.name,
           gallery_description: galleryMetadata.description,
@@ -194,7 +194,7 @@ export class PhotoImportService {
 
       // Mark gallery as imported
       await this.supabase
-        .from('galleries')
+        .from('photo_galleries')
         .update({
           is_imported: true,
           import_completed_at: new Date().toISOString(),
