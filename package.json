@@ -13,7 +13,8 @@
     "format:check": "prettier --check .",
     "prompt:sync": "node scripts/sync-prompt.mjs",
     "prompt:verify": "node scripts/verify-prompt.mjs",
-    "ci:gate": "npm run hygiene && npm run prompt:verify && npm run type-check"
+    "ci:gate": "npm run hygiene && npm run prompt:verify && npm run type-check",
+    "postinstall": "node scripts/stub-resend-build.js"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.10",

@@ -7,14 +7,6 @@ const nextConfig: NextConfig = {
   // External packages for server-side functionality
   // resend is externalized to prevent Turbopack from bundling it during build
   serverExternalPackages: ['jszip', 'unzipper', '@tus/server', '@tus/file-store', 'resend'],
-
-  // Turbopack configuration to alias resend to stub during build
-  turbopack: {
-    resolveAlias: {
-      // Alias resend to stub module to prevent build-time instantiation errors
-      'resend': './resend-stub.js',
-    },
-  },
   
   // Security headers (MBP v4.3 requirement)
   async headers() {
