@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase'
 import { stripe, STRIPE_PRICES, PRICING } from '@/lib/stripe'
 
+// Force dynamic rendering to prevent module evaluation during build
+export const dynamic = 'force-dynamic'
+
 /**
  * Create Stripe Checkout Session for Client Subscription
  * POST /api/stripe/create-checkout
