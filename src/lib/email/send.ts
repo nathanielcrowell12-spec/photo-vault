@@ -1,10 +1,11 @@
-import { getResendClient, FROM_EMAIL } from './resend';
+// CRITICAL: Use dynamic imports to prevent build-time evaluation
 
 export async function sendPhotographerSuspensionWarning(
   photographerEmail: string,
   daysRemaining: number
 ) {
   try {
+    const { getResendClient, FROM_EMAIL } = await import('./resend');
     await (await getResendClient()).emails.send({
       from: FROM_EMAIL,
       to: photographerEmail,
@@ -28,6 +29,7 @@ export async function sendPhotographerDeleted(
   clientCount: number
 ) {
   try {
+    const { getResendClient, FROM_EMAIL } = await import('./resend');
     await (await getResendClient()).emails.send({
       from: FROM_EMAIL,
       to: photographerEmail,
@@ -52,6 +54,7 @@ export async function sendCommissionPaid(
   clientName: string
 ) {
   try {
+    const { getResendClient, FROM_EMAIL } = await import('./resend');
     await (await getResendClient()).emails.send({
       from: FROM_EMAIL,
       to: photographerEmail,
@@ -80,6 +83,7 @@ export async function sendClientPaymentFailed(
   daysRemaining: number
 ) {
   try {
+    const { getResendClient, FROM_EMAIL } = await import('./resend');
     await (await getResendClient()).emails.send({
       from: FROM_EMAIL,
       to: clientEmail,
@@ -116,6 +120,7 @@ export async function sendClientDeactivated(
   clientEmail: string
 ) {
   try {
+    const { getResendClient, FROM_EMAIL } = await import('./resend');
     await (await getResendClient()).emails.send({
       from: FROM_EMAIL,
       to: photographerEmail,
@@ -133,4 +138,3 @@ export async function sendClientDeactivated(
     return { success: false, error };
   }
 }
-

@@ -1,8 +1,8 @@
 /**
  * Resend Email Client - Lazy Loaded
  *
- * CRITICAL: This module uses dynamic imports to prevent Resend from being loaded
- * during Vercel's build phase. Do NOT add any static imports from 'resend' package.
+ * CRITICAL: This module MUST NOT be imported during build phase.
+ * All consumers should use dynamic imports: const { getResendClient } = await import('@/lib/email/resend')
  */
 
 export const FROM_EMAIL = process.env.FROM_EMAIL || 'PhotoVault <noreply@photovault.photo>';
@@ -26,12 +26,16 @@ let mockInstance: ResendClient | null = null;
 
 /**
  * Get Resend client - dynamically imports and initializes on first use
- * This prevents build-time errors when RESEND_API_KEY is not available
+ * Returns mock client during build phase or when API key is missing
  */
 export async function getResendClient(): Promise<ResendClient> {
-  // Skip initialization during build if API key is missing
-  if (!process.env.RESEND_API_KEY) {
-    console.warn('[Resend] RESEND_API_KEY not set - using mock client');
+  // CRITICAL: Return mock during Vercel build phase
+  // Vercel sets VERCEL=1 during build, but RESEND_API_KEY might not be available
+  const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build' ||
+                       (process.env.VERCEL === '1' && !process.env.RESEND_API_KEY);
+
+  if (isBuildPhase || !process.env.RESEND_API_KEY) {
+    console.warn('[Resend] Using mock client (build phase or missing API key)');
 
     if (!mockInstance) {
       mockInstance = {
@@ -59,7 +63,7 @@ export async function getResendClient(): Promise<ResendClient> {
     return resendInstance;
   }
 
-  // Dynamic import and initialization
+  // Dynamic import and initialization (only at runtime with API key)
   try {
     const { Resend } = await import('resend');
     const client = new Resend(process.env.RESEND_API_KEY);
