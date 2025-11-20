@@ -13,7 +13,7 @@ const isVercelBuild = process.env.VERCEL === '1' && process.env.CI === '1';
 if (isVercelBuild) {
   console.log('[Post-install] Detected Vercel build environment - stubbing resend module');
 
-  const resendPath = path.join(__dirname, '..', 'node_modules', 'resend', 'build', 'index.js');
+  const resendPath = path.join(__dirname, '..', 'node_modules', 'resend', 'dist', 'index.js');
 
   const stubContent = `// Build-time stub for resend (auto-generated during Vercel build)
 export class Resend {
