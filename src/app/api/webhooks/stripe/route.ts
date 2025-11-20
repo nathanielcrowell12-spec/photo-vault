@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { createServerSupabaseClient } from '@/lib/supabase'
 
+// Force dynamic rendering to prevent module evaluation during build
+export const dynamic = 'force-dynamic'
+
 // Initialize Stripe with API version
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: '2025-09-30.clover',
