@@ -1,5 +1,4 @@
 import type { NextConfig } from "next";
-import path from "path";
 
 const nextConfig: NextConfig = {
   // Standalone build for production optimization
@@ -9,16 +8,12 @@ const nextConfig: NextConfig = {
   // resend is externalized to prevent Turbopack from bundling it during build
   serverExternalPackages: ['jszip', 'unzipper', '@tus/server', '@tus/file-store', 'resend'],
 
-  // Webpack configuration to use stub during build
-  webpack: (config, { isServer }) => {
-    if (isServer) {
-      // Replace resend with stub during build to prevent instantiation errors
-      config.resolve.alias = {
-        ...config.resolve.alias,
-        'resend': path.resolve(__dirname, 'resend-stub.js'),
-      };
-    }
-    return config;
+  // Turbopack configuration to alias resend to stub during build
+  turbopack: {
+    resolveAlias: {
+      // Alias resend to stub module to prevent build-time instantiation errors
+      'resend': './resend-stub.js',
+    },
   },
   
   // Security headers (MBP v4.3 requirement)
