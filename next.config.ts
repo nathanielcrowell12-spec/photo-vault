@@ -5,7 +5,8 @@ const nextConfig: NextConfig = {
   output: 'standalone',
 
   // External packages for server-side functionality
-  serverExternalPackages: ['jszip', 'unzipper', '@tus/server', '@tus/file-store'],
+  // resend is externalized to prevent Turbopack from bundling it during build
+  serverExternalPackages: ['jszip', 'unzipper', '@tus/server', '@tus/file-store', 'resend'],
   
   // Security headers (MBP v4.3 requirement)
   async headers() {

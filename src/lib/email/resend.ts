@@ -29,13 +29,14 @@ let mockInstance: ResendClient | null = null;
  * Returns mock client during build phase or when API key is missing
  */
 export async function getResendClient(): Promise<ResendClient> {
-  // CRITICAL: Return mock during Vercel build phase
-  // Vercel sets VERCEL=1 during build, but RESEND_API_KEY might not be available
-  const isBuildPhase = process.env.NEXT_PHASE === 'phase-production-build' ||
-                       (process.env.VERCEL === '1' && !process.env.RESEND_API_KEY);
+  // Return cached instance if already initialized
+  if (resendInstance) {
+    return resendInstance;
+  }
 
-  if (isBuildPhase || !process.env.RESEND_API_KEY) {
-    console.warn('[Resend] Using mock client (build phase or missing API key)');
+  // Return mock if API key is not available
+  if (!process.env.RESEND_API_KEY) {
+    console.warn('[Resend] Using mock client - RESEND_API_KEY not set');
 
     if (!mockInstance) {
       mockInstance = {
@@ -58,15 +59,38 @@ export async function getResendClient(): Promise<ResendClient> {
     return mockInstance;
   }
 
-  // Return cached instance if already initialized
-  if (resendInstance) {
-    return resendInstance;
-  }
-
   // Dynamic import and initialization (only at runtime with API key)
   try {
-    const { Resend } = await import('resend');
-    const client = new Resend(process.env.RESEND_API_KEY);
+    // Try to dynamically import resend - this may fail during build
+    let ResendClass;
+    try {
+      const resendModule = await import('resend');
+      ResendClass = resendModule.Resend;
+    } catch (importError) {
+      console.warn('[Resend] Failed to import resend module:', importError);
+      // Return mock if import fails (e.g., during build)
+      if (!mockInstance) {
+        mockInstance = {
+          emails: {
+            send: async (params) => {
+              console.log('[Resend Mock] Would send email (import failed):', {
+                to: params.to,
+                subject: params.subject
+              });
+              return {
+                id: 'mock-' + Date.now(),
+                from: params.from,
+                to: Array.isArray(params.to) ? params.to : [params.to],
+                created_at: new Date().toISOString()
+              };
+            }
+          }
+        };
+      }
+      return mockInstance;
+    }
+
+    const client = new ResendClass(process.env.RESEND_API_KEY);
     resendInstance = client as unknown as ResendClient;
     console.log('[Resend] Client initialized successfully');
     return resendInstance;
