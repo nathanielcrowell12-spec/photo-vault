@@ -13,8 +13,6 @@ const isVercelBuild = process.env.VERCEL === '1' && process.env.CI === '1';
 if (isVercelBuild) {
   console.log('[Post-install] Detected Vercel build environment - stubbing resend module');
 
-  const resendPath = path.join(__dirname, '..', 'node_modules', 'resend', 'dist', 'index.js');
-
   const stubContent = `// Build-time stub for resend (auto-generated during Vercel build)
 "use strict";
 
@@ -37,21 +35,35 @@ module.exports.Resend = Resend;
 module.exports.default = { Resend };
 `;
 
-  try {
-    // Backup original file
-    const originalPath = resendPath + '.original';
-    if (fs.existsSync(resendPath) && !fs.existsSync(originalPath)) {
-      fs.copyFileSync(resendPath, originalPath);
-      console.log('[Post-install] Backed up original resend module');
-    }
+  // Stub both dist and build directories
+  const paths = [
+    path.join(__dirname, '..', 'node_modules', 'resend', 'dist', 'index.js'),
+    path.join(__dirname, '..', 'node_modules', 'resend', 'build', 'index.js'),
+  ];
 
-    // Write stub
-    fs.writeFileSync(resendPath, stubContent, 'utf8');
-    console.log('[Post-install] Successfully stubbed resend module');
-  } catch (error) {
-    console.error('[Post-install] Failed to stub resend module:', error.message);
-    // Don't fail the build if stubbing fails
+  let successCount = 0;
+  let failCount = 0;
+
+  for (const resendPath of paths) {
+    try {
+      // Backup original file
+      const originalPath = resendPath + '.original';
+      if (fs.existsSync(resendPath) && !fs.existsSync(originalPath)) {
+        fs.copyFileSync(resendPath, originalPath);
+        console.log(`[Post-install] Backed up original: ${resendPath}`);
+      }
+
+      // Write stub
+      fs.writeFileSync(resendPath, stubContent, 'utf8');
+      console.log(`[Post-install] Successfully stubbed: ${resendPath}`);
+      successCount++;
+    } catch (error) {
+      console.error(`[Post-install] Failed to stub ${resendPath}:`, error.message);
+      failCount++;
+    }
   }
+
+  console.log(`[Post-install] Summary: ${successCount} stubbed, ${failCount} failed`);
 } else {
   console.log('[Post-install] Not a Vercel build - skipping resend stub');
 }
