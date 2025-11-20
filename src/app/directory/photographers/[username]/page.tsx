@@ -1,5 +1,5 @@
 // src/app/directory/photographers/[username]/page.tsx
-import { createClient } from '@/lib/supabase';
+import { createServerSupabaseClient } from '@/lib/supabase';
 import { notFound } from 'next/navigation';
 
 type PhotographerProfileProps = {
@@ -9,7 +9,7 @@ type PhotographerProfileProps = {
 };
 
 export async function generateStaticParams() {
-    const supabase = createClient();
+    const supabase = createServerSupabaseClient();
     const { data: profiles } = await supabase.from('photographer_profiles').select('username');
     return profiles?.map(profile => ({
         username: profile.username,
@@ -17,7 +17,7 @@ export async function generateStaticParams() {
 }
 
 export default async function PhotographerProfilePage({ params }: PhotographerProfileProps) {
-  const supabase = createClient();
+  const supabase = createServerSupabaseClient();
   const { data: profile } = await supabase
     .from('photographer_profiles')
     .select(`

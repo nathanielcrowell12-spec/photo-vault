@@ -10,6 +10,7 @@ type ToasterToast = {
   action?: React.ReactNode
   duration?: number
   type?: "default" | "destructive" | "success"
+  variant?: "default" | "destructive"
 }
 
 const actionTypes = {
@@ -121,7 +122,7 @@ function toast({ ...props }: ToastOptions) {
       description: props.description,
       action: props.action,
       duration: props.duration || TOAST_REMOVE_DELAY,
-      variant: props.type || "default",
+      variant: props.variant || "default",
     },
   })
 

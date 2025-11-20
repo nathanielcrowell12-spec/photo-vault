@@ -258,8 +258,8 @@ export default function GalleryViewerPage() {
     if (confirm(`Download all ${photos.length} photos? This may take a while.`)) {
       for (let i = 0; i < photos.length; i++) {
         const photo = photos[i]
-        const filename = photo.original_filename || photo.filename || `photo-${i + 1}.jpg`
-        await downloadPhoto(photo.original_url || photo.photo_url, filename)
+        const filename = photo.original_filename || `photo-${i + 1}.jpg`
+        await downloadPhoto(photo.photo_url, filename)
         // Add delay between downloads to avoid overwhelming the browser
         await new Promise(resolve => setTimeout(resolve, 500))
       }
@@ -482,8 +482,8 @@ export default function GalleryViewerPage() {
                 className="text-white hover:bg-white/20"
                 onClick={() => {
                   const photo = photos[selectedPhotoIndex]
-                  const filename = photo.original_filename || photo.filename || `photo-${selectedPhotoIndex + 1}.jpg`
-                  downloadPhoto(photo.original_url || photo.photo_url, filename)
+                  const filename = photo.original_filename || `photo-${selectedPhotoIndex + 1}.jpg`
+                  downloadPhoto(photo.photo_url, filename)
                 }}
               >
                 <Download className="h-5 w-5" />

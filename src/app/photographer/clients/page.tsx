@@ -158,7 +158,7 @@ export default function ClientsPage() {
       console.log('[Clients] User is photographer, fetching data')
       fetchClients()
       fetchGalleries()
-    } else if (userType && userType !== 'photographer') {
+    } else if (userType) {
       console.log('[Clients] User is not photographer, redirecting')
       router.push('/dashboard')
     } else {

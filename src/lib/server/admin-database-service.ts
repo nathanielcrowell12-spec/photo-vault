@@ -234,7 +234,7 @@ export async function fetchDatabaseStatus(): Promise<{
     {
       title: 'Storage Usage',
       subtitle: `${(storageUsedBytes / (1024 ** 3)).toFixed(1)} GB`,
-      status: `${Math.min(100, (storageUsedBytes / (1024 ** 4)).toFixed(1))}% of 1 TB`,
+      status: `${Math.min(100, storageUsedBytes / (1024 ** 4)).toFixed(1)}% of 1 TB`,
       icon: 'Cloud',
       color: 'text-blue-600',
       bg: 'bg-blue-50 border border-blue-200',

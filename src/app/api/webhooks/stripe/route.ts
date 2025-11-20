@@ -4,7 +4,7 @@ import { createServerSupabaseClient } from '@/lib/supabase'
 
 // Initialize Stripe with API version
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2024-11-20.acacia',
+  apiVersion: '2025-09-30.clover',
 })
 
 /**
@@ -254,6 +254,11 @@ async function handleSubscriptionCreated(
   // Extract plan info from metadata or subscription items
   const planType = subscription.metadata?.plan_type || 'unknown'
 
+  // Get billing period from first subscription item (all items share the same billing period)
+  const firstItem = subscription.items.data[0]
+  const currentPeriodStart = firstItem?.current_period_start
+  const currentPeriodEnd = firstItem?.current_period_end
+
   // Create subscription record
   const { error: insertError } = await supabase.from('subscriptions').insert({
     user_id: user.id,
@@ -261,8 +266,8 @@ async function handleSubscriptionCreated(
     stripe_customer_id: customerId,
     status: subscription.status,
     plan_type: planType,
-    current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
-    current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+    current_period_start: currentPeriodStart ? new Date(currentPeriodStart * 1000).toISOString() : new Date().toISOString(),
+    current_period_end: currentPeriodEnd ? new Date(currentPeriodEnd * 1000).toISOString() : new Date().toISOString(),
     cancel_at_period_end: subscription.cancel_at_period_end,
     canceled_at: subscription.canceled_at ? new Date(subscription.canceled_at * 1000).toISOString() : null,
     created_at: new Date().toISOString(),
@@ -284,7 +289,11 @@ async function handlePaymentSucceeded(
 ): Promise<string> {
   console.log('[Webhook] Processing invoice.payment_succeeded', invoice.id)
 
-  const subscriptionId = invoice.subscription as string
+  // Extract subscription ID - it can be a string ID or expanded Subscription object
+  const invoiceSubscription = (invoice as any).subscription
+  const subscriptionId = typeof invoiceSubscription === 'string'
+    ? invoiceSubscription
+    : invoiceSubscription?.id
 
   if (!subscriptionId) {
     // Not a subscription payment, might be one-time payment
@@ -408,7 +417,10 @@ async function handlePaymentFailed(
 ): Promise<string> {
   console.log('[Webhook] Processing invoice.payment_failed', invoice.id)
 
-  const subscriptionId = invoice.subscription as string
+  const invoiceSubscription = (invoice as any).subscription
+  const subscriptionId = typeof invoiceSubscription === 'string'
+    ? invoiceSubscription
+    : invoiceSubscription?.id
 
   if (!subscriptionId) {
     return `Invoice ${invoice.id} payment failed (not subscription-related)`
@@ -499,12 +511,17 @@ async function handleSubscriptionUpdated(
 ): Promise<string> {
   console.log('[Webhook] Processing customer.subscription.updated', subscription.id)
 
+  // Get billing period from first subscription item (all items share the same billing period)
+  const firstItem = subscription.items.data[0]
+  const currentPeriodStart = firstItem?.current_period_start
+  const currentPeriodEnd = firstItem?.current_period_end
+
   const { error } = await supabase
     .from('subscriptions')
     .update({
       status: subscription.status,
-      current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
-      current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+      current_period_start: currentPeriodStart ? new Date(currentPeriodStart * 1000).toISOString() : undefined,
+      current_period_end: currentPeriodEnd ? new Date(currentPeriodEnd * 1000).toISOString() : undefined,
       cancel_at_period_end: subscription.cancel_at_period_end,
       canceled_at: subscription.canceled_at ? new Date(subscription.canceled_at * 1000).toISOString() : null,
       updated_at: new Date().toISOString()

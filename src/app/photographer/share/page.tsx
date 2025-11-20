@@ -33,6 +33,8 @@ export default function SharePage() {
     navigator.clipboard.writeText(`http://localhost:3000/gallery/${selectedGallery}`)
     toast({
       title: "Copied to clipboard!",
+      description: "Gallery link has been copied to your clipboard.",
+      variant: "default",
     })
   }
 

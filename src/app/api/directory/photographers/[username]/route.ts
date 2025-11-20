@@ -1,12 +1,12 @@
 // src/app/api/directory/photographers/[username]/route.ts
 import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase';
+import { createServerSupabaseClient } from '@/lib/supabase';
 
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ username: string }> }
 ) {
-  const supabase = createClient();
+  const supabase = createServerSupabaseClient();
   const { username } = await params
   const { data, error } = await supabase
     .from('photographer_profiles')

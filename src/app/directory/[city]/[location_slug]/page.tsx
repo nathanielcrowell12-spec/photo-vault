@@ -1,5 +1,5 @@
 // src/app/directory/[city]/[location_slug]/page.tsx
-import { createClient } from '@/lib/supabase';
+import { createServerSupabaseClient } from '@/lib/supabase';
 import { notFound } from 'next/navigation';
 
 type LocationPageProps = {
@@ -10,7 +10,7 @@ type LocationPageProps = {
 
 // This function generates static pages at build time
 export async function generateStaticParams() {
-  const supabase = createClient();
+  const supabase = createServerSupabaseClient();
   const { data: locations } = await supabase.from('locations').select('city, slug');
   return locations?.map(location => ({
     city: location.city.toLowerCase().replace(/ /g, '-'),
@@ -19,7 +19,7 @@ export async function generateStaticParams() {
 }
 
 export default async function LocationPage({ params }: LocationPageProps) {
-  const supabase = createClient();
+  const supabase = createServerSupabaseClient();
   const { data: location } = await supabase
     .from('locations')
     .select(`
