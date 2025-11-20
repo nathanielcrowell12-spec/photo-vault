@@ -25,6 +25,10 @@ export function getResendClient(): Resend {
   return resendInstance;
 }
 
-// Export resend client (lazy-loaded)
-export const resend = getResendClient();
+// For backward compatibility - this getter is called lazily
+export const resend = {
+  get emails() {
+    return getResendClient().emails;
+  }
+} as Resend;
 
