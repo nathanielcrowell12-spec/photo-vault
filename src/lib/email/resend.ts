@@ -34,9 +34,14 @@ export async function getResendClient(): Promise<ResendClient> {
     return resendInstance;
   }
 
-  // Return mock if API key is not available
-  if (!process.env.RESEND_API_KEY) {
-    console.warn('[Resend] Using mock client - RESEND_API_KEY not set');
+  // CRITICAL: Detect if we're in Vercel build phase
+  // During build, skip real initialization and return mock
+  const isVercelBuild = process.env.VERCEL === '1' && process.env.CI === '1';
+
+  // Return mock if API key is not available OR if we're in build phase
+  if (!process.env.RESEND_API_KEY || isVercelBuild) {
+    const reason = isVercelBuild ? 'Vercel build phase' : 'RESEND_API_KEY not set';
+    console.warn(`[Resend] Using mock client - ${reason}`);
 
     if (!mockInstance) {
       mockInstance = {
