@@ -1,11 +1,11 @@
-import { resend, FROM_EMAIL } from './resend';
+import { getResendClient, FROM_EMAIL } from './resend';
 
 export async function sendPhotographerSuspensionWarning(
   photographerEmail: string,
   daysRemaining: number
 ) {
   try {
-    await resend.emails.send({
+    await getResendClient().emails.send({
       from: FROM_EMAIL,
       to: photographerEmail,
       subject: `⚠️ Payment Overdue - ${daysRemaining} Days Until Account Deletion`,
@@ -28,7 +28,7 @@ export async function sendPhotographerDeleted(
   clientCount: number
 ) {
   try {
-    await resend.emails.send({
+    await getResendClient().emails.send({
       from: FROM_EMAIL,
       to: photographerEmail,
       subject: 'PhotoVault Account Deleted',
@@ -52,7 +52,7 @@ export async function sendCommissionPaid(
   clientName: string
 ) {
   try {
-    await resend.emails.send({
+    await getResendClient().emails.send({
       from: FROM_EMAIL,
       to: photographerEmail,
       subject: `💰 Commission Payment Processed - $${(amount / 100).toFixed(2)}`,
@@ -80,7 +80,7 @@ export async function sendClientPaymentFailed(
   daysRemaining: number
 ) {
   try {
-    await resend.emails.send({
+    await getResendClient().emails.send({
       from: FROM_EMAIL,
       to: clientEmail,
       subject: 'Payment Failed - Update Payment Method',
@@ -92,7 +92,7 @@ export async function sendClientPaymentFailed(
       `
     });
 
-    await resend.emails.send({
+    await getResendClient().emails.send({
       from: FROM_EMAIL,
       to: photographerEmail,
       subject: 'Client Payment Failed',
@@ -116,7 +116,7 @@ export async function sendClientDeactivated(
   clientEmail: string
 ) {
   try {
-    await resend.emails.send({
+    await getResendClient().emails.send({
       from: FROM_EMAIL,
       to: photographerEmail,
       subject: 'Client Account Deactivated',

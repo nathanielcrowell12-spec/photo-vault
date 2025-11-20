@@ -1,8 +1,10 @@
-import { resend, FROM_EMAIL } from '@/lib/email/resend';
+import { getResendClient, FROM_EMAIL } from '@/lib/email/resend';
+
+export const dynamic = 'force-dynamic'
 
 export async function GET() {
   try {
-    const data = await resend.emails.send({
+    const data = await getResendClient().emails.send({
       from: FROM_EMAIL,
       to: 'photovault.business@gmail.com',
       subject: 'PhotoVault Email Test',
