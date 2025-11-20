@@ -1,0 +1,32 @@
+diff --git a/node_modules/resend/dist/index.js b/node_modules/resend/dist/index.js
+index 87a89a2..3031122 100644
+--- a/node_modules/resend/dist/index.js
++++ b/node_modules/resend/dist/index.js
+@@ -1175,15 +1175,19 @@
+     this.webhooks = new Webhooks(this);
+     this.templates = new Templates(this);
+     this.topics = new Topics(this);
+-    if (!key) {
+-      if (typeof process !== "undefined" && process.env) {
+-        this.key = process.env.RESEND_API_KEY;
+-      }
+-      if (!this.key) {
+-        throw new Error(
+-          'Missing API key. Pass it to the constructor `new Resend("re_122")`'
+-        );
++    const isVercelBuild = typeof process !== "undefined" && process.env.VERCEL === '1' && process.env.CI === '1';
++    if (!isVercelBuild) {
++      if (!key) {
++        if (typeof process !== "undefined" && process.env) {
++          this.key = process.env.RESEND_API_KEY;
++        }
++        if (!this.key) {
++          throw new Error(
++            'Missing API key. Pass it to the constructor `new Resend("re_123")`'
++          );
++        }
+       }
+     }
+     this.headers = new Headers({
+       Authorization: `Bearer ${this.key}`,
+       "User-Agent": userAgent,
