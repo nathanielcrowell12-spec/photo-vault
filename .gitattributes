@@ -1,2 +1,0 @@
-# Enforce Unix-style line endings for patch files to ensure compatibility
-*.patch text eol=lf
