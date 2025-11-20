@@ -1,4 +1,7 @@
 import { getResendClient, FROM_EMAIL } from './resend'
+
+// Helper to get resend client (now async)
+const getClient = () => getResendClient()
 import {
   getGalleryReadyEmailHTML,
   getGalleryReadyEmailText,
@@ -50,7 +53,7 @@ export class EmailService {
    */
   static async sendGalleryReadyEmail(data: GalleryReadyEmailData): Promise<{ success: boolean; error?: string }> {
     try {
-      await getResendClient().emails.send({
+      await (await getClient()).emails.send({
         from: FROM_EMAIL,
         to: data.clientEmail,
         subject: `📸 Your photos are ready from ${data.photographerName}!`,
@@ -72,7 +75,7 @@ export class EmailService {
    */
   static async sendWelcomeEmail(data: WelcomeEmailData): Promise<{ success: boolean; error?: string }> {
     try {
-      await getResendClient().emails.send({
+      await (await getClient()).emails.send({
         from: FROM_EMAIL,
         to: data.customerEmail,
         subject: '🎉 Welcome to PhotoVault!',
@@ -98,7 +101,7 @@ export class EmailService {
     const resetLink = `${process.env.NEXT_PUBLIC_APP_URL}/reset-password?token=${resetToken}`
 
     try {
-      await getResendClient().emails.send({
+      await (await getClient()).emails.send({
         from: FROM_EMAIL,
         to: email,
         subject: 'Reset your PhotoVault password',
@@ -139,7 +142,7 @@ If you didn't request this, you can safely ignore this email.
     dueDate: string
   ): Promise<{ success: boolean; error?: string }> {
     try {
-      await getResendClient().emails.send({
+      await (await getClient()).emails.send({
         from: FROM_EMAIL,
         to: email,
         subject: 'Payment reminder - PhotoVault',
@@ -173,7 +176,7 @@ Update payment method: ${process.env.NEXT_PUBLIC_APP_URL}/billing
    */
   static async sendTestEmail(to: string): Promise<{ success: boolean; error?: string }> {
     try {
-      await getResendClient().emails.send({
+      await (await getClient()).emails.send({
         from: FROM_EMAIL,
         to,
         subject: 'PhotoVault Test Email',
@@ -199,7 +202,7 @@ Update payment method: ${process.env.NEXT_PUBLIC_APP_URL}/billing
    */
   static async sendClientInvitationEmail(data: ClientInvitationEmailData): Promise<{ success: boolean; error?: string }> {
     try {
-      await getResendClient().emails.send({
+      await (await getClient()).emails.send({
         from: FROM_EMAIL,
         to: data.clientEmail,
         subject: `📸 ${data.photographerName} invited you to view your photos!`,
@@ -221,7 +224,7 @@ Update payment method: ${process.env.NEXT_PUBLIC_APP_URL}/billing
    */
   static async sendPhotographerWelcomeEmail(data: PhotographerWelcomeEmailData): Promise<{ success: boolean; error?: string }> {
     try {
-      await getResendClient().emails.send({
+      await (await getClient()).emails.send({
         from: FROM_EMAIL,
         to: data.photographerEmail,
         subject: '🎉 Welcome to PhotoVault - Let\'s Get Started!',
@@ -243,7 +246,7 @@ Update payment method: ${process.env.NEXT_PUBLIC_APP_URL}/billing
    */
   static async sendPaymentSuccessfulEmail(data: PaymentSuccessfulEmailData): Promise<{ success: boolean; error?: string }> {
     try {
-      await getResendClient().emails.send({
+      await (await getClient()).emails.send({
         from: FROM_EMAIL,
         to: data.customerEmail,
         subject: '✅ Payment Successful - Your Photos Are Ready!',
@@ -269,7 +272,7 @@ Update payment method: ${process.env.NEXT_PUBLIC_APP_URL}/billing
    */
   static async sendSubscriptionExpiringEmail(data: SubscriptionExpiringEmailData): Promise<{ success: boolean; error?: string }> {
     try {
-      await getResendClient().emails.send({
+      await (await getClient()).emails.send({
         from: FROM_EMAIL,
         to: data.customerEmail,
         subject: `⚠️ Your ${data.galleryName} subscription expires in ${data.expiresInDays} days`,
@@ -291,7 +294,7 @@ Update payment method: ${process.env.NEXT_PUBLIC_APP_URL}/billing
    */
   static async sendPaymentFailedEmail(data: PaymentFailedEmailData): Promise<{ success: boolean; error?: string }> {
     try {
-      await getResendClient().emails.send({
+      await (await getClient()).emails.send({
         from: FROM_EMAIL,
         to: data.customerEmail,
         subject: '⚠️ Payment Failed - Update Your Payment Method',
@@ -313,7 +316,7 @@ Update payment method: ${process.env.NEXT_PUBLIC_APP_URL}/billing
    */
   static async sendPayoutNotificationEmail(data: PayoutNotificationEmailData): Promise<{ success: boolean; error?: string }> {
     try {
-      await getResendClient().emails.send({
+      await (await getClient()).emails.send({
         from: FROM_EMAIL,
         to: data.photographerEmail,
         subject: `💰 Payout Processed: $${data.payoutAmount.toFixed(2)}`,
@@ -339,7 +342,7 @@ Update payment method: ${process.env.NEXT_PUBLIC_APP_URL}/billing
    */
   static async sendFirstGalleryUploadEmail(data: FirstGalleryUploadEmailData): Promise<{ success: boolean; error?: string }> {
     try {
-      await getResendClient().emails.send({
+      await (await getClient()).emails.send({
         from: FROM_EMAIL,
         to: data.photographerEmail,
         subject: '🎉 First Gallery Uploaded Successfully!',
@@ -361,7 +364,7 @@ Update payment method: ${process.env.NEXT_PUBLIC_APP_URL}/billing
    */
   static async sendGalleryAccessRestoredEmail(data: GalleryAccessRestoredEmailData): Promise<{ success: boolean; error?: string }> {
     try {
-      await getResendClient().emails.send({
+      await (await getClient()).emails.send({
         from: FROM_EMAIL,
         to: data.customerEmail,
         subject: '✅ Welcome Back! Your Gallery Access Has Been Restored',

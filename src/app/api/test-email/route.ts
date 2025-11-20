@@ -4,7 +4,8 @@ export const dynamic = 'force-dynamic'
 
 export async function GET() {
   try {
-    const data = await getResendClient().emails.send({
+    const resend = await getResendClient();
+    const data = await resend.emails.send({
       from: FROM_EMAIL,
       to: 'photovault.business@gmail.com',
       subject: 'PhotoVault Email Test',
