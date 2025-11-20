@@ -1,20 +1,44 @@
 /**
  * Stripe Configuration & Utilities
- * 
+ *
  * Server-side Stripe instance - DO NOT use on client
  * For client-side, use @stripe/stripe-js with publishable key
+ *
+ * CRITICAL: Uses lazy initialization to prevent Stripe from being instantiated
+ * during Vercel's build phase when environment variables may not be available.
  */
 
 import Stripe from 'stripe'
 
-if (!process.env.STRIPE_SECRET_KEY) {
-  console.warn('⚠️  STRIPE_SECRET_KEY not set. Stripe features will not work.')
-  console.warn('📖 See STRIPE-SETUP-GUIDE.md for setup instructions')
+// Cached Stripe instance
+let stripeInstance: Stripe | null = null
+
+/**
+ * Get Stripe client - lazy initialization on first use
+ * This prevents build-time errors when STRIPE_SECRET_KEY is not available
+ */
+export function getStripeClient(): Stripe {
+  if (!stripeInstance) {
+    if (!process.env.STRIPE_SECRET_KEY) {
+      console.warn('⚠️  STRIPE_SECRET_KEY not set. Stripe features will not work.')
+      console.warn('📖 See STRIPE-SETUP-GUIDE.md for setup instructions')
+      // Return a mock or throw - for now we'll create with empty string to maintain compatibility
+    }
+
+    stripeInstance = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
+      apiVersion: '2025-09-30.clover',
+      typescript: true,
+    })
+  }
+
+  return stripeInstance
 }
 
-export const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || '', {
-  apiVersion: '2025-09-30.clover',
-  typescript: true,
+// Export for backward compatibility - but this is lazy now
+export const stripe = new Proxy({} as Stripe, {
+  get(_target, prop) {
+    return getStripeClient()[prop as keyof Stripe]
+  }
 })
 
 /**
