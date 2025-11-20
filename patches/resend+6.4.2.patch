@@ -21,10 +21,10 @@ index 0000000..9ee0e61
 +
 +export default { Resend };
 diff --git a/node_modules/resend/dist/index.js b/node_modules/resend/dist/index.js
-index cd2c500..ed3b729 100644
+index cd2c500..72ab418 100644
 --- a/node_modules/resend/dist/index.js
 +++ b/node_modules/resend/dist/index.js
-@@ -1089,14 +1089,17 @@ var Resend = class {
+@@ -1089,14 +1089,19 @@ var Resend = class {
      this.webhooks = new Webhooks(this);
      this.templates = new Templates(this);
      this.topics = new Topics(this);
@@ -36,8 +36,10 @@ index cd2c500..ed3b729 100644
 -        throw new Error(
 -          'Missing API key. Pass it to the constructor `new Resend("re_123")`'
 -        );
-+    const isVercelBuild = typeof process !== "undefined" && process.env.VERCEL === '1' && process.env.CI === '1';
-+    if (!isVercelBuild) {
++    // Skip API key validation during build
++    const isVercelBuild = typeof process !== "undefined" && process.env && process.env.VERCEL === '1' && process.env.CI === '1';
++    const isBuild = typeof process !== "undefined" && process.env && (process.env.NODE_ENV === 'production' || process.env.VERCEL === '1');
++    if (!isVercelBuild && !isBuild) {
 +      if (!key) {
 +        if (typeof process !== "undefined" && process.env) {
 +          this.key = process.env.RESEND_API_KEY;
