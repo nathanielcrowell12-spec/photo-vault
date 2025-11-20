@@ -66,34 +66,11 @@ export async function getResendClient(): Promise<ResendClient> {
 
   // Dynamic import and initialization (only at runtime with API key)
   try {
-    // Try to dynamically import resend - this may fail during build
-    let ResendClass;
-    try {
-      const resendModule = await import('resend');
-      ResendClass = resendModule.Resend;
-    } catch (importError) {
-      console.warn('[Resend] Failed to import resend module:', importError);
-      // Return mock if import fails (e.g., during build)
-      if (!mockInstance) {
-        mockInstance = {
-          emails: {
-            send: async (params) => {
-              console.log('[Resend Mock] Would send email (import failed):', {
-                to: params.to,
-                subject: params.subject
-              });
-              return {
-                id: 'mock-' + Date.now(),
-                from: params.from,
-                to: Array.isArray(params.to) ? params.to : [params.to],
-                created_at: new Date().toISOString()
-              };
-            }
-          }
-        };
-      }
-      return mockInstance;
-    }
+    // CRITICAL: Use eval to prevent Turbopack from statically analyzing this import
+    // This is a workaround for Vercel's build phase evaluation
+    const importResend = new Function('return import("resend")');
+    const resendModule = await importResend();
+    const ResendClass = resendModule.Resend;
 
     const client = new ResendClass(process.env.RESEND_API_KEY);
     resendInstance = client as unknown as ResendClient;
