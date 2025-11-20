@@ -1,9 +1,9 @@
-import { getResendClient, FROM_EMAIL } from '@/lib/email/resend';
-
+// Use dynamic import to prevent build-time evaluation
 export const dynamic = 'force-dynamic'
 
 export async function GET() {
   try {
+    const { getResendClient, FROM_EMAIL } = await import('@/lib/email/resend');
     const resend = await getResendClient();
     const data = await resend.emails.send({
       from: FROM_EMAIL,
