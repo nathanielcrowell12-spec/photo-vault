@@ -16,8 +16,11 @@ if (isVercelBuild) {
   const resendPath = path.join(__dirname, '..', 'node_modules', 'resend', 'dist', 'index.js');
 
   const stubContent = `// Build-time stub for resend (auto-generated during Vercel build)
-export class Resend {
+"use strict";
+
+class Resend {
   constructor(apiKey) {
+    // Stub constructor - accepts but ignores API key during build
     console.warn('[Resend Stub] Using build-time stub');
   }
 
@@ -28,7 +31,10 @@ export class Resend {
   }
 }
 
-export default { Resend };
+// CommonJS exports to match resend package format
+module.exports = { Resend };
+module.exports.Resend = Resend;
+module.exports.default = { Resend };
 `;
 
   try {
