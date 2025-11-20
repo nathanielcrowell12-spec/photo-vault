@@ -7,7 +7,15 @@ let resendInstance: Resend | null = null;
 
 export function getResendClient(): Resend {
   if (!process.env.RESEND_API_KEY) {
-    throw new Error('RESEND_API_KEY is not defined. Email features will not work.');
+    console.warn('[Resend] RESEND_API_KEY is not defined. Email features will not work.');
+    // Return a mock client during build to prevent errors
+    return {
+      emails: {
+        send: async () => {
+          throw new Error('RESEND_API_KEY is not configured');
+        }
+      }
+    } as unknown as Resend;
   }
 
   if (!resendInstance) {
@@ -17,10 +25,6 @@ export function getResendClient(): Resend {
   return resendInstance;
 }
 
-// For backward compatibility - will throw at runtime if API key is missing
-export const resend = new Proxy({} as Resend, {
-  get(_target, prop) {
-    return getResendClient()[prop as keyof Resend];
-  }
-});
+// Export resend client (lazy-loaded)
+export const resend = getResendClient();
 
