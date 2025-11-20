@@ -6,6 +6,11 @@
  * Schedule: Every day at 2:00 AM UTC
  */
 
+// Force dynamic rendering to prevent Next.js from trying to statically generate this route
+// This prevents module evaluation during build phase on Vercel
+export const dynamic = 'force-dynamic'
+export const runtime = 'nodejs'
+
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase'
 import { processScheduledPayout } from '@/lib/server/commission-service'
