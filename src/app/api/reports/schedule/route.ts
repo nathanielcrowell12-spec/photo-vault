@@ -177,7 +177,9 @@ function calculateNextSendDate(schedule: string): string {
 }
 
 // This function would be called by a cron job or scheduled task
-export async function processScheduledReports() {
+// Note: Removed export because it's not a valid Next.js route handler
+// If you need to call this, create a separate cron endpoint
+async function processScheduledReports() {
   try {
     const now = new Date()
     
