@@ -1,9 +1,6 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  // Standalone build for production optimization
-  output: 'standalone',
-
   // External packages for server-side functionality
   serverExternalPackages: ['jszip', 'unzipper', '@tus/server', '@tus/file-store'],
   
