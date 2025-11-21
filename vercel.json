@@ -1,13 +1,8 @@
 {
+  "framework": "nextjs",
   "env": {
     "NODE_ENV": "production"
   },
-  "rewrites": [
-    {
-      "source": "/landing-page.html",
-      "destination": "/landing-page.html"
-    }
-  ],
   "cleanUrls": true,
   "trailingSlash": false
 }

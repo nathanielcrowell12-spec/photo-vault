@@ -3,6 +3,11 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   // External packages for server-side functionality
   serverExternalPackages: ['jszip', 'unzipper', '@tus/server', '@tus/file-store'],
+
+  // Fix for multiple lockfiles warning
+  turbopack: {
+    root: __dirname,
+  },
   
   // Security headers (MBP v4.3 requirement)
   async headers() {
