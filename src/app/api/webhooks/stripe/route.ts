@@ -5,10 +5,15 @@ import { createServerSupabaseClient } from '@/lib/supabase'
 // Force dynamic rendering to prevent module evaluation during build
 export const dynamic = 'force-dynamic'
 
-// Initialize Stripe with API version
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2025-09-30.clover',
-})
+// Lazy initialize Stripe to avoid build-time errors
+function getStripeClient() {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    throw new Error('STRIPE_SECRET_KEY is not configured')
+  }
+  return new Stripe(process.env.STRIPE_SECRET_KEY, {
+    apiVersion: '2025-09-30.clover',
+  })
+}
 
 /**
  * Stripe Webhook Handler
@@ -40,6 +45,7 @@ export async function POST(request: NextRequest) {
 
     // 2. Verify webhook signature (CRITICAL SECURITY)
     let event: Stripe.Event
+    const stripe = getStripeClient()
 
     try {
       event = stripe.webhooks.constructEvent(
@@ -329,6 +335,7 @@ async function handlePaymentSucceeded(
 
   // **NEW: Create commission record**
   // Get client and photographer info from subscription metadata
+  const stripe = getStripeClient()
   const subscription = await stripe.subscriptions.retrieve(subscriptionId)
   const photographerId = subscription.metadata?.photographer_id
   const clientId = subscription.metadata?.client_id
