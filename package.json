@@ -14,7 +14,8 @@
     "prompt:sync": "node scripts/sync-prompt.mjs",
     "prompt:verify": "node scripts/verify-prompt.mjs",
     "ci:gate": "npm run hygiene && npm run prompt:verify && npm run type-check",
-    "postinstall": "patch-package"
+    "postinstall": "patch-package",
+    "vercel-build": "patch-package && next build --turbopack"
   },
   "dependencies": {
     "@radix-ui/react-avatar": "^1.1.10",
