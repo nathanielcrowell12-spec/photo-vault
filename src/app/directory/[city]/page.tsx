@@ -1,12 +1,13 @@
 // src/app/directory/[city]/page.tsx
 type CityPageProps = {
-  params: {
+  params: Promise<{
     city: string;
-  };
+  }>;
 };
 
-export default function CityPage({ params }: CityPageProps) {
-  const cityName = params.city.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+export default async function CityPage({ params }: CityPageProps) {
+  const { city } = await params;
+  const cityName = city.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 
   return (
     <div className="container mx-auto py-12">

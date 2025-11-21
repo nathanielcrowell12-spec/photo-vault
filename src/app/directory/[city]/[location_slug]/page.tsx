@@ -3,9 +3,9 @@ import { createServerSupabaseClient } from '@/lib/supabase';
 import { notFound } from 'next/navigation';
 
 type LocationPageProps = {
-  params: {
+  params: Promise<{
     location_slug: string;
-  };
+  }>;
 };
 
 // This function generates static pages at build time
@@ -19,6 +19,7 @@ export async function generateStaticParams() {
 }
 
 export default async function LocationPage({ params }: LocationPageProps) {
+  const { location_slug } = await params;
   const supabase = createServerSupabaseClient();
   const { data: location } = await supabase
     .from('locations')
@@ -27,7 +28,7 @@ export default async function LocationPage({ params }: LocationPageProps) {
       location_attributes (*),
       location_business_intelligence (*)
     `)
-    .eq('slug', params.location_slug)
+    .eq('slug', location_slug)
     .single();
 
   if (!location) {

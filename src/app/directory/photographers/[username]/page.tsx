@@ -3,9 +3,9 @@ import { createServerSupabaseClient } from '@/lib/supabase';
 import { notFound } from 'next/navigation';
 
 type PhotographerProfileProps = {
-  params: {
+  params: Promise<{
     username: string;
-  };
+  }>;
 };
 
 export async function generateStaticParams() {
@@ -17,6 +17,7 @@ export async function generateStaticParams() {
 }
 
 export default async function PhotographerProfilePage({ params }: PhotographerProfileProps) {
+  const { username } = await params;
   const supabase = createServerSupabaseClient();
   const { data: profile } = await supabase
     .from('photographer_profiles')
@@ -24,7 +25,7 @@ export default async function PhotographerProfilePage({ params }: PhotographerPr
       *,
       reviews (*)
     `)
-    .eq('username', params.username)
+    .eq('username', username)
     .single();
 
   if (!profile) {
