@@ -237,8 +237,8 @@ export function getFirstGalleryUploadEmailHTML(data: FirstGalleryUploadEmailData
             <ul style="color: #6b7280;">
                 <li>✉️ Your client receives a beautiful invitation email</li>
                 <li>🔐 They create a free PhotoVault account</li>
-                <li>💳 They subscribe ($10/month) to access photos</li>
-                <li>💰 You earn 50% commission ($5/month) for each active subscription</li>
+                <li>💳 They subscribe ($8/month after Year 1) to access photos</li>
+                <li>💰 You earn 50% commission ($4/month) for each active subscription</li>
                 <li>📊 Track everything in your dashboard</li>
             </ul>
 
@@ -303,8 +303,8 @@ WHAT HAPPENS AFTER YOU SEND THE INVITATION?
 
 ✉️ Your client receives a beautiful invitation email
 🔐 They create a free PhotoVault account
-💳 They subscribe ($10/month) to access photos
-💰 You earn 50% commission ($5/month) for each active subscription
+💳 They subscribe ($8/month after Year 1) to access photos
+💰 You earn 50% commission ($4/month) for each active subscription
 📊 Track everything in your dashboard
 
 "You're not just uploading photos—you're building a new revenue stream while delivering an incredible client experience. Keep it up!"

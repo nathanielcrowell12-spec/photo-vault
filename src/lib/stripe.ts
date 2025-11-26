@@ -43,12 +43,30 @@ export const stripe = new Proxy({} as Stripe, {
 
 /**
  * Pricing Plans
- * Client: $10/month for gallery access
- * (No photographer subscription - they earn via commission only)
+ *
+ * CLIENT PRICING MODEL:
+ * - Year 1: $100 upfront (or $50 for 6-month package)
+ * - Year 2+: $8/month ongoing subscription
+ *
+ * PHOTOGRAPHER COMMISSION (50/50 split):
+ * - Year 1: $50 upfront commission (from $100 payment)
+ * - Year 2+: $4/month passive income (from $8/month payment)
  */
 export const PRICING = {
+  // Year 1 upfront packages
+  CLIENT_YEAR_1: {
+    amount: 10000, // $100.00 in cents
+    currency: 'usd',
+    interval: 'year' as const,
+  },
+  CLIENT_6_MONTH: {
+    amount: 5000, // $50.00 in cents
+    currency: 'usd',
+    interval: 'month' as const, // 6-month package, billed once
+  },
+  // Year 2+ monthly subscription
   CLIENT_MONTHLY: {
-    amount: 1000, // $10.00 in cents
+    amount: 800, // $8.00 in cents
     currency: 'usd',
     interval: 'month' as const,
   },
@@ -70,7 +88,10 @@ export const STRIPE_CONNECT_CLIENT_ID = process.env.STRIPE_CONNECT_CLIENT_ID || 
 /**
  * Commission rate for photographers (50% flat rate)
  * PhotoVault uses a 50/50 split: photographers get 50%, platform gets 50%
- * Example: Client pays $10/month → Photographer gets $5, PhotoVault gets $5
+ *
+ * Examples:
+ * - Year 1: Client pays $100 → Photographer gets $50, PhotoVault gets $50
+ * - Year 2+: Client pays $8/month → Photographer gets $4/month, PhotoVault gets $4/month
  */
 export const PHOTOGRAPHER_COMMISSION_RATE = 0.50
 

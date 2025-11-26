@@ -15,19 +15,27 @@ import { PHOTOGRAPHER_COMMISSION_RATE } from '@/lib/stripe'
 
 describe('Commission Service', () => {
   describe('calculateCommissionAmount', () => {
-    test('should calculate 50% commission for $10 payment (1000 cents)', () => {
-      const paymentAmount = 1000 // $10.00
+    test('should calculate 50% commission for $8/month payment (800 cents) - Year 2+', () => {
+      const paymentAmount = 800 // $8.00
       const commission = calculateCommissionAmount(paymentAmount)
 
-      expect(commission).toBe(500) // $5.00
+      expect(commission).toBe(400) // $4.00
+      expect(commission).toBe(Math.round(paymentAmount * PHOTOGRAPHER_COMMISSION_RATE))
+    })
+
+    test('should calculate 50% commission for $100 Year 1 payment (10000 cents)', () => {
+      const paymentAmount = 10000 // $100.00
+      const commission = calculateCommissionAmount(paymentAmount)
+
+      expect(commission).toBe(5000) // $50.00
       expect(commission).toBe(Math.round(paymentAmount * PHOTOGRAPHER_COMMISSION_RATE))
     })
 
     test('should calculate 50% commission for various amounts', () => {
       const testCases = [
-        { payment: 1000, expected: 500 },   // $10.00 → $5.00
-        { payment: 2000, expected: 1000 },  // $20.00 → $10.00
-        { payment: 500, expected: 250 },    // $5.00 → $2.50
+        { payment: 800, expected: 400 },    // $8.00 → $4.00 (monthly)
+        { payment: 5000, expected: 2500 },  // $50.00 → $25.00 (6-month)
+        { payment: 10000, expected: 5000 }, // $100.00 → $50.00 (year 1)
         { payment: 100, expected: 50 },     // $1.00 → $0.50
         { payment: 10, expected: 5 },       // $0.10 → $0.05
       ]
@@ -183,13 +191,13 @@ describe('Commission Service', () => {
   })
 
   describe('Integration: Full Commission Flow', () => {
-    test('should correctly process $10 monthly payment', () => {
-      const paymentAmountCents = 1000 // $10.00
+    test('should correctly process $8/month payment (Year 2+)', () => {
+      const paymentAmountCents = 800 // $8.00
       const paymentDate = new Date('2025-11-19')
 
       // Step 1: Calculate commission
       const commission = calculateCommissionAmount(paymentAmountCents)
-      expect(commission).toBe(500) // $5.00
+      expect(commission).toBe(400) // $4.00
 
       // Step 2: Calculate payout date
       const payoutDate = calculateScheduledPayoutDate(paymentDate)
@@ -197,20 +205,33 @@ describe('Commission Service', () => {
 
       // Step 3: Verify split
       const photovaultRevenue = paymentAmountCents - commission
-      expect(photovaultRevenue).toBe(500) // $5.00
+      expect(photovaultRevenue).toBe(400) // $4.00
 
       // Step 4: Verify percentages
       const commissionPercentage = commission / paymentAmountCents
       expect(commissionPercentage).toBe(0.50) // 50%
     })
 
-    test('should handle multiple clients correctly', () => {
+    test('should correctly process $100 Year 1 payment', () => {
+      const paymentAmountCents = 10000 // $100.00
+      const paymentDate = new Date('2025-11-19')
+
+      // Step 1: Calculate commission
+      const commission = calculateCommissionAmount(paymentAmountCents)
+      expect(commission).toBe(5000) // $50.00
+
+      // Step 2: Verify split
+      const photovaultRevenue = paymentAmountCents - commission
+      expect(photovaultRevenue).toBe(5000) // $50.00
+    })
+
+    test('should handle multiple clients correctly (Year 2+ monthly)', () => {
       const clientPayments = [
-        { clientId: '1', amount: 1000 },
-        { clientId: '2', amount: 1000 },
-        { clientId: '3', amount: 1000 },
-        { clientId: '4', amount: 1000 },
-        { clientId: '5', amount: 1000 },
+        { clientId: '1', amount: 800 },
+        { clientId: '2', amount: 800 },
+        { clientId: '3', amount: 800 },
+        { clientId: '4', amount: 800 },
+        { clientId: '5', amount: 800 },
       ]
 
       const totalPayments = clientPayments.reduce((sum, p) => sum + p.amount, 0)
@@ -219,14 +240,14 @@ describe('Commission Service', () => {
         0
       )
 
-      expect(totalPayments).toBe(5000) // $50.00 total
-      expect(totalCommissions).toBe(2500) // $25.00 to photographer
-      expect(totalPayments - totalCommissions).toBe(2500) // $25.00 to PhotoVault
+      expect(totalPayments).toBe(4000) // $40.00 total
+      expect(totalCommissions).toBe(2000) // $20.00 to photographer
+      expect(totalPayments - totalCommissions).toBe(2000) // $20.00 to PhotoVault
     })
 
-    test('should calculate correct annual revenue', () => {
-      // One client paying $10/month for 12 months
-      const monthlyPayment = 1000 // $10.00
+    test('should calculate correct Year 2 annual revenue', () => {
+      // One client paying $8/month for 12 months
+      const monthlyPayment = 800 // $8.00
       const months = 12
 
       let totalCommissions = 0
@@ -234,13 +255,13 @@ describe('Commission Service', () => {
         totalCommissions += calculateCommissionAmount(monthlyPayment)
       }
 
-      expect(totalCommissions).toBe(6000) // $60.00 annually
+      expect(totalCommissions).toBe(4800) // $48.00 annually
 
       const totalRevenue = monthlyPayment * months
       const photovaultRevenue = totalRevenue - totalCommissions
 
-      expect(totalRevenue).toBe(12000) // $120.00
-      expect(photovaultRevenue).toBe(6000) // $60.00
+      expect(totalRevenue).toBe(9600) // $96.00
+      expect(photovaultRevenue).toBe(4800) // $48.00
     })
   })
 
@@ -290,11 +311,15 @@ describe('Commission Service', () => {
     })
 
     test('should match documented pricing model', () => {
-      // From business docs: Client pays $10, photographer gets $5
-      const clientPayment = 1000 // $10.00 in cents
-      const expectedCommission = 500 // $5.00 in cents
+      // From business docs:
+      // Year 1: Client pays $100, photographer gets $50
+      // Year 2+: Client pays $8/month, photographer gets $4/month
 
-      expect(calculateCommissionAmount(clientPayment)).toBe(expectedCommission)
+      const year1Payment = 10000 // $100.00 in cents
+      expect(calculateCommissionAmount(year1Payment)).toBe(5000) // $50.00
+
+      const monthlyPayment = 800 // $8.00 in cents
+      expect(calculateCommissionAmount(monthlyPayment)).toBe(400) // $4.00
     })
 
     test('should verify payout delay is 14 days, not 30', () => {

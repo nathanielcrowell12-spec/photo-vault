@@ -21,15 +21,27 @@ describe('Stripe Configuration', () => {
       expect(PHOTOGRAPHER_COMMISSION_RATE).not.toBe(0.20) // Should NOT be 20%
     })
 
-    test('PRICING.CLIENT_MONTHLY should be $10.00 (1000 cents)', () => {
-      expect(PRICING.CLIENT_MONTHLY.amount).toBe(1000)
+    test('PRICING.CLIENT_MONTHLY should be $8.00 (800 cents) for Year 2+', () => {
+      expect(PRICING.CLIENT_MONTHLY.amount).toBe(800)
       expect(PRICING.CLIENT_MONTHLY.currency).toBe('usd')
       expect(PRICING.CLIENT_MONTHLY.interval).toBe('month')
     })
 
-    test('should not have quarterly or annual pricing', () => {
-      expect(PRICING).not.toHaveProperty('CLIENT_QUARTERLY')
-      expect(PRICING).not.toHaveProperty('CLIENT_ANNUAL')
+    test('PRICING.CLIENT_YEAR_1 should be $100.00 (10000 cents)', () => {
+      expect(PRICING.CLIENT_YEAR_1.amount).toBe(10000)
+      expect(PRICING.CLIENT_YEAR_1.currency).toBe('usd')
+      expect(PRICING.CLIENT_YEAR_1.interval).toBe('year')
+    })
+
+    test('PRICING.CLIENT_6_MONTH should be $50.00 (5000 cents)', () => {
+      expect(PRICING.CLIENT_6_MONTH.amount).toBe(5000)
+      expect(PRICING.CLIENT_6_MONTH.currency).toBe('usd')
+    })
+
+    test('should have correct pricing tiers', () => {
+      expect(PRICING).toHaveProperty('CLIENT_MONTHLY')
+      expect(PRICING).toHaveProperty('CLIENT_YEAR_1')
+      expect(PRICING).toHaveProperty('CLIENT_6_MONTH')
     })
   })
 
@@ -124,41 +136,52 @@ describe('Stripe Configuration', () => {
   })
 
   describe('Integration: Revenue Split Calculation', () => {
-    test('should calculate correct 50/50 split for $10 payment', () => {
-      const paymentCents = PRICING.CLIENT_MONTHLY.amount // 1000 cents
+    test('should calculate correct 50/50 split for $8/month payment (Year 2+)', () => {
+      const paymentCents = PRICING.CLIENT_MONTHLY.amount // 800 cents
       const commission = calculateCommission(paymentCents)
       const platformRevenue = paymentCents - commission
 
-      expect(commission).toBe(500) // $5.00
-      expect(platformRevenue).toBe(500) // $5.00
-      expect(formatAmount(commission)).toBe('$5.00')
-      expect(formatAmount(platformRevenue)).toBe('$5.00')
+      expect(commission).toBe(400) // $4.00
+      expect(platformRevenue).toBe(400) // $4.00
+      expect(formatAmount(commission)).toBe('$4.00')
+      expect(formatAmount(platformRevenue)).toBe('$4.00')
     })
 
-    test('should calculate monthly revenue for multiple clients', () => {
+    test('should calculate correct 50/50 split for $100 Year 1 payment', () => {
+      const paymentCents = PRICING.CLIENT_YEAR_1.amount // 10000 cents
+      const commission = calculateCommission(paymentCents)
+      const platformRevenue = paymentCents - commission
+
+      expect(commission).toBe(5000) // $50.00
+      expect(platformRevenue).toBe(5000) // $50.00
+      expect(formatAmount(commission)).toBe('$50.00')
+      expect(formatAmount(platformRevenue)).toBe('$50.00')
+    })
+
+    test('should calculate monthly revenue for multiple clients (Year 2+)', () => {
       const clientCount = 10
-      const paymentPerClient = PRICING.CLIENT_MONTHLY.amount
+      const paymentPerClient = PRICING.CLIENT_MONTHLY.amount // $8
 
       const totalPayments = clientCount * paymentPerClient
       const totalCommissions = clientCount * calculateCommission(paymentPerClient)
       const totalPlatformRevenue = totalPayments - totalCommissions
 
-      expect(totalPayments).toBe(10000) // $100.00
-      expect(totalCommissions).toBe(5000) // $50.00
-      expect(totalPlatformRevenue).toBe(5000) // $50.00
+      expect(totalPayments).toBe(8000) // $80.00
+      expect(totalCommissions).toBe(4000) // $40.00
+      expect(totalPlatformRevenue).toBe(4000) // $40.00
     })
 
-    test('should calculate annual revenue correctly', () => {
-      const monthlyPayment = PRICING.CLIENT_MONTHLY.amount
+    test('should calculate Year 2 annual revenue correctly', () => {
+      const monthlyPayment = PRICING.CLIENT_MONTHLY.amount // $8
       const months = 12
 
       const annualPayments = monthlyPayment * months
       const annualCommission = months * calculateCommission(monthlyPayment)
       const annualPlatformRevenue = annualPayments - annualCommission
 
-      expect(annualPayments).toBe(12000) // $120.00
-      expect(annualCommission).toBe(6000) // $60.00
-      expect(annualPlatformRevenue).toBe(6000) // $60.00
+      expect(annualPayments).toBe(9600) // $96.00
+      expect(annualCommission).toBe(4800) // $48.00
+      expect(annualPlatformRevenue).toBe(4800) // $48.00
     })
   })
 
@@ -178,22 +201,31 @@ describe('Stripe Configuration', () => {
       expect(payment - commission).toBe(500)
     })
 
-    test('should match documentation: $10 client payment', () => {
-      const clientPayment = 1000 // $10.00
+    test('should match documentation: $100 Year 1 client payment', () => {
+      const clientPayment = 10000 // $100.00
 
-      expect(calculateCommission(clientPayment)).toBe(500) // $5.00 to photographer
-      expect(clientPayment - calculateCommission(clientPayment)).toBe(500) // $5.00 to platform
+      expect(calculateCommission(clientPayment)).toBe(5000) // $50.00 to photographer
+      expect(clientPayment - calculateCommission(clientPayment)).toBe(5000) // $50.00 to platform
+    })
+
+    test('should match documentation: $8/month Year 2+ client payment', () => {
+      const clientPayment = 800 // $8.00
+
+      expect(calculateCommission(clientPayment)).toBe(400) // $4.00 to photographer
+      expect(clientPayment - calculateCommission(clientPayment)).toBe(400) // $4.00 to platform
     })
 
     test('should verify pricing constants match business model', () => {
       // From business docs:
-      // - Client: $10/month
+      // - Year 1: $100 upfront (or $50 for 6-month)
+      // - Year 2+: $8/month
       // - Commission: 50%
-      // - No quarterly/annual plans
 
-      expect(PRICING.CLIENT_MONTHLY.amount).toBe(1000)
+      expect(PRICING.CLIENT_YEAR_1.amount).toBe(10000) // $100
+      expect(PRICING.CLIENT_6_MONTH.amount).toBe(5000) // $50
+      expect(PRICING.CLIENT_MONTHLY.amount).toBe(800) // $8
       expect(PHOTOGRAPHER_COMMISSION_RATE).toBe(0.50)
-      expect(Object.keys(PRICING)).toHaveLength(1) // Only monthly plan
+      expect(Object.keys(PRICING)).toHaveLength(3) // Year 1, 6-month, Monthly
     })
   })
 
