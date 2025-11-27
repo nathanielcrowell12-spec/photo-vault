@@ -77,11 +77,14 @@ export const PRICING = {
  * These are created in Stripe Dashboard → Products
  */
 export const STRIPE_PRICES = {
-  CLIENT_MONTHLY: process.env.STRIPE_CLIENT_MONTHLY_PRICE_ID || '',
+  CLIENT_YEAR1: process.env.STRIPE_CLIENT_YEAR1_PRICE_ID || '',      // $100 one-time (Year 1)
+  CLIENT_MONTHLY: process.env.STRIPE_CLIENT_MONTHLY_PRICE_ID || '',  // $8/month recurring (Year 2+)
 } as const
 
 /**
  * Stripe Connect Client ID for photographer onboarding
+ * NOTE: Not needed for Express accounts (which use Account Links instead of OAuth)
+ * Only used if we switch to Standard accounts with OAuth flow
  */
 export const STRIPE_CONNECT_CLIENT_ID = process.env.STRIPE_CONNECT_CLIENT_ID || ''
 
@@ -149,13 +152,29 @@ export async function createConnectAccountLink(accountId: string, returnUrl: str
 }
 
 /**
- * Create a Stripe Connect account for a photographer
+ * Create a Stripe Connect Express account for a photographer
+ * Express accounts are recommended for platforms like PhotoVault:
+ * - Stripe handles onboarding and identity verification
+ * - Photographers get a simple Express Dashboard
+ * - Platform handles disputes/refunds
  */
 export async function createConnectAccount(email: string, metadata?: Record<string, string>) {
   const account = await stripe.accounts.create({
-    type: 'standard',
+    type: 'express',
     email,
     metadata,
+    capabilities: {
+      card_payments: { requested: true },
+      transfers: { requested: true },
+    },
+    business_type: 'individual',
+    settings: {
+      payouts: {
+        schedule: {
+          interval: 'manual', // Platform controls payouts (14-day delay per commission rules)
+        },
+      },
+    },
   })
 
   return account
