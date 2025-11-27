@@ -1,6 +1,6 @@
 # PhotoVault Hub - Claude Code Context
 
-**Last Updated:** November 26, 2025
+**Last Updated:** November 26, 2025 (Stripe Setup Complete)
 **Project:** PhotoVault Hub - Professional Photo Gallery Platform
 **Status:** Active Development
 
@@ -167,13 +167,43 @@ npm run type-check   # TypeScript validation
 
 | Component | Status |
 |-----------|--------|
-| Code Implementation | Complete |
-| Stripe Account Setup | Pending |
-| API Keys Configuration | Pending |
-| Webhook Testing | Pending |
-| UI Components | Pending |
+| Code Implementation | ✅ Complete |
+| Stripe Account Setup | ✅ Complete (Sandbox) |
+| API Keys Configuration | ✅ Complete |
+| Webhook Configuration | ✅ Complete |
+| Stripe Connect (Express) | ✅ Complete |
+| UI Components | ✅ Complete |
 
-See `STRIPE_INTEGRATION_COMPLETE.md` for full setup guide.
+### Stripe Product Configuration
+- **Product:** Client Gallery Subscription (`prod_TUvIAG3NEbbcBU`)
+- **$100 one-time price (Year 1):** `price_1SXvU48jZm4oWQdn5lNwjXqH`
+- **$8/month recurring (Year 2+):** `price_1SXvS38jZm4oWQdnMvTxZWrw`
+
+### Stripe Connect
+- **Account Type:** Express (Stripe-hosted onboarding)
+- **Capabilities:** card_payments, transfers
+- **Payout Schedule:** Manual (platform controls 14-day delay per commission rules)
+
+### Brand Colors for Stripe
+- **Primary (Gold):** `#f59e0b`
+- **Secondary (Navy):** `#1a365d`
+
+---
+
+## Billing Modes (Future Feature)
+
+PhotoVault will support two billing modes for photographers:
+
+### Mode 1: Storage Only (Current)
+- Photographer invoices clients separately for photoshoots (their existing system)
+- PhotoVault only bills the $100 Year 1 / $8 month Year 2+ storage fee
+- Simple, works with photographers who already have invoicing set up
+
+### Mode 2: All-in-One Billing (Planned)
+- Photographer sets their session price in PhotoVault (e.g., $2,500)
+- PhotoVault adds the $100 storage fee automatically
+- Client pays one invoice, Stripe splits payment automatically
+- Requires: Dynamic pricing UI, custom checkout, destination charges
 
 ---
 
@@ -188,17 +218,25 @@ This project uses BMad Method for structured development:
 
 ## Environment Variables
 
-Required in `.env.local`:
+Required in Vercel/`.env.local`:
 ```
+# Supabase
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
 SUPABASE_SERVICE_ROLE_KEY=
-STRIPE_SECRET_KEY=
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=
-STRIPE_WEBHOOK_SECRET=
-STRIPE_CLIENT_MONTHLY_PRICE_ID=
-STRIPE_CONNECT_CLIENT_ID=
+
+# Stripe
+STRIPE_SECRET_KEY=sk_test_...
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
+STRIPE_CLIENT_YEAR1_PRICE_ID=price_...      # $100 one-time
+STRIPE_CLIENT_MONTHLY_PRICE_ID=price_...    # $8/month recurring
+
+# Site URL
+NEXT_PUBLIC_SITE_URL=https://photovault.photo
 ```
+
+**Note:** `STRIPE_CONNECT_CLIENT_ID` is NOT needed for Express accounts (uses Account Links instead of OAuth).
 
 ---
 
