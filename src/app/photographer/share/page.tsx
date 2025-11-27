@@ -1,31 +1,45 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { 
-  ArrowLeft, 
+import {
+  ArrowLeft,
   Share2,
   Link as LinkIcon,
   Mail,
-  Copy
+  Copy,
+  Loader2
 } from 'lucide-react'
 import Link from 'next/link'
 import { Input } from '@/components/ui/input'
 import { useToast } from '@/components/ui/use-toast'
 
 export default function SharePage() {
-  const { user, userType } = useAuth()
+  const { user, userType, loading } = useAuth()
   const router = useRouter()
   const { toast } = useToast()
   const [selectedGallery, setSelectedGallery] = useState('your-gallery-url')
 
+  useEffect(() => {
+    if (!loading && userType !== 'photographer') {
+      router.push('/dashboard')
+    }
+  }, [loading, userType, router])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+
   if (userType !== 'photographer') {
-    router.push('/dashboard')
     return null
   }
 

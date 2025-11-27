@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -8,11 +8,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { SUPPORTED_PLATFORMS, connectPlatform } from '@/lib/platforms'
-import { 
-  ArrowLeft, 
-  Camera, 
-  CheckCircle, 
-  ExternalLink, 
+import {
+  ArrowLeft,
+  Camera,
+  CheckCircle,
+  ExternalLink,
   Loader2,
   Plus,
   Users,
@@ -22,7 +22,7 @@ import {
 import Link from 'next/link'
 
 export default function ImportPage() {
-  const { user, userType } = useAuth()
+  const { user, userType, loading } = useAuth()
   const router = useRouter()
   const [connecting, setConnecting] = useState<string | null>(null)
   const [connectedPlatforms, setConnectedPlatforms] = useState<string[]>([])
@@ -34,8 +34,21 @@ export default function ImportPage() {
     created_at: string
   }>>([])
 
+  useEffect(() => {
+    if (!loading && userType !== 'photographer') {
+      router.push('/dashboard')
+    }
+  }, [loading, userType, router])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+
   if (userType !== 'photographer') {
-    router.push('/dashboard')
     return null
   }
 

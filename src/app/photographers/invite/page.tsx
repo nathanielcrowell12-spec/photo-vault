@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -11,10 +11,10 @@ import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { 
-  ArrowLeft, 
-  Camera, 
-  CheckCircle, 
+import {
+  ArrowLeft,
+  Camera,
+  CheckCircle,
   DollarSign,
   Users,
   Mail,
@@ -22,13 +22,14 @@ import {
   Send,
   AlertTriangle,
   Clock,
-  Shield
+  Shield,
+  Loader2
 } from 'lucide-react'
 import Link from 'next/link'
 import { PAYMENT_OPTIONS, getDefaultPaymentOptions } from '@/lib/payment-models'
 
 export default function InvitePage() {
-  const { user, userType } = useAuth()
+  const { user, userType, loading } = useAuth()
   const router = useRouter()
   const [selectedPaymentOption, setSelectedPaymentOption] = useState('photographer_billed')
   const [clientEmail, setClientEmail] = useState('')
@@ -38,8 +39,21 @@ export default function InvitePage() {
   const [sending, setSending] = useState(false)
   const [sent, setSent] = useState(false)
 
+  useEffect(() => {
+    if (!loading && userType !== 'photographer') {
+      router.push('/dashboard')
+    }
+  }, [loading, userType, router])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+
   if (userType !== 'photographer') {
-    router.push('/dashboard')
     return null
   }
 

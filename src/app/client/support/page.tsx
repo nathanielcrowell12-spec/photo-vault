@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -11,8 +11,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { 
-  ArrowLeft, 
+import {
+  ArrowLeft,
   HelpCircle,
   Mail,
   Phone,
@@ -25,7 +25,8 @@ import {
   Users,
   CreditCard,
   Camera,
-  Download
+  Download,
+  Loader2
 } from 'lucide-react'
 import Link from 'next/link'
 
@@ -89,7 +90,7 @@ const faqItems: FAQItem[] = [
 ]
 
 export default function ClientSupportPage() {
-  const { user, userType } = useAuth()
+  const { user, userType, loading } = useAuth()
   const router = useRouter()
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
   const [searchQuery, setSearchQuery] = useState('')
@@ -101,8 +102,21 @@ export default function ClientSupportPage() {
   })
   const [submitting, setSubmitting] = useState(false)
 
+  useEffect(() => {
+    if (!loading && userType !== 'client') {
+      router.push('/dashboard')
+    }
+  }, [loading, userType, router])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+
   if (userType !== 'client') {
-    router.push('/dashboard')
     return null
   }
 

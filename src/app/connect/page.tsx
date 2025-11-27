@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -9,13 +9,13 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { 
-  ArrowLeft, 
-  Heart, 
-  Camera, 
-  Search, 
+import {
+  ArrowLeft,
+  Heart,
+  Camera,
+  Search,
   Link as LinkIcon,
-  CheckCircle, 
+  CheckCircle,
   Loader2,
   Plus,
   Users,
@@ -26,7 +26,7 @@ import {
 import Link from 'next/link'
 
 export default function ConnectPage() {
-  const { user, userType } = useAuth()
+  const { user, userType, loading } = useAuth()
   const router = useRouter()
   const [galleryUrl, setGalleryUrl] = useState('')
   const [accessCode, setAccessCode] = useState('')
@@ -39,8 +39,21 @@ export default function ConnectPage() {
   }>>([])
   const [searchMode, setSearchMode] = useState<'url' | 'search'>('url')
 
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login')
+    }
+  }, [loading, user, router])
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+
   if (!user) {
-    router.push('/login')
     return null
   }
 

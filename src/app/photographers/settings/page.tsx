@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import {
@@ -42,7 +42,7 @@ interface StripeConnectStatus {
   isConnected: boolean
 }
 
-export default function PhotographerSettingsPage() {
+function PhotographerSettingsContent() {
   const { user, userType, loading, changePassword } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -597,6 +597,19 @@ export default function PhotographerSettingsPage() {
         </main>
       </div>
     </AccessGuard>
+  )
+}
+
+// Main export with Suspense boundary for useSearchParams
+export default function PhotographerSettingsPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    }>
+      <PhotographerSettingsContent />
+    </Suspense>
   )
 }
 
