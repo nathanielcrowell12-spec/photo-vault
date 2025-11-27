@@ -7,172 +7,129 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { 
-  ArrowLeft, 
+import {
+  ArrowLeft,
   CreditCard,
-  Calendar,
   CheckCircle,
-  AlertTriangle,
-  Download,
-  Clock,
+  AlertCircle,
+  Calendar,
   DollarSign,
+  Loader2,
+  ExternalLink,
   Camera,
-  Users,
-  FileText,
-  Mail,
-  Phone
+  RefreshCw
 } from 'lucide-react'
 import Link from 'next/link'
+import { supabaseBrowser as supabase } from '@/lib/supabase-browser'
 
-interface ClientPayment {
+interface Subscription {
   id: string
-  date: string
-  amount: number
-  status: 'paid' | 'pending' | 'failed' | 'refunded'
-  description: string
-  payment_method: string
-  gallery_access: {
-    photographer_name: string
-    gallery_name: string
-    access_expires: string
-  }
+  stripe_subscription_id: string
+  status: 'active' | 'past_due' | 'canceled' | 'trialing'
+  current_period_start: string
+  current_period_end: string
+  cancel_at_period_end: boolean
+  gallery_id: string
+  gallery_name?: string
+  photographer_name?: string
 }
 
-interface ClientBillingInfo {
-  client_name: string
-  email: string
-  phone: string
-  billing_address: string
-  payment_method: {
-    type: string
-    last4: string
-    brand: string
-    expiry: string
-  } | null
-  subscription_status: 'active' | 'inactive' | 'cancelled' | 'trial'
-  next_billing_date: string
-  total_paid: number
-  galleries: Array<{
-    id: string
-    photographer_name: string
-    gallery_name: string
-    access_expires: string
-    status: 'active' | 'expired' | 'suspended'
-  }>
+interface PaymentHistory {
+  id: string
+  amount_paid_cents: number
+  currency: string
+  status: string
+  paid_at: string
 }
 
 export default function ClientBillingPage() {
-  const { user, userType } = useAuth()
+  const { user, loading: authLoading } = useAuth()
   const router = useRouter()
-  const [billingInfo, setBillingInfo] = useState<ClientBillingInfo | null>(null)
-  const [payments, setPayments] = useState<ClientPayment[]>([])
+  const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
+  const [payments, setPayments] = useState<PaymentHistory[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (userType === 'client') {
+    if (!authLoading && !user) {
+      router.push('/login')
+      return
+    }
+
+    if (user) {
       fetchBillingData()
     }
-  }, [userType])
-
-  if (userType !== 'client') {
-    router.push('/dashboard')
-    return null
-  }
+  }, [user, authLoading])
 
   const fetchBillingData = async () => {
     try {
-      // Simulate API call - in real implementation, this would fetch from database
-      setTimeout(() => {
-        setBillingInfo({
-          client_name: 'John & Jane Smith',
-          email: 'john.smith@email.com',
-          phone: '(555) 123-4567',
-          billing_address: '123 Main St, Anytown, ST 12345',
-          payment_method: {
-            type: 'card',
-            last4: '4242',
-            brand: 'Visa',
-            expiry: '12/25'
-          },
-          subscription_status: 'active',
-          next_billing_date: '2024-11-15',
-          total_paid: 100,
-          galleries: [
-            {
-              id: '1',
-              photographer_name: 'Emma Rodriguez Photography',
-              gallery_name: 'Smith Wedding - October 2024',
-              access_expires: '2025-10-15',
-              status: 'active'
-            },
-            {
-              id: '2',
-              photographer_name: 'Mike Chen Studios',
-              gallery_name: 'Family Portrait Session',
-              access_expires: '2024-12-15',
-              status: 'active'
-            }
-          ]
-        })
+      setLoading(true)
 
-        setPayments([
-          {
-            id: '1',
-            date: '2024-10-15',
-            amount: 100,
-            status: 'paid',
-            description: 'Smith Wedding Gallery - Annual Access',
-            payment_method: 'Visa •••• 4242',
-            gallery_access: {
-              photographer_name: 'Emma Rodriguez Photography',
-              gallery_name: 'Smith Wedding - October 2024',
-              access_expires: '2025-10-15'
-            }
-          },
-          {
-            id: '2',
-            date: '2024-09-15',
-            amount: 20,
-            status: 'paid',
-            description: 'Family Portrait Session - 6 Month Trial',
-            payment_method: 'Visa •••• 4242',
-            gallery_access: {
-              photographer_name: 'Mike Chen Studios',
-              gallery_name: 'Family Portrait Session',
-              access_expires: '2024-12-15'
-            }
+      // Fetch subscriptions
+      const { data: subData, error: subError } = await supabase
+        .from('subscriptions')
+        .select(`
+          id,
+          stripe_subscription_id,
+          status,
+          current_period_start,
+          current_period_end,
+          cancel_at_period_end,
+          gallery_id
+        `)
+        .eq('client_id', user?.id)
+        .order('created_at', { ascending: false })
+
+      if (subError) throw subError
+
+      // Enrich with gallery data
+      const enrichedSubs = await Promise.all(
+        (subData || []).map(async (sub) => {
+          const { data: galleryData } = await supabase
+            .from('photo_galleries')
+            .select('gallery_name, photographer_id')
+            .eq('id', sub.gallery_id)
+            .single()
+
+          let photographerName = 'Unknown'
+          if (galleryData?.photographer_id) {
+            const { data: photoData } = await supabase
+              .from('photographers')
+              .select('business_name')
+              .eq('id', galleryData.photographer_id)
+              .single()
+            photographerName = photoData?.business_name || 'Unknown'
           }
-        ])
-        setLoading(false)
-      }, 1000)
+
+          return {
+            ...sub,
+            gallery_name: galleryData?.gallery_name || 'Unknown Gallery',
+            photographer_name: photographerName
+          }
+        })
+      )
+
+      setSubscriptions(enrichedSubs)
+
+      // Fetch payment history
+      const { data: paymentData, error: paymentError } = await supabase
+        .from('payment_history')
+        .select('id, amount_paid_cents, currency, status, paid_at')
+        .order('paid_at', { ascending: false })
+        .limit(10)
+
+      if (!paymentError) {
+        setPayments(paymentData || [])
+      }
     } catch (error) {
       console.error('Error fetching billing data:', error)
+    } finally {
       setLoading(false)
     }
   }
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case 'active':
-        return <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">Active</Badge>
-      case 'paid':
-        return <Badge className="bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">Paid</Badge>
-      case 'pending':
-        return <Badge className="bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">Pending</Badge>
-      case 'failed':
-        return <Badge className="bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">Failed</Badge>
-      case 'refunded':
-        return <Badge className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">Refunded</Badge>
-      default:
-        return <Badge variant="outline">Unknown</Badge>
-    }
-  }
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD'
-    }).format(amount)
+  const handleManageSubscription = async (subscriptionId: string) => {
+    // In production, this would create a Stripe Customer Portal session
+    alert('Stripe Customer Portal coming soon! Contact support@photovault.photo to manage your subscription.')
   }
 
   const formatDate = (dateString: string) => {
@@ -183,19 +140,36 @@ export default function ClientBillingPage() {
     })
   }
 
-  const downloadInvoice = (paymentId: string) => {
-    // Simulate invoice download
-    console.log('Downloading invoice for payment:', paymentId)
-    alert('Invoice downloaded!')
+  const formatCurrency = (cents: number, currency: string = 'usd') => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currency.toUpperCase()
+    }).format(cents / 100)
   }
 
-  if (loading) {
+  const getStatusBadge = (status: string, cancelAtPeriodEnd: boolean) => {
+    if (cancelAtPeriodEnd) {
+      return <Badge variant="outline" className="border-amber-500 text-amber-700">Canceling</Badge>
+    }
+
+    switch (status) {
+      case 'active':
+        return <Badge className="bg-green-600">Active</Badge>
+      case 'past_due':
+        return <Badge className="bg-red-600">Past Due</Badge>
+      case 'canceled':
+        return <Badge variant="secondary">Canceled</Badge>
+      case 'trialing':
+        return <Badge className="bg-blue-600">Trial</Badge>
+      default:
+        return <Badge variant="secondary">{status}</Badge>
+    }
+  }
+
+  if (authLoading || loading) {
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-slate-600 dark:text-slate-300">Loading billing information...</p>
-        </div>
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
   }
@@ -207,223 +181,208 @@ export default function ClientBillingPage() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Button asChild variant="ghost" size="sm">
-              <Link href="/dashboard">
+              <Link href="/client/dashboard">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Dashboard
               </Link>
             </Button>
             <Separator orientation="vertical" className="h-6" />
             <div className="flex items-center space-x-2">
-              <CreditCard className="h-6 w-6 text-blue-600" />
-              <span className="text-xl font-bold">Billing & Payments</span>
+              <CreditCard className="h-6 w-6 text-green-600" />
+              <span className="text-xl font-bold">Billing & Subscriptions</span>
             </div>
           </div>
-          <div className="flex items-center space-x-2">
-            {billingInfo && getStatusBadge(billingInfo.subscription_status)}
-          </div>
+          <Button variant="outline" size="sm" onClick={fetchBillingData}>
+            <RefreshCw className="h-4 w-4 mr-2" />
+            Refresh
+          </Button>
         </div>
       </header>
 
       <main className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto">
-          {billingInfo && (
-            <>
-              {/* Account Summary */}
-              <Card className="mb-8">
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Users className="h-6 w-6 text-blue-600" />
-                    <span>Account Summary</span>
-                  </CardTitle>
-                  <CardDescription>
-                    Your PhotoVault account information and billing details
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid md:grid-cols-2 gap-6">
-                    <div>
-                      <h4 className="font-semibold mb-4">Account Information</h4>
-                      <div className="space-y-3 text-sm">
-                        <div>
-                          <span className="text-slate-600 dark:text-slate-400">Name:</span>
-                          <span className="ml-2 font-medium">{billingInfo.client_name}</span>
-                        </div>
-                        <div>
-                          <span className="text-slate-600 dark:text-slate-400">Email:</span>
-                          <span className="ml-2 font-medium">{billingInfo.email}</span>
-                        </div>
-                        <div>
-                          <span className="text-slate-600 dark:text-slate-400">Phone:</span>
-                          <span className="ml-2 font-medium">{billingInfo.phone}</span>
-                        </div>
-                        <div>
-                          <span className="text-slate-600 dark:text-slate-400">Total Paid:</span>
-                          <span className="ml-2 font-medium text-green-600">{formatCurrency(billingInfo.total_paid)}</span>
-                        </div>
-                      </div>
-                    </div>
+        <div className="max-w-4xl mx-auto space-y-8">
+          {/* Active Subscriptions */}
+          <section>
+            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+              <Camera className="h-5 w-5 text-purple-600" />
+              Your Subscriptions
+            </h2>
 
-                    <div>
-                      <h4 className="font-semibold mb-4">Billing Information</h4>
-                      <div className="space-y-3 text-sm">
-                        <div>
-                          <span className="text-slate-600 dark:text-slate-400">Status:</span>
-                          <span className="ml-2">{getStatusBadge(billingInfo.subscription_status)}</span>
-                        </div>
-                        <div>
-                          <span className="text-slate-600 dark:text-slate-400">Next Billing:</span>
-                          <span className="ml-2">{formatDate(billingInfo.next_billing_date)}</span>
-                        </div>
-                        {billingInfo.payment_method && (
-                          <div>
-                            <span className="text-slate-600 dark:text-slate-400">Payment Method:</span>
-                            <span className="ml-2">
-                              {billingInfo.payment_method.brand} •••• {billingInfo.payment_method.last4}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
+            {subscriptions.length === 0 ? (
+              <Card>
+                <CardContent className="py-8 text-center">
+                  <AlertCircle className="h-12 w-12 text-slate-300 mx-auto mb-4" />
+                  <h3 className="text-lg font-medium mb-2">No Active Subscriptions</h3>
+                  <p className="text-slate-600 mb-4">
+                    You don&apos;t have any gallery subscriptions yet.
+                  </p>
+                  <Button asChild>
+                    <Link href="/client/dashboard">
+                      Browse Your Galleries
+                    </Link>
+                  </Button>
                 </CardContent>
               </Card>
-
-              {/* Active Galleries */}
-              <Card className="mb-8">
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <Camera className="h-6 w-6 text-purple-600" />
-                    <span>Your Photo Galleries</span>
-                  </CardTitle>
-                  <CardDescription>
-                    Galleries you have access to and their expiration dates
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {billingInfo.galleries.map((gallery) => (
-                      <div key={gallery.id} className="flex items-center justify-between p-4 border rounded-lg">
-                        <div className="flex items-center space-x-4">
-                          <div className="h-12 w-12 bg-purple-100 dark:bg-purple-900/20 rounded-full flex items-center justify-center">
-                            <Camera className="h-6 w-6 text-purple-600" />
+            ) : (
+              <div className="space-y-4">
+                {subscriptions.map((sub) => (
+                  <Card key={sub.id}>
+                    <CardContent className="p-6">
+                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-3 mb-2">
+                            <h3 className="text-lg font-semibold">{sub.gallery_name}</h3>
+                            {getStatusBadge(sub.status, sub.cancel_at_period_end)}
                           </div>
-                          <div>
-                            <h3 className="font-medium">{gallery.gallery_name}</h3>
-                            <p className="text-sm text-slate-600 dark:text-slate-400">
-                              by {gallery.photographer_name}
-                            </p>
-                            <p className="text-xs text-slate-500">
-                              Access expires: {formatDate(gallery.access_expires)}
-                            </p>
+                          <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
+                            by {sub.photographer_name}
+                          </p>
+                          <div className="flex flex-wrap gap-4 text-sm text-slate-500">
+                            <div className="flex items-center gap-1">
+                              <Calendar className="h-4 w-4" />
+                              <span>Renews {formatDate(sub.current_period_end)}</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <DollarSign className="h-4 w-4" />
+                              <span>$8/month</span>
+                            </div>
                           </div>
                         </div>
-                        <div className="flex items-center space-x-3">
-                          {getStatusBadge(gallery.status)}
-                          <Button variant="outline" size="sm">
-                            View Gallery
+
+                        <div className="flex flex-col sm:flex-row gap-2">
+                          <Button asChild variant="outline" size="sm">
+                            <Link href={`/gallery/${sub.gallery_id}`}>
+                              <Camera className="h-4 w-4 mr-2" />
+                              View Gallery
+                            </Link>
                           </Button>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Payment History */}
-              <Card className="mb-8">
-                <CardHeader>
-                  <CardTitle className="flex items-center space-x-2">
-                    <DollarSign className="h-6 w-6 text-green-600" />
-                    <span>Payment History</span>
-                  </CardTitle>
-                  <CardDescription>
-                    All your payments and receipts
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {payments.map((payment) => (
-                      <div key={payment.id} className="flex items-center justify-between p-4 border rounded-lg">
-                        <div className="flex items-center space-x-4">
-                          <div className="h-12 w-12 bg-green-100 dark:bg-green-900/20 rounded-full flex items-center justify-center">
-                            <CreditCard className="h-6 w-6 text-green-600" />
-                          </div>
-                          <div>
-                            <h3 className="font-medium">{payment.description}</h3>
-                            <p className="text-sm text-slate-600 dark:text-slate-400">
-                              {payment.gallery_access.photographer_name}
-                            </p>
-                            <p className="text-xs text-slate-500">
-                              Paid on {formatDate(payment.date)} • {payment.payment_method}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-3">
-                          <div className="text-right">
-                            <div className="font-medium">{formatCurrency(payment.amount)}</div>
-                            <div className="text-xs text-slate-500">{getStatusBadge(payment.status)}</div>
-                          </div>
-                          <Button 
-                            variant="outline" 
+                          <Button
+                            variant="outline"
                             size="sm"
-                            onClick={() => downloadInvoice(payment.id)}
+                            onClick={() => handleManageSubscription(sub.stripe_subscription_id)}
                           >
-                            <Download className="h-4 w-4" />
+                            <ExternalLink className="h-4 w-4 mr-2" />
+                            Manage
                           </Button>
+                        </div>
+                      </div>
+
+                      {sub.status === 'past_due' && (
+                        <div className="mt-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
+                          <div className="flex items-start gap-3">
+                            <AlertCircle className="h-5 w-5 text-red-600 mt-0.5" />
+                            <div>
+                              <h4 className="font-medium text-red-800 dark:text-red-200">
+                                Payment Failed
+                              </h4>
+                              <p className="text-sm text-red-700 dark:text-red-300 mt-1">
+                                Your last payment didn&apos;t go through. Please update your payment method
+                                to keep access to your photos.
+                              </p>
+                              <Button size="sm" className="mt-3 bg-red-600 hover:bg-red-700">
+                                Update Payment Method
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
+                      {sub.cancel_at_period_end && (
+                        <div className="mt-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
+                          <div className="flex items-start gap-3">
+                            <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5" />
+                            <div>
+                              <h4 className="font-medium text-amber-800 dark:text-amber-200">
+                                Subscription Ending
+                              </h4>
+                              <p className="text-sm text-amber-700 dark:text-amber-300 mt-1">
+                                Your subscription will end on {formatDate(sub.current_period_end)}.
+                                You&apos;ll lose access to your photos after this date.
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </section>
+
+          {/* Payment History */}
+          <section>
+            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+              <DollarSign className="h-5 w-5 text-green-600" />
+              Payment History
+            </h2>
+
+            {payments.length === 0 ? (
+              <Card>
+                <CardContent className="py-8 text-center">
+                  <p className="text-slate-600">No payment history yet.</p>
+                </CardContent>
+              </Card>
+            ) : (
+              <Card>
+                <CardContent className="p-0">
+                  <div className="divide-y dark:divide-slate-700">
+                    {payments.map((payment) => (
+                      <div
+                        key={payment.id}
+                        className="flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-800"
+                      >
+                        <div className="flex items-center gap-4">
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                            payment.status === 'succeeded'
+                              ? 'bg-green-100 dark:bg-green-900'
+                              : 'bg-red-100 dark:bg-red-900'
+                          }`}>
+                            {payment.status === 'succeeded' ? (
+                              <CheckCircle className="h-5 w-5 text-green-600" />
+                            ) : (
+                              <AlertCircle className="h-5 w-5 text-red-600" />
+                            )}
+                          </div>
+                          <div>
+                            <div className="font-medium">
+                              {payment.status === 'succeeded' ? 'Payment Successful' : 'Payment Failed'}
+                            </div>
+                            <div className="text-sm text-slate-500">
+                              {formatDate(payment.paid_at)}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="text-right">
+                          <div className={`font-semibold ${
+                            payment.status === 'succeeded' ? 'text-green-600' : 'text-red-600'
+                          }`}>
+                            {formatCurrency(payment.amount_paid_cents, payment.currency)}
+                          </div>
                         </div>
                       </div>
                     ))}
                   </div>
                 </CardContent>
               </Card>
+            )}
+          </section>
 
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Button variant="outline">
-                  <CreditCard className="h-4 w-4 mr-2" />
-                  Update Payment Method
-                </Button>
-                <Button variant="outline">
-                  <FileText className="h-4 w-4 mr-2" />
-                  Download All Receipts
-                </Button>
-                <Button variant="outline">
-                  <Mail className="h-4 w-4 mr-2" />
-                  Email Billing Summary
-                </Button>
-                <Button variant="outline">
-                  <Phone className="h-4 w-4 mr-2" />
+          {/* Help Section */}
+          <Card className="border-blue-200 dark:border-blue-800">
+            <CardContent className="p-6">
+              <h3 className="font-semibold mb-2">Need Help?</h3>
+              <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                If you have questions about billing or need to make changes to your subscription,
+                our support team is here to help.
+              </p>
+              <Button asChild variant="outline">
+                <a href="mailto:support@photovault.photo">
                   Contact Support
-                </Button>
-              </div>
-
-              {/* Help Section */}
-              <Card className="mt-8">
-                <CardContent className="p-6">
-                  <div className="text-center">
-                    <h3 className="text-lg font-semibold mb-2">Need Help?</h3>
-                    <p className="text-slate-600 dark:text-slate-300 mb-4">
-                      Our support team is here to help with any billing questions or issues.
-                    </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                      <Button variant="outline">
-                        <Mail className="h-4 w-4 mr-2" />
-                        Email Support
-                      </Button>
-                      <Button variant="outline">
-                        <Phone className="h-4 w-4 mr-2" />
-                        Call Support
-                      </Button>
-                      <Button variant="outline">
-                        <FileText className="h-4 w-4 mr-2" />
-                        Billing FAQ
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </>
-          )}
+                </a>
+              </Button>
+            </CardContent>
+          </Card>
         </div>
       </main>
     </div>
