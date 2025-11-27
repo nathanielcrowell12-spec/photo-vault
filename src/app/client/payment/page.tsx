@@ -1,14 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { SubscribeButton, SubscribeCard } from '@/components/SubscribeButton'
+import { SubscribeCard } from '@/components/SubscribeButton'
 import {
   ArrowLeft,
   CreditCard,
@@ -32,7 +31,8 @@ interface GalleryInfo {
   photo_count: number
 }
 
-export default function ClientPaymentPage() {
+// Inner component that uses useSearchParams
+function ClientPaymentContent() {
   const { user, userType, loading: authLoading } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
@@ -309,5 +309,18 @@ export default function ClientPaymentPage() {
         </div>
       </main>
     </div>
+  )
+}
+
+// Main export with Suspense boundary
+export default function ClientPaymentPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    }>
+      <ClientPaymentContent />
+    </Suspense>
   )
 }

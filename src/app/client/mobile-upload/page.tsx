@@ -61,7 +61,7 @@ interface MobileUploadSession {
 }
 
 export default function MobileUploadPage() {
-  const { user, userType } = useAuth()
+  const { user, userType, loading } = useAuth()
   const router = useRouter()
   const fileInputRef = useRef<HTMLInputElement>(null)
   const cameraInputRef = useRef<HTMLInputElement>(null)
@@ -71,7 +71,7 @@ export default function MobileUploadPage() {
   const [selectedPhotos, setSelectedPhotos] = useState<string[]>([])
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [autoOrganize, setAutoOrganize] = useState(true)
-  const [connectionStatus, setConnectionStatus] = useState({
+  const [connectionStatus] = useState({
     wifi: true,
     battery: 85,
     signal: 4
@@ -110,9 +110,21 @@ export default function MobileUploadPage() {
     }
   }, [uploadSession])
 
-  if (userType !== 'client') {
-    router.push('/dashboard')
+  // Handle auth redirect in useEffect to avoid SSR issues
+  if (!loading && userType !== 'client') {
+    if (typeof window !== 'undefined') {
+      router.push('/dashboard')
+    }
     return null
+  }
+
+  // Show loading state during auth check
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+        <Cloud className="h-8 w-8 animate-pulse text-blue-600" />
+      </div>
+    )
   }
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
