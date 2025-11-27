@@ -120,11 +120,11 @@ export default function RootLayout({
         <AuthProvider>
           <ViewProvider>
             <div className="flex flex-col min-h-screen">
-              <Navigation />
+              <Navigation hideOnPaths={['/photographer/dashboard']} />
               <main className="flex-1">
                 {children}
               </main>
-              <Footer />
+              <Footer hideOnPaths={['/photographer/dashboard']} />
               <Toaster />
             </div>
           </ViewProvider>

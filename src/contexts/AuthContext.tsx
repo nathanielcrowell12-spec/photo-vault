@@ -12,6 +12,7 @@ interface AuthContextType {
   signUp: (email: string, password: string, userType: 'client' | 'photographer' | 'admin', fullName?: string) => Promise<{ error: unknown }>
   signIn: (email: string, password: string) => Promise<{ error: unknown }>
   signOut: () => Promise<void>
+  changePassword: (newPassword: string) => Promise<{ error: unknown }>
   userType: 'client' | 'photographer' | 'admin' | null
   userFullName: string | null
   paymentStatus: string | null
@@ -445,6 +446,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  const changePassword = async (newPassword: string) => {
+    try {
+      console.log('[AuthContext] Changing password...')
+      
+      if (!session) {
+        return { error: { message: 'No active session. Please log in again.' } }
+      }
+
+      const { data, error } = await supabase.auth.updateUser({
+        password: newPassword
+      })
+
+      if (error) {
+        console.error('[AuthContext] Password change error:', error)
+        return { error }
+      }
+
+      console.log('[AuthContext] Password changed successfully')
+      return { error: null }
+    } catch (error) {
+      console.error('[AuthContext] Error changing password:', error)
+      return { error }
+    }
+  }
+
   const value: AuthContextType = {
     user,
     session,
@@ -452,6 +478,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     signUp,
     signIn,
     signOut,
+    changePassword,
     userType,
     userFullName,
     paymentStatus,

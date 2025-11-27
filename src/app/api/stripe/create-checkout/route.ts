@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase'
-import { stripe, STRIPE_PRICES, PRICING } from '@/lib/stripe'
+import { getStripeClient, STRIPE_PRICES, PRICING } from '@/lib/stripe'
 
 // Force dynamic rendering to prevent module evaluation during build
 export const dynamic = 'force-dynamic'
@@ -43,7 +43,7 @@ export async function POST(request: NextRequest) {
     // 3. Verify gallery exists and belongs to photographer
     const { data: gallery, error: galleryError } = await supabase
       .from('photo_galleries')
-      .select('id, name, photographer_id')
+      .select('id, gallery_name, photographer_id')
       .eq('id', galleryId)
       .eq('photographer_id', photographerId)
       .single()
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
     // 4. Get photographer info
     const { data: photographer, error: photographerError } = await supabase
       .from('photographers')
-      .select('id, user_id, business_name, users!inner(email, full_name)')
+      .select('id, business_name')
       .eq('id', photographerId)
       .single()
 
@@ -63,24 +63,29 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Photographer not found' }, { status: 404 })
     }
 
-    // 5. Get user info
+    // 5. Get user info from user_profiles
     const { data: userData, error: userError } = await supabase
-      .from('users')
+      .from('user_profiles')
       .select('email, full_name, stripe_customer_id')
       .eq('id', user.id)
       .single()
 
-    if (userError || !userData) {
-      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+    // Fallback to auth user email if user_profiles doesn't have it
+    const userEmail = userData?.email || user.email || ''
+    const userName = userData?.full_name || undefined
+
+    if (userError && !userData) {
+      console.warn('[Checkout] User profile not found, using auth user data')
     }
 
     // 6. Create or retrieve Stripe customer
-    let customerId = userData.stripe_customer_id
+    const stripe = getStripeClient()
+    let customerId = userData?.stripe_customer_id
 
     if (!customerId) {
       const customer = await stripe.customers.create({
-        email: userData.email,
-        name: userData.full_name || undefined,
+        email: userEmail,
+        name: userName,
         metadata: {
           userId: user.id,
           role: 'client',
@@ -89,11 +94,23 @@ export async function POST(request: NextRequest) {
 
       customerId = customer.id
 
-      // Update user record with Stripe customer ID
-      await supabase
-        .from('users')
-        .update({ stripe_customer_id: customerId })
-        .eq('id', user.id)
+      // Update user record with Stripe customer ID (try both tables)
+      if (userData) {
+        await supabase
+          .from('user_profiles')
+          .update({ stripe_customer_id: customerId })
+          .eq('id', user.id)
+      }
+      
+      // Also try users table if it exists
+      try {
+        await supabase
+          .from('users')
+          .update({ stripe_customer_id: customerId })
+          .eq('id', user.id)
+      } catch (e) {
+        // Table might not exist, that's okay
+      }
     }
 
     // 7. Check if client already has an active subscription for this gallery
@@ -130,7 +147,7 @@ export async function POST(request: NextRequest) {
         userId: user.id,
         photographerId: photographer.id,
         galleryId: gallery.id,
-        galleryName: gallery.name,
+        galleryName: gallery.gallery_name || gallery.id,
       },
       subscription_data: {
         metadata: {

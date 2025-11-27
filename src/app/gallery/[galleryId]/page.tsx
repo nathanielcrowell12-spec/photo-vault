@@ -210,6 +210,12 @@ export default function GalleryViewerPage() {
   }
 
   const openSlideshow = (index: number) => {
+    console.log('[Gallery] Opening slideshow for photo:', {
+      index,
+      photo: photos[index],
+      photo_url: photos[index]?.photo_url,
+      thumbnail_url: photos[index]?.thumbnail_url
+    })
     setSelectedPhotoIndex(index)
     setViewMode('slideshow')
   }
@@ -513,12 +519,18 @@ export default function GalleryViewerPage() {
             {/* Photo */}
             <div className="max-w-7xl max-h-screen p-8">
               <img
-                src={photos[selectedPhotoIndex].photo_url}
-                loading="lazy"
+                src={photos[selectedPhotoIndex].photo_url || photos[selectedPhotoIndex].thumbnail_url}
                 alt={photos[selectedPhotoIndex].original_filename || `Photo ${selectedPhotoIndex + 1}`}
                 className="max-w-full max-h-[90vh] object-contain"
+                onError={(e) => {
+                  console.error('Failed to load photo:', photos[selectedPhotoIndex].photo_url)
+                  // Try fallback to thumbnail if main image fails
+                  if (photos[selectedPhotoIndex].thumbnail_url) {
+                    e.currentTarget.src = photos[selectedPhotoIndex].thumbnail_url || ''
+                  }
+                }}
               />
-              
+
               {/* Photo Counter */}
               <div className="text-center mt-4 text-white text-sm">
                 {selectedPhotoIndex + 1} of {photos.length}

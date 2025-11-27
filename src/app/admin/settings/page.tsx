@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
 import AccessGuard from '@/components/AccessGuard'
@@ -24,6 +24,12 @@ import {
   Settings,
   Sliders,
   UploadCloud,
+  Lock,
+  User,
+  Eye,
+  EyeOff,
+  CheckCircle2,
+  XCircle,
 } from 'lucide-react'
 
 const toggleSettings = [
@@ -34,14 +40,93 @@ const toggleSettings = [
 ]
 
 export default function SystemSettingsPage() {
-  const { user, userType, loading } = useAuth()
+  const { user, userType, loading, changePassword } = useAuth()
   const router = useRouter()
+  
+  const [currentPassword, setCurrentPassword] = useState('')
+  const [newPassword, setNewPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false)
+  const [showNewPassword, setShowNewPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+  const [isChanging, setIsChanging] = useState(false)
+  const [error, setError] = useState('')
+  const [success, setSuccess] = useState('')
+  const [passwordRequirements, setPasswordRequirements] = useState({
+    minLength: false,
+    hasUppercase: false,
+    hasLowercase: false,
+    hasNumber: false,
+  })
 
   useEffect(() => {
     if (!loading && (!user || userType !== 'admin')) {
       router.push('/login')
     }
   }, [loading, user, userType, router])
+
+  useEffect(() => {
+    // Validate password requirements
+    setPasswordRequirements({
+      minLength: newPassword.length >= 8,
+      hasUppercase: /[A-Z]/.test(newPassword),
+      hasLowercase: /[a-z]/.test(newPassword),
+      hasNumber: /[0-9]/.test(newPassword),
+    })
+  }, [newPassword])
+
+  const handlePasswordChange = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError('')
+    setSuccess('')
+
+    // Validation
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      setError('All fields are required')
+      return
+    }
+
+    if (newPassword !== confirmPassword) {
+      setError('New passwords do not match')
+      return
+    }
+
+    if (newPassword.length < 8) {
+      setError('Password must be at least 8 characters long')
+      return
+    }
+
+    if (!passwordRequirements.hasUppercase || !passwordRequirements.hasLowercase || !passwordRequirements.hasNumber) {
+      setError('Password must contain at least one uppercase letter, one lowercase letter, and one number')
+      return
+    }
+
+    if (currentPassword === newPassword) {
+      setError('New password must be different from current password')
+      return
+    }
+
+    setIsChanging(true)
+
+    try {
+      const { error: changeError } = await changePassword(newPassword)
+
+      if (changeError) {
+        setError(changeError instanceof Error ? changeError.message : 'Failed to change password. Please try again.')
+      } else {
+        setSuccess('Password changed successfully!')
+        setCurrentPassword('')
+        setNewPassword('')
+        setConfirmPassword('')
+        setTimeout(() => setSuccess(''), 5000)
+      }
+    } catch (err) {
+      setError('An unexpected error occurred. Please try again.')
+      console.error('Password change error:', err)
+    } finally {
+      setIsChanging(false)
+    }
+  }
 
   if (loading) {
     return (
@@ -79,6 +164,180 @@ export default function SystemSettingsPage() {
         {/* Content */}
         <main className="container mx-auto px-4 py-8">
           <div className="max-w-6xl mx-auto space-y-8">
+            {/* Account Settings */}
+            <Card className="border-2 border-blue-100 shadow-sm">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <User className="h-5 w-5 text-blue-600" />
+                  Account Settings
+                </CardTitle>
+                <CardDescription>
+                  Manage your admin account password and security
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="adminEmail">Email Address</Label>
+                    <div className="flex items-center gap-2">
+                      <Mail className="h-4 w-4 text-slate-400" />
+                      <Input
+                        id="adminEmail"
+                        type="email"
+                        value={user.email || ''}
+                        disabled
+                        className="bg-slate-50"
+                      />
+                    </div>
+                    <p className="text-xs text-slate-500">
+                      Contact support to change your email address
+                    </p>
+                  </div>
+                </div>
+
+                <div className="border-t pt-6">
+                  <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+                    <Lock className="h-5 w-5 text-blue-600" />
+                    Change Password
+                  </h3>
+                  <form onSubmit={handlePasswordChange} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="currentPassword">Current Password</Label>
+                      <div className="relative">
+                        <Input
+                          id="currentPassword"
+                          type={showCurrentPassword ? 'text' : 'password'}
+                          value={currentPassword}
+                          onChange={(e) => setCurrentPassword(e.target.value)}
+                          placeholder="Enter your current password"
+                          className="pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                        >
+                          {showCurrentPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="newPassword">New Password</Label>
+                      <div className="relative">
+                        <Input
+                          id="newPassword"
+                          type={showNewPassword ? 'text' : 'password'}
+                          value={newPassword}
+                          onChange={(e) => setNewPassword(e.target.value)}
+                          placeholder="Enter your new password"
+                          className="pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowNewPassword(!showNewPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                        >
+                          {showNewPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </button>
+                      </div>
+                      {newPassword && (
+                        <div className="space-y-1 text-xs">
+                          <div className={`flex items-center gap-2 ${passwordRequirements.minLength ? 'text-green-600' : 'text-slate-500'}`}>
+                            {passwordRequirements.minLength ? (
+                              <CheckCircle2 className="h-3 w-3" />
+                            ) : (
+                              <XCircle className="h-3 w-3" />
+                            )}
+                            At least 8 characters
+                          </div>
+                          <div className={`flex items-center gap-2 ${passwordRequirements.hasUppercase ? 'text-green-600' : 'text-slate-500'}`}>
+                            {passwordRequirements.hasUppercase ? (
+                              <CheckCircle2 className="h-3 w-3" />
+                            ) : (
+                              <XCircle className="h-3 w-3" />
+                            )}
+                            One uppercase letter
+                          </div>
+                          <div className={`flex items-center gap-2 ${passwordRequirements.hasLowercase ? 'text-green-600' : 'text-slate-500'}`}>
+                            {passwordRequirements.hasLowercase ? (
+                              <CheckCircle2 className="h-3 w-3" />
+                            ) : (
+                              <XCircle className="h-3 w-3" />
+                            )}
+                            One lowercase letter
+                          </div>
+                          <div className={`flex items-center gap-2 ${passwordRequirements.hasNumber ? 'text-green-600' : 'text-slate-500'}`}>
+                            {passwordRequirements.hasNumber ? (
+                              <CheckCircle2 className="h-3 w-3" />
+                            ) : (
+                              <XCircle className="h-3 w-3" />
+                            )}
+                            One number
+                          </div>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                      <div className="relative">
+                        <Input
+                          id="confirmPassword"
+                          type={showConfirmPassword ? 'text' : 'password'}
+                          value={confirmPassword}
+                          onChange={(e) => setConfirmPassword(e.target.value)}
+                          placeholder="Confirm your new password"
+                          className="pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                        >
+                          {showConfirmPassword ? (
+                            <EyeOff className="h-4 w-4" />
+                          ) : (
+                            <Eye className="h-4 w-4" />
+                          )}
+                        </button>
+                      </div>
+                    </div>
+
+                    {error && (
+                      <div className="rounded-lg bg-red-50 border border-red-200 p-3 text-sm text-red-700 flex items-center gap-2">
+                        <XCircle className="h-4 w-4" />
+                        {error}
+                      </div>
+                    )}
+
+                    {success && (
+                      <div className="rounded-lg bg-green-50 border border-green-200 p-3 text-sm text-green-700 flex items-center gap-2">
+                        <CheckCircle2 className="h-4 w-4" />
+                        {success}
+                      </div>
+                    )}
+
+                    <Button
+                      type="submit"
+                      disabled={isChanging}
+                      className="w-full bg-blue-600 hover:bg-blue-700"
+                    >
+                      {isChanging ? 'Changing Password...' : 'Change Password'}
+                    </Button>
+                  </form>
+                </div>
+              </CardContent>
+            </Card>
+
             {/* Application Settings */}
             <Card className="border-2 border-blue-100 shadow-sm">
               <CardHeader>

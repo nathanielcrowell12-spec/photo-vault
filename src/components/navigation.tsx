@@ -32,12 +32,21 @@ import {
   Heart
 } from 'lucide-react'
 
-export function Navigation() {
+interface NavigationProps {
+  hideOnPaths?: string[]
+}
+
+export function Navigation({ hideOnPaths = [] }: NavigationProps) {
   const pathname = usePathname()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const { user, userType, loading } = useAuth()
   const { viewMode, setViewMode, isAdminView, isCustomerView, isPhotographerView } = useView()
-  
+
+  // Hide navigation on specified paths
+  if (hideOnPaths.includes(pathname)) {
+    return null
+  }
+
   // Check if user is actually admin (restricted to nathaniel.crowell12@gmail.com)
   const isActuallyAdmin = isAdminUser(user?.email || null, userType)
 
@@ -337,8 +346,14 @@ export function Navigation() {
   )
 }
 
-export function Footer() {
+export function Footer({ hideOnPaths = [] }: NavigationProps) {
   const pathname = usePathname()
+
+  // Hide footer on specified paths
+  if (hideOnPaths.includes(pathname)) {
+    return null
+  }
+
   const isPhotographerSite = pathname.startsWith('/photographers')
   const isCustomerSite = !isPhotographerSite
 

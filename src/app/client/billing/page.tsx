@@ -64,7 +64,7 @@ export default function ClientBillingPage() {
     try {
       setLoading(true)
 
-      // Fetch subscriptions
+      // Fetch subscriptions - table may not exist yet if Stripe not configured
       const { data: subData, error: subError } = await supabase
         .from('subscriptions')
         .select(`
@@ -79,7 +79,10 @@ export default function ClientBillingPage() {
         .eq('client_id', user?.id)
         .order('created_at', { ascending: false })
 
-      if (subError) throw subError
+      // Don't throw on missing table - just show empty state
+      if (subError && !subError.message?.includes('does not exist')) {
+        console.warn('Subscriptions query issue:', subError.message)
+      }
 
       // Enrich with gallery data
       const enrichedSubs = await Promise.all(
@@ -121,7 +124,9 @@ export default function ClientBillingPage() {
         setPayments(paymentData || [])
       }
     } catch (error) {
-      console.error('Error fetching billing data:', error)
+      // Silently handle - empty state UI will show
+      // This is expected when subscriptions/payment_history tables don't exist yet
+      console.log('[Billing] No billing data available yet')
     } finally {
       setLoading(false)
     }

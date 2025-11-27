@@ -25,3 +25,4 @@ SELECT
         ELSE '✗ commission_payments missing (payment system not set up)'
     END as payments_status;
 
+
