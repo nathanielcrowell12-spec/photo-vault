@@ -95,7 +95,12 @@ export default function GalleriesPage() {
         .order('created_at', { ascending: false })
 
       if (error) throw error
-      setGalleries(data || [])
+      // Supabase returns joined relations as arrays - transform to single object
+      const transformedData = (data || []).map(gallery => ({
+        ...gallery,
+        client: Array.isArray(gallery.client) ? gallery.client[0] || null : gallery.client
+      }))
+      setGalleries(transformedData)
     } catch (err) {
       console.error('Error fetching galleries:', err)
     } finally {
