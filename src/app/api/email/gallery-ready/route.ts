@@ -58,7 +58,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
     }
 
-    const client = gallery.clients as { id: string; name: string; email: string } | null
+    // Supabase returns joined relations as arrays - get first item
+    const clientsArray = gallery.clients as { id: string; name: string; email: string }[] | null
+    const client = clientsArray?.[0] ?? null
     if (!client?.email) {
       return NextResponse.json({ error: 'No client email found' }, { status: 400 })
     }
