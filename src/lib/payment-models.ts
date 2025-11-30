@@ -29,57 +29,102 @@ export interface ClientPayment {
 }
 
 export const PAYMENT_OPTIONS: PaymentOption[] = [
+  // ============================================================================
+  // STORAGE PACKAGES (with prepaid period, then $8/month)
+  // ============================================================================
   {
-    id: 'photographer_billed',
-    name: 'Photographer Billed - Annual + Monthly',
-    description: 'Client pays $100/year upfront, then $8/month ongoing - $50 + $4/month commission',
-    price: 100, // $100 upfront + $8/month ongoing
-    duration: 12, // First year
-    photographer_commission: 50, // $50 upfront + $4/month ongoing
+    id: 'year_package',
+    name: 'Year Package',
+    description: 'Client pays $100 upfront for 12 months, then $8/month ongoing',
+    price: 100,
+    duration: 12, // 12 months prepaid
+    photographer_commission: 50, // 50% = $50
     gallery_status: 'active',
-    reactivation_fee: 8,
+    reactivation_fee: 20,
     commission_applies: true,
     terms: [
-      'Client pays $100 upfront for first year access',
-      'Photographer receives $50 commission immediately',
-      'After year 1, client pays $8/month ongoing',
-      'Photographer receives $4/month passive commission',
-      'Gallery access unlocked after upfront payment',
-      'Ongoing monthly billing handled automatically',
-      'Replaces photographer\'s existing photo sharing software'
+      'Client pays $100 upfront for 12 months gallery access',
+      'Photographer receives $50 commission (50%)',
+      'After 12 months, $8/month billing starts automatically',
+      'Photographer receives $4/month passive commission (50%)',
+      'Can be bundled with shoot fee in All-In-One pricing'
+    ]
+  },
+  {
+    id: 'six_month_package',
+    name: '6-Month Package',
+    description: 'Client pays $50 upfront for 6 months, then $8/month ongoing',
+    price: 50,
+    duration: 6, // 6 months prepaid
+    photographer_commission: 50, // 50% = $25
+    gallery_status: 'active',
+    reactivation_fee: 20,
+    commission_applies: true,
+    terms: [
+      'Client pays $50 upfront for 6 months gallery access',
+      'Photographer receives $25 commission (50%)',
+      'After 6 months, $8/month billing starts automatically',
+      'Photographer receives $4/month passive commission (50%)',
+      'Can be bundled with shoot fee in All-In-One pricing'
     ]
   },
   {
     id: 'six_month_trial',
     name: '6-Month Trial',
-    description: 'Client pays $20 for 6 months access, then gallery goes inactive',
+    description: 'Client pays $20 for 6 months access, then gallery expires',
     price: 20,
     duration: 6,
-    photographer_commission: 50, // $10 commission
+    photographer_commission: 50, // 50% = $10
     gallery_status: 'active',
-    reactivation_fee: 8,
+    reactivation_fee: 20,
     commission_applies: true,
     terms: [
       'Client pays $20 for 6-month trial access',
-      'Photographer receives $10 commission',
+      'Photographer receives $10 commission (50%)',
       'Gallery becomes inactive after 6 months',
-      'For clients who don\'t want subscription model',
-      'No ongoing monthly payments required'
+      'No automatic monthly billing - client must reactivate or upgrade',
+      'For clients who don\'t want subscription model'
     ]
   },
+  // ============================================================================
+  // SHOOT ONLY (No storage package - limited time access)
+  // ============================================================================
+  {
+    id: 'shoot_only',
+    name: 'Shoot Only',
+    description: 'No storage package - gallery access until all photos downloaded or 90 days max',
+    price: 0, // No storage fee
+    duration: 3, // 90 days max
+    photographer_commission: 0, // No storage = no commission
+    gallery_status: 'active',
+    reactivation_fee: 20,
+    commission_applies: false,
+    terms: [
+      'No storage package included - shoot fee only',
+      'Gallery access until all photos downloaded OR 90 days (whichever first)',
+      'PhotoVault receives $0 from this option',
+      'Photographer keeps 100% of shoot fee (minus Stripe fees)',
+      'Client can upgrade to storage package anytime before expiration',
+      'After expiration, client must pay reactivation fee + choose storage package'
+    ]
+  },
+  // ============================================================================
+  // INTERNAL OPTIONS (used by system, not shown to photographers in UI)
+  // ============================================================================
   {
     id: 'ongoing_monthly',
     name: 'Ongoing Monthly - Year 2+',
-    description: 'Client pays $8/month ongoing after first year - $4/month passive commission',
+    description: 'Client pays $8/month ongoing after prepaid period - $4/month passive commission',
     price: 8,
     duration: 999, // Ongoing monthly
     photographer_commission: 50, // $4/month commission
     gallery_status: 'active',
-    reactivation_fee: 8,
+    reactivation_fee: 20,
     commission_applies: true,
     terms: [
-      'Client pays PhotoVault $8/month ongoing (after year 1)',
-      'Photographer receives $4/month passive commission',
+      'Automatically starts after prepaid period ends',
+      'Client pays PhotoVault $8/month ongoing',
+      'Photographer receives $4/month passive commission (50%)',
       'Automatic monthly billing',
       'Gallery stays active as long as payments continue',
       'Passive income for photographer',
@@ -87,58 +132,42 @@ export const PAYMENT_OPTIONS: PaymentOption[] = [
     ]
   },
   {
-    id: 'reactivated_gallery',
-    name: 'Reactivated Gallery',
-    description: 'Client reactivated after 6+ months of inactivity',
-    price: 8,
-    duration: 1,
-    photographer_commission: 0, // No commission after reactivation
-    gallery_status: 'active',
-    reactivation_fee: 8,
-    commission_applies: false,
-    terms: [
-      'Client reactivated after 6+ months of gallery inactivity',
-      'No photographer commission applies',
-      'Client pays $8/month directly to PhotoVault',
-      'Gallery remains active as long as payments continue'
-    ]
-  },
-  {
-    id: 'family_account_direct',
-    name: 'Family Account - Direct',
-    description: 'Family account with no photographer involved - unlimited galleries',
+    id: 'photovault_direct_monthly',
+    name: 'PhotoVault Direct Monthly',
+    description: 'Monthly subscription with 100% revenue to PhotoVault - no photographer commission',
     price: 8,
     duration: 999, // Ongoing monthly
-    photographer_commission: 0, // No photographer commission
+    photographer_commission: 0, // 100% to PhotoVault
     gallery_status: 'active',
-    reactivation_fee: 8,
+    reactivation_fee: 20,
     commission_applies: false,
     terms: [
-      'Family pays $8/month for unlimited galleries',
-      'One login per family, unlimited family members',
-      'No photographer commission applies',
-      'Perfect for families collecting photos from various sources',
-      'Unlimited photo storage and galleries',
-      'Direct billing to PhotoVault'
+      'Client pays $8/month directly to PhotoVault',
+      '100% of revenue goes to PhotoVault - no photographer commission',
+      'Used for: orphaned clients (photographer left platform)',
+      'Used for: direct signups (no photographer referral)',
+      'Used for: family accounts (collecting photos from various sources)',
+      'Used for: clients who reactivate but photographer is no longer active',
+      'Gallery stays active as long as payments continue'
     ]
   },
   {
-    id: 'reactivation_without_session',
-    name: 'Reactivation Without New Session',
-    description: 'Client reactivates account without booking new photoshoot',
+    id: 'reactivation_fee',
+    name: 'Reactivation Fee',
+    description: 'One-time fee to reactivate archived gallery - 100% to PhotoVault',
     price: 20,
-    duration: 1, // One-time reactivation fee
-    photographer_commission: 50, // 50% commission = $10
+    duration: 1, // Opens door for 1 month - client then chooses to resume $8/mo or download and leave
+    photographer_commission: 0, // NO commission - this is a service fee
     gallery_status: 'active',
     reactivation_fee: 20,
-    commission_applies: true,
+    commission_applies: false,
     terms: [
-      'Client went inactive after first paid year (12 months paid + 6 month grace period)',
-      'Client pays $20 reactivation fee to PhotoVault',
-      'Photographer gets $10 commission from reactivation fee',
-      'Then $8/month payments resume with standard $4/month commission to photographer',
-      'Photographer never loses the customer - commission continues',
-      'No new photoshoot required for reactivation'
+      'Client pays $20 reactivation fee to PhotoVault (100% to PhotoVault, no commission)',
+      'Gallery becomes active for 1 month',
+      'Client then chooses: resume $8/month subscription OR download photos and leave',
+      'If client resumes $8/month, standard 50/50 commission split applies going forward',
+      'Reactivation fee is a service fee - photographer should maintain better client relations',
+      'This is the "door opener" - not a storage package'
     ]
   }
 ]
@@ -169,12 +198,106 @@ export function getPaymentOptionById(id: string): PaymentOption | undefined {
   return PAYMENT_OPTIONS.find(option => option.id === id)
 }
 
-export function getDefaultPaymentOptions(): PaymentOption[] {
-  return PAYMENT_OPTIONS.filter(option => 
-    option.id === 'photographer_billed' || 
-    option.id === 'six_month_trial' || 
-    option.id === 'client_direct_monthly'
+/**
+ * Get payment options available for photographers to offer clients
+ * These are the packages photographers can select when creating galleries
+ */
+export function getPhotographerPaymentOptions(): PaymentOption[] {
+  return PAYMENT_OPTIONS.filter(option =>
+    option.id === 'year_package' ||
+    option.id === 'six_month_package' ||
+    option.id === 'six_month_trial' ||
+    option.id === 'shoot_only'
   )
+}
+
+// Alias for backward compatibility
+export const getDefaultPaymentOptions = getPhotographerPaymentOptions
+
+/**
+ * Get internal system payment options (not shown to photographers)
+ */
+export function getInternalPaymentOptions(): PaymentOption[] {
+  return PAYMENT_OPTIONS.filter(option =>
+    option.id === 'ongoing_monthly' ||
+    option.id === 'photovault_direct_monthly' ||
+    option.id === 'reactivation_fee'
+  )
+}
+
+// ============================================================================
+// ALL-IN-ONE DYNAMIC PRICING (Phase 2)
+// ============================================================================
+
+export interface AllInOnePricing {
+  payment_option_id: string      // Which storage package (year_package, six_month_package, six_month_trial, shoot_only)
+  shoot_fee: number              // Photographer's custom shoot fee (e.g., $2500)
+  storage_fee: number            // From payment option ($100, $50, $20, or $0)
+  total_amount: number           // What client pays (shoot_fee + storage_fee)
+  photographer_receives: number  // shoot_fee + storage_commission (calculated)
+  photovault_receives: number    // storage_fee - storage_commission (calculated)
+  stripe_fees_estimate: number   // ~2.9% + $0.30 (paid by photographer)
+}
+
+/**
+ * Calculate All-In-One pricing breakdown
+ *
+ * @param shootFee - Photographer's session fee (e.g., $2500)
+ * @param paymentOptionId - Storage package ID
+ * @returns Complete pricing breakdown
+ */
+export function calculateAllInOnePricing(
+  shootFee: number,
+  paymentOptionId: string
+): AllInOnePricing | null {
+  const paymentOption = getPaymentOptionById(paymentOptionId)
+  if (!paymentOption) return null
+
+  const storageFee = paymentOption.price
+  const totalAmount = shootFee + storageFee
+
+  // Storage commission (50% of storage fee goes to photographer)
+  const storageCommission = (storageFee * paymentOption.photographer_commission) / 100
+
+  // Photographer receives: full shoot fee + storage commission
+  const photographerReceives = shootFee + storageCommission
+
+  // PhotoVault receives: storage fee - commission
+  const photovaultReceives = storageFee - storageCommission
+
+  // Stripe fees: ~2.9% + $0.30 (paid from photographer's portion)
+  const stripeFees = (totalAmount * 0.029) + 0.30
+
+  return {
+    payment_option_id: paymentOptionId,
+    shoot_fee: shootFee,
+    storage_fee: storageFee,
+    total_amount: totalAmount,
+    photographer_receives: photographerReceives,
+    photovault_receives: photovaultReceives,
+    stripe_fees_estimate: Math.round(stripeFees * 100) / 100
+  }
+}
+
+/**
+ * Get a user-friendly description of a payment option for gallery creation UI
+ */
+export function getPaymentOptionSummary(paymentOptionId: string): string {
+  const option = getPaymentOptionById(paymentOptionId)
+  if (!option) return 'Unknown package'
+
+  switch (paymentOptionId) {
+    case 'year_package':
+      return '$100 upfront (12 months), then $8/month - You earn $50 now + $4/month'
+    case 'six_month_package':
+      return '$50 upfront (6 months), then $8/month - You earn $25 now + $4/month'
+    case 'six_month_trial':
+      return '$20 one-time (6 months, no renewal) - You earn $10'
+    case 'shoot_only':
+      return 'No storage fee - Gallery expires after download or 90 days'
+    default:
+      return option.description
+  }
 }
 
 export interface PhotographerSubscription {
@@ -235,17 +358,22 @@ export const COMMISSION_RULES: CommissionRules = {
     'NEW SESSION RULE: If inactive client books new photo session, commission cycle resets',
     'New session with photographer restores $4/month commission for that client',
     'This incentivizes photographers to maintain long-term client relationships',
-    'REACTIVATION WITHOUT NEW SESSION: Client can reactivate after inactivity (12mo paid + 6mo grace) without new photoshoot',
-    'Client pays $20 reactivation fee + resumes $8/month payments',
-    'Standard commission split applies: Photographer gets $10 from reactivation fee, PhotoVault gets $10',
-    'Then ongoing $8/month payments split 50/50: $4 photographer, $4 PhotoVault',
-    'Photographer never loses the customer - commission continues on reactivation',
+    'REACTIVATION FEE: $20 one-time fee to reactivate archived gallery',
+    'Reactivation fee is 100% PhotoVault revenue - NO photographer commission',
+    'This is a service fee - photographers should maintain better client relations to avoid this',
+    'After paying $20, client has 1 month to choose: resume $8/month OR download and leave',
+    'If client resumes $8/month, standard 50/50 split applies going forward ($4 each)',
     'CROSS-PHOTOGRAPHER COMMISSION: New photographer gets $50 new customer commission',
     'PhotoVault keeps $50 from new session, original photographer keeps $4/month recurring',
     'This creates network effect - all photographers benefit from local photo network',
     '14-day free trial available for new photographers',
     'FAMILY ACCOUNTS: One login per family, unlimited galleries, $8/month if no photographer',
-    'FAMILY-TO-PHOTOGRAPHER CONVERSION: If family (no photographer) later books with PhotoVault photographer, PhotoVault\'s $8/month stops, standard commission applies (photographer gets $50 + $4/month)',
+    'DIRECT-TO-PHOTOGRAPHER CONVERSION: When a Direct Monthly client ($8/mo, 100% PhotoVault) books with a photographer:',
+    '  1. Client becomes associated with photographer (primary_photographer_id set)',
+    '  2. Stripe subscription swaps from Direct Monthly to Client Monthly (same $8, but now 50/50 split)',
+    '  3. Photographer earns $4/month going forward',
+    '  4. If upfront package purchased, photographer gets 50% of that too ($50 or $25)',
+    '  5. Conversion logged in photographer_succession_log for audit trail',
     'GRACE PERIOD PAYMENT RESUMPTION: If client resumes paying during grace period (e.g., 4 months into 6-month grace), no back pay is due - monthly payments simply restart',
     'MULTI-GALLERY CORE FEATURE: Customers collect photos from various local photographers',
     'PHOTOGRAPHER TERMINATION: Clean break - clients become PhotoVault clients',

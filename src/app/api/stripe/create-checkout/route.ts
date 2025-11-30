@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerSupabaseClient } from '@/lib/supabase'
+import { createServerSupabaseClient, createServiceRoleClient } from '@/lib/supabase-server'
 import { getStripeClient, STRIPE_PRICES, PRICING } from '@/lib/stripe'
 
 // Force dynamic rendering to prevent module evaluation during build
@@ -9,6 +9,9 @@ export const dynamic = 'force-dynamic'
  * Create Stripe Checkout Session for Client Subscription
  * POST /api/stripe/create-checkout
  *
+ * SECURITY: Only the client associated with a gallery can be billed.
+ * This prevents fraudulent photographers from sending bills to random users.
+ *
  * Body:
  * {
  *   galleryId: string
@@ -17,7 +20,7 @@ export const dynamic = 'force-dynamic'
  */
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createServerSupabaseClient()
+    const supabase = await createServerSupabaseClient()
 
     // 1. Get authenticated user
     const {
@@ -41,9 +44,10 @@ export async function POST(request: NextRequest) {
     }
 
     // 3. Verify gallery exists and belongs to photographer
+    // Also fetch client_id for security verification
     const { data: gallery, error: galleryError } = await supabase
       .from('photo_galleries')
-      .select('id, gallery_name, photographer_id')
+      .select('id, gallery_name, photographer_id, client_id')
       .eq('id', galleryId)
       .eq('photographer_id', photographerId)
       .single()
@@ -52,7 +56,69 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Gallery not found' }, { status: 404 })
     }
 
-    // 4. Get photographer info
+    // 4. SECURITY CHECK: Verify the authenticated user is the client for this gallery
+    // This prevents photographers from billing random users
+    if (gallery.client_id) {
+      // Gallery has a client_id - verify the user is linked to this client
+      const { data: clientRecord, error: clientError } = await supabase
+        .from('clients')
+        .select('id, user_id, email')
+        .eq('id', gallery.client_id)
+        .single()
+
+      if (clientError || !clientRecord) {
+        console.error('[Checkout] Client record not found for gallery:', galleryId)
+        return NextResponse.json(
+          { error: 'Client record not found for this gallery' },
+          { status: 404 }
+        )
+      }
+
+      // Check if the client record is linked to the authenticated user
+      const isLinkedByUserId = clientRecord.user_id === user.id
+      const isLinkedByEmail = clientRecord.email?.toLowerCase() === user.email?.toLowerCase()
+
+      if (!isLinkedByUserId && !isLinkedByEmail) {
+        console.warn(
+          `[Checkout] SECURITY: User ${user.id} (${user.email}) attempted to checkout for gallery ${galleryId} ` +
+          `but is not the associated client (client_id: ${gallery.client_id}, client_email: ${clientRecord.email})`
+        )
+        return NextResponse.json(
+          { error: 'You are not authorized to pay for this gallery. Only the assigned client can complete payment.' },
+          { status: 403 }
+        )
+      }
+
+      // If matched by email but not yet linked by user_id, link them now
+      if (!isLinkedByUserId && isLinkedByEmail) {
+        await supabase
+          .from('clients')
+          .update({ user_id: user.id })
+          .eq('id', gallery.client_id)
+        console.log(`[Checkout] Linked client ${gallery.client_id} to user ${user.id} via email match`)
+      }
+    } else {
+      // Gallery has no client_id - this is likely a family/direct account scenario
+      // Verify the user owns this gallery directly (user_id on gallery)
+      const { data: galleryWithUser } = await supabase
+        .from('photo_galleries')
+        .select('user_id')
+        .eq('id', galleryId)
+        .single()
+
+      if (galleryWithUser?.user_id && galleryWithUser.user_id !== user.id) {
+        console.warn(
+          `[Checkout] SECURITY: User ${user.id} attempted to checkout for gallery ${galleryId} ` +
+          `but gallery belongs to user ${galleryWithUser.user_id}`
+        )
+        return NextResponse.json(
+          { error: 'You are not authorized to pay for this gallery.' },
+          { status: 403 }
+        )
+      }
+    }
+
+    // 5. Get photographer info
     const { data: photographer, error: photographerError } = await supabase
       .from('photographers')
       .select('id, business_name')
@@ -63,22 +129,23 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Photographer not found' }, { status: 404 })
     }
 
-    // 5. Get user info from user_profiles
+    // 7. Get user info from user_profiles
+    // Note: email is on auth.users, not user_profiles
     const { data: userData, error: userError } = await supabase
       .from('user_profiles')
-      .select('email, full_name, stripe_customer_id')
+      .select('full_name, stripe_customer_id')
       .eq('id', user.id)
       .single()
 
-    // Fallback to auth user email if user_profiles doesn't have it
-    const userEmail = userData?.email || user.email || ''
+    // Use email from auth user (not in user_profiles table)
+    const userEmail = user.email || ''
     const userName = userData?.full_name || undefined
 
     if (userError && !userData) {
       console.warn('[Checkout] User profile not found, using auth user data')
     }
 
-    // 6. Create or retrieve Stripe customer
+    // 8. Create or retrieve Stripe customer
     const stripe = getStripeClient()
     let customerId = userData?.stripe_customer_id
 
@@ -113,7 +180,7 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 7. Check if client already has an active subscription for this gallery
+    // 9. Check if client already has an active subscription for this gallery
     const { data: existingSubscription } = await supabase
       .from('subscriptions')
       .select('id, stripe_subscription_id, status')
@@ -132,7 +199,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // 8. Create Stripe Checkout Session
+    // 10. Create Stripe Checkout Session
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
       payment_method_types: ['card'],
@@ -165,7 +232,7 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    // 9. Log checkout session creation
+    // 11. Log checkout session creation
     console.log(`[Checkout] Created session ${session.id} for user ${user.id}, gallery ${galleryId}`)
 
     return NextResponse.json(

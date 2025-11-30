@@ -1,26 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerSupabaseClient } from '@/lib/supabase'
+import { createServerSupabaseClient, createServiceRoleClient } from '@/lib/supabase-server'
 import { getStripeClient } from '@/lib/stripe'
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic'
 
 /**
- * Handle Stripe Connect OAuth callback
- * GET /api/stripe/connect/callback?code=xxx&state=xxx
+ * Handle Stripe Connect Express account return
+ * GET /api/stripe/connect/callback
+ *
+ * NOTE: Express accounts use Account Links, not OAuth.
+ * When the user completes onboarding, they're redirected here.
+ * We just need to verify their account status - no code exchange needed.
  */
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createServerSupabaseClient()
-    const { searchParams } = new URL(request.url)
-    const code = searchParams.get('code')
-    const state = searchParams.get('state')
-
-    if (!code) {
-      return NextResponse.redirect(
-        new URL('/photographers/settings?stripe=error', request.url)
-      )
-    }
+    const supabase = await createServerSupabaseClient()
 
     // Get authenticated user
     const {
@@ -30,44 +25,58 @@ export async function GET(request: NextRequest) {
 
     if (authError || !user) {
       return NextResponse.redirect(
-        new URL('/auth/login?redirect=/photographers/settings', request.url)
+        new URL('/login?redirect=/photographers/settings', request.url)
       )
     }
 
-    // Exchange authorization code for account ID
-    const stripe = getStripeClient()
-    const response = await stripe.oauth.token({
-      grant_type: 'authorization_code',
-      code: code!,
-    })
+    // Use service role client for database queries (bypasses RLS)
+    const adminClient = createServiceRoleClient()
 
-    const accountId = response.stripe_user_id
+    // Get photographer's Stripe Connect account ID from database
+    const { data: photographer, error: photographerError } = await adminClient
+      .from('photographers')
+      .select('stripe_connect_account_id')
+      .eq('id', user.id)
+      .single()
 
-    if (!accountId) {
+    if (photographerError || !photographer?.stripe_connect_account_id) {
+      console.error('[Stripe Connect] No account ID found for photographer:', user.id)
       return NextResponse.redirect(
-        new URL('/photographers/settings?stripe=error', request.url)
+        new URL('/photographers/settings?stripe=error&reason=no_account', request.url)
       )
     }
 
-    // Get account details
-    const account = await stripe.accounts.retrieve(accountId)
+    // Get account details from Stripe to verify onboarding status
+    const stripe = getStripeClient()
+    const account = await stripe.accounts.retrieve(photographer.stripe_connect_account_id)
 
-    // Update photographer record
-    await supabase
+    // Update photographer record with current account status
+    const { error: updateError } = await adminClient
       .from('photographers')
       .update({
-        stripe_connect_account_id: accountId,
         stripe_connect_status: account.details_submitted ? 'active' : 'pending',
         can_receive_payouts: account.payouts_enabled || false,
         bank_account_verified: account.details_submitted || false,
-        stripe_connect_onboarded_at: new Date().toISOString(),
+        stripe_connect_onboarded_at: account.details_submitted ? new Date().toISOString() : null,
         updated_at: new Date().toISOString(),
       })
       .eq('id', user.id)
 
-    return NextResponse.redirect(
-      new URL('/photographers/settings?stripe=success', request.url)
-    )
+    if (updateError) {
+      console.error('[Stripe Connect] Error updating photographer:', updateError)
+    }
+
+    // Redirect based on onboarding completion
+    if (account.details_submitted) {
+      return NextResponse.redirect(
+        new URL('/photographers/settings?stripe=success', request.url)
+      )
+    } else {
+      // Onboarding not complete - they may have cancelled or there was an issue
+      return NextResponse.redirect(
+        new URL('/photographers/settings?stripe=incomplete', request.url)
+      )
+    }
   } catch (error) {
     const err = error as Error
     console.error('[Stripe Connect] Error handling callback:', err)

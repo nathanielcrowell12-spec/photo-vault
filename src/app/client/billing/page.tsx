@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -17,10 +17,16 @@ import {
   Loader2,
   ExternalLink,
   Camera,
-  RefreshCw
+  RefreshCw,
+  Sparkles,
+  Shield,
+  Download,
+  Share2,
+  PartyPopper
 } from 'lucide-react'
 import Link from 'next/link'
 import { supabaseBrowser as supabase } from '@/lib/supabase-browser'
+import { PaymentMethodManager } from '@/components/stripe'
 
 interface Subscription {
   id: string
@@ -42,12 +48,22 @@ interface PaymentHistory {
   paid_at: string
 }
 
-export default function ClientBillingPage() {
+function ClientBillingContent() {
   const { user, loading: authLoading } = useAuth()
   const router = useRouter()
+  const searchParams = useSearchParams()
   const [subscriptions, setSubscriptions] = useState<Subscription[]>([])
   const [payments, setPayments] = useState<PaymentHistory[]>([])
   const [loading, setLoading] = useState(true)
+  const [subscribing, setSubscribing] = useState(false)
+  const [subscriptionSuccess, setSubscriptionSuccess] = useState(false)
+
+  // Check for success redirect
+  useEffect(() => {
+    if (searchParams.get('subscription') === 'success') {
+      setSubscriptionSuccess(true)
+    }
+  }, [searchParams])
 
   useEffect(() => {
     if (!authLoading && !user) {
@@ -137,6 +153,35 @@ export default function ClientBillingPage() {
     alert('Stripe Customer Portal coming soon! Contact support@photovault.photo to manage your subscription.')
   }
 
+  const handleSubscribeDirectMonthly = async () => {
+    try {
+      setSubscribing(true)
+
+      const response = await fetch('/api/stripe/create-direct-subscription', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create subscription')
+      }
+
+      // Redirect to Stripe Checkout
+      if (data.url) {
+        window.location.href = data.url
+      }
+    } catch (error) {
+      console.error('[Billing] Error creating subscription:', error)
+      alert(error instanceof Error ? error.message : 'Failed to create subscription. Please try again.')
+    } finally {
+      setSubscribing(false)
+    }
+  }
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -213,21 +258,111 @@ export default function ClientBillingPage() {
               Your Subscriptions
             </h2>
 
-            {subscriptions.length === 0 ? (
-              <Card>
-                <CardContent className="py-8 text-center">
-                  <AlertCircle className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium mb-2">No Active Subscriptions</h3>
-                  <p className="text-slate-600 mb-4">
-                    You don&apos;t have any gallery subscriptions yet.
-                  </p>
-                  <Button asChild>
-                    <Link href="/client/dashboard">
-                      Browse Your Galleries
-                    </Link>
-                  </Button>
+            {/* Subscription Success Message */}
+            {subscriptionSuccess && (
+              <Card className="border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20 mb-6">
+                <CardContent className="py-6">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
+                      <PartyPopper className="h-6 w-6 text-green-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-semibold text-green-800 dark:text-green-200">
+                        Welcome to PhotoVault!
+                      </h3>
+                      <p className="text-sm text-green-700 dark:text-green-300">
+                        Your subscription is now active. You can start uploading and organizing your photos.
+                      </p>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
+            )}
+
+            {subscriptions.length === 0 ? (
+              <div className="space-y-6">
+                {/* Direct Monthly Subscription Card */}
+                <Card className="border-2 border-purple-200 dark:border-purple-800">
+                  <CardHeader className="pb-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Sparkles className="h-5 w-5 text-purple-600" />
+                        <CardTitle>PhotoVault Monthly</CardTitle>
+                      </div>
+                      <Badge className="bg-purple-600">$8/month</Badge>
+                    </div>
+                    <CardDescription>
+                      Unlimited photo storage for your personal collection
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="space-y-6">
+                    {/* Features */}
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      {[
+                        { icon: Camera, text: 'Unlimited photo galleries' },
+                        { icon: Download, text: 'High-resolution downloads' },
+                        { icon: Share2, text: 'Share with family & friends' },
+                        { icon: Shield, text: 'Photos stored securely forever' },
+                      ].map((feature, index) => (
+                        <div key={index} className="flex items-center gap-2 text-sm">
+                          <feature.icon className="h-4 w-4 text-purple-600" />
+                          <span>{feature.text}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <Separator />
+
+                    {/* Subscribe Button */}
+                    <div className="flex flex-col sm:flex-row items-center gap-4">
+                      <Button
+                        onClick={handleSubscribeDirectMonthly}
+                        disabled={subscribing}
+                        className="w-full sm:w-auto bg-purple-600 hover:bg-purple-700"
+                        size="lg"
+                      >
+                        {subscribing ? (
+                          <>
+                            <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            Setting up...
+                          </>
+                        ) : (
+                          <>
+                            <CreditCard className="h-4 w-4 mr-2" />
+                            Subscribe Now - $8/month
+                          </>
+                        )}
+                      </Button>
+                      <p className="text-xs text-slate-500 text-center sm:text-left">
+                        Cancel anytime. No hidden fees.
+                      </p>
+                    </div>
+
+                    {/* Security Note */}
+                    <div className="flex items-center gap-2 text-xs text-slate-500 bg-slate-50 dark:bg-slate-800 p-3 rounded-lg">
+                      <Shield className="h-4 w-4" />
+                      <span>Secure payment powered by Stripe. Your card details are never stored on our servers.</span>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Alternative: Already have a photographer? */}
+                <Card className="bg-slate-50 dark:bg-slate-800/50">
+                  <CardContent className="py-6">
+                    <div className="text-center">
+                      <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                        Working with a photographer? They may have already set up a gallery for you.
+                      </p>
+                      <Button asChild variant="outline" size="sm">
+                        <Link href="/client/dashboard">
+                          <Camera className="h-4 w-4 mr-2" />
+                          Check Your Galleries
+                        </Link>
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
             ) : (
               <div className="space-y-4">
                 {subscriptions.map((sub) => (
@@ -315,6 +450,14 @@ export default function ClientBillingPage() {
             )}
           </section>
 
+          {/* Payment Methods */}
+          <section>
+            <PaymentMethodManager
+              title="Payment Methods"
+              description="Manage payment methods for your gallery subscriptions"
+            />
+          </section>
+
           {/* Payment History */}
           <section>
             <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
@@ -391,5 +534,18 @@ export default function ClientBillingPage() {
         </div>
       </main>
     </div>
+  )
+}
+
+// Main export with Suspense boundary for useSearchParams
+export default function ClientBillingPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    }>
+      <ClientBillingContent />
+    </Suspense>
   )
 }

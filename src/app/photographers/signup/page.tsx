@@ -88,9 +88,9 @@ export default function PhotographerSignupPage() {
                 <Badge className="mb-4 bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
                   For Photographers
                 </Badge>
-                <h1 className="text-4xl font-bold mb-4">Start Your 14-Day Free Trial</h1>
+                <h1 className="text-4xl font-bold mb-4">Join PhotoVault Pro</h1>
                 <p className="text-lg text-slate-600 dark:text-slate-300">
-                  Join PhotoVault and start earning $50 + $4/month per client
+                  Start earning $50 + $4/month per client
                 </p>
               </div>
 
@@ -98,7 +98,7 @@ export default function PhotographerSignupPage() {
                 <CardHeader>
                   <CardTitle>Create Your Photographer Account</CardTitle>
                   <CardDescription>
-                    No credit card required • Cancel anytime
+                    Free during beta • $22/month after launch
                   </CardDescription>
                 </CardHeader>
                 <CardContent>

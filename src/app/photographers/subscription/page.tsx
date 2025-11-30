@@ -23,6 +23,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { PHOTOGRAPHER_SUBSCRIPTION } from '@/lib/payment-models'
+import { PaymentMethodManager } from '@/components/stripe'
 
 interface SubscriptionData {
   status: 'active' | 'trial' | 'cancelled' | 'past_due'
@@ -309,32 +310,22 @@ export default function SubscriptionPage() {
                 </CardContent>
               </Card>
 
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-4">
-                {subscription.status === 'trial' && (
-                  <Button
-                    className="bg-green-600 hover:bg-green-700"
-                    onClick={() => alert('Payment integration coming soon! This will open a secure payment form to add your credit card.')}
-                  >
-                    <CreditCard className="h-4 w-4 mr-2" />
-                    Add Payment Method
-                  </Button>
-                )}
-                {subscription.payment_method && (
-                  <Button
-                    variant="outline"
-                    onClick={() => alert('Payment integration coming soon! This will allow you to update your payment method.')}
-                  >
-                    <CreditCard className="h-4 w-4 mr-2" />
-                    Update Payment Method
-                  </Button>
-                )}
+              {/* Payment Methods Section */}
+              <PaymentMethodManager
+                title="Payment Methods"
+                description="Manage your payment methods for your $22/month PhotoVault subscription"
+              />
+
+              {/* Additional Actions */}
+              <div className="flex flex-col sm:flex-row gap-4 mt-8">
                 <Button
                   variant="outline"
-                  onClick={() => alert('Billing history coming soon! This will show all your past invoices and payments.')}
+                  asChild
                 >
-                  <Shield className="h-4 w-4 mr-2" />
-                  Billing History
+                  <Link href="/photographers/revenue">
+                    <Shield className="h-4 w-4 mr-2" />
+                    Billing History
+                  </Link>
                 </Button>
                 {subscription.status !== 'cancelled' && (
                   <Button
@@ -342,7 +333,7 @@ export default function SubscriptionPage() {
                     className="text-red-600 border-red-600 hover:bg-red-50"
                     onClick={() => {
                       if (confirm('Are you sure you want to cancel your subscription? You will lose access to the photographer dashboard and commission program.')) {
-                        alert('Cancellation feature coming soon! This will process your subscription cancellation.')
+                        alert('To cancel your subscription, please contact support@photovault.photo')
                       }
                     }}
                   >

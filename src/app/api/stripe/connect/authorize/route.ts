@@ -1,10 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerSupabaseClient } from '@/lib/supabase'
+import { createServerSupabaseClient, createServiceRoleClient } from '@/lib/supabase-server'
 import {
-  getStripeClient,
   createConnectAccount,
   createConnectAccountLink,
-  STRIPE_CONNECT_CLIENT_ID,
+  getStripeClient,
 } from '@/lib/stripe'
 
 // Force dynamic rendering
@@ -16,7 +15,7 @@ export const dynamic = 'force-dynamic'
  */
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createServerSupabaseClient()
+    const supabase = await createServerSupabaseClient()
 
     // Get authenticated user
     const {
@@ -28,15 +27,27 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    // Use service role client for database queries (bypasses RLS)
+    const adminClient = createServiceRoleClient()
+
+    console.log('[Stripe Connect] User authenticated:', { id: user.id, email: user.email })
+    console.log('[Stripe Connect] Admin client created, querying user_profiles...')
+
     // Get user profile to verify photographer role
-    const { data: userProfile, error: profileError } = await supabase
+    // Note: email is on auth.users, not user_profiles
+    const { data: userProfile, error: profileError } = await adminClient
       .from('user_profiles')
-      .select('user_type, email, full_name')
+      .select('user_type, full_name')
       .eq('id', user.id)
       .single()
 
+    console.log('[Stripe Connect] Profile query complete')
+    console.log('[Stripe Connect] userProfile:', JSON.stringify(userProfile, null, 2))
+    console.log('[Stripe Connect] profileError:', JSON.stringify(profileError, null, 2))
+
     if (profileError || !userProfile) {
-      return NextResponse.json({ error: 'User profile not found' }, { status: 404 })
+      console.error('[Stripe Connect] Profile not found:', { userId: user.id, error: profileError })
+      return NextResponse.json({ error: 'User profile not found', details: profileError }, { status: 404 })
     }
 
     if (userProfile.user_type !== 'photographer') {
@@ -47,7 +58,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Get photographer record
-    const { data: photographer, error: photographerError } = await supabase
+    const { data: photographer, error: photographerError } = await adminClient
       .from('photographers')
       .select('id, stripe_connect_account_id, stripe_connect_status')
       .eq('id', user.id)
@@ -78,7 +89,8 @@ export async function POST(request: NextRequest) {
 
     if (!accountId) {
       // Create new Stripe Connect account
-      const account = await createConnectAccount(userProfile.email || '', {
+      // Use user.email from auth (not userProfile - that table doesn't have email)
+      const account = await createConnectAccount(user.email || '', {
         userId: user.id,
         photographerId: photographer.id,
       })
@@ -86,7 +98,7 @@ export async function POST(request: NextRequest) {
       accountId = account.id
 
       // Save account ID to database
-      await supabase
+      await adminClient
         .from('photographers')
         .update({
           stripe_connect_account_id: accountId,
@@ -97,8 +109,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Create account link for onboarding
-    const returnUrl = `${process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL}/photographers/settings?stripe=success`
-    const refreshUrl = `${process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL}/photographers/settings?stripe=refresh`
+    // Return URL goes through callback to update database with account status
+    const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3001'
+    const returnUrl = `${baseUrl}/api/stripe/connect/callback`
+    const refreshUrl = `${baseUrl}/photographers/settings?stripe=refresh`
 
     const accountLink = await createConnectAccountLink(accountId, returnUrl, refreshUrl)
 
@@ -125,7 +139,7 @@ export async function POST(request: NextRequest) {
  */
 export async function GET(request: NextRequest) {
   try {
-    const supabase = createServerSupabaseClient()
+    const supabase = await createServerSupabaseClient()
 
     // Get authenticated user
     const {
@@ -137,8 +151,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
+    // Use service role client for database queries (bypasses RLS)
+    const adminClient = createServiceRoleClient()
+
     // Get photographer record
-    const { data: photographer, error: photographerError } = await supabase
+    const { data: photographer, error: photographerError } = await adminClient
       .from('photographers')
       .select('id, stripe_connect_account_id, stripe_connect_status, can_receive_payouts, bank_account_verified')
       .eq('id', user.id)

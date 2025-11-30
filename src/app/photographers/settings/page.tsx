@@ -33,6 +33,7 @@ import {
   PartyPopper
 } from 'lucide-react'
 import AccessGuard from '@/components/AccessGuard'
+import { PaymentMethodManager } from '@/components/stripe'
 
 interface StripeConnectStatus {
   accountId: string | null
@@ -413,6 +414,12 @@ function PhotographerSettingsContent() {
                 )}
               </CardContent>
             </Card>
+
+            {/* Your Payment Methods (for subscription payments) */}
+            <PaymentMethodManager
+              title="Your Payment Methods"
+              description="Add a payment method for your PhotoVault subscription"
+            />
 
             {/* Account Information */}
             <Card className="border-2 border-blue-100 shadow-sm">

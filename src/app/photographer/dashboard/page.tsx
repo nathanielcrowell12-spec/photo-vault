@@ -25,7 +25,9 @@ import {
   Edit,
   Calendar,
   Menu,
-  X
+  X,
+  Plus,
+  FolderOpen
 } from 'lucide-react'
 import Link from 'next/link'
 import AccessGuard from '@/components/AccessGuard'
@@ -175,6 +177,12 @@ export default function PhotographerDashboardPage() {
                   >
                     Reports
                   </Link>
+                  <Link
+                    href="/photographers/subscription"
+                    className="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
+                  >
+                    Subscription
+                  </Link>
                 </nav>
               </div>
 
@@ -250,6 +258,12 @@ export default function PhotographerDashboardPage() {
             >
               Reports
             </Link>
+            <Link
+              href="/photographers/subscription"
+              className="block px-4 py-3 rounded-lg text-slate-300 hover:bg-white/5"
+            >
+              Subscription
+            </Link>
             <div className="h-px bg-white/10 my-4" />
             <Link
               href="/photographers/settings"
@@ -304,17 +318,15 @@ export default function PhotographerDashboardPage() {
                   </p>
                 </div>
 
-                <div className="w-full md:w-auto">
-                  <Button
-                    className="w-full md:w-auto flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-black px-8 py-4 rounded-xl font-bold transition-all shadow-lg shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98]"
-                    asChild
-                  >
-                    <Link href="/photographer/upload">
-                      <Upload size={20} />
-                      Upload New Gallery
-                    </Link>
-                  </Button>
-                </div>
+                <Button
+                  className="w-full md:w-auto flex items-center justify-center gap-2 bg-amber-500 hover:bg-amber-400 text-black px-8 py-4 rounded-xl font-bold transition-all shadow-lg shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98]"
+                  asChild
+                >
+                  <Link href="/photographer/galleries/create">
+                    <Plus size={20} />
+                    Create New Gallery
+                  </Link>
+                </Button>
               </div>
             </section>
 
@@ -446,8 +458,8 @@ export default function PhotographerDashboardPage() {
           </Link>
           <div className="relative -top-6">
             <Button className="w-12 h-12 bg-[#f59e0b] hover:bg-[#f59e0b]/90 rounded-full flex items-center justify-center text-black shadow-lg shadow-[#f59e0b]/30" asChild>
-              <Link href="/photographer/upload">
-                <Upload size={20} />
+              <Link href="/photographer/galleries/create">
+                <Plus size={20} />
               </Link>
             </Button>
           </div>

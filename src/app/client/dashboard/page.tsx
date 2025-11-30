@@ -15,6 +15,7 @@ import {
   Calendar,
   MessageSquare,
   Trash2,
+  CreditCard,
 } from 'lucide-react'
 import Link from 'next/link'
 import AccessGuard from '@/components/AccessGuard'
@@ -111,7 +112,7 @@ export default function ClientDashboardPage() {
             </Card>
 
             {/* Quick Actions - Moved below galleries */}
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
               <Card className="hover:shadow-lg transition-shadow cursor-pointer">
                 <CardHeader>
                   <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
@@ -144,6 +145,25 @@ export default function ClientDashboardPage() {
                 <CardContent>
                   <Button className="w-full" onClick={scrollToGalleries}>
                     View Galleries
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+                <CardHeader>
+                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
+                    <CreditCard className="w-6 h-6 text-green-600" />
+                  </div>
+                  <CardTitle>Billing & Subscription</CardTitle>
+                  <CardDescription>
+                    Manage your subscription and payment methods
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button className="w-full" asChild>
+                    <Link href="/client/billing">
+                      Manage Billing
+                    </Link>
                   </Button>
                 </CardContent>
               </Card>

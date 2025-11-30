@@ -17,7 +17,9 @@ import {
   AlertCircle,
   X,
   Eye,
-  Send
+  Send,
+  Monitor,
+  Download
 } from 'lucide-react'
 import Link from 'next/link'
 import { supabaseBrowser as supabase } from '@/lib/supabase-browser'
@@ -48,7 +50,7 @@ export default function GalleryUploadPage({ params }: { params: Promise<{ id: st
   const resolvedParams = use(params)
   const galleryId = resolvedParams.id
 
-  const { user, userType } = useAuth()
+  const { user, userType, loading: authLoading } = useAuth()
   const router = useRouter()
 
   const [gallery, setGallery] = useState<Gallery | null>(null)
@@ -60,7 +62,7 @@ export default function GalleryUploadPage({ params }: { params: Promise<{ id: st
   const [files, setFiles] = useState<File[]>([])
   const [error, setError] = useState('')
 
-  // Fetch gallery details
+  // Fetch gallery details from photo_galleries (canonical table)
   const fetchGallery = async () => {
     if (!galleryId) return
 
@@ -115,13 +117,19 @@ export default function GalleryUploadPage({ params }: { params: Promise<{ id: st
   }
 
   useEffect(() => {
+    // Wait for auth to finish loading before checking
+    if (authLoading) {
+      return
+    }
+
+    // Only redirect if auth is done loading AND user is not authenticated
     if (!user || userType !== 'photographer') {
       router.push('/login')
       return
     }
 
     fetchGallery()
-  }, [galleryId, user, userType, router])
+  }, [galleryId, user, userType, authLoading, router])
 
   // Handle file selection
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -159,6 +167,7 @@ export default function GalleryUploadPage({ params }: { params: Promise<{ id: st
         setUploadStatus(`Uploading ${i + 1} of ${files.length}: ${file.name}`)
 
         // Upload to storage
+        console.log('[Upload] Uploading to storage:', filePath)
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from('photos')
           .upload(filePath, file, {
@@ -166,7 +175,11 @@ export default function GalleryUploadPage({ params }: { params: Promise<{ id: st
             upsert: false
           })
 
-        if (uploadError) throw uploadError
+        if (uploadError) {
+          console.error('[Upload] Storage upload error:', JSON.stringify(uploadError, null, 2))
+          throw new Error(uploadError.message || 'Storage upload failed')
+        }
+        console.log('[Upload] Storage upload success:', uploadData)
 
         // Get public URL
         const { data: { publicUrl } } = supabase.storage
@@ -187,13 +200,18 @@ export default function GalleryUploadPage({ params }: { params: Promise<{ id: st
 
       // Insert photo records
       setUploadStatus('Creating photo records...')
+      console.log('[Upload] Inserting photo records:', uploadedPhotos)
       const { error: insertError } = await supabase
         .from('photos')
         .insert(uploadedPhotos)
 
-      if (insertError) throw insertError
+      if (insertError) {
+        console.error('[Upload] Insert error:', JSON.stringify(insertError, null, 2))
+        throw new Error(insertError.message || 'Failed to create photo records')
+      }
+      console.log('[Upload] Photo records created successfully')
 
-      // Update gallery photo count
+      // Update gallery photo count in photo_galleries (canonical table)
       const { error: updateError } = await supabase
         .from('photo_galleries')
         .update({ photo_count: photos.length + files.length })
@@ -216,7 +234,9 @@ export default function GalleryUploadPage({ params }: { params: Promise<{ id: st
 
     } catch (err: any) {
       console.error('Upload error:', err)
-      setError(err.message || 'Upload failed')
+      console.error('Upload error details:', JSON.stringify(err, null, 2))
+      const errorMessage = err?.message || err?.error?.message || 'Upload failed - check console for details'
+      setError(errorMessage)
       setUploading(false)
     }
   }
@@ -233,7 +253,7 @@ export default function GalleryUploadPage({ params }: { params: Promise<{ id: st
     router.push(`/photographer/galleries/${galleryId}/sneak-peek-select`)
   }
 
-  if (loading) {
+  if (authLoading || loading) {
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
         <Loader2 className="h-12 w-12 animate-spin text-blue-600" />
@@ -275,7 +295,7 @@ export default function GalleryUploadPage({ params }: { params: Promise<{ id: st
                   </Badge>
                 </div>
                 <p className="text-slate-600 dark:text-slate-400">
-                  {gallery?.clients?.name} • ${gallery?.total_amount?.toFixed(2)}
+                  {gallery?.clients?.name} • ${((gallery?.total_amount || 0) / 100).toFixed(2)}
                 </p>
               </div>
             </div>
@@ -291,10 +311,118 @@ export default function GalleryUploadPage({ params }: { params: Promise<{ id: st
 
       <main className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="grid gap-8">
-          {/* Upload Section */}
-          <Card>
+          {/* Upload Method Selection */}
+          <Card className="border-2 border-purple-200 dark:border-purple-800 bg-purple-50/50 dark:bg-purple-950/20">
             <CardHeader>
-              <CardTitle>Upload Photos</CardTitle>
+              <CardTitle className="flex items-center gap-2">
+                <Monitor className="h-5 w-5 text-purple-600" />
+                Choose Your Upload Method
+              </CardTitle>
+              <CardDescription>
+                Select between our desktop tool for bulk uploads or web-based upload for quick access
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid md:grid-cols-2 gap-4">
+                {/* Desktop Tool Option */}
+                <div className="border-2 border-purple-300 dark:border-purple-700 rounded-lg p-6 bg-white dark:bg-slate-900 hover:shadow-md transition-shadow">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Download className="w-6 h-6 text-purple-600" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-lg mb-2">PhotoVault Desktop Tool</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                        Recommended for bulk uploads, faster processing, and advanced features
+                      </p>
+                      <ul className="text-sm text-gray-600 dark:text-gray-400 mb-4 space-y-1">
+                        <li>• Upload hundreds of photos at once</li>
+                        <li>• Automatic image optimization</li>
+                        <li>• Background uploads</li>
+                        <li>• Offline queue support</li>
+                      </ul>
+                      <Button
+                        className="w-full"
+                        variant="default"
+                        onClick={async () => {
+                          // Get current session and pass to desktop app
+                          const { data: { session } } = await supabase.auth.getSession()
+                          if (session?.access_token && user?.id && gallery?.client_id) {
+                            // Try local API first (for dev testing)
+                            try {
+                              const response = await fetch('http://localhost:57123/auth', {
+                                method: 'POST',
+                                headers: {
+                                  'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                  token: session.access_token,
+                                  userId: user.id,
+                                  clientId: gallery.client_id,
+                                  galleryId: galleryId
+                                })
+                              })
+
+                              if (response.ok) {
+                                console.log('Desktop app launched via local API')
+                                return
+                              }
+                            } catch (error) {
+                              console.log('Local API not available, trying protocol handler')
+                            }
+
+                            // Fallback to protocol handler (for production)
+                            window.location.href = `photovault://auth?token=${encodeURIComponent(session.access_token)}&userId=${encodeURIComponent(user.id)}&clientId=${encodeURIComponent(gallery.client_id)}&galleryId=${encodeURIComponent(galleryId)}`
+                          } else {
+                            // Fallback to just opening the app
+                            window.location.href = `photovault://upload?galleryId=${encodeURIComponent(galleryId)}`
+                          }
+                        }}
+                      >
+                        <Monitor className="h-4 w-4 mr-2" />
+                        Launch Desktop Tool
+                      </Button>
+                      <p className="text-xs text-gray-500 mt-2 text-center">
+                        Don't have it? <Link href="/download-desktop-app" className="text-purple-600 hover:underline">Download here</Link>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Web Upload Option */}
+                <div className="border-2 border-green-300 dark:border-green-700 rounded-lg p-6 bg-white dark:bg-slate-900 hover:shadow-md transition-shadow">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Upload className="w-6 h-6 text-green-600" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-lg mb-2">Web Upload</h3>
+                      <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+                        Quick and convenient upload directly from your browser
+                      </p>
+                      <ul className="text-sm text-gray-600 dark:text-gray-400 mb-4 space-y-1">
+                        <li>• No installation required</li>
+                        <li>• Upload from any device</li>
+                        <li>• Simple drag-and-drop</li>
+                        <li>• Perfect for small batches</li>
+                      </ul>
+                      <Button className="w-full" variant="outline" asChild>
+                        <a href="#web-upload">
+                          <Upload className="h-4 w-4 mr-2" />
+                          Use Web Upload Below
+                        </a>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Upload Section */}
+          <Card id="web-upload">
+            <CardHeader>
+              <CardTitle>Web Upload</CardTitle>
               <CardDescription>
                 Add photos to this gallery. You can continue uploading incrementally.
               </CardDescription>

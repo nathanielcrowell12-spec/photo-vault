@@ -22,7 +22,6 @@ import {
   Settings,
   Menu,
   X,
-  Crown,
   Smartphone,
   BarChart3,
   Wrench,
@@ -70,7 +69,7 @@ export function Navigation({ hideOnPaths = [] }: NavigationProps) {
     { href: '/photographers/sessions', icon: Calendar, label: 'Sessions' },
     { href: '/photographers/revenue', icon: DollarSign, label: 'Revenue' },
     { href: '/photographers/reports', icon: FileText, label: 'Reports' },
-    { href: '/photographers/subscription', icon: Crown, label: 'Subscription' }
+    { href: '/photographers/settings', icon: Settings, label: 'Settings' }
   ]
 
   const adminLinks = [

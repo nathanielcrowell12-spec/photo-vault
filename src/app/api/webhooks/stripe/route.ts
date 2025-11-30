@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
     console.log(`[Webhook] Received event: ${event.type} (${event.id})`)
 
     // 3. Initialize Supabase client with service role (elevated permissions)
-    const supabase = createServerSupabaseClient()
+    const supabase = await createServerSupabaseClient()
 
     // 4. Check idempotency - prevent duplicate processing
     const { data: alreadyProcessed } = await supabase
@@ -154,7 +154,7 @@ export async function POST(request: NextRequest) {
 
     // Log error to database
     try {
-      const supabase = createServerSupabaseClient()
+      const supabase = await createServerSupabaseClient()
       await supabase.from('webhook_logs').insert({
         event_type: 'error',
         status: 'failed',

@@ -27,7 +27,7 @@ ADD COLUMN IF NOT EXISTS primary_photographer_id UUID REFERENCES photographers(i
 ADD COLUMN IF NOT EXISTS became_primary_at TIMESTAMPTZ,
 ADD COLUMN IF NOT EXISTS is_orphaned BOOLEAN DEFAULT FALSE,
 ADD COLUMN IF NOT EXISTS orphaned_at TIMESTAMPTZ,
-ADD COLUMN IF NOT EXISTS client_type VARCHAR(20) DEFAULT 'photographer_referred'
+ADD COLUMN IF NOT EXISTS client_type VARCHAR(25) DEFAULT 'photographer_referred'
   CHECK (client_type IN ('photographer_referred', 'direct_signup', 'orphaned'));
 
 -- Make photographer_id nullable to support orphaned clients
@@ -484,6 +484,119 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- ============================================================================
+-- 3.5 CONVERT_DIRECT_CLIENT_TO_PHOTOGRAPHER() - When direct/orphan client books with photographer
+-- ============================================================================
+-- This function handles the conversion when:
+-- 1. A Direct Monthly client ($8/mo, 100% PhotoVault) books a shoot with a photographer
+-- 2. An orphaned client is "claimed" by a new photographer via gallery creation
+--
+-- The function:
+-- - Updates client record with new primary photographer
+-- - Changes client_type from 'direct_signup' or 'orphaned' to 'photographer_referred'
+-- - Logs the conversion in photographer_succession_log
+-- - Updates monthly_billing_schedule with new primary photographer
+-- - Returns the old Stripe subscription ID so application code can swap prices
+
+CREATE OR REPLACE FUNCTION convert_direct_client_to_photographer(
+  p_client_id UUID,
+  p_photographer_id UUID,
+  p_gallery_id UUID DEFAULT NULL
+)
+RETURNS TABLE (
+  success BOOLEAN,
+  old_client_type VARCHAR(25),
+  old_stripe_subscription_id VARCHAR(255),
+  message TEXT
+) AS $$
+DECLARE
+  client_record RECORD;
+  old_type VARCHAR(25);
+  old_subscription VARCHAR(255);
+BEGIN
+  -- Get client record
+  SELECT
+    c.id,
+    c.client_type,
+    c.primary_photographer_id,
+    c.is_orphaned,
+    mbs.stripe_subscription_id
+  INTO client_record
+  FROM clients c
+  LEFT JOIN monthly_billing_schedule mbs ON mbs.client_id = c.id
+  WHERE c.id = p_client_id;
+
+  IF client_record.id IS NULL THEN
+    RETURN QUERY SELECT FALSE, NULL::VARCHAR(25), NULL::VARCHAR(255), 'Client not found'::TEXT;
+    RETURN;
+  END IF;
+
+  -- Check if client already has a primary photographer (not a conversion case)
+  IF client_record.primary_photographer_id IS NOT NULL
+     AND client_record.is_orphaned = FALSE
+     AND client_record.client_type = 'photographer_referred' THEN
+    -- Client already has a photographer - this is just a new gallery, not a conversion
+    RETURN QUERY SELECT TRUE, client_record.client_type, client_record.stripe_subscription_id,
+      'Client already has primary photographer - no conversion needed'::TEXT;
+    RETURN;
+  END IF;
+
+  -- Store old values for return
+  old_type := client_record.client_type;
+  old_subscription := client_record.stripe_subscription_id;
+
+  -- Update client record
+  UPDATE clients
+  SET
+    primary_photographer_id = p_photographer_id,
+    became_primary_at = NOW(),
+    is_orphaned = FALSE,
+    orphaned_at = NULL,
+    client_type = 'photographer_referred'
+  WHERE id = p_client_id;
+
+  -- Update monthly billing schedule with new primary photographer
+  UPDATE monthly_billing_schedule
+  SET
+    primary_photographer_id = p_photographer_id,
+    updated_at = NOW()
+  WHERE client_id = p_client_id;
+
+  -- Log the conversion in succession log
+  INSERT INTO photographer_succession_log (
+    client_id,
+    previous_primary_photographer_id,
+    new_primary_photographer_id,
+    succession_reason,
+    notes
+  ) VALUES (
+    p_client_id,
+    client_record.primary_photographer_id, -- May be NULL if direct signup
+    p_photographer_id,
+    CASE
+      WHEN old_type = 'direct_signup' THEN 'initial_signup'
+      WHEN old_type = 'orphaned' OR client_record.is_orphaned THEN 'photographer_returned'
+      ELSE 'manual_override'
+    END,
+    CASE
+      WHEN old_type = 'direct_signup' THEN
+        'Direct client converted to photographer client via gallery creation. Subscription will be swapped from Direct Monthly to Client Monthly (50/50 split).'
+      WHEN old_type = 'orphaned' OR client_record.is_orphaned THEN
+        'Orphaned client acquired by new photographer via gallery creation. Subscription will be swapped from Direct Monthly to Client Monthly (50/50 split).'
+      ELSE
+        'Client assigned to photographer via gallery creation.'
+    END || COALESCE(' Gallery ID: ' || p_gallery_id::TEXT, '')
+  );
+
+  -- Return success with old subscription ID for Stripe swap
+  RETURN QUERY SELECT
+    TRUE,
+    old_type,
+    old_subscription,
+    ('Client converted from ' || COALESCE(old_type, 'unknown') || ' to photographer_referred. Stripe subscription swap required.')::TEXT;
+END;
+$$ LANGUAGE plpgsql;
+
+-- ============================================================================
 -- PHASE 4: UPDATE PAYMENT OPTIONS WITH CORRECT PRICING
 -- ============================================================================
 
@@ -549,10 +662,11 @@ INSERT INTO payment_options (
 ),
 
 -- Ongoing Monthly (starts after prepaid period or immediately on upgrade)
+-- This is for clients WITH an active photographer earning 50/50 commission
 (
   'monthly_ongoing',
-  '$8/Month Ongoing',
-  'Monthly gallery access fee. Client vault remains active as long as payments continue. Never pauses once started.',
+  '$8/Month Ongoing (with photographer)',
+  'Monthly gallery access fee with 50/50 commission split. Client vault remains active as long as payments continue.',
   8.00,
   999,
   50.00,
@@ -563,44 +677,35 @@ INSERT INTO payment_options (
   TRUE
 ),
 
--- Reactivation Options (after gallery archived)
+-- PhotoVault Direct Monthly (100% to PhotoVault, no photographer commission)
+-- Used for: orphaned clients, direct signups, family accounts, reactivated without active photographer
 (
-  'reactivation_download',
-  '$20 One-Time Download',
-  'Reactivate gallery for 1 month download window, then archive again. 100% to PhotoVault (no commission).',
-  20.00,
-  1,
+  'photovault_direct_monthly',
+  '$8/Month Direct (PhotoVault only)',
+  'Monthly gallery access - 100% to PhotoVault. For orphaned clients, direct signups, family accounts, or clients without active photographer.',
+  8.00,
+  999,
   0.00,
-  'reactivation',
+  'monthly',
   0,
   FALSE,
   FALSE,
   TRUE
 ),
 
+-- Reactivation Option (after gallery archived)
+-- NOTE: Only ONE reactivation option exists - the $20 "door opener"
+-- Client pays $20, gets 1 month access, then chooses to resume $8/month or download and leave
+-- NO $70 or $120 bundles - those were incorrect and have been removed
 (
-  'reactivation_6mo',
-  '$70 Reactivation (6 Months)',
-  '$20 service fee + $50 for 6 months prepaid storage. Monthly billing starts after 6 months. 50% commission on $50 portion only.',
-  70.00,
-  6,
+  'reactivation_fee',
+  '$20 Reactivation Fee',
+  'One-time fee to reactivate archived gallery. 100% to PhotoVault (NO commission). Client gets 1 month access, then chooses: resume $8/month subscription OR download photos and leave.',
+  20.00,
+  1,
   0.00,
   'reactivation',
-  6,
-  FALSE,
-  FALSE,
-  TRUE
-),
-
-(
-  'reactivation_1yr',
-  '$120 Reactivation (1 Year)',
-  '$20 service fee + $100 for 1 year prepaid storage. Monthly billing starts after 12 months. 50% commission on $100 portion only.',
-  120.00,
-  12,
-  0.00,
-  'reactivation',
-  12,
+  0,
   FALSE,
   FALSE,
   TRUE

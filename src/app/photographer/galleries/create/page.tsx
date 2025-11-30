@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Alert, AlertDescription } from '@/components/ui/alert'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
 import {
   ArrowLeft,
   Camera,
@@ -20,10 +21,18 @@ import {
   Loader2,
   AlertCircle,
   Info,
-  Plus
+  Plus,
+  Download,
+  CreditCard
 } from 'lucide-react'
 import Link from 'next/link'
 import { supabaseBrowser as supabase } from '@/lib/supabase-browser'
+import {
+  getPhotographerPaymentOptions,
+  calculateAllInOnePricing,
+  getPaymentOptionSummary,
+  type PaymentOption
+} from '@/lib/payment-models'
 
 interface Client {
   id: string
@@ -32,17 +41,7 @@ interface Client {
   phone?: string
 }
 
-interface PaymentOption {
-  id: string
-  name: string
-  description: string
-  price: number
-  duration_months: number
-  photographer_commission_rate: number
-  package_type: string
-  free_months: number
-  is_first_gallery_only: boolean
-}
+type BillingMode = 'storage_only' | 'all_in_one'
 
 export default function CreateGalleryPage() {
   const { user, userType, loading: authLoading } = useAuth()
@@ -64,11 +63,13 @@ export default function CreateGalleryPage() {
   const [galleryDescription, setGalleryDescription] = useState('')
   const [sessionDate, setSessionDate] = useState('')
 
-  // Pricing
+  // Billing mode and pricing
+  const [billingMode, setBillingMode] = useState<BillingMode>('all_in_one')
   const [shootFee, setShootFee] = useState('')
   const [selectedPackageId, setSelectedPackageId] = useState('')
-  const [paymentOptions, setPaymentOptions] = useState<PaymentOption[]>([])
-  const [loadingPackages, setLoadingPackages] = useState(true)
+
+  // Get payment options from our payment-models.ts
+  const paymentOptions = useMemo(() => getPhotographerPaymentOptions(), [])
 
   // Form state
   const [creating, setCreating] = useState(false)
@@ -95,26 +96,6 @@ export default function CreateGalleryPage() {
     }
   }
 
-  // Fetch payment options
-  const fetchPaymentOptions = async () => {
-    try {
-      setLoadingPackages(true)
-      const { data, error } = await supabase
-        .from('payment_options')
-        .select('*')
-        .eq('is_active', true)
-        .in('package_type', ['service_fee', 'prepaid'])
-        .order('price')
-
-      if (error) throw error
-      setPaymentOptions(data || [])
-    } catch (err) {
-      console.error('Error fetching payment options:', err)
-    } finally {
-      setLoadingPackages(false)
-    }
-  }
-
   useEffect(() => {
     if (authLoading) return
 
@@ -129,7 +110,6 @@ export default function CreateGalleryPage() {
     }
 
     fetchClients()
-    fetchPaymentOptions()
   }, [user, userType, authLoading, router])
 
   // Handle inline client creation
@@ -173,37 +153,75 @@ export default function CreateGalleryPage() {
     }
   }
 
+  // Get the selected package
+  const selectedPackage = useMemo(() => {
+    return paymentOptions.find(p => p.id === selectedPackageId)
+  }, [paymentOptions, selectedPackageId])
+
   // Calculate pricing summary
-  const calculateSummary = () => {
+  const pricingSummary = useMemo(() => {
     const shootFeeNum = parseFloat(shootFee) || 0
-    const selectedPackage = paymentOptions.find(p => p.id === selectedPackageId)
-    const storageFee = selectedPackage?.price || 0
-    const totalAmount = shootFeeNum + storageFee
 
-    // Commission calculation
-    const shootFeeToPhotographer = shootFeeNum // 100% pass-through
-    const storageCommission = storageFee * (selectedPackage?.photographer_commission_rate || 50) / 100
-    const photographerPayout = shootFeeToPhotographer + storageCommission
+    if (billingMode === 'storage_only') {
+      // Storage only - photographer bills separately
+      // We just need to know the storage package details
+      const storageFee = selectedPackage?.price || 0
+      const storageCommission = (storageFee * (selectedPackage?.photographer_commission || 0)) / 100
 
-    // Monthly billing start date (if applicable)
-    let monthlyBillingStarts = null
-    if (selectedPackage && selectedPackage.free_months > 0) {
-      const startDate = new Date()
-      startDate.setMonth(startDate.getMonth() + selectedPackage.free_months)
-      monthlyBillingStarts = startDate
+      return {
+        mode: 'storage_only' as const,
+        shootFee: 0, // Not tracked in PhotoVault
+        storageFee,
+        totalAmount: storageFee, // Client only pays storage through PhotoVault
+        photographerPayout: storageCommission,
+        photovaultRevenue: storageFee - storageCommission,
+        stripeFees: storageFee > 0 ? Math.round((storageFee * 0.029 + 0.30) * 100) / 100 : 0,
+        isShootOnly: selectedPackageId === 'shoot_only'
+      }
+    } else {
+      // All-in-one pricing
+      const pricing = calculateAllInOnePricing(shootFeeNum, selectedPackageId)
+      if (!pricing) {
+        return {
+          mode: 'all_in_one' as const,
+          shootFee: shootFeeNum,
+          storageFee: 0,
+          totalAmount: shootFeeNum,
+          photographerPayout: shootFeeNum,
+          photovaultRevenue: 0,
+          stripeFees: shootFeeNum > 0 ? Math.round((shootFeeNum * 0.029 + 0.30) * 100) / 100 : 0,
+          isShootOnly: selectedPackageId === 'shoot_only'
+        }
+      }
+
+      return {
+        mode: 'all_in_one' as const,
+        shootFee: pricing.shoot_fee,
+        storageFee: pricing.storage_fee,
+        totalAmount: pricing.total_amount,
+        photographerPayout: pricing.photographer_receives,
+        photovaultRevenue: pricing.photovault_receives,
+        stripeFees: pricing.stripe_fees_estimate,
+        isShootOnly: selectedPackageId === 'shoot_only'
+      }
     }
+  }, [billingMode, shootFee, selectedPackageId, selectedPackage])
 
-    return {
-      totalAmount,
-      photographerPayout,
-      photovaultRevenue: totalAmount - photographerPayout,
-      monthlyBillingStarts,
-      packageName: selectedPackage?.name || '',
-      freeMonths: selectedPackage?.free_months || 0
+  // Calculate expiry date based on package
+  const getExpiryDate = () => {
+    const now = new Date()
+    switch (selectedPackageId) {
+      case 'year_package':
+        return new Date(now.setMonth(now.getMonth() + 12))
+      case 'six_month_package':
+      case 'six_month_trial':
+        return new Date(now.setMonth(now.getMonth() + 6))
+      case 'shoot_only':
+        return new Date(now.setDate(now.getDate() + 90)) // 90 days max
+      default:
+        return null
     }
   }
-
-  const summary = calculateSummary()
 
   // Handle gallery creation
   const handleCreateGallery = async () => {
@@ -216,12 +234,14 @@ export default function CreateGalleryPage() {
       setError('Please enter a gallery name')
       return
     }
-    if (!shootFee || parseFloat(shootFee) < 0) {
-      setError('Please enter a valid shoot fee (minimum $0)')
-      return
-    }
     if (!selectedPackageId) {
       setError('Please select a storage package')
+      return
+    }
+
+    // For all_in_one mode, shoot fee is required (can be $0 for free shoots)
+    if (billingMode === 'all_in_one' && shootFee === '') {
+      setError('Please enter your shoot fee (enter 0 for free shoots)')
       return
     }
 
@@ -229,10 +249,17 @@ export default function CreateGalleryPage() {
     setError('')
 
     try {
-      const selectedPackage = paymentOptions.find(p => p.id === selectedPackageId)
       const shootFeeNum = parseFloat(shootFee) || 0
+      const shootFeeCents = Math.round(shootFeeNum * 100)
+      const storageFeeCents = Math.round((selectedPackage?.price || 0) * 100)
+      const totalCents = billingMode === 'all_in_one'
+        ? shootFeeCents + storageFeeCents
+        : storageFeeCents
 
-      // Create gallery with status = 'draft'
+      const expiryDate = getExpiryDate()
+
+      // Create gallery in photo_galleries (the canonical gallery table)
+      // This is the single source of truth - photos table FK references photo_galleries
       const { data: gallery, error: galleryError } = await supabase
         .from('photo_galleries')
         .insert({
@@ -241,12 +268,22 @@ export default function CreateGalleryPage() {
           gallery_name: galleryName,
           gallery_description: galleryDescription || null,
           session_date: sessionDate || null,
-          shoot_fee: shootFeeNum,
-          payment_option_id: selectedPackageId,
-          total_amount: summary.totalAmount,
-          gallery_status: 'draft',
           photo_count: 0,
-          platform: 'photovault'
+          platform: 'photovault', // Required field
+          gallery_status: 'draft',
+          // Pricing fields
+          payment_option_id: selectedPackageId,
+          billing_mode: billingMode,
+          shoot_fee: billingMode === 'all_in_one' ? shootFeeCents : 0,
+          storage_fee: storageFeeCents,
+          total_amount: totalCents,
+          payment_status: 'pending',
+          gallery_expires_at: expiryDate?.toISOString() || null,
+          // Download tracking for shoot_only
+          download_tracking_enabled: selectedPackageId === 'shoot_only',
+          total_photos_to_download: 0, // Will be updated after upload
+          photos_downloaded: 0,
+          all_photos_downloaded: false
         })
         .select()
         .single()
@@ -260,14 +297,16 @@ export default function CreateGalleryPage() {
 
     } catch (err: any) {
       console.error('Error creating gallery:', err)
-      setError(err.message || 'Failed to create gallery. Please try again.')
+      console.error('Error details:', JSON.stringify(err, null, 2))
+      const errorMessage = err?.message || err?.details || err?.hint || 'Failed to create gallery. Please try again.'
+      setError(errorMessage)
     } finally {
       setCreating(false)
     }
   }
 
   // Loading states
-  if (authLoading || loadingClients || loadingPackages) {
+  if (authLoading || loadingClients) {
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
         <div className="text-center">
@@ -441,6 +480,51 @@ export default function CreateGalleryPage() {
             </CardContent>
           </Card>
 
+          {/* Billing Mode Selection */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <CreditCard className="h-5 w-5" />
+                Billing Mode
+              </CardTitle>
+              <CardDescription>
+                How would you like to bill this client?
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <RadioGroup
+                value={billingMode}
+                onValueChange={(value) => setBillingMode(value as BillingMode)}
+                className="grid gap-4"
+              >
+                <div className="flex items-start space-x-3 p-4 border rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer">
+                  <RadioGroupItem value="all_in_one" id="all_in_one" className="mt-1" />
+                  <div className="flex-1">
+                    <Label htmlFor="all_in_one" className="font-medium cursor-pointer">
+                      All-In-One Invoice (Recommended)
+                    </Label>
+                    <p className="text-sm text-slate-500 mt-1">
+                      Client receives one invoice combining your shoot fee + storage.
+                      They see a single total - clean and professional.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-3 p-4 border rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer">
+                  <RadioGroupItem value="storage_only" id="storage_only" className="mt-1" />
+                  <div className="flex-1">
+                    <Label htmlFor="storage_only" className="font-medium cursor-pointer">
+                      Storage Only (I Bill Separately)
+                    </Label>
+                    <p className="text-sm text-slate-500 mt-1">
+                      PhotoVault only handles the storage subscription.
+                      You invoice your shoot fee through your own system.
+                    </p>
+                  </div>
+                </div>
+              </RadioGroup>
+            </CardContent>
+          </Card>
+
           {/* Pricing */}
           <Card>
             <CardHeader>
@@ -449,30 +533,37 @@ export default function CreateGalleryPage() {
                 Pricing
               </CardTitle>
               <CardDescription>
-                Set your shoot fee and select a storage package
+                {billingMode === 'all_in_one'
+                  ? 'Set your shoot fee and select a storage package'
+                  : 'Select a storage package for your client'
+                }
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="shootFee">My Shoot Fee *</Label>
-                <div className="relative">
-                  <span className="absolute left-3 top-2.5 text-slate-500">$</span>
-                  <Input
-                    id="shootFee"
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    value={shootFee}
-                    onChange={(e) => setShootFee(e.target.value)}
-                    placeholder="0.00"
-                    className="pl-7"
-                  />
+              {/* Shoot Fee - only show for all_in_one mode */}
+              {billingMode === 'all_in_one' && (
+                <div>
+                  <Label htmlFor="shootFee">Your Shoot Fee *</Label>
+                  <div className="relative">
+                    <span className="absolute left-3 top-2.5 text-slate-500">$</span>
+                    <Input
+                      id="shootFee"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      value={shootFee}
+                      onChange={(e) => setShootFee(e.target.value)}
+                      placeholder="0.00"
+                      className="pl-7"
+                    />
+                  </div>
+                  <p className="text-xs text-slate-500 mt-1">
+                    Your photography fee - you keep 100% (minus ~3% Stripe fees)
+                  </p>
                 </div>
-                <p className="text-xs text-slate-500 mt-1">
-                  Your photography fee (you receive 100% after Stripe fees)
-                </p>
-              </div>
+              )}
 
+              {/* Storage Package */}
               <div>
                 <Label htmlFor="package">Storage Package *</Label>
                 <Select value={selectedPackageId} onValueChange={setSelectedPackageId}>
@@ -482,20 +573,33 @@ export default function CreateGalleryPage() {
                   <SelectContent>
                     {paymentOptions.map((option) => (
                       <SelectItem key={option.id} value={option.id}>
-                        <div className="flex flex-col">
+                        <div className="flex flex-col py-1">
                           <span className="font-medium">{option.name}</span>
-                          <span className="text-xs text-slate-500">{option.description}</span>
+                          <span className="text-xs text-slate-500">
+                            {getPaymentOptionSummary(option.id)}
+                          </span>
                         </div>
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
+
+              {/* Shoot Only Info */}
+              {selectedPackageId === 'shoot_only' && (
+                <Alert>
+                  <Download className="h-4 w-4" />
+                  <AlertDescription>
+                    <strong>Shoot Only:</strong> No storage fee - gallery access until all photos are downloaded OR 90 days (whichever comes first).
+                    Client can upgrade to a storage package anytime.
+                  </AlertDescription>
+                </Alert>
+              )}
             </CardContent>
           </Card>
 
           {/* Summary */}
-          {shootFee && selectedPackageId && (
+          {selectedPackageId && (billingMode === 'storage_only' || shootFee !== '') && (
             <Card className="border-blue-200 bg-blue-50 dark:bg-blue-950 dark:border-blue-800">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-blue-900 dark:text-blue-100">
@@ -506,37 +610,60 @@ export default function CreateGalleryPage() {
               <CardContent className="space-y-3">
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <p className="text-slate-600 dark:text-slate-400">Client Will Be Charged:</p>
-                    <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">
-                      ${summary.totalAmount.toFixed(2)}
+                    <p className="text-slate-600 dark:text-slate-400">
+                      {billingMode === 'all_in_one' ? 'Client Will Pay:' : 'Storage Fee:'}
                     </p>
+                    <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">
+                      ${pricingSummary.totalAmount.toFixed(2)}
+                    </p>
+                    {billingMode === 'all_in_one' && pricingSummary.shootFee > 0 && (
+                      <p className="text-xs text-slate-500">
+                        (${pricingSummary.shootFee.toFixed(2)} shoot + ${pricingSummary.storageFee.toFixed(2)} storage)
+                      </p>
+                    )}
                   </div>
                   <div>
                     <p className="text-slate-600 dark:text-slate-400">You Will Receive:</p>
                     <p className="text-2xl font-bold text-green-600 dark:text-green-400">
-                      ${summary.photographerPayout.toFixed(2)}
+                      ~${(pricingSummary.photographerPayout - pricingSummary.stripeFees).toFixed(2)}
                     </p>
                     <p className="text-xs text-slate-500 mt-1">
-                      (in 2 weeks after payment)
+                      (after ~${pricingSummary.stripeFees.toFixed(2)} Stripe fees, paid in 14 days)
                     </p>
                   </div>
                 </div>
 
-                {summary.monthlyBillingStarts && (
+                {/* Monthly billing info for non-trial packages */}
+                {(selectedPackageId === 'year_package' || selectedPackageId === 'six_month_package') && (
+                  <Alert>
+                    <Calendar className="h-4 w-4" />
+                    <AlertDescription>
+                      After the prepaid period, client will be billed $8/month automatically.
+                      You'll earn <strong>$4/month</strong> passive income.
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                {/* Trial info */}
+                {selectedPackageId === 'six_month_trial' && (
                   <Alert>
                     <Info className="h-4 w-4" />
                     <AlertDescription>
-                      Client's monthly billing ($8/month) will start on{' '}
-                      <strong>{summary.monthlyBillingStarts.toLocaleDateString()}</strong>
-                      {' '}after their {summary.freeMonths}-month free period.
+                      This is a 6-month trial. Gallery will become inactive after 6 months.
+                      No automatic billing - client must reactivate or upgrade if they want to continue.
                     </AlertDescription>
                   </Alert>
                 )}
 
                 <div className="border-t pt-3 text-xs text-slate-600 dark:text-slate-400 space-y-1">
-                  <p>• Package: {summary.packageName}</p>
-                  <p>• PhotoVault revenue: ${summary.photovaultRevenue.toFixed(2)}</p>
-                  <p>• Client invoice will show: "Photography Services & Gallery Publishing - ${summary.totalAmount.toFixed(2)}"</p>
+                  <p>• Package: {selectedPackage?.name}</p>
+                  <p>• PhotoVault revenue: ${pricingSummary.photovaultRevenue.toFixed(2)}</p>
+                  {billingMode === 'all_in_one' && (
+                    <p>• Client invoice shows: "Photography Services - ${pricingSummary.totalAmount.toFixed(2)}"</p>
+                  )}
+                  {pricingSummary.isShootOnly && (
+                    <p>• Gallery expires: {getExpiryDate()?.toLocaleDateString() || 'After all downloads'}</p>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -561,7 +688,13 @@ export default function CreateGalleryPage() {
             </Button>
             <Button
               onClick={handleCreateGallery}
-              disabled={creating || !selectedClientId || !galleryName || !shootFee || !selectedPackageId}
+              disabled={
+                creating ||
+                !selectedClientId ||
+                !galleryName ||
+                !selectedPackageId ||
+                (billingMode === 'all_in_one' && shootFee === '')
+              }
               className="flex-1"
             >
               {creating ? (

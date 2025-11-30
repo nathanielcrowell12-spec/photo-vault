@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { headers } from 'next/headers'
-import { getStripeClient, constructWebhookEvent } from '@/lib/stripe'
-import { createServerSupabaseClient } from '@/lib/supabase'
+import { getStripeClient, constructWebhookEvent, PHOTOGRAPHER_COMMISSION_RATE } from '@/lib/stripe'
+import { createServerSupabaseClient } from '@/lib/supabase-server'
 import Stripe from 'stripe'
 
 // Type helpers for Stripe responses
@@ -22,6 +22,19 @@ type StripeInvoice = {
   customer?: string | null
 }
 
+type StripePaymentIntent = {
+  id: string
+  amount: number
+  status: string
+  metadata: Record<string, string>
+  charges: {
+    data: Array<{
+      id: string
+      balance_transaction: string
+    }>
+  }
+}
+
 // Force dynamic rendering - webhooks must be dynamic
 export const dynamic = 'force-dynamic'
 
@@ -39,7 +52,7 @@ export const dynamic = 'force-dynamic'
  * - account.updated (Stripe Connect)
  */
 export async function POST(request: NextRequest) {
-  const supabase = createServerSupabaseClient()
+  const supabase = await createServerSupabaseClient()
   const stripe = getStripeClient()
 
   try {
@@ -104,6 +117,10 @@ export async function POST(request: NextRequest) {
         await handleInvoicePaymentFailed(event.data.object as Stripe.Invoice, supabase)
         break
 
+      case 'payment_intent.succeeded':
+        await handlePaymentIntentSucceeded(event.data.object as Stripe.PaymentIntent, supabase, stripe)
+        break
+
       case 'account.updated':
         await handleAccountUpdated(event.data.object as Stripe.Account, supabase)
         break
@@ -128,7 +145,7 @@ export async function POST(request: NextRequest) {
  */
 async function handleCheckoutSessionCompleted(
   session: Stripe.Checkout.Session,
-  supabase: ReturnType<typeof createServerSupabaseClient>,
+  supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>,
   stripe: Stripe
 ) {
   try {
@@ -235,7 +252,7 @@ async function handleCheckoutSessionCompleted(
  */
 async function handleSubscriptionUpdated(
   rawSubscription: Stripe.Subscription,
-  supabase: ReturnType<typeof createServerSupabaseClient>
+  supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>
 ) {
   try {
     const subscription = rawSubscription as unknown as StripeSubscription
@@ -309,7 +326,7 @@ async function handleSubscriptionUpdated(
  */
 async function handleSubscriptionDeleted(
   subscription: Stripe.Subscription,
-  supabase: ReturnType<typeof createServerSupabaseClient>
+  supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>
 ) {
   try {
     await supabase
@@ -349,7 +366,7 @@ async function handleSubscriptionDeleted(
  */
 async function handleInvoicePaid(
   rawInvoice: Stripe.Invoice,
-  supabase: ReturnType<typeof createServerSupabaseClient>,
+  supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>,
   stripe: Stripe
 ) {
   try {
@@ -400,7 +417,7 @@ async function handleInvoicePaid(
  */
 async function handleInvoicePaymentFailed(
   rawInvoice: Stripe.Invoice,
-  supabase: ReturnType<typeof createServerSupabaseClient>
+  supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>
 ) {
   try {
     const invoice = rawInvoice as unknown as StripeInvoice
@@ -443,11 +460,178 @@ async function handleInvoicePaymentFailed(
 }
 
 /**
+ * Handle successful payment intent (one-time gallery payments)
+ * This is triggered for All-In-One gallery payments
+ */
+async function handlePaymentIntentSucceeded(
+  paymentIntent: Stripe.PaymentIntent,
+  supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>,
+  stripe: Stripe
+) {
+  try {
+    const metadata = paymentIntent.metadata || {}
+
+    // Check if this is a gallery payment
+    if (metadata.type !== 'gallery_payment') {
+      console.log('[Webhook] Payment intent is not a gallery payment, skipping')
+      return
+    }
+
+    const galleryId = metadata.galleryId
+    const photographerId = metadata.photographerId
+    const clientId = metadata.clientId
+    const billingMode = metadata.billingMode
+    const paymentOptionId = metadata.paymentOptionId
+
+    // Parse amounts from metadata
+    const shootFeeCents = parseInt(metadata.shootFeeCents || '0', 10)
+    const storageFeeCents = parseInt(metadata.storageFeeCents || '0', 10)
+    const photographerPayoutCents = parseInt(metadata.photographerPayoutCents || '0', 10)
+    const photovaultRevenueCents = parseInt(metadata.photovaultRevenueCents || '0', 10)
+
+    console.log(`[Webhook] Gallery payment succeeded for gallery ${galleryId}`, {
+      totalAmount: paymentIntent.amount,
+      shootFee: shootFeeCents,
+      storageFee: storageFeeCents,
+      photographerPayout: photographerPayoutCents,
+      photovaultRevenue: photovaultRevenueCents,
+    })
+
+    // 1. Update gallery payment status
+    const { error: updateError } = await supabase
+      .from('photo_galleries')
+      .update({
+        payment_status: 'paid',
+        paid_at: new Date().toISOString(),
+        stripe_payment_intent_id: paymentIntent.id,
+      })
+      .eq('id', galleryId)
+
+    if (updateError) {
+      console.error('[Webhook] Error updating gallery:', updateError)
+    }
+
+    // 2. Record the payment transaction
+    const { error: txError } = await supabase
+      .from('gallery_payment_transactions')
+      .insert({
+        gallery_id: galleryId,
+        photographer_id: photographerId,
+        client_id: clientId,
+        payment_option_id: paymentOptionId,
+        billing_mode: billingMode,
+        shoot_fee: shootFeeCents,
+        storage_fee: storageFeeCents,
+        total_amount: paymentIntent.amount,
+        photographer_commission: storageFeeCents > 0
+          ? Math.round(storageFeeCents * PHOTOGRAPHER_COMMISSION_RATE)
+          : 0,
+        photovault_revenue: photovaultRevenueCents,
+        photographer_payout: photographerPayoutCents,
+        stripe_fees: Math.round(paymentIntent.amount * 0.029) + 30, // Estimate
+        stripe_payment_intent_id: paymentIntent.id,
+        status: 'completed',
+        paid_at: new Date().toISOString(),
+      })
+
+    if (txError) {
+      console.error('[Webhook] Error recording transaction:', txError)
+    }
+
+    // 3. Transfer photographer's payout to their connected account
+    // The payout includes: full shoot fee + storage commission
+    if (photographerPayoutCents > 0) {
+      // Get photographer's Stripe account ID
+      const { data: photographer } = await supabase
+        .from('user_profiles')
+        .select('stripe_account_id')
+        .eq('id', photographerId)
+        .single()
+
+      if (photographer?.stripe_account_id) {
+        try {
+          // Create transfer to photographer's connected account
+          // Transfer happens after 14-day delay (configured in Stripe dashboard or via schedule)
+          const transfer = await stripe.transfers.create({
+            amount: photographerPayoutCents,
+            currency: 'usd',
+            destination: photographer.stripe_account_id,
+            metadata: {
+              galleryId,
+              photographerId,
+              type: 'gallery_payment_payout',
+              shootFee: shootFeeCents.toString(),
+              storageCommission: (photographerPayoutCents - shootFeeCents).toString(),
+            },
+          })
+
+          // Update transaction with transfer ID
+          await supabase
+            .from('gallery_payment_transactions')
+            .update({
+              stripe_transfer_id: transfer.id,
+              transfer_completed_at: new Date().toISOString(),
+            })
+            .eq('stripe_payment_intent_id', paymentIntent.id)
+
+          console.log(`[Webhook] Created transfer ${transfer.id} for ${photographerPayoutCents} cents to ${photographer.stripe_account_id}`)
+
+        } catch (transferError) {
+          console.error('[Webhook] Error creating transfer:', transferError)
+          // Don't throw - the payment succeeded, we just need to retry the transfer later
+          // Mark the transaction as needing manual intervention
+          await supabase
+            .from('gallery_payment_transactions')
+            .update({
+              notes: `Transfer failed: ${(transferError as Error).message}. Requires manual processing.`,
+            })
+            .eq('stripe_payment_intent_id', paymentIntent.id)
+        }
+      } else {
+        console.warn(`[Webhook] Photographer ${photographerId} has no Stripe account - cannot transfer payout`)
+        await supabase
+          .from('gallery_payment_transactions')
+          .update({
+            notes: 'Photographer has no Stripe Connect account. Payout pending account setup.',
+          })
+          .eq('stripe_payment_intent_id', paymentIntent.id)
+      }
+    }
+
+    // 4. Update gallery download tracking count if shoot_only
+    if (paymentOptionId === 'shoot_only') {
+      // Get photo count from gallery
+      const { data: gallery } = await supabase
+        .from('photo_galleries')
+        .select('photo_count')
+        .eq('id', galleryId)
+        .single()
+
+      if (gallery?.photo_count) {
+        await supabase
+          .from('photo_galleries')
+          .update({
+            total_photos_to_download: gallery.photo_count,
+            download_tracking_enabled: true,
+          })
+          .eq('id', galleryId)
+      }
+    }
+
+    console.log(`[Webhook] Gallery payment processing complete for ${galleryId}`)
+
+  } catch (error) {
+    console.error('[Webhook] Error handling payment_intent.succeeded:', error)
+    throw error
+  }
+}
+
+/**
  * Handle Stripe Connect account updates
  */
 async function handleAccountUpdated(
   account: Stripe.Account,
-  supabase: ReturnType<typeof createServerSupabaseClient>
+  supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>
 ) {
   try {
     // Find photographer by Stripe Connect account ID

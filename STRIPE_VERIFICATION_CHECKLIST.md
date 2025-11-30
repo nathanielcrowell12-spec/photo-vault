@@ -6,252 +6,211 @@ TOPIC: Stripe Integration Verification Checklist
 
 # Stripe Integration Verification Checklist
 
-**Date:** November 19, 2025
-**Purpose:** Verify all Stripe code changes are correct after commission rate fix
-**Status:** In Progress
+**Date:** November 27, 2025
+**Purpose:** Verify all Stripe code is correct for the new All-In-One pricing model
+**Status:** Phase 2 Complete - Ready for Testing
+
+---
+
+## 💰 Current Pricing Model
+
+### Storage Package Pricing
+| Package | Client Pays | Photographer Gets | PhotoVault Gets | Duration |
+|---------|-------------|-------------------|-----------------|----------|
+| **Year Package** | $100 | $50 (50%) | $50 (50%) | 12 months |
+| **6-Month Package** | $50 | $25 (50%) | $25 (50%) | 6 months |
+| **6-Month Trial** | $20 | $10 (50%) | $10 (50%) | 6 months (no auto-renew) |
+| **Shoot Only** | $0 | $0 | $0 | Until downloaded or 90 days |
+
+### Ongoing Pricing (After Package Expires)
+| Type | Client Pays | Photographer Gets | PhotoVault Gets |
+|------|-------------|-------------------|-----------------|
+| **Monthly (with photographer)** | $8/month | $4/month (50%) | $4/month (50%) |
+| **Direct Monthly (no photographer)** | $8/month | $0 | $8/month (100%) |
+| **Reactivation Fee** | $20 one-time | $0 | $20 (100%) |
 
 ---
 
 ## 🔍 Code Files to Verify
 
-### 1. Core Configuration File
-**File:** `src/lib/stripe.ts`
+### 1. Core Payment Models
+**File:** `src/lib/payment-models.ts`
 
-**Line 47-51: Commission Rate**
-```typescript
-/**
- * Commission rate for photographers (50% flat rate)
- * PhotoVault uses a 50/50 split: photographers get 50%, platform gets 50%
- * Example: Client pays $10/month → Photographer gets $5, PhotoVault gets $5
- */
-export const PHOTOGRAPHER_COMMISSION_RATE = 0.50
-```
-- [ ] Value is 0.50 (50%)
-- [ ] Comments are correct
-- [ ] No other hardcoded commission percentages in file
+**Payment Options:**
+- [ ] `year_package`: $100, 12 months, 50% commission
+- [ ] `six_month_package`: $50, 6 months, 50% commission
+- [ ] `six_month_trial`: $20, 6 months, 50% commission, NO auto-renew
+- [ ] `shoot_only`: $0, 90 days max, 0% commission
 
-**Line 25-31: Pricing Configuration**
-```typescript
-export const PRICING = {
-  CLIENT_MONTHLY: {
-    amount: 1000, // $10.00 in cents
-    currency: 'usd',
-    interval: 'month' as const,
-  },
-} as const
-```
-- [ ] Amount is 1000 cents ($10)
-- [ ] No references to quarterly/annual pricing
+**Functions:**
+- [ ] `getPhotographerPaymentOptions()` returns all 4 options
+- [ ] `calculateAllInOnePricing()` correctly calculates revenue split
+- [ ] `getPaymentOptionSummary()` returns user-friendly descriptions
 
 ---
 
-### 2. Checkout API Endpoint
-**File:** `src/app/api/stripe/create-checkout/route.ts`
+### 2. Stripe Configuration
+**File:** `src/lib/stripe.ts`
+
+**Price IDs:**
+- [ ] Year Package upfront: `price_1SY5Th8jZm4oWQdn1UDKi6WQ`
+- [ ] Year Package recurring: `price_1SY5Th8jZm4oWQdnwALqVzSx`
+- [ ] 6-Month Package upfront: `price_1SY5U98jZm4oWQdnnyYnQbqA`
+- [ ] 6-Month Package recurring: `price_1SY5U98jZm4oWQdnBz8u9xri`
+- [ ] 6-Month Trial: `price_1SY5UZ8jZm4oWQdnlFsYPaN3`
+- [ ] Reactivation Fee: `price_1SY5Uz8jZm4oWQdnD3KJY0ds`
+- [ ] Client Monthly: `price_1SY5VP8jZm4oWQdnSRkf7QBm`
+- [ ] Direct Monthly: `price_1SY5yu8jZm4oWQdncyIxgA2Z`
+- [ ] Photographer Platform: `price_1SY5TE8jZm4oWQdnrsTm2bCp`
+
+---
+
+### 3. Gallery Checkout API
+**File:** `src/app/api/stripe/gallery-checkout/route.ts`
 
 **Verification:**
 - [ ] File exists
-- [ ] Uses STRIPE_PRICES.CLIENT_MONTHLY (not hardcoded)
-- [ ] No hardcoded commission calculations
-- [ ] Metadata includes: userId, photographerId, galleryId
-- [ ] Subscription metadata includes: client_id, photographer_id, gallery_id
+- [ ] Handles All-In-One pricing (shoot fee + storage)
+- [ ] Single line item "Photography Services" (no itemization to client)
+- [ ] Metadata includes: photographer_payout_amount, platform_amount, commission_rate
+- [ ] No hardcoded amounts
 - [ ] No compilation errors
 
-**Expected Behavior:**
-- Creates checkout session for $10/month
-- Associates client with photographer
-- Commission calculation happens in webhook (not here)
+---
+
+### 4. Webhook Handler
+**File:** `src/app/api/stripe/webhook/route.ts`
+
+**payment_intent.succeeded handler:**
+- [ ] Updates gallery `payment_status` to 'paid'
+- [ ] Records transaction in `gallery_payment_transactions`
+- [ ] Creates Stripe Transfer to photographer's connected account
+- [ ] Uses metadata for revenue split (not hardcoded)
+
+**checkout.session.completed handler:**
+- [ ] Handles both subscription and one-time payments
+- [ ] Creates appropriate records in database
 
 ---
 
-### 3. Webhook Handler
-**File:** `src/app/api/webhooks/stripe/route.ts`
+### 5. Download Tracking API
+**File:** `src/app/api/gallery/download/route.ts`
 
-**Line 320-337: Commission Creation (handlePaymentSucceeded)**
-```typescript
-const subscription = await stripe.subscriptions.retrieve(subscriptionId)
-const photographerId = subscription.metadata?.photographer_id
-const clientId = subscription.metadata?.client_id
-const galleryId = subscription.metadata?.gallery_id
-
-if (photographerId && clientId && paymentRecord) {
-  const { createCommission } = await import('@/lib/server/commission-service')
-
-  const commissionResult = await createCommission({
-    photographerId,
-    clientId,
-    clientPaymentId: paymentRecord.id,
-    paymentAmountCents: invoice.amount_paid,
-    // ... more fields
-  })
-}
-```
-- [ ] Uses metadata from subscription (not hardcoded)
-- [ ] Calls commission service (which uses PHOTOGRAPHER_COMMISSION_RATE)
-- [ ] No hardcoded commission percentages
-
-**Line 349-397: Payment Success Email**
-- [ ] Sends PaymentSuccessfulEmail
-- [ ] Uses actual payment data (not hardcoded amounts)
-- [ ] No references to 80% or incorrect commission rates
-
-**Line 387-413: Payment Failed Email**
-- [ ] Sends PaymentFailedEmail
-- [ ] Uses gracePeriodDays: 90
-- [ ] No hardcoded commission references
-
-- [ ] No compilation errors in webhook handler
+**Verification:**
+- [ ] POST: Records individual photo download
+- [ ] PUT: Records bulk download
+- [ ] GET: Returns download progress
+- [ ] Verifies user has access to gallery
+- [ ] Updates gallery download counters
 
 ---
 
-### 4. Email Templates
+### 6. Email Templates
 
 **File:** `src/lib/email/critical-templates.ts`
-
-**Line 384: Photographer Welcome Email (HTML)**
-```html
-<li>✅ <strong>Recurring Revenue</strong> - Earn 50% commission on client subscriptions</li>
-```
-- [ ] Says "50% commission"
-- [ ] Not "80% commission"
-
-**Line 445: Photographer Welcome Email (Text)**
-```
-✅ Recurring Revenue - Earn 50% commission on client subscriptions
-```
-- [ ] Says "50% commission"
-- [ ] Not "80% commission"
-
----
+- [ ] Photographer Welcome: Says "50% commission"
+- [ ] No references to "80%" or old pricing
 
 **File:** `src/lib/email/engagement-templates.ts`
-
-**Line 241: First Gallery Upload Email (HTML)**
-```html
-<li>💰 You earn 50% commission ($5/month) for each active subscription</li>
-```
-- [ ] Says "50% commission"
-- [ ] Says "$5/month"
-- [ ] Not "$8/month"
-
-**Line 307: First Gallery Upload Email (Text)**
-```
-💰 You earn 50% commission ($5/month) for each active subscription
-```
-- [ ] Says "50% commission"
-- [ ] Says "$5/month"
-- [ ] Not "$8/month"
-
----
+- [ ] First Gallery Upload: Shows correct commission amounts
+- [ ] Examples use $100/$50 packages, not $10/month
 
 **File:** `src/lib/email/revenue-templates.ts`
-
-**Line 644: Payout Notification Email (HTML)**
-```html
-<span class="detail-label">Commission Rate</span>
-<span class="detail-value">50%</span>
-```
-- [ ] Says "50%"
-- [ ] Not "80%"
-
-**Line 702: Payout Notification Email (Text)**
-```
-Commission Rate: 50%
-```
-- [ ] Says "50%"
-- [ ] Not "80%"
-
----
-
-### 5. Environment Variables
-**File:** `.env.local`
-
-**Lines 9-20: Stripe Configuration**
-```bash
-# Stripe Configuration (Test Mode)
-STRIPE_SECRET_KEY=sk_test_YOUR_SECRET_KEY_HERE
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_YOUR_PUBLISHABLE_KEY_HERE
-STRIPE_WEBHOOK_SECRET=whsec_YOUR_WEBHOOK_SECRET_HERE
-
-# Stripe Price IDs
-STRIPE_CLIENT_MONTHLY_PRICE_ID=price_YOUR_PRICE_ID_HERE
-
-# Stripe Connect
-STRIPE_CONNECT_CLIENT_ID=ca_YOUR_CONNECT_CLIENT_ID_HERE
-```
-- [ ] All placeholders present
-- [ ] No hardcoded commission rates
-- [ ] Only one price ID (monthly)
-- [ ] No quarterly/annual price IDs
-
----
-
-## 🧪 Functional Tests
-
-### Test 1: Checkout Flow (After Stripe Setup)
-- [ ] Client can access checkout
-- [ ] Checkout shows $10/month
-- [ ] Payment succeeds with test card
-- [ ] Redirects to success page
-
-### Test 2: Commission Calculation
-- [ ] Webhook receives payment event
-- [ ] Commission record created in database
-- [ ] Commission amount is $5 (50% of $10)
-- [ ] Photographer balance updated correctly
-
-### Test 3: Email Delivery
-- [ ] Payment success email sent to client
-- [ ] Email shows correct amounts
-- [ ] Email mentions 50% commission (if applicable)
-- [ ] No references to 80%
-
-### Test 4: Database Records
-- [ ] Subscription created with correct amount
-- [ ] Payment record shows $10
-- [ ] Commission record shows $5
-- [ ] All metadata correct
+- [ ] Commission Rate shown as "50%"
+- [ ] Payout amounts calculated correctly
 
 ---
 
 ## 📊 Database Schema Check
 
-### Tables Referenced by Stripe Code
+### New Tables (Phase 2)
+- [ ] `photo_downloads` exists
+- [ ] `gallery_payment_transactions` exists
 
-**subscriptions:**
-- [ ] Has client_id column
-- [ ] Has photographer_id column
-- [ ] Has gallery_id column
-- [ ] Has stripe_subscription_id column
-- [ ] Has status column
+### New Columns on `galleries`
+- [ ] `payment_option_id` VARCHAR(50)
+- [ ] `billing_mode` VARCHAR(20)
+- [ ] `shoot_fee` INTEGER
+- [ ] `storage_fee` INTEGER
+- [ ] `total_amount` INTEGER
+- [ ] `payment_status` VARCHAR(20)
+- [ ] `paid_at` TIMESTAMPTZ
+- [ ] `gallery_expires_at` TIMESTAMPTZ
+- [ ] `download_tracking_enabled` BOOLEAN
+- [ ] `total_photos_to_download` INTEGER
+- [ ] `photos_downloaded` INTEGER
+- [ ] `all_photos_downloaded` BOOLEAN
+- [ ] `download_completed_at` TIMESTAMPTZ
 
-**payment_history:**
-- [ ] Has stripe_invoice_id column
-- [ ] Has amount_paid_cents column
-- [ ] Has status column
+### Functions Created
+- [ ] `reactivate_gallery(gallery_id, stripe_payment_intent_id)` exists
+- [ ] `start_monthly_subscription(gallery_id, stripe_subscription_id)` exists
+- [ ] `update_gallery_download_progress()` trigger exists
+- [ ] `record_gallery_payment_transaction()` function exists
 
-**commissions:**
-- [ ] Has photographer_id column
-- [ ] Has client_id column
-- [ ] Has payment_id column
-- [ ] Has amount_cents column
-- [ ] Has commission_rate column (should be 0.50)
+---
+
+## 🧪 Functional Tests
+
+### Test 1: Gallery Creation (All-In-One)
+- [ ] Photographer can select billing mode "All-In-One"
+- [ ] Photographer can enter shoot fee (e.g., $2,500)
+- [ ] Photographer can select storage package
+- [ ] Total shown correctly (shoot fee + storage)
+- [ ] Gallery created with correct metadata
+
+### Test 2: Gallery Creation (Storage Only)
+- [ ] Photographer can select billing mode "Storage Only"
+- [ ] Shoot fee input is hidden
+- [ ] Only storage package options shown
+- [ ] Gallery created with billing_mode = 'storage_only'
+
+### Test 3: Shoot Only Option
+- [ ] Photographer can select "Shoot Only" package
+- [ ] Gallery expires after download or 90 days
+- [ ] Download tracking enabled
+- [ ] Client can upgrade to storage package
+
+### Test 4: Client Checkout Flow
+- [ ] Client sees single "Photography Services" line item
+- [ ] Amount matches total (shoot + storage)
+- [ ] No itemization visible to client
+- [ ] Payment succeeds with test card
+
+### Test 5: Webhook Processing
+- [ ] payment_intent.succeeded received
+- [ ] Gallery marked as paid
+- [ ] Transaction recorded
+- [ ] Photographer payout transfer created
+
+### Test 6: Reactivation Flow
+- [ ] Archived gallery can be reactivated
+- [ ] Client pays $20 reactivation fee
+- [ ] Gallery gets 1 month access
+- [ ] Client can choose $8/month or just download
+
+### Test 7: Download Tracking (Shoot Only)
+- [ ] Downloads are recorded
+- [ ] Counter increments correctly
+- [ ] Gallery marks complete when all downloaded
+- [ ] Expiration triggers after completion
 
 ---
 
 ## 🚨 Known Issues to Check
 
-### Issue 1: Hardcoded Values
-- [ ] No "0.80" anywhere in Stripe files
-- [ ] No "$8" in commission calculations
-- [ ] No "80%" in user-facing text
+### Issue 1: Old Pricing References
+- [ ] No "$10/month" anywhere in code
+- [ ] No references to old commission structure
+- [ ] Email templates updated
 
 ### Issue 2: Import Statements
-- [ ] commission-service.ts exists and exports createCommission
-- [ ] EmailService imports work correctly
+- [ ] `payment-models.ts` exports all functions
+- [ ] Stripe webhook imports work correctly
 - [ ] No missing dependencies
 
 ### Issue 3: TypeScript Errors
-- [ ] `npm run type-check` passes
+- [ ] `npm run build` passes
 - [ ] No errors in VSCode
 - [ ] Dev server runs without errors
 
@@ -259,65 +218,57 @@ STRIPE_CONNECT_CLIENT_ID=ca_YOUR_CONNECT_CLIENT_ID_HERE
 
 ## ✅ Final Verification Steps
 
-1. **Read Each File:**
-   - [ ] src/lib/stripe.ts
-   - [ ] src/app/api/stripe/create-checkout/route.ts
-   - [ ] src/app/api/webhooks/stripe/route.ts
-   - [ ] src/lib/email/critical-templates.ts
-   - [ ] src/lib/email/engagement-templates.ts
-   - [ ] src/lib/email/revenue-templates.ts
-   - [ ] .env.local
-
-2. **Search for Wrong Values:**
+1. **Build Check:**
    ```bash
-   # Search for 80% or 0.80
-   grep -r "80%" src/
-   grep -r "0\.80" src/
-   grep -r "\$8" src/lib/email/
+   cd "C:\Users\natha\.cursor\Photo Vault\photovault-hub"
+   npm run build
    ```
-   - [ ] No results found (or only in comments)
+   - [ ] No TypeScript errors
+   - [ ] Build completes successfully
 
-3. **Run Type Check:**
-   ```bash
-   npm run type-check
-   ```
-   - [ ] No errors
+2. **Database Verification:**
+   - [ ] Both migrations ran successfully
+   - [ ] All new tables/columns exist
+   - [ ] Functions and triggers created
 
-4. **Check Server:**
-   ```bash
-   npm run dev
-   ```
-   - [ ] Starts without errors
-   - [ ] No compilation errors
+3. **Manual Flow Test:**
+   - [ ] Create gallery with All-In-One pricing
+   - [ ] Client receives checkout link
+   - [ ] Payment completes
+   - [ ] Photographer receives payout notification
 
 ---
 
-## 📝 Manual Review Findings
+## 📝 Migration Status
 
-### Files Checked:
-- **src/lib/stripe.ts:** Commission rate = 0.50 ✓
-- **Email templates:** All say 50% and $5 ✓
-- **Webhook handler:** Uses PHOTOGRAPHER_COMMISSION_RATE constant ✓
-- **Documentation:** All corrected ✓
+### SQL Migrations Run:
+- [x] `payment-model-migration.sql` - Foundation tables ✅
+- [x] `all-in-one-pricing-migration.sql` - Phase 2 schema ✅
 
-### Remaining Concerns:
-- [ ] Need to verify commission-service.ts uses correct rate
-- [ ] Need to test actual payment flow
-- [ ] Need to verify database calculations
+### Stripe Products Created:
+- [x] Photographer Platform ($22/month)
+- [x] Year Package ($100 + $8/mo)
+- [x] 6-Month Package ($50 + $8/mo)
+- [x] 6-Month Trial ($20 one-time)
+- [x] Reactivation Fee ($20 one-time)
+- [x] Client Monthly ($8/month)
+- [x] Direct Monthly ($8/month, 0% commission)
 
 ---
 
 ## 🎯 Next Actions
 
-1. [ ] User reviews this checklist
-2. [ ] User verifies critical files manually
-3. [ ] Set up Stripe test account
-4. [ ] Test actual payment flow
-5. [ ] Verify commission calculation in database
-6. [ ] Mark checklist complete
+1. [x] Run database migrations
+2. [ ] Run `npm run build` to verify TypeScript
+3. [ ] Test gallery creation flow locally
+4. [ ] Test checkout flow with Stripe test mode
+5. [ ] Verify webhook handling
+6. [ ] Update any email templates with old pricing
+7. [ ] Deploy to Vercel staging
+8. [ ] End-to-end production test
 
 ---
 
-**Verification Status:** Awaiting User Review
-**Confidence Level:** Medium (code looks correct, needs user verification)
-**Risk Level:** Low (changes are isolated to commission rate)
+**Verification Status:** Ready for Build Test
+**Confidence Level:** High (migrations complete, code updated)
+**Risk Level:** Low (incremental changes, test mode first)

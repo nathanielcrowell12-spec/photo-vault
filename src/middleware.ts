@@ -56,7 +56,7 @@ export async function middleware(req: NextRequest) {
   const isPublicRoute = publicRoutes.some(route => pathname === route || pathname.startsWith('/api/health'))
 
   // Allow webhook routes (Stripe needs to access these)
-  if (pathname.startsWith('/api/webhooks')) {
+  if (pathname.startsWith('/api/webhooks') || pathname.startsWith('/api/stripe/webhook')) {
     return res
   }
 
@@ -66,7 +66,8 @@ export async function middleware(req: NextRequest) {
       '/api/health',
       '/api/test-env',
       '/api/test-supabase',
-      '/api/webhooks', // Stripe webhooks
+      '/api/webhooks', // Legacy webhooks
+      '/api/stripe/webhook', // Stripe webhooks
       '/api/cron', // Cron jobs
       '/api/auth/check-session', // Desktop app auth check
       '/api/auth/logout', // Logout endpoint
@@ -183,7 +184,8 @@ export async function middleware(req: NextRequest) {
       '/api/health',
       '/api/test-env',
       '/api/test-supabase',
-      '/api/webhooks', // Stripe webhooks
+      '/api/webhooks', // Legacy webhooks
+      '/api/stripe/webhook', // Stripe webhooks
       '/api/cron', // Cron jobs
       '/api/auth/check-session', // Desktop app auth check
       '/api/auth/logout', // Logout endpoint

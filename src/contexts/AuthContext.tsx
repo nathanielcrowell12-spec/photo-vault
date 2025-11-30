@@ -49,7 +49,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     try {
       // Get current session instead of calling getUser() which can return 403
-      const { data: { session } } = await supabase.auth.getSession()
+      console.log('[AuthContext] Getting session...')
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+      console.log('[AuthContext] Session result:', { session: !!session, error: sessionError })
+
       const userEmail = session?.user?.email
       const isAdminUser = userEmail === 'nathaniel.crowell12@gmail.com'
 
@@ -210,7 +213,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       } else if (event === 'SIGNED_IN' && session) {
         setSession(session)
         setUser(session.user)
-        await fetchUserType(session.user.id)
+        // Only fetch user type if we don't already have it (prevents loops from multiple SIGNED_IN events)
+        if (!initializedRef.current) {
+          await fetchUserType(session.user.id)
+        }
       }
     })
 
