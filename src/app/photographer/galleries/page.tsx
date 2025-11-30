@@ -21,8 +21,11 @@ import {
   Eye,
   Trash2,
   Edit,
-  Loader2
+  Loader2,
+  Send,
+  RefreshCw
 } from 'lucide-react'
+import { useToast } from '@/components/ui/use-toast'
 import Link from 'next/link'
 import { supabaseBrowser as supabase } from '@/lib/supabase-browser'
 import {
@@ -53,9 +56,11 @@ interface Gallery {
 export default function GalleriesPage() {
   const { user, userType, loading: authLoading } = useAuth()
   const router = useRouter()
+  const { toast } = useToast()
   const [galleries, setGalleries] = useState<Gallery[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
+  const [sendingNotification, setSendingNotification] = useState<string | null>(null)
 
   useEffect(() => {
     if (authLoading) return
@@ -116,6 +121,46 @@ export default function GalleriesPage() {
       gallery.client?.email?.toLowerCase().includes(searchLower)
     )
   })
+
+  const handleResendNotification = async (galleryId: string, clientEmail: string | undefined) => {
+    if (!clientEmail) {
+      toast({
+        title: 'No client email',
+        description: 'This gallery does not have a client email address.',
+        variant: 'destructive'
+      })
+      return
+    }
+
+    try {
+      setSendingNotification(galleryId)
+      const response = await fetch('/api/email/gallery-ready', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ galleryId })
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to send notification')
+      }
+
+      toast({
+        title: 'Notification sent',
+        description: `Gallery ready email sent to ${clientEmail}`,
+      })
+    } catch (err: any) {
+      console.error('Error sending notification:', err)
+      toast({
+        title: 'Failed to send',
+        description: err.message || 'Could not send notification email',
+        variant: 'destructive'
+      })
+    } finally {
+      setSendingNotification(null)
+    }
+  }
 
   const getPaymentStatusBadge = (gallery: Gallery) => {
     if (!gallery.payment_option_id || gallery.payment_option_id === 'shoot_only') {
@@ -258,6 +303,20 @@ export default function GalleriesPage() {
                           <Edit className="h-4 w-4 mr-2" />
                           Edit Details
                         </DropdownMenuItem>
+                        {gallery.client?.email && (
+                          <DropdownMenuItem
+                            className="text-slate-300 hover:text-white focus:text-white cursor-pointer"
+                            onClick={() => handleResendNotification(gallery.id, gallery.client?.email)}
+                            disabled={sendingNotification === gallery.id}
+                          >
+                            {sendingNotification === gallery.id ? (
+                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                            ) : (
+                              <Send className="h-4 w-4 mr-2" />
+                            )}
+                            Resend Notification
+                          </DropdownMenuItem>
+                        )}
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>

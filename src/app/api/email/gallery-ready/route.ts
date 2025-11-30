@@ -50,18 +50,26 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (galleryError || !gallery) {
+      console.log('[GalleryReady] Gallery not found:', galleryId, galleryError)
       return NextResponse.json({ error: 'Gallery not found' }, { status: 404 })
     }
+
+    console.log('[GalleryReady] Gallery data:', JSON.stringify(gallery, null, 2))
 
     // Verify this photographer owns the gallery
     if (gallery.photographer_id !== user.id) {
       return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
     }
 
-    // Supabase returns joined relations as arrays - get first item
-    const clientsArray = gallery.clients as { id: string; name: string; email: string }[] | null
-    const client = clientsArray?.[0] ?? null
+    // Handle both array and object formats from Supabase join
+    // Supabase returns an object for single relations, array for multi relations
+    const clientsData = gallery.clients
+    const client = Array.isArray(clientsData)
+      ? clientsData[0] as { id: string; name: string; email: string } | undefined
+      : clientsData as { id: string; name: string; email: string } | null
+
     if (!client?.email) {
+      console.log('[GalleryReady] No client email - clients:', clientsData, 'client:', client)
       return NextResponse.json({ error: 'No client email found' }, { status: 400 })
     }
 
