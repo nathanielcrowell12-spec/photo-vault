@@ -78,7 +78,7 @@ export default function SneakPeekSelectPage() {
       }
 
       // Fetch client info separately
-      let clientInfo = null
+      let clientInfo: { name: string; email: string } | undefined = undefined
       if (galleryData.client_id) {
         const { data: clientData, error: clientError } = await supabase
           .from('clients')
