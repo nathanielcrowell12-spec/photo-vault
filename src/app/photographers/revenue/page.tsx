@@ -8,8 +8,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { 
-  ArrowLeft, 
+import {
+  ArrowLeft,
   DollarSign,
   TrendingUp,
   Users,
@@ -29,10 +29,8 @@ interface RevenueData {
   summary: {
     totalUpfrontCommission: number
     totalMonthlyCommission: number
-    monthlyUpfrontCommission: number
-    monthlyRecurringCommission: number
-    yearlyUpfrontCommission: number
-    yearlyRecurringCommission: number
+    totalEarnings: number
+    transactionCount: number
     activeClientsCount: number
     monthlyRecurringClientsCount: number
     projectedMonthlyRecurring: number
@@ -42,8 +40,9 @@ interface RevenueData {
   recentTransactions: Array<{
     id: string
     clientName: string
+    galleryName: string
     amount: number
-    type: 'upfront' | 'recurring'
+    type: 'upfront' | 'monthly' | 'reactivation'
     date: string
     status: string
   }>
@@ -60,6 +59,7 @@ export default function RevenuePage() {
   const router = useRouter()
   const [revenueData, setRevenueData] = useState<RevenueData | null>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [period, setPeriod] = useState('all')
 
   useEffect(() => {
@@ -73,10 +73,10 @@ export default function RevenuePage() {
   // Show loading or redirect if not photographer
   if (userType !== 'photographer') {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-slate-600 dark:text-slate-300">Redirecting...</p>
+          <p className="text-neutral-300">Redirecting...</p>
         </div>
       </div>
     )
@@ -84,101 +84,101 @@ export default function RevenuePage() {
 
   const fetchRevenueData = async () => {
     try {
-      // Simulate API call - in real implementation, this would call the API
-      setTimeout(() => {
-        setRevenueData({
-          summary: {
-            totalUpfrontCommission: 1250, // $50 × 25 clients
-            totalMonthlyCommission: 480, // $4 × 120 months total
-            monthlyUpfrontCommission: 200, // $50 × 4 new clients this month
-            monthlyRecurringCommission: 96, // $4 × 24 recurring clients
-            yearlyUpfrontCommission: 2400, // $50 × 48 clients this year
-            yearlyRecurringCommission: 1152, // $4 × 288 months this year
-            activeClientsCount: 48,
-            monthlyRecurringClientsCount: 24,
-            projectedMonthlyRecurring: 96,
-            projectedYearlyRecurring: 1152,
-            projectedYearlyTotal: 3552 // $2400 upfront + $1152 recurring
-          },
-          recentTransactions: [
-            {
-              id: '1',
-              clientName: 'Sarah & John Smith',
-              amount: 50,
-              type: 'upfront',
-              date: '2024-10-15',
-              status: 'paid'
-            },
-            {
-              id: '2',
-              clientName: 'Mike Johnson Family',
-              amount: 4,
-              type: 'recurring',
-              date: '2024-10-01',
-              status: 'paid'
-            },
-            {
-              id: '3',
-              clientName: 'Emma & David Wedding',
-              amount: 50,
-              type: 'upfront',
-              date: '2024-09-28',
-              status: 'paid'
-            },
-            {
-              id: '4',
-              clientName: 'Lisa Martinez Family',
-              amount: 4,
-              type: 'recurring',
-              date: '2024-09-15',
-              status: 'paid'
-            },
-            {
-              id: '5',
-              clientName: 'Robert Chen Portrait',
-              amount: 50,
-              type: 'upfront',
-              date: '2024-09-10',
-              status: 'paid'
-            }
-          ],
-          topClients: [
-            {
-              name: 'Sarah & John Smith',
-              total: 104,
-              upfront: 50,
-              recurring: 54
-            },
-            {
-              name: 'Mike Johnson Family',
-              total: 92,
-              upfront: 50,
-              recurring: 42
-            },
-            {
-              name: 'Emma & David Wedding',
-              total: 86,
-              upfront: 50,
-              recurring: 36
-            },
-            {
-              name: 'Lisa Martinez Family',
-              total: 74,
-              upfront: 50,
-              recurring: 24
-            },
-            {
-              name: 'Robert Chen Portrait',
-              total: 62,
-              upfront: 50,
-              recurring: 12
-            }
-          ]
-        })
+      setLoading(true)
+      setError(null)
+
+      // Fetch real commission data from API
+      const response = await fetch('/api/photographer/commissions?limit=100')
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch commission data')
+      }
+
+      const data = await response.json()
+
+      if (data.error) {
+        throw new Error(data.error)
+      }
+
+      const { commissions, totals } = data
+
+      // If no commissions exist, show empty state
+      if (!commissions || commissions.length === 0) {
+        setRevenueData(null)
         setLoading(false)
-      }, 1000)
-    } catch (error) {
-      console.error('Error fetching revenue data:', error)
+        return
+      }
+
+      // Map API response to page structure
+      const recentTransactions = commissions.slice(0, 10).map((c: any) => ({
+        id: c.id,
+        clientName: c.client_email || 'Unknown Client',
+        galleryName: c.gallery_name || 'Gallery',
+        amount: c.amount_dollars,
+        type: c.payment_type,
+        date: c.created_at,
+        status: c.status
+      }))
+
+      // Aggregate clients by email for top clients list
+      const clientTotals: Record<string, { upfront: number; recurring: number }> = {}
+      commissions.forEach((c: any) => {
+        const key = c.client_email || 'unknown'
+        if (!clientTotals[key]) {
+          clientTotals[key] = { upfront: 0, recurring: 0 }
+        }
+        if (c.payment_type === 'upfront') {
+          clientTotals[key].upfront += c.amount_dollars
+        } else {
+          clientTotals[key].recurring += c.amount_dollars
+        }
+      })
+
+      const topClients = Object.entries(clientTotals)
+        .map(([name, amounts]) => ({
+          name,
+          total: amounts.upfront + amounts.recurring,
+          upfront: amounts.upfront,
+          recurring: amounts.recurring
+        }))
+        .sort((a, b) => b.total - a.total)
+        .slice(0, 5)
+
+      // Count unique clients
+      const uniqueClients = new Set(commissions.map((c: any) => c.client_email)).size
+
+      // Count monthly recurring clients (clients with monthly payments)
+      const monthlyClients = new Set(
+        commissions
+          .filter((c: any) => c.payment_type === 'monthly')
+          .map((c: any) => c.client_email)
+      ).size
+
+      // Calculate projections based on current monthly recurring
+      const projectedMonthlyRecurring = totals.monthlyEarnings > 0
+        ? (totals.monthlyEarnings / Math.max(1, commissions.filter((c: any) => c.payment_type === 'monthly').length)) * monthlyClients
+        : 0
+
+      setRevenueData({
+        summary: {
+          totalUpfrontCommission: totals.upfrontEarnings,
+          totalMonthlyCommission: totals.monthlyEarnings,
+          totalEarnings: totals.totalEarnings,
+          transactionCount: totals.transactionCount,
+          activeClientsCount: uniqueClients,
+          monthlyRecurringClientsCount: monthlyClients,
+          projectedMonthlyRecurring: projectedMonthlyRecurring,
+          projectedYearlyRecurring: projectedMonthlyRecurring * 12,
+          projectedYearlyTotal: totals.upfrontEarnings + (projectedMonthlyRecurring * 12)
+        },
+        recentTransactions,
+        topClients
+      })
+
+      setLoading(false)
+    } catch (err) {
+      console.error('Error fetching revenue data:', err)
+      setError(err instanceof Error ? err.message : 'Failed to load revenue data')
       setLoading(false)
     }
   }
@@ -206,23 +206,26 @@ export default function RevenuePage() {
     // Create CSV content
     let csv = 'Revenue Summary\n\n'
     csv += 'Metric,Amount\n'
-    csv += `Total Upfront Commission,${revenueData.summary.totalUpfrontCommission}\n`
-    csv += `Total Monthly Commission,${revenueData.summary.totalMonthlyCommission}\n`
-    csv += `Active Clients,${revenueData.summary.activeClientsCount}\n`
-    csv += `Monthly Recurring Clients,${revenueData.summary.monthlyRecurringClientsCount}\n`
-    csv += `Projected Monthly Recurring,${revenueData.summary.projectedMonthlyRecurring}\n`
-    csv += `Projected Yearly Total,${revenueData.summary.projectedYearlyTotal}\n\n`
+    csv += `Total Earnings,$${revenueData.summary.totalEarnings.toFixed(2)}\n`
+    csv += `Upfront Commissions,$${revenueData.summary.totalUpfrontCommission.toFixed(2)}\n`
+    csv += `Monthly Commissions,$${revenueData.summary.totalMonthlyCommission.toFixed(2)}\n`
+    csv += `Total Transactions,${revenueData.summary.transactionCount}\n`
+    csv += `Unique Clients,${revenueData.summary.activeClientsCount}\n`
+    csv += `Recurring Clients,${revenueData.summary.monthlyRecurringClientsCount}\n`
+    csv += `Projected Monthly Recurring,$${revenueData.summary.projectedMonthlyRecurring.toFixed(2)}\n`
+    csv += `Projected Yearly Total,$${revenueData.summary.projectedYearlyTotal.toFixed(2)}\n\n`
 
     csv += 'Recent Transactions\n'
-    csv += 'Date,Client,Type,Amount,Status\n'
+    csv += 'Date,Client,Gallery,Type,Amount,Status\n'
     revenueData.recentTransactions.forEach(transaction => {
-      csv += `${transaction.date},${transaction.clientName},${transaction.type},${transaction.amount},${transaction.status}\n`
+      const date = new Date(transaction.date).toLocaleDateString()
+      csv += `${date},"${transaction.clientName}","${transaction.galleryName}",${transaction.type},$${transaction.amount.toFixed(2)},${transaction.status}\n`
     })
 
     csv += '\nTop Clients\n'
     csv += 'Client,Total,Upfront,Recurring\n'
     revenueData.topClients.forEach(client => {
-      csv += `${client.name},${client.total},${client.upfront},${client.recurring}\n`
+      csv += `"${client.name}",$${client.total.toFixed(2)},$${client.upfront.toFixed(2)},$${client.recurring.toFixed(2)}\n`
     })
 
     // Create blob and download
@@ -239,24 +242,41 @@ export default function RevenuePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-slate-600 dark:text-slate-300">Loading revenue data...</p>
+          <p className="text-neutral-300">Loading revenue data...</p>
         </div>
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md bg-neutral-800/50 border-white/10">
+          <CardContent className="p-8 text-center">
+            <AlertTriangle className="h-16 w-16 text-red-500 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold mb-2 text-neutral-100">Error Loading Data</h2>
+            <p className="text-neutral-400 mb-6">{error}</p>
+            <Button onClick={fetchRevenueData}>
+              Try Again
+            </Button>
+          </CardContent>
+        </Card>
       </div>
     )
   }
 
   if (!revenueData) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md">
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-4">
+        <Card className="w-full max-w-md bg-neutral-800/50 border-white/10">
           <CardContent className="p-8 text-center">
-            <AlertTriangle className="h-16 w-16 text-orange-500 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold mb-2">No Revenue Data</h2>
-            <p className="text-slate-600 dark:text-slate-300 mb-6">
-              No commission data available yet. Start inviting clients to begin earning.
+            <DollarSign className="h-16 w-16 text-neutral-600 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold mb-2 text-neutral-100">No Revenue Yet</h2>
+            <p className="text-neutral-400 mb-6">
+              Once clients pay for their galleries, your commission earnings will appear here.
             </p>
             <Button asChild>
               <Link href="/photographers/invite">
@@ -270,9 +290,9 @@ export default function RevenuePage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen bg-neutral-900">
       {/* Header */}
-      <header className="border-b bg-white dark:bg-slate-900">
+      <header className="border-b border-white/10 bg-neutral-800/50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Button asChild variant="ghost" size="sm">
@@ -284,7 +304,7 @@ export default function RevenuePage() {
             <Separator orientation="vertical" className="h-6" />
             <div className="flex items-center space-x-2">
               <DollarSign className="h-6 w-6 text-green-600" />
-              <span className="text-xl font-bold">Revenue Dashboard</span>
+              <span className="text-xl font-bold text-neutral-100">Revenue Dashboard</span>
             </div>
           </div>
           <div className="flex items-center space-x-2">
@@ -304,7 +324,7 @@ export default function RevenuePage() {
               <Download className="h-4 w-4 mr-2" />
               Export
             </Button>
-            <Badge variant="outline" className="bg-green-50 text-green-700 dark:bg-green-900 dark:text-green-200">
+            <Badge variant="outline" className="bg-green-50 text-green-700">
               Photographer
             </Badge>
           </div>
@@ -326,77 +346,77 @@ export default function RevenuePage() {
 
           {/* Summary Cards */}
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <Card>
+            <Card className="bg-neutral-800/50 border-white/10">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Total Upfront</p>
+                    <p className="text-sm font-medium text-neutral-400">Total Upfront</p>
                     <p className="text-2xl font-bold text-green-600">
                       {formatCurrency(revenueData.summary.totalUpfrontCommission)}
                     </p>
                   </div>
-                  <div className="h-12 w-12 bg-green-100 dark:bg-green-900/20 rounded-lg flex items-center justify-center">
+                  <div className="h-12 w-12 bg-green-900/20 rounded-lg flex items-center justify-center">
                     <DollarSign className="h-6 w-6 text-green-600" />
                   </div>
                 </div>
-                <p className="text-xs text-slate-500 mt-2">
+                <p className="text-xs text-neutral-400 mt-2">
                   $50 (6mo) or $100 (1yr) per client
                 </p>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-neutral-800/50 border-white/10">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Monthly Recurring</p>
+                    <p className="text-sm font-medium text-neutral-400">Monthly Recurring</p>
                     <p className="text-2xl font-bold text-blue-600">
                       {formatCurrency(revenueData.summary.projectedMonthlyRecurring)}
                     </p>
                   </div>
-                  <div className="h-12 w-12 bg-blue-100 dark:bg-blue-900/20 rounded-lg flex items-center justify-center">
+                  <div className="h-12 w-12 bg-blue-900/20 rounded-lg flex items-center justify-center">
                     <TrendingUp className="h-6 w-6 text-blue-600" />
                   </div>
                 </div>
-                <p className="text-xs text-slate-500 mt-2">
+                <p className="text-xs text-neutral-400 mt-2">
                   $4/month per active client
                 </p>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-neutral-800/50 border-white/10">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Active Clients</p>
+                    <p className="text-sm font-medium text-neutral-400">Active Clients</p>
                     <p className="text-2xl font-bold text-purple-600">
                       {revenueData.summary.activeClientsCount}
                     </p>
                   </div>
-                  <div className="h-12 w-12 bg-purple-100 dark:bg-purple-900/20 rounded-lg flex items-center justify-center">
+                  <div className="h-12 w-12 bg-purple-900/20 rounded-lg flex items-center justify-center">
                     <Users className="h-6 w-6 text-purple-600" />
                   </div>
                 </div>
-                <p className="text-xs text-slate-500 mt-2">
+                <p className="text-xs text-neutral-400 mt-2">
                   {revenueData.summary.monthlyRecurringClientsCount} paying monthly
                 </p>
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="bg-neutral-800/50 border-white/10">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Projected Yearly</p>
+                    <p className="text-sm font-medium text-neutral-400">Projected Yearly</p>
                     <p className="text-2xl font-bold text-orange-600">
                       {formatCurrency(revenueData.summary.projectedYearlyTotal)}
                     </p>
                   </div>
-                  <div className="h-12 w-12 bg-orange-100 dark:bg-orange-900/20 rounded-lg flex items-center justify-center">
+                  <div className="h-12 w-12 bg-orange-900/20 rounded-lg flex items-center justify-center">
                     <Target className="h-6 w-6 text-orange-600" />
                   </div>
                 </div>
-                <p className="text-xs text-slate-500 mt-2">
+                <p className="text-xs text-neutral-400 mt-2">
                   Upfront + recurring
                 </p>
               </CardContent>
@@ -405,25 +425,25 @@ export default function RevenuePage() {
 
           <div className="grid lg:grid-cols-2 gap-8">
             {/* Revenue Breakdown */}
-            <Card>
+            <Card className="bg-neutral-800/50 border-white/10">
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
+                <CardTitle className="flex items-center space-x-2 text-neutral-100">
                   <PieChart className="h-5 w-5 text-green-600" />
                   <span>Revenue Breakdown</span>
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-neutral-400">
                   Upfront vs recurring commission earnings
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
+                  <div className="flex items-center justify-between p-4 bg-green-900/20 rounded-lg">
                     <div className="flex items-center space-x-3">
                       <div className="h-4 w-4 bg-green-500 rounded-full"></div>
                       <div>
-                        <p className="font-medium">Upfront Commissions</p>
-                        <p className="text-sm text-slate-600 dark:text-slate-400">
-                          $50 (6 months) or $100 (1 year)
+                        <p className="font-medium text-neutral-100">Upfront Commissions</p>
+                        <p className="text-sm text-neutral-400">
+                          Year 1 client payments
                         </p>
                       </div>
                     </div>
@@ -431,19 +451,19 @@ export default function RevenuePage() {
                       <p className="font-bold text-green-600">
                         {formatCurrency(revenueData.summary.totalUpfrontCommission)}
                       </p>
-                      <p className="text-sm text-slate-500">
-                        {Math.round(revenueData.summary.totalUpfrontCommission / 50)} clients
+                      <p className="text-sm text-neutral-400">
+                        {revenueData.summary.activeClientsCount} client{revenueData.summary.activeClientsCount !== 1 ? 's' : ''}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                  <div className="flex items-center justify-between p-4 bg-blue-900/20 rounded-lg">
                     <div className="flex items-center space-x-3">
                       <div className="h-4 w-4 bg-blue-500 rounded-full"></div>
                       <div>
-                        <p className="font-medium">Recurring Commissions</p>
-                        <p className="text-sm text-slate-600 dark:text-slate-400">
-                          $4/month per active client
+                        <p className="font-medium text-neutral-100">Recurring Commissions</p>
+                        <p className="text-sm text-neutral-400">
+                          Year 2+ monthly payments
                         </p>
                       </div>
                     </div>
@@ -451,24 +471,24 @@ export default function RevenuePage() {
                       <p className="font-bold text-blue-600">
                         {formatCurrency(revenueData.summary.totalMonthlyCommission)}
                       </p>
-                      <p className="text-sm text-slate-500">
-                        {revenueData.summary.monthlyRecurringClientsCount} clients
+                      <p className="text-sm text-neutral-400">
+                        {revenueData.summary.monthlyRecurringClientsCount} recurring
                       </p>
                     </div>
                   </div>
 
                   <Separator />
 
-                  <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
+                  <div className="flex items-center justify-between p-4 bg-neutral-800 rounded-lg">
                     <div>
-                      <p className="font-medium">Total Commission Earned</p>
-                      <p className="text-sm text-slate-600 dark:text-slate-400">
-                        All time earnings
+                      <p className="font-medium text-neutral-100">Total Earnings</p>
+                      <p className="text-sm text-neutral-400">
+                        {revenueData.summary.transactionCount} transaction{revenueData.summary.transactionCount !== 1 ? 's' : ''}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-2xl font-bold text-slate-900 dark:text-slate-100">
-                        {formatCurrency(revenueData.summary.totalUpfrontCommission + revenueData.summary.totalMonthlyCommission)}
+                      <p className="text-2xl font-bold text-neutral-100">
+                        {formatCurrency(revenueData.summary.totalEarnings)}
                       </p>
                     </div>
                   </div>
@@ -477,27 +497,27 @@ export default function RevenuePage() {
             </Card>
 
             {/* Top Earning Clients */}
-            <Card>
+            <Card className="bg-neutral-800/50 border-white/10">
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2">
+                <CardTitle className="flex items-center space-x-2 text-neutral-100">
                   <BarChart3 className="h-5 w-5 text-purple-600" />
                   <span>Top Earning Clients</span>
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-neutral-400">
                   Your highest revenue generating clients
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {revenueData.topClients.map((client, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 border rounded-lg">
+                    <div key={index} className="flex items-center justify-between p-3 border border-white/10 rounded-lg">
                       <div className="flex items-center space-x-3">
                         <div className="h-8 w-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
                           {index + 1}
                         </div>
                         <div>
-                          <p className="font-medium">{client.name}</p>
-                          <p className="text-sm text-slate-600 dark:text-slate-400">
+                          <p className="font-medium text-neutral-100">{client.name}</p>
+                          <p className="text-sm text-neutral-400">
                             {formatCurrency(client.upfront)} upfront + {formatCurrency(client.recurring)} recurring
                           </p>
                         </div>
@@ -527,25 +547,25 @@ export default function RevenuePage() {
           </div>
 
           {/* Recent Transactions */}
-          <Card className="mt-8">
+          <Card className="mt-8 bg-neutral-800/50 border-white/10">
             <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
+              <CardTitle className="flex items-center space-x-2 text-neutral-100">
                 <Clock className="h-5 w-5 text-blue-600" />
                 <span>Recent Transactions</span>
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-neutral-400">
                 Your latest commission payments
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {revenueData.recentTransactions.map((transaction) => (
-                  <div key={transaction.id} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div key={transaction.id} className="flex items-center justify-between p-4 border border-white/10 rounded-lg">
                     <div className="flex items-center space-x-4">
                       <div className={`h-10 w-10 rounded-full flex items-center justify-center ${
-                        transaction.type === 'upfront' 
-                          ? 'bg-green-100 dark:bg-green-900/20' 
-                          : 'bg-blue-100 dark:bg-blue-900/20'
+                        transaction.type === 'upfront'
+                          ? 'bg-green-900/20'
+                          : 'bg-blue-900/20'
                       }`}>
                         {transaction.type === 'upfront' ? (
                           <DollarSign className="h-5 w-5 text-green-600" />
@@ -554,18 +574,18 @@ export default function RevenuePage() {
                         )}
                       </div>
                       <div>
-                        <p className="font-medium">{transaction.clientName}</p>
-                        <p className="text-sm text-slate-600 dark:text-slate-400">
+                        <p className="font-medium text-neutral-100">{transaction.clientName}</p>
+                        <p className="text-sm text-neutral-400">
                           {formatDate(transaction.date)}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-3">
                       <div className="text-right">
-                        <p className="font-bold text-slate-900 dark:text-slate-100">
+                        <p className="font-bold text-neutral-100">
                           {formatCurrency(transaction.amount)}
                         </p>
-                        <Badge 
+                        <Badge
                           variant={transaction.type === 'upfront' ? 'default' : 'outline'}
                           className="text-xs"
                         >

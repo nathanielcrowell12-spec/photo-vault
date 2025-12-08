@@ -177,7 +177,12 @@ export default function SneakPeekSelectPage() {
 
       if (!response.ok) {
         const data = await response.json()
-        console.warn('Email send warning:', data.error)
+        if (data.code === 'PHOTOGRAPHER_STRIPE_MISSING') {
+          // Show error but don't block gallery from being marked ready
+          alert('Warning: Gallery marked as ready, but email not sent. You must complete your payment setup (Stripe Connect) before sending gallery notifications to clients. Please connect your Stripe account in Settings.')
+        } else {
+          console.warn('Email send warning:', data.error)
+        }
         // Continue anyway - gallery is marked ready
       }
 
@@ -204,7 +209,7 @@ export default function SneakPeekSelectPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-amber-400" />
       </div>
     )
@@ -212,7 +217,7 @@ export default function SneakPeekSelectPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
         <Card className="bg-slate-800/50 border-slate-700 max-w-md">
           <CardContent className="pt-6 text-center">
             <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -230,7 +235,7 @@ export default function SneakPeekSelectPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <div className="min-h-screen bg-neutral-900">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">

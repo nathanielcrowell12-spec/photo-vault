@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { createServerSupabaseClient } from '@/lib/supabase'
+import { createServiceRoleClient } from '@/lib/supabase-server'
 
 // Force dynamic rendering to prevent module evaluation during build
 export const dynamic = 'force-dynamic'
@@ -64,8 +65,8 @@ export async function POST(request: NextRequest) {
 
     console.log(`[Webhook] Received event: ${event.type} (${event.id})`)
 
-    // 3. Initialize Supabase client with service role (elevated permissions)
-    const supabase = await createServerSupabaseClient()
+    // 3. Initialize Supabase client with service role (elevated permissions for admin operations)
+    const supabase = createServiceRoleClient()
 
     // 4. Check idempotency - prevent duplicate processing
     const { data: alreadyProcessed } = await supabase
@@ -154,7 +155,7 @@ export async function POST(request: NextRequest) {
 
     // Log error to database
     try {
-      const supabase = await createServerSupabaseClient()
+      const supabase = createServiceRoleClient()
       await supabase.from('webhook_logs').insert({
         event_type: 'error',
         status: 'failed',
@@ -185,8 +186,287 @@ async function handleCheckoutCompleted(
   console.log('[Webhook] Processing checkout.session.completed', session.id)
 
   // Extract metadata
-  const { user_id, tokens, purchase_type } = session.metadata || {}
+  const metadata = session.metadata || {}
+  const { user_id, tokens, purchase_type, isPublicCheckout, type, galleryId, photographerId, clientId, clientEmail, clientName, galleryName, totalAmount, shootFee, storageFee, shootFeeCents, storageFeeCents, photovaultRevenueCents, photographerPayoutCents } = metadata
 
+  // Handle gallery checkout (both public and authenticated)
+  // Public checkout uses: isPublicCheckout === 'true'
+  // Authenticated checkout uses: type === 'gallery_payment'
+  if ((isPublicCheckout === 'true' || type === 'gallery_payment') && galleryId) {
+    const checkoutType = isPublicCheckout === 'true' ? 'public' : 'authenticated'
+    console.log(`[Webhook] Processing ${checkoutType} gallery checkout for gallery:`, galleryId)
+
+    // Get client email from clients table (photographer already has it)
+    let customerEmail: string = ''
+    let customerName: string = ''
+    
+    if (clientId) {
+      const { data: client } = await supabase
+        .from('clients')
+        .select('email, name')
+        .eq('id', clientId)
+        .single()
+      
+      if (client) {
+        customerEmail = client.email
+        customerName = client.name
+      }
+    }
+
+    // Fallback to Stripe session email if client record doesn't have it
+    if (!customerEmail) {
+      customerEmail = session.customer_details?.email || clientEmail || ''
+      customerName = session.customer_details?.name || clientName || customerName
+    }
+
+    if (!customerEmail) {
+      console.error('[Webhook] No customer email found in checkout')
+      throw new Error('No customer email found in checkout')
+    }
+
+    const stripeCustomerId = session.customer as string
+
+    // Check if a user with this email already exists (check auth.users, not user_profiles)
+    // user_profiles doesn't have an email column - email is in auth.users
+    let userId: string | null = null
+
+    // First try to find existing user by email using getUserByEmail (newer Supabase method)
+    // If that doesn't work, try listUsers and search manually
+    try {
+      const { data: existingUser, error: lookupError } = await supabase.auth.admin.getUserByEmail(
+        customerEmail.toLowerCase()
+      )
+
+      if (!lookupError && existingUser?.user) {
+        userId = existingUser.user.id
+        console.log('[Webhook] Found existing user by email:', userId)
+      }
+    } catch (lookupErr) {
+      // getUserByEmail might not exist in older versions, fall through to creation
+      console.log('[Webhook] getUserByEmail not available or failed, will try to create user')
+    }
+    let tempPassword: string | null = null
+
+    // If no user exists and this is a public checkout, create account with temp password
+    if (!userId && isPublicCheckout === 'true') {
+      console.log('[Webhook] Creating new user account for public checkout:', customerEmail)
+
+      // Generate secure random password (16 chars: uppercase, lowercase, numbers)
+      const crypto = await import('crypto')
+      const randomBytes = crypto.randomBytes(12)
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789'
+      tempPassword = Array.from(randomBytes)
+        .map(byte => chars[byte % chars.length])
+        .join('')
+
+      // Create user with Supabase Admin API
+      const { data: newUser, error: createError } = await supabase.auth.admin.createUser({
+        email: customerEmail.toLowerCase(),
+        password: tempPassword,
+        email_confirm: true, // Auto-confirm email
+        user_metadata: {
+          full_name: customerName || '',
+          user_type: 'client'
+        }
+      })
+
+      if (createError) {
+        // If user already exists, fetch the existing user instead of failing
+        if (createError.code === 'email_exists' || createError.message?.includes('already been registered')) {
+          console.log('[Webhook] User already exists, fetching existing user:', customerEmail)
+
+          // List all users and find the matching one (workaround for missing getUserByEmail)
+          const { data: allUsers } = await supabase.auth.admin.listUsers({ perPage: 1000 })
+          const existingUser = allUsers?.users?.find((u: { email?: string; id: string }) => u.email?.toLowerCase() === customerEmail.toLowerCase())
+
+          if (existingUser) {
+            userId = existingUser.id
+            tempPassword = null // Don't send temp password for existing users
+            console.log('[Webhook] Found existing user:', userId)
+          } else {
+            console.error('[Webhook] Could not find existing user despite email_exists error')
+            throw new Error(`User lookup failed: ${createError.message}`)
+          }
+        } else {
+          console.error('[Webhook] Error creating user:', createError)
+          throw new Error(`Failed to create user account: ${createError.message}`)
+        }
+      } else if (!newUser?.user) {
+        throw new Error('User creation succeeded but no user returned')
+      } else {
+        userId = newUser.user.id
+        console.log('[Webhook] Created new user account:', userId)
+      }
+
+      // Create user_profiles record (user_profiles doesn't have email column)
+      const { error: profileError } = await supabase
+        .from('user_profiles')
+        .insert({
+          id: userId,
+          full_name: customerName || '',
+          user_type: 'client',
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        })
+
+      if (profileError) {
+        console.error('[Webhook] Error creating user profile:', profileError)
+        // Don't fail - profile might already exist or be created by trigger
+      }
+    }
+
+    // Update gallery payment status
+    const { error: galleryError } = await supabase
+      .from('photo_galleries')
+      .update({
+        payment_status: 'paid',
+        paid_at: new Date().toISOString(),
+        stripe_payment_intent_id: session.payment_intent as string,
+      })
+      .eq('id', galleryId)
+
+    if (galleryError) {
+      console.error('[Webhook] Error updating gallery:', galleryError)
+    }
+
+    // Update client record to link user (happens after user creation)
+    if (clientId && userId) {
+      const { error: clientUpdateError } = await supabase
+        .from('clients')
+        .update({
+          user_id: userId,
+        })
+        .eq('id', clientId)
+
+      if (clientUpdateError) {
+        console.error('[Webhook] Error linking user to client:', clientUpdateError)
+        // Don't fail webhook - user account is created, just not linked
+      } else {
+        console.log('[Webhook] Successfully linked user', userId, 'to client', clientId)
+      }
+    } else if (clientId && !userId) {
+      console.warn('[Webhook] Cannot link client - no user ID available')
+    }
+
+    // Record the commission for the photographer
+    // With DESTINATION CHARGES, money is ALREADY transferred to photographer!
+    // Commission structure for upfront payments:
+    // - Photographer receives: total - application_fee (shoot_fee + 50% of storage_fee)
+    // - PhotoVault receives: application_fee (50% of storage_fee)
+    // - Stripe fees are deducted from photographer's share automatically
+    
+    // Handle both metadata formats:
+    // - Public checkout: shootFee, storageFee, photovaultFee
+    // - Authenticated checkout: shootFeeCents, storageFeeCents, photovaultRevenueCents, photographerPayoutCents
+    const amountPaidCents = session.amount_total || parseInt(totalAmount || '0')
+    
+    let shootFeeCents: number
+    let storageFeeCents: number
+    let photovaultFeeCents: number
+    let photographerGrossCents: number
+    
+    if (type === 'gallery_payment' && metadata.shootFeeCents) {
+      // Authenticated checkout format (from gallery-checkout endpoint)
+      shootFeeCents = parseInt(metadata.shootFeeCents.toString() || '0')
+      storageFeeCents = parseInt(metadata.storageFeeCents.toString() || '0')
+      photovaultFeeCents = parseInt(metadata.photovaultRevenueCents?.toString() || '0')
+      photographerGrossCents = parseInt(metadata.photographerPayoutCents?.toString() || '0')
+    } else {
+      // Public checkout format (legacy - for backwards compatibility)
+      shootFeeCents = parseInt(shootFee || '0')
+      storageFeeCents = parseInt(storageFee || totalAmount || '0')
+      photovaultFeeCents = parseInt(session.metadata?.photovaultFee || '0') || Math.round(storageFeeCents * 0.5)
+      photographerGrossCents = amountPaidCents - photovaultFeeCents
+    }
+
+    // Get the Stripe transfer ID from the payment intent for reconciliation
+    // For destination charges, the transfer is created automatically and linked to the charge
+    let stripeTransferId: string | null = null
+    try {
+      const stripe = getStripeClient()
+      if (session.payment_intent) {
+        const paymentIntent = await stripe.paymentIntents.retrieve(
+          session.payment_intent as string,
+          { expand: ['latest_charge'] }
+        )
+        
+        // For destination charges, the transfer is on the charge
+        const charge = paymentIntent.latest_charge
+        if (charge && typeof charge !== 'string') {
+          // Get transfer from charge.transfer (available on destination charges)
+          if (charge.transfer) {
+            stripeTransferId = typeof charge.transfer === 'string' ? charge.transfer : charge.transfer.id
+          }
+          // Note: transfers.list() doesn't support source_transaction filter
+          // For destination charges, the transfer should always be on the charge object
+        }
+      }
+    } catch (err) {
+      console.warn('[Webhook] Could not retrieve transfer ID:', err)
+      // Don't fail the webhook if we can't get transfer ID - it's not critical
+      // The transfer ID can be updated later if needed
+    }
+
+    console.log('[Webhook] Commission breakdown (DESTINATION CHARGE - already paid):', {
+      totalPaid: amountPaidCents,
+      shootFee: shootFeeCents,
+      storageFee: storageFeeCents,
+      photovaultFee: photovaultFeeCents,
+      photographerGross: photographerGrossCents,
+      stripeTransferId,
+    })
+
+    await supabase.from('commissions').insert({
+      photographer_id: photographerId,
+      gallery_id: galleryId,
+      client_email: customerEmail,
+      amount_cents: photographerGrossCents, // What photographer received (before Stripe fees)
+      total_paid_cents: amountPaidCents,
+      shoot_fee_cents: shootFeeCents,
+      storage_fee_cents: storageFeeCents,
+      photovault_commission_cents: photovaultFeeCents,
+      payment_type: 'upfront', // Year 1 upfront payment
+      stripe_payment_intent_id: session.payment_intent as string,
+      stripe_transfer_id: stripeTransferId, // Transfer already happened via destination charge
+      status: 'paid', // ALREADY PAID - Stripe transferred money via destination charge
+      paid_at: new Date().toISOString(), // Paid NOW
+      created_at: new Date().toISOString(),
+    }).then(({ error }: { error: any }) => {
+      if (error) console.warn('[Webhook] Commission insert error (may be duplicate):', error.message)
+    })
+
+    // Send welcome email with temp password if account was just created
+    if (tempPassword && userId) {
+      try {
+        const { EmailService } = await import('@/lib/email/email-service')
+        const { data: galleryData } = await supabase
+          .from('photo_galleries')
+          .select('gallery_name')
+          .eq('id', galleryId)
+          .single()
+
+        await EmailService.sendWelcomeEmailWithPassword({
+          customerName: customerName || 'Valued Customer',
+          customerEmail: customerEmail,
+          tempPassword: tempPassword,
+          galleryName: galleryData?.gallery_name || 'your gallery',
+          galleryUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/gallery/${galleryId}`,
+          loginUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/login`
+        })
+
+        console.log(`[Webhook] Sent welcome email with temp password to ${customerEmail}`)
+      } catch (emailError) {
+        console.error('[Webhook] Error sending welcome email:', emailError)
+        // Don't fail webhook if email fails - payment is already processed
+      }
+    }
+
+    console.log(`[Webhook] ${checkoutType === 'public' ? 'Public' : 'Authenticated'} checkout complete for gallery ${galleryId}, customer ${customerEmail}`)
+
+    return `${checkoutType === 'public' ? 'Public' : 'Authenticated'} gallery checkout completed for gallery ${galleryId}, customer ${customerEmail}`
+  }
+
+  // Original logic for authenticated checkouts
   if (!user_id) {
     throw new Error('Missing user_id in checkout session metadata')
   }
@@ -233,8 +513,111 @@ async function handleCheckoutCompleted(
   } else if (purchase_type === 'subscription') {
     // Subscription created via checkout - handled by subscription.created event
     return `Subscription checkout completed for user ${user_id}`
+  } else if (type === 'family_takeover') {
+    // Family account takeover - secondary taking over billing
+    console.log(`[Webhook] Processing family takeover for account: ${metadata.account_id}`)
+
+    const { completeTakeover } = await import('@/lib/server/family-takeover-service')
+
+    await completeTakeover(supabase, {
+      account_id: metadata.account_id,
+      secondary_id: metadata.secondary_id,
+      takeover_type: metadata.takeover_type as 'full_primary' | 'billing_only',
+      reason: metadata.reason,
+      reason_text: metadata.reason_text,
+      new_payer_user_id: metadata.new_payer_user_id,
+      previous_primary_id: metadata.previous_primary_id,
+    }, session.subscription as string)
+
+    return `Family takeover completed for account ${metadata.account_id} by secondary ${metadata.secondary_id}`
+  } else if (type === 'reactivation') {
+    // Reactivation fee payment - restore access for 30 days
+    const subscriptionId = metadata.stripe_subscription_id
+    const galleryId = metadata.gallery_id
+
+    if (!subscriptionId) {
+      throw new Error('Missing subscription_id in reactivation checkout metadata')
+    }
+
+    console.log(`[Webhook] Processing reactivation payment for subscription ${subscriptionId}`)
+
+    // Calculate 30-day access period
+    const now = new Date()
+    const accessEndDate = new Date(now)
+    accessEndDate.setDate(accessEndDate.getDate() + 30)
+
+    // Restore access and set 30-day window
+    const { error: updateError } = await supabase
+      .from('subscriptions')
+      .update({
+        status: 'active',
+        access_suspended: false,
+        access_suspended_at: null,
+        payment_failure_count: 0,
+        last_payment_failure_at: null,
+        // Set period for 30-day decision window
+        current_period_start: now.toISOString(),
+        current_period_end: accessEndDate.toISOString(),
+        updated_at: now.toISOString(),
+      })
+      .eq('stripe_subscription_id', subscriptionId)
+
+    if (updateError) {
+      console.error('[Webhook] Error restoring access:', updateError)
+      throw updateError
+    }
+
+    // Record the reactivation payment
+    await supabase.from('payment_history').insert({
+      stripe_invoice_id: session.payment_intent as string,
+      stripe_subscription_id: subscriptionId,
+      amount_paid_cents: session.amount_total || 2000,
+      currency: session.currency || 'usd',
+      status: 'succeeded',
+      paid_at: now.toISOString(),
+      created_at: now.toISOString()
+    })
+
+    // Send reactivation confirmation email
+    try {
+      const { data: userData } = await supabase.auth.admin.getUserById(user_id)
+      const userEmail = userData?.user?.email
+
+      const { data: userProfile } = await supabase
+        .from('user_profiles')
+        .select('full_name')
+        .eq('id', user_id)
+        .single()
+
+      const { data: galleryData } = await supabase
+        .from('photo_galleries')
+        .select('gallery_name')
+        .eq('id', galleryId)
+        .single()
+
+      if (userEmail) {
+        const { EmailService } = await import('@/lib/email/email-service')
+
+        await EmailService.sendGalleryAccessRestoredEmail({
+          customerName: userProfile?.full_name || 'Valued Customer',
+          customerEmail: userEmail,
+          galleryName: galleryData?.gallery_name || 'your gallery',
+          photographerName: 'PhotoVault', // Direct reactivation
+          accessLink: `${process.env.NEXT_PUBLIC_SITE_URL}/gallery/${galleryId}`,
+        })
+
+        console.log(`[Webhook] Sent reactivation confirmation email to ${userEmail}`)
+      }
+    } catch (emailError) {
+      console.error('[Webhook] Error sending reactivation email:', emailError)
+      // Don't fail webhook for email issues
+    }
+
+    console.log(`[Webhook] Reactivation completed for subscription ${subscriptionId}, 30-day access until ${accessEndDate.toISOString()}`)
+
+    return `Reactivation completed for subscription ${subscriptionId}, user ${user_id}, 30-day access window`
   } else {
-    return `Checkout completed for user ${user_id}, type: ${purchase_type || 'unknown'}`
+    return `Checkout completed for user ${user_id}, type: ${purchase_type || type || 'unknown'}`
   }
 }
 
@@ -291,6 +674,7 @@ async function handleSubscriptionCreated(
 /**
  * Handle successful subscription payment
  * NOW CREATES COMMISSION RECORDS
+ * Also restores access if it was previously suspended due to failed payments
  */
 async function handlePaymentSucceeded(
   invoice: Stripe.Invoice,
@@ -309,18 +693,83 @@ async function handlePaymentSucceeded(
     return `Invoice ${invoice.id} paid (not subscription-related)`
   }
 
-  // Update subscription status and period
+  // Check if access was previously suspended (for restoration email)
+  const { data: previousState } = await supabase
+    .from('subscriptions')
+    .select('access_suspended, user_id, gallery_id')
+    .eq('stripe_subscription_id', subscriptionId)
+    .single()
+
+  const wasAccessSuspended = previousState?.access_suspended === true
+
+  // Update subscription status, period, and RESET failure tracking
   const { error } = await supabase
     .from('subscriptions')
     .update({
       status: 'active',
       current_period_start: new Date(invoice.period_start * 1000).toISOString(),
       current_period_end: new Date(invoice.period_end * 1000).toISOString(),
+      // Reset payment failure tracking
+      payment_failure_count: 0,
+      last_payment_failure_at: null,
+      access_suspended: false,
+      access_suspended_at: null,
       updated_at: new Date().toISOString()
     })
     .eq('stripe_subscription_id', subscriptionId)
 
   if (error) throw error
+
+  // If access was suspended, send restoration email
+  if (wasAccessSuspended && previousState?.user_id) {
+    console.log(`[Webhook] Access restored for subscription ${subscriptionId}`)
+    
+    try {
+      // Get user details for email
+      const { data: userData } = await supabase.auth.admin.getUserById(previousState.user_id)
+      const userEmail = userData?.user?.email
+
+      const { data: userProfile } = await supabase
+        .from('user_profiles')
+        .select('full_name')
+        .eq('id', previousState.user_id)
+        .single()
+
+      const { data: galleryData } = await supabase
+        .from('photo_galleries')
+        .select('gallery_name, photographer_id')
+        .eq('id', previousState.gallery_id)
+        .single()
+
+      // Get photographer name
+      let photographerName = 'Your Photographer'
+      if (galleryData?.photographer_id) {
+        const { data: photographerProfile } = await supabase
+          .from('user_profiles')
+          .select('full_name, business_name')
+          .eq('id', galleryData.photographer_id)
+          .single()
+        photographerName = photographerProfile?.business_name || photographerProfile?.full_name || 'Your Photographer'
+      }
+
+      if (userEmail) {
+        const { EmailService } = await import('@/lib/email/email-service')
+
+        await EmailService.sendGalleryAccessRestoredEmail({
+          customerName: userProfile?.full_name || 'Valued Customer',
+          customerEmail: userEmail,
+          galleryName: galleryData?.gallery_name || 'your gallery',
+          photographerName: photographerName,
+          accessLink: `${process.env.NEXT_PUBLIC_SITE_URL}/gallery/${previousState.gallery_id}`,
+        })
+
+        console.log(`[Webhook] Sent access restored email to ${userEmail}`)
+      }
+    } catch (emailError) {
+      console.error('[Webhook] Error sending access restored email:', emailError)
+      // Don't fail webhook if email fails
+    }
+  }
 
   // Record payment in payment history
   const { data: paymentRecord } = await supabase.from('payment_history').insert({
@@ -333,36 +782,65 @@ async function handlePaymentSucceeded(
     created_at: new Date().toISOString()
   }).select().single()
 
-  // **NEW: Create commission record**
-  // Get client and photographer info from subscription metadata
+  // Record commission for subscription payment
+  // With DESTINATION CHARGES on subscriptions, Stripe handles the split automatically
+  // This record is for reporting/dashboard purposes only
   const stripe = getStripeClient()
   const subscription = await stripe.subscriptions.retrieve(subscriptionId)
   const photographerId = subscription.metadata?.photographer_id
   const clientId = subscription.metadata?.client_id
   const galleryId = subscription.metadata?.gallery_id
 
-  if (photographerId && clientId && paymentRecord) {
-    const { createCommission } = await import('@/lib/server/commission-service')
+  if (photographerId && paymentRecord) {
+    // For subscriptions with destination charges, the split is automatic
+    // We just record it for dashboard/reporting
+    const amountPaidCents = invoice.amount_paid
+    // 50/50 split for monthly subscriptions
+    const photovaultFeeCents = Math.round(amountPaidCents * 0.5)
+    const photographerGrossCents = amountPaidCents - photovaultFeeCents
 
-    const commissionResult = await createCommission({
-      photographerId,
-      clientId,
-      clientPaymentId: paymentRecord.id,
-      paymentAmountCents: invoice.amount_paid,
-      paymentDate: new Date(invoice.status_transitions.paid_at! * 1000),
-      periodStart: new Date(invoice.period_start * 1000),
-      periodEnd: new Date(invoice.period_end * 1000),
-      commissionType: invoice.billing_reason === 'subscription_create' ? 'upfront' : 'recurring'
-    })
+    // Get transfer ID if available (for destination charge subscriptions)
+    let stripeTransferId: string | null = null
+    let paymentIntentId: string | null = null
+    try {
+      // Invoice may have charge and payment_intent as expandable fields
+      const invoiceAny = invoice as any
+      const chargeId = invoiceAny.charge
+      paymentIntentId = typeof invoiceAny.payment_intent === 'string'
+        ? invoiceAny.payment_intent
+        : invoiceAny.payment_intent?.id || null
 
-    if (!commissionResult.success) {
-      console.error('[Webhook] Failed to create commission:', commissionResult.error)
-      // Don't throw - payment still succeeded, commission can be created manually
-    } else {
-      console.log(`[Webhook] Created commission ${commissionResult.commissionId}`)
+      if (chargeId && typeof chargeId === 'string') {
+        const charge = await stripe.charges.retrieve(chargeId)
+        if (charge.transfer && typeof charge.transfer === 'string') {
+          stripeTransferId = charge.transfer
+        }
+      }
+    } catch (err) {
+      console.warn('[Webhook] Could not retrieve transfer ID for subscription:', err)
     }
+
+    await supabase.from('commissions').insert({
+      photographer_id: photographerId,
+      gallery_id: galleryId || null,
+      client_email: invoice.customer_email || '',
+      amount_cents: photographerGrossCents,
+      total_paid_cents: amountPaidCents,
+      shoot_fee_cents: 0, // Monthly subscription has no shoot fee
+      storage_fee_cents: amountPaidCents, // All of it is storage fee
+      photovault_commission_cents: photovaultFeeCents,
+      payment_type: invoice.billing_reason === 'subscription_create' ? 'upfront' : 'monthly',
+      stripe_payment_intent_id: paymentIntentId || invoice.id, // Fallback to invoice ID
+      stripe_transfer_id: stripeTransferId,
+      status: 'paid', // With destination charges, already paid
+      paid_at: new Date().toISOString(),
+      created_at: new Date().toISOString(),
+    }).then(({ error }: { error: any }) => {
+      if (error) console.warn('[Webhook] Commission insert error (may be duplicate):', error.message)
+      else console.log(`[Webhook] Recorded subscription commission for photographer ${photographerId}`)
+    })
   } else {
-    console.warn('[Webhook] Missing photographer_id or client_id in subscription metadata')
+    console.warn('[Webhook] Missing photographer_id in subscription metadata')
   }
 
   // Send payment successful email to client
@@ -420,6 +898,7 @@ async function handlePaymentSucceeded(
 
 /**
  * Handle failed subscription payment
+ * Tracks failure count and suspends access after 48 hours
  */
 async function handlePaymentFailed(
   invoice: Stripe.Invoice,
@@ -436,25 +915,65 @@ async function handlePaymentFailed(
     return `Invoice ${invoice.id} payment failed (not subscription-related)`
   }
 
-  // Mark subscription as past_due
+  const now = new Date()
+  // Grace period: 6 months (per payment-models.ts COMMISSION_RULES)
+  // During grace: client can resume $8/month anytime, no penalty
+  // After grace: gallery archived, requires $20 reactivation
+  const GRACE_PERIOD_MONTHS = 6
+  const GRACE_PERIOD_MS = GRACE_PERIOD_MONTHS * 30 * 24 * 60 * 60 * 1000 // ~6 months in ms
+
+  // Get current subscription state
+  const { data: currentSubscription } = await supabase
+    .from('subscriptions')
+    .select('payment_failure_count, last_payment_failure_at, access_suspended')
+    .eq('stripe_subscription_id', subscriptionId)
+    .single()
+
+  // Calculate new failure count and check if suspension is needed
+  const newFailureCount = (currentSubscription?.payment_failure_count || 0) + 1
+  const firstFailureTime = currentSubscription?.last_payment_failure_at 
+    ? new Date(currentSubscription.last_payment_failure_at)
+    : now
+  
+  // Check if 6 months have passed since first failure
+  const timeSinceFirstFailure = now.getTime() - firstFailureTime.getTime()
+  const shouldSuspend = timeSinceFirstFailure >= GRACE_PERIOD_MS && !currentSubscription?.access_suspended
+
+  // Build update object
+  const updateData: any = {
+    status: 'past_due',
+    payment_failure_count: newFailureCount,
+    updated_at: now.toISOString()
+  }
+
+  // Only set last_payment_failure_at on first failure (to track grace period start)
+  if (!currentSubscription?.last_payment_failure_at) {
+    updateData.last_payment_failure_at = now.toISOString()
+  }
+
+  // Suspend access if grace period exceeded (6 months)
+  if (shouldSuspend) {
+    updateData.access_suspended = true
+    updateData.access_suspended_at = now.toISOString()
+    console.log(`[Webhook] Suspending access for subscription ${subscriptionId} - 6 month grace period exceeded`)
+  }
+
+  // Update subscription
   const { error } = await supabase
     .from('subscriptions')
-    .update({
-      status: 'past_due',
-      updated_at: new Date().toISOString()
-    })
+    .update(updateData)
     .eq('stripe_subscription_id', subscriptionId)
 
   if (error) throw error
 
-  // Record failed payment
+  // Record failed payment in history
   await supabase.from('payment_history').insert({
     stripe_invoice_id: invoice.id,
     stripe_subscription_id: subscriptionId,
     amount_paid_cents: 0,
     currency: invoice.currency,
     status: 'failed',
-    created_at: new Date().toISOString()
+    created_at: now.toISOString()
   })
 
   // Get user and subscription details for notification
@@ -463,29 +982,41 @@ async function handlePaymentFailed(
     .select(`
       user_id,
       gallery_id,
-      users!inner(email, full_name),
-      photo_galleries!inner(name)
+      access_suspended,
+      user_profiles!subscriptions_user_id_fkey(full_name),
+      photo_galleries!subscriptions_gallery_id_fkey(gallery_name)
     `)
     .eq('stripe_subscription_id', subscriptionId)
     .single()
 
   if (subscription) {
-    // Send payment failed email
-    const { EmailService } = await import('@/lib/email/email-service')
+    // Get user email from auth
+    const { data: userData } = await supabase.auth.admin.getUserById(subscription.user_id)
+    const userEmail = userData?.user?.email
 
-    await EmailService.sendPaymentFailedEmail({
-      customerName: subscription.users.full_name || 'Valued Customer',
-      customerEmail: subscription.users.email,
-      amountDue: invoice.amount_due / 100,
-      galleryName: subscription.photo_galleries.name,
-      updatePaymentLink: `${process.env.NEXT_PUBLIC_SITE_URL}/client/billing`,
-      gracePeriodDays: 90,
-    })
+    if (userEmail) {
+      const { EmailService } = await import('@/lib/email/email-service')
 
-    console.log(`[Webhook] Sent payment failure email to ${subscription.users.email}`)
+      // Calculate time remaining in 6-month grace period
+      const msRemaining = Math.max(0, GRACE_PERIOD_MS - timeSinceFirstFailure)
+      const daysRemaining = Math.ceil(msRemaining / (24 * 60 * 60 * 1000))
+      // Show months for clarity (on first failure, show full 6 months)
+      const gracePeriodDays = daysRemaining || (GRACE_PERIOD_MONTHS * 30)
+
+      await EmailService.sendPaymentFailedEmail({
+        customerName: subscription.user_profiles?.full_name || 'Valued Customer',
+        customerEmail: userEmail,
+        amountDue: invoice.amount_due / 100,
+        galleryName: subscription.photo_galleries?.gallery_name || 'your gallery',
+        updatePaymentLink: `${process.env.NEXT_PUBLIC_SITE_URL}/client/billing`,
+        gracePeriodDays: gracePeriodDays,
+      })
+
+      console.log(`[Webhook] Sent payment failure email to ${userEmail} (${daysRemaining} days / ~${Math.ceil(daysRemaining / 30)} months remaining in grace period)`)
+    }
   }
 
-  return `Payment failed for subscription ${subscriptionId}`
+  return `Payment failed for subscription ${subscriptionId}, failure count: ${newFailureCount}, suspended: ${shouldSuspend}`
 }
 
 /**

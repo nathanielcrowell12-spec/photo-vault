@@ -138,7 +138,7 @@ export default function RevenuePage() {
 
   return (
     <AccessGuard requiredAccess="canAccessAdminDashboard">
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/40 to-slate-100">
+      <div className="min-h-screen bg-neutral-900">
         {/* Header */}
         <header className="border-b bg-white/95 backdrop-blur-sm">
           <div className="container mx-auto px-4 py-6 flex items-center justify-between">

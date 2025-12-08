@@ -302,24 +302,24 @@ export default function UploadPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen bg-neutral-900">
       {/* Header */}
-      <header className="border-b bg-white dark:bg-slate-900">
+      <header className="border-b border-white/5 bg-neutral-800/50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <Button asChild variant="ghost" size="sm">
+            <Button asChild variant="ghost" size="sm" className="text-neutral-400 hover:text-white">
               <Link href="/photographer/dashboard">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Dashboard
               </Link>
             </Button>
-            <Separator orientation="vertical" className="h-6" />
+            <Separator orientation="vertical" className="h-6 bg-white/10" />
             <div className="flex items-center space-x-2">
-              <Upload className="h-6 w-6 text-green-600" />
-              <span className="text-xl font-bold">Upload Photos</span>
+              <Upload className="h-6 w-6 text-amber-500" />
+              <span className="text-xl font-bold text-neutral-100">Upload Photos</span>
             </div>
           </div>
-          <Badge variant="outline" className="bg-green-50 text-green-700 dark:bg-green-900 dark:text-green-200">
+          <Badge variant="outline" className="bg-amber-500/10 text-amber-400 border-amber-500/20">
             Photographer
           </Badge>
         </div>
@@ -328,37 +328,37 @@ export default function UploadPage() {
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto space-y-6">
           {/* Upload Method Selection */}
-          <Card className="border-2 border-purple-200 bg-purple-50/50">
+          <Card className="border-2 border-purple-500/30 bg-purple-500/10">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Monitor className="h-5 w-5 text-purple-600" />
+              <CardTitle className="flex items-center gap-2 text-neutral-100">
+                <Monitor className="h-5 w-5 text-purple-400" />
                 Choose Your Upload Method
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-neutral-400">
                 Select between our desktop tool for bulk uploads or web-based upload for quick access
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid md:grid-cols-2 gap-4">
                 {/* Desktop Tool Option */}
-                <div className="border-2 border-purple-300 rounded-lg p-6 bg-white hover:shadow-md transition-shadow">
+                <div className="border-2 border-purple-500/30 rounded-lg p-6 bg-neutral-800/50 hover:bg-neutral-800/70 transition-colors">
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <Download className="w-6 h-6 text-purple-600" />
+                    <div className="w-12 h-12 bg-purple-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Download className="w-6 h-6 text-purple-400" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-semibold text-lg mb-2">PhotoVault Desktop Tool</h3>
-                      <p className="text-sm text-gray-600 mb-4">
+                      <h3 className="font-semibold text-lg mb-2 text-neutral-100">PhotoVault Desktop Tool</h3>
+                      <p className="text-sm text-neutral-400 mb-4">
                         Recommended for bulk uploads, faster processing, and advanced features
                       </p>
-                      <ul className="text-sm text-gray-600 mb-4 space-y-1">
+                      <ul className="text-sm text-neutral-400 mb-4 space-y-1">
                         <li>• Upload hundreds of photos at once</li>
                         <li>• Automatic image optimization</li>
                         <li>• Background uploads</li>
                         <li>• Offline queue support</li>
                       </ul>
                       <Button
-                        className="w-full"
+                        className="w-full bg-purple-500 hover:bg-purple-600 text-white"
                         variant="default"
                         disabled={!selectedClientId}
                         onClick={async () => {
@@ -403,31 +403,31 @@ export default function UploadPage() {
                         <Monitor className="h-4 w-4 mr-2" />
                         {selectedClientId ? 'Launch Desktop Tool' : 'Select Client First'}
                       </Button>
-                      <p className="text-xs text-gray-500 mt-2 text-center">
-                        Don't have it? <Link href="/download-desktop-app" className="text-purple-600 hover:underline">Download here</Link>
+                      <p className="text-xs text-neutral-500 mt-2 text-center">
+                        Don't have it? <Link href="/download-desktop-app" className="text-purple-400 hover:underline">Download here</Link>
                       </p>
                     </div>
                   </div>
                 </div>
 
                 {/* Web Upload Option */}
-                <div className="border-2 border-green-300 rounded-lg p-6 bg-white hover:shadow-md transition-shadow">
+                <div className="border-2 border-green-500/30 rounded-lg p-6 bg-neutral-800/50 hover:bg-neutral-800/70 transition-colors">
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                      <Upload className="w-6 h-6 text-green-600" />
+                    <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <Upload className="w-6 h-6 text-green-400" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="font-semibold text-lg mb-2">Web Upload</h3>
-                      <p className="text-sm text-gray-600 mb-4">
+                      <h3 className="font-semibold text-lg mb-2 text-neutral-100">Web Upload</h3>
+                      <p className="text-sm text-neutral-400 mb-4">
                         Quick and convenient upload directly from your browser
                       </p>
-                      <ul className="text-sm text-gray-600 mb-4 space-y-1">
+                      <ul className="text-sm text-neutral-400 mb-4 space-y-1">
                         <li>• No installation required</li>
                         <li>• Upload from any device</li>
                         <li>• Simple drag-and-drop</li>
                         <li>• Perfect for small batches</li>
                       </ul>
-                      <Button className="w-full" variant="outline">
+                      <Button className="w-full bg-green-500 hover:bg-green-600 text-white" variant="outline">
                         <Upload className="h-4 w-4 mr-2" />
                         Use Web Upload Below
                       </Button>
@@ -439,10 +439,10 @@ export default function UploadPage() {
           </Card>
 
           {/* Web Upload Form */}
-          <Card>
+          <Card className="bg-neutral-800/50 border-white/10">
             <CardHeader>
-              <CardTitle>Web Upload - Create New Gallery</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-neutral-100">Web Upload - Create New Gallery</CardTitle>
+              <CardDescription className="text-neutral-400">
                 Upload photos to create a new gallery for your client
               </CardDescription>
             </CardHeader>
@@ -450,13 +450,13 @@ export default function UploadPage() {
               <div className="space-y-6">
                 {/* Client Selection */}
                 <div>
-                  <Label htmlFor="client">Select Client *</Label>
+                  <Label htmlFor="client" className="text-neutral-300">Select Client *</Label>
                   {loadingClients ? (
-                    <p className="text-sm text-gray-500">Loading clients...</p>
+                    <p className="text-sm text-neutral-400">Loading clients...</p>
                   ) : clients.length === 0 ? (
-                    <div className="mt-2 p-4 border border-dashed rounded-md text-center">
-                      <p className="text-sm text-gray-600 mb-3">No clients yet</p>
-                      <Button size="sm" variant="outline" asChild>
+                    <div className="mt-2 p-4 border border-dashed border-white/10 rounded-md text-center">
+                      <p className="text-sm text-neutral-400 mb-3">No clients yet</p>
+                      <Button size="sm" variant="outline" asChild className="border-white/10 text-neutral-300 hover:bg-white/5">
                         <Link href="/photographer/clients">
                           <UserPlus className="h-4 w-4 mr-2" />
                           Add Your First Client
@@ -468,7 +468,7 @@ export default function UploadPage() {
                       id="client"
                       value={selectedClientId}
                       onChange={(e) => setSelectedClientId(e.target.value)}
-                      className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
+                      className="mt-1 block w-full rounded-md border border-white/10 bg-neutral-900 text-white px-3 py-2 shadow-sm focus:border-amber-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
                     >
                       <option value="">Select a client...</option>
                       {clients.map((client) => (
@@ -482,41 +482,43 @@ export default function UploadPage() {
 
                 {/* Gallery Name */}
                 <div>
-                  <Label htmlFor="gallery-name">Gallery Name *</Label>
+                  <Label htmlFor="gallery-name" className="text-neutral-300">Gallery Name *</Label>
                   <Input
                     id="gallery-name"
                     value={galleryName}
                     onChange={(e) => setGalleryName(e.target.value)}
                     placeholder="e.g., Summer Wedding 2024, Family Portraits"
+                    className="bg-neutral-900 border-white/10 text-white placeholder:text-neutral-500"
                   />
                 </div>
 
                 {/* Gallery Description */}
                 <div>
-                  <Label htmlFor="gallery-description">Description (Optional)</Label>
+                  <Label htmlFor="gallery-description" className="text-neutral-300">Description (Optional)</Label>
                   <Textarea
                     id="gallery-description"
                     value={galleryDescription}
                     onChange={(e) => setGalleryDescription(e.target.value)}
                     placeholder="Add details about this photo session..."
                     rows={3}
+                    className="bg-neutral-900 border-white/10 text-white placeholder:text-neutral-500"
                   />
                 </div>
 
-                <Separator />
+                <Separator className="bg-white/10" />
 
                 {/* File Upload */}
                 <div>
-                  <label htmlFor="file-upload" className="block text-sm font-medium text-gray-700 mb-2">
+                  <label htmlFor="file-upload" className="block text-sm font-medium text-neutral-300 mb-2">
                     Select Photos *
                   </label>
-                  <div className="flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md hover:border-indigo-400 transition-colors">
+                  <div className="flex justify-center px-6 pt-5 pb-6 border-2 border-white/10 border-dashed rounded-md hover:border-amber-500/50 transition-colors">
                     <div className="space-y-1 text-center">
-                      <ImageIcon className="mx-auto h-12 w-12 text-gray-400" />
-                      <div className="flex text-sm text-gray-600">
+                      <ImageIcon className="mx-auto h-12 w-12 text-neutral-600" />
+                      <div className="flex text-sm text-neutral-400">
                         <label
                           htmlFor="file-upload"
-                          className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
+                          className="relative cursor-pointer rounded-md font-medium text-amber-400 hover:text-amber-300 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-amber-500"
                         >
                           <span>Upload files</span>
                           <input
@@ -531,18 +533,18 @@ export default function UploadPage() {
                         </label>
                         <p className="pl-1">or drag and drop</p>
                       </div>
-                      <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB each</p>
+                      <p className="text-xs text-neutral-500">PNG, JPG, GIF up to 10MB each</p>
                     </div>
                   </div>
                 </div>
 
                 {/* Selected Files Preview */}
                 {files.length > 0 && (
-                  <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-4">
-                    <h3 className="text-sm font-medium mb-2">Selected Files ({files.length}):</h3>
+                  <div className="bg-neutral-900 border border-white/10 rounded-lg p-4">
+                    <h3 className="text-sm font-medium mb-2 text-neutral-100">Selected Files ({files.length}):</h3>
                     <ul className="space-y-1 max-h-32 overflow-y-auto">
                       {files.map((file, index) => (
-                        <li key={index} className="text-sm text-gray-600 dark:text-gray-400 flex items-center">
+                        <li key={index} className="text-sm text-neutral-400 flex items-center">
                           <ImageIcon className="h-3 w-3 mr-2" />
                           {file.name}
                         </li>
@@ -555,8 +557,8 @@ export default function UploadPage() {
                 {uploading && (
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">{uploadStatus}</span>
-                      <span className="font-medium">{uploadProgress}%</span>
+                      <span className="text-neutral-400">{uploadStatus}</span>
+                      <span className="font-medium text-neutral-100">{uploadProgress}%</span>
                     </div>
                     <Progress value={uploadProgress} className="h-2" />
                   </div>
@@ -568,7 +570,7 @@ export default function UploadPage() {
                     <div className="flex gap-2">
                       <Button
                         disabled
-                        className="flex-1"
+                        className="flex-1 bg-amber-500/50"
                         size="lg"
                       >
                         <FileUp className="h-4 w-4 mr-2 animate-spin" />
@@ -588,7 +590,7 @@ export default function UploadPage() {
                     <Button
                       onClick={handleUpload}
                       disabled={files.length === 0 || !selectedClientId || !galleryName}
-                      className="w-full"
+                      className="w-full bg-amber-500 hover:bg-amber-600 text-black"
                       size="lg"
                     >
                       <Upload className="h-4 w-4 mr-2" />
@@ -603,7 +605,7 @@ export default function UploadPage() {
                     </Button>
                   )}
                   {!uploading && (files.length === 0 || !selectedClientId || !galleryName) && (
-                    <p className="text-sm text-orange-600 mt-2 text-center">
+                    <p className="text-sm text-amber-400 mt-2 text-center">
                       {!selectedClientId && '⚠️ Please select a client'}
                       {selectedClientId && !galleryName && '⚠️ Please enter a gallery name'}
                       {selectedClientId && galleryName && files.length === 0 && '⚠️ Please select photos to upload'}

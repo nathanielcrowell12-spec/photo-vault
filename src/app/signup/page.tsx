@@ -70,9 +70,9 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-slate-800">
+    <div className="min-h-screen bg-neutral-900">
       {/* Header */}
-      <header className="border-b bg-white/95 backdrop-blur-sm dark:bg-slate-900/95">
+      <header className="border-b border-white/10 bg-neutral-800/50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center space-x-2">
@@ -96,19 +96,19 @@ export default function SignupPage() {
             <div>
               <div className="mb-8">
                 <Badge className="mb-4 bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200">
-                  For Families
+                  Memory Insurance for Families
                 </Badge>
-                <h1 className="text-4xl font-bold mb-4">Find Your Photos</h1>
+                <h1 className="text-4xl font-bold mb-4">Protect Your Memories</h1>
                 <p className="text-lg text-slate-600 dark:text-slate-300">
-                  Create your account and access all your precious memories
+                  Your photos deserve better than a failing hard drive. Create your account and start protecting your irreplaceable memories.
                 </p>
               </div>
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Create Your Family Account</CardTitle>
+                  <CardTitle>Create Your Memory Insurance Account</CardTitle>
                   <CardDescription>
-                    Get instant access to all your photos from every photographer
+                    A digital safety deposit box for your family's irreplaceable photos
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -229,43 +229,43 @@ export default function SignupPage() {
               <Card className="border-2 border-pink-200 dark:border-pink-800">
                 <CardContent className="pt-6">
                   <Badge className="mb-4 bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200">
-                    Family Benefits
+                    Memory Insurance
                   </Badge>
-                  <h2 className="text-2xl font-bold mb-4">What You Get</h2>
+                  <h2 className="text-2xl font-bold mb-4">Your Photos Are Protected</h2>
                   <div className="space-y-3">
                     <div className="flex items-start space-x-3">
                       <CheckCircle className="h-5 w-5 text-primary mt-0.5" />
                       <div>
-                        <div className="font-semibold">All Your Photos in One Place</div>
-                        <div className="text-sm text-slate-600 dark:text-slate-400">From every photographer in your city</div>
+                        <div className="font-semibold">Digital Safety Deposit Box</div>
+                        <div className="text-sm text-slate-600 dark:text-slate-400">Protected from hard drive failures—which have a 100% failure rate eventually</div>
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
                       <CheckCircle className="h-5 w-5 text-primary mt-0.5" />
                       <div>
-                        <div className="font-semibold">Never Lose Access</div>
-                        <div className="text-sm text-slate-600 dark:text-slate-400">Permanent storage, no expiring links</div>
+                        <div className="font-semibold">One Tap to Camera Roll</div>
+                        <div className="text-sm text-slate-600 dark:text-slate-400">Full resolution downloads. No zip files to wrestle with on your phone.</div>
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
                       <CheckCircle className="h-5 w-5 text-primary mt-0.5" />
                       <div>
-                        <div className="font-semibold">Import Existing Photos</div>
-                        <div className="text-sm text-slate-600 dark:text-slate-400">From Pixieset, SmugMug, and more</div>
+                        <div className="font-semibold">Family Sharing</div>
+                        <div className="text-sm text-slate-600 dark:text-slate-400">Share with family members you authorize</div>
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
                       <CheckCircle className="h-5 w-5 text-primary mt-0.5" />
                       <div>
-                        <div className="font-semibold">Upload Phone Photos</div>
-                        <div className="text-sm text-slate-600 dark:text-slate-400">Organize everything together</div>
+                        <div className="font-semibold">Lifetime Archival</div>
+                        <div className="text-sm text-slate-600 dark:text-slate-400">No expiring download links or lost USB drives</div>
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
                       <CheckCircle className="h-5 w-5 text-primary mt-0.5" />
                       <div>
-                        <div className="font-semibold">Timeline View</div>
-                        <div className="text-sm text-slate-600 dark:text-slate-400">See all memories chronologically</div>
+                        <div className="font-semibold">All Photographers, One Vault</div>
+                        <div className="text-sm text-slate-600 dark:text-slate-400">Collect memories from every photographer in one protected place</div>
                       </div>
                     </div>
                   </div>
@@ -274,25 +274,25 @@ export default function SignupPage() {
 
               <Card className="bg-pink-50 dark:bg-pink-900/20 border-pink-200 dark:border-pink-800">
                 <CardContent className="pt-6">
-                  <h3 className="font-semibold mb-3">Simple Pricing</h3>
+                  <h3 className="font-semibold mb-3">Memory Insurance Pricing</h3>
                   <div className="text-sm space-y-2 text-slate-600 dark:text-slate-400">
                     <div>• First year included with photographer session</div>
-                    <div>• $8/month after first year</div>
-                    <div>• One login per family</div>
-                    <div>• Unlimited galleries & photos</div>
+                    <div>• $8/month after first year—the price of one coffee</div>
+                    <div>• One family account, unlimited memories</div>
+                    <div>• Professional data recovery costs $500-$5,000. This costs $8.</div>
                   </div>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardContent className="pt-6">
-                  <h3 className="font-semibold mb-3">How It Works</h3>
+                  <h3 className="font-semibold mb-3">How Memory Insurance Works</h3>
                   <div className="text-sm space-y-2 text-slate-600 dark:text-slate-400">
-                    <div>1. Create your free account</div>
-                    <div>2. Connect to your photographer galleries</div>
-                    <div>3. Import photos from other platforms</div>
-                    <div>4. Upload your phone photos</div>
-                    <div>5. Access everything forever</div>
+                    <div>1. Create your account—your digital safety deposit box</div>
+                    <div>2. Your photographer delivers protected memories</div>
+                    <div>3. One tap to download full resolution to your camera roll</div>
+                    <div>4. Share with family members you authorize</div>
+                    <div>5. Protected from hard drive failures, lost USB drives, expired links</div>
                   </div>
                 </CardContent>
               </Card>

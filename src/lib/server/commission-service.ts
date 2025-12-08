@@ -1,221 +1,231 @@
 /**
- * Commission Service - Core business logic for commission creation and management
- * CORRECTED: Uses flat 50% commission rate, not tiered
+ * Commission Service - SIMPLIFIED
+ *
+ * With Stripe Connect DESTINATION CHARGES, this service is now just for RECORD-KEEPING.
+ * Stripe handles all money movement automatically:
+ * - Money goes directly to photographer via destination charge
+ * - PhotoVault gets its cut via application_fee_amount
+ * - Stripe handles 2-day settlement to photographer's bank
+ * - No cron jobs, no manual transfers, no pending queues
+ *
+ * This service now only:
+ * - Queries commission records for dashboards/reports
+ * - Calculates commission splits (for display purposes)
  */
 
-import { createServerSupabaseClient } from '../supabase'
+import { createServerSupabaseClient, createServiceRoleClient } from '../supabase-server'
 import { PHOTOGRAPHER_COMMISSION_RATE } from '../stripe'
 
-export interface CreateCommissionParams {
-  photographerId: string
-  clientId: string
-  clientPaymentId: string
-  paymentAmountCents: number
-  paymentDate: Date
-  periodStart: Date
-  periodEnd: Date
-  commissionType: 'upfront' | 'recurring' | 'reactivation'
+export interface Commission {
+  id: string
+  photographer_id: string
+  gallery_id: string
+  client_email: string
+  amount_cents: number
+  total_paid_cents: number
+  shoot_fee_cents: number
+  storage_fee_cents: number
+  photovault_commission_cents: number
+  payment_type: 'upfront' | 'monthly' | 'reactivation'
+  stripe_payment_intent_id: string
+  stripe_transfer_id: string | null
+  status: 'paid' | 'refunded'
+  paid_at: string
+  created_at: string
 }
 
 /**
- * Calculate commission amount (flat 50% rate)
+ * Calculate PhotoVault's fee (50% of storage fee)
+ * This is used when creating checkout sessions
  */
-export function calculateCommissionAmount(paymentAmountCents: number): number {
-  return Math.round(paymentAmountCents * PHOTOGRAPHER_COMMISSION_RATE)
+export function calculatePhotovaultFee(storageFeeCents: number): number {
+  return Math.round(storageFeeCents * (1 - PHOTOGRAPHER_COMMISSION_RATE))
 }
 
 /**
- * Calculate scheduled payout date (14 days from payment)
+ * Calculate photographer's gross (shoot fee + 50% of storage fee)
+ * Stripe fees are deducted from this automatically
  */
-export function calculateScheduledPayoutDate(paymentDate: Date): Date {
-  const payoutDate = new Date(paymentDate)
-  payoutDate.setDate(payoutDate.getDate() + 14)
-  return payoutDate
+export function calculatePhotographerGross(
+  shootFeeCents: number,
+  storageFeeCents: number
+): number {
+  const storageCommission = Math.round(storageFeeCents * PHOTOGRAPHER_COMMISSION_RATE)
+  return shootFeeCents + storageCommission
 }
 
 /**
- * Check if client is in grace period (within 90 days of last payment)
+ * Get photographer's commission history (all commissions - no more "pending")
  */
-export function isInGracePeriod(lastPaymentDate: Date): boolean {
-  const now = new Date()
-  const daysSincePayment = (now.getTime() - lastPaymentDate.getTime()) / (1000 * 60 * 60 * 24)
-  return daysSincePayment < 90
-}
-
-/**
- * Check if photographer should be suspended (90+ days overdue)
- */
-export function shouldSuspendPhotographer(lastPaymentAttempt: Date): boolean {
-  const now = new Date()
-  const daysSincePayment = (now.getTime() - lastPaymentAttempt.getTime()) / (1000 * 60 * 60 * 24)
-  return daysSincePayment >= 90
-}
-
-/**
- * Create commission record when client makes payment
- */
-export async function createCommission(params: CreateCommissionParams): Promise<{
-  success: boolean
-  commissionId?: string
-  error?: string
-}> {
-  const supabase = createServerSupabaseClient()
-
-  try {
-    // Calculate commission amount (flat 50% rate)
-    const commissionAmountCents = calculateCommissionAmount(params.paymentAmountCents)
-
-    // Calculate scheduled payout date (payment date + 14 days)
-    const scheduledPayoutDate = calculateScheduledPayoutDate(params.paymentDate)
-
-    // Insert commission record
-    const { data, error } = await supabase
-      .from('commission_payments')
-      .insert({
-        photographer_id: params.photographerId,
-        client_payment_id: params.clientPaymentId,
-        commission_amount: (commissionAmountCents / 100).toFixed(2), // Convert cents to dollars
-        payment_period_start: params.periodStart.toISOString().split('T')[0],
-        payment_period_end: params.periodEnd.toISOString().split('T')[0],
-        status: 'pending',
-        scheduled_payout_date: scheduledPayoutDate.toISOString(),
-        created_at: new Date().toISOString()
-      })
-      .select()
-      .single()
-
-    if (error) {
-      console.error('Error creating commission:', error)
-      return { success: false, error: error.message }
-    }
-
-    console.log(`[Commission] Created commission ${data.id} for photographer ${params.photographerId}: $${commissionAmountCents / 100} (50% of $${params.paymentAmountCents / 100})`)
-
-    return { success: true, commissionId: data.id }
-
-  } catch (error) {
-    const err = error as Error
-    console.error('[Commission] Unexpected error:', err)
-    return { success: false, error: err.message }
-  }
-}
-
-/**
- * Process a scheduled payout (called by cron job)
- */
-export async function processScheduledPayout(commissionId: string): Promise<{
-  success: boolean
-  transferId?: string
-  error?: string
-}> {
-  const supabase = createServerSupabaseClient()
-
-  try {
-    // Get commission details with photographer info
-    const { data: commission, error: fetchError } = await supabase
-      .from('commission_payments')
-      .select(`
-        *,
-        photographers!inner (
-          id,
-          cms_integration_id
-        )
-      `)
-      .eq('id', commissionId)
-      .single()
-
-    if (fetchError || !commission) {
-      return { success: false, error: 'Commission not found' }
-    }
-
-    // Check if photographer has Stripe Connect account
-    const stripeAccountId = commission.photographers?.cms_integration_id
-
-    if (!stripeAccountId) {
-      console.warn(`[Payout] Photographer ${commission.photographer_id} has no Stripe Connect account`)
-      return { success: false, error: 'No Stripe Connect account' }
-    }
-
-    // Transfer to photographer via Stripe Connect
-    const { stripe } = await import('../stripe')
-    const transfer = await stripe.transfers.create({
-      amount: Math.round(parseFloat(commission.commission_amount) * 100), // Convert to cents
-      currency: 'usd',
-      destination: stripeAccountId,
-      metadata: {
-        commission_id: commissionId,
-        photographer_id: commission.photographer_id,
-        payout_type: 'commission'
-      }
-    })
-
-    // Mark commission as paid
-    const { error: updateError } = await supabase
-      .from('commission_payments')
-      .update({
-        status: 'paid',
-        paid_at: new Date().toISOString(),
-        cms_payment_id: transfer.id // Store Stripe transfer ID
-      })
-      .eq('id', commissionId)
-
-    if (updateError) {
-      console.error('[Payout] Error updating commission status:', updateError)
-      return { success: false, error: updateError.message }
-    }
-
-    console.log(`[Payout] Successfully paid commission ${commissionId}: $${commission.commission_amount} to photographer ${commission.photographer_id}`)
-
-    return { success: true, transferId: transfer.id }
-
-  } catch (error) {
-    const err = error as Error
-    console.error('[Payout] Error processing payout:', err)
-    return { success: false, error: err.message }
-  }
-}
-
-/**
- * Get photographer's pending commissions
- */
-export async function getPhotographerPendingCommissions(photographerId: string) {
-  const supabase = createServerSupabaseClient()
-
-  const { data, error } = await supabase
-    .from('commission_payments')
-    .select('*')
-    .eq('photographer_id', photographerId)
-    .eq('status', 'pending')
-    .order('scheduled_payout_date', { ascending: true })
-
-  if (error) {
-    console.error('Error fetching pending commissions:', error)
-    return []
-  }
-
-  return data || []
-}
-
-/**
- * Get photographer's commission history
- */
-export async function getPhotographerCommissionHistory(
+export async function getPhotographerCommissions(
   photographerId: string,
   limit: number = 50
-) {
-  const supabase = createServerSupabaseClient()
+): Promise<Commission[]> {
+  const supabase = createServiceRoleClient()
 
   const { data, error } = await supabase
-    .from('commission_payments')
+    .from('commissions')
     .select('*')
     .eq('photographer_id', photographerId)
     .order('created_at', { ascending: false })
     .limit(limit)
 
   if (error) {
-    console.error('Error fetching commission history:', error)
+    console.error('[Commission] Error fetching commissions:', error)
     return []
   }
 
-  return data || []
+  return (data || []) as Commission[]
+}
+
+/**
+ * Get commission totals for photographer dashboard
+ */
+export async function getPhotographerCommissionTotals(photographerId: string): Promise<{
+  totalEarnings: number
+  upfrontEarnings: number
+  monthlyEarnings: number
+  transactionCount: number
+}> {
+  const supabase = createServiceRoleClient()
+
+  const { data, error } = await supabase
+    .from('commissions')
+    .select('amount_cents, payment_type')
+    .eq('photographer_id', photographerId)
+
+  if (error) {
+    console.error('[Commission] Error fetching totals:', error)
+    return {
+      totalEarnings: 0,
+      upfrontEarnings: 0,
+      monthlyEarnings: 0,
+      transactionCount: 0,
+    }
+  }
+
+  const commissions = data || []
+
+  const totalEarnings = commissions.reduce((sum, c) => sum + c.amount_cents, 0)
+  const upfrontEarnings = commissions
+    .filter(c => c.payment_type === 'upfront')
+    .reduce((sum, c) => sum + c.amount_cents, 0)
+  const monthlyEarnings = commissions
+    .filter(c => c.payment_type === 'monthly')
+    .reduce((sum, c) => sum + c.amount_cents, 0)
+
+  return {
+    totalEarnings: totalEarnings / 100, // Convert to dollars
+    upfrontEarnings: upfrontEarnings / 100,
+    monthlyEarnings: monthlyEarnings / 100,
+    transactionCount: commissions.length,
+  }
+}
+
+/**
+ * Get recent commissions for photographer (for dashboard widget)
+ */
+export async function getRecentCommissions(
+  photographerId: string,
+  limit: number = 5
+): Promise<Commission[]> {
+  return getPhotographerCommissions(photographerId, limit)
+}
+
+/**
+ * Get commission by ID
+ */
+export async function getCommissionById(commissionId: string): Promise<Commission | null> {
+  const supabase = createServiceRoleClient()
+
+  const { data, error } = await supabase
+    .from('commissions')
+    .select('*')
+    .eq('id', commissionId)
+    .single()
+
+  if (error) {
+    console.error('[Commission] Error fetching commission:', error)
+    return null
+  }
+
+  return data as Commission
+}
+
+/**
+ * Get commission by Stripe payment intent (for webhook deduplication)
+ */
+export async function getCommissionByPaymentIntent(
+  paymentIntentId: string
+): Promise<Commission | null> {
+  const supabase = createServiceRoleClient()
+
+  const { data, error } = await supabase
+    .from('commissions')
+    .select('*')
+    .eq('stripe_payment_intent_id', paymentIntentId)
+    .single()
+
+  if (error && error.code !== 'PGRST116') {
+    // PGRST116 = no rows returned
+    console.error('[Commission] Error fetching commission by payment intent:', error)
+  }
+
+  return data as Commission | null
+}
+
+// ============================================================
+// DEPRECATED FUNCTIONS - These are no longer needed with
+// destination charges, but kept for backwards compatibility
+// during migration
+// ============================================================
+
+/**
+ * @deprecated No longer needed - Stripe handles payouts automatically
+ */
+export function calculateScheduledPayoutDate(paymentDate: Date): Date {
+  console.warn('[Commission] calculateScheduledPayoutDate is deprecated - Stripe handles payouts automatically')
+  const payoutDate = new Date(paymentDate)
+  payoutDate.setDate(payoutDate.getDate() + 2) // Stripe's 2-day settlement
+  return payoutDate
+}
+
+/**
+ * @deprecated No longer needed - Stripe handles payouts automatically
+ */
+export async function processScheduledPayout(commissionId: string): Promise<{
+  success: boolean
+  error?: string
+}> {
+  console.warn('[Commission] processScheduledPayout is deprecated - Stripe handles payouts via destination charges')
+  return {
+    success: false,
+    error: 'Manual payouts are deprecated. Stripe handles transfers via destination charges.',
+  }
+}
+
+/**
+ * @deprecated Use getPhotographerCommissions instead - all commissions are "paid" now
+ */
+export async function getPhotographerPendingCommissions(photographerId: string) {
+  console.warn('[Commission] getPhotographerPendingCommissions is deprecated - all commissions are paid immediately via destination charges')
+  return []
+}
+
+/**
+ * @deprecated Use getPhotographerCommissions instead
+ */
+export async function getPhotographerCommissionHistory(
+  photographerId: string,
+  limit: number = 50
+) {
+  return getPhotographerCommissions(photographerId, limit)
+}
+
+/**
+ * @deprecated Commission calculation now happens in checkout routes
+ */
+export function calculateCommissionAmount(paymentAmountCents: number): number {
+  console.warn('[Commission] calculateCommissionAmount is deprecated - use calculatePhotographerGross instead')
+  return Math.round(paymentAmountCents * PHOTOGRAPHER_COMMISSION_RATE)
 }

@@ -170,10 +170,10 @@ export default function ClientsPage() {
   // Show loading while checking authentication
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-slate-600 dark:text-slate-300">Loading...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-amber-500 mx-auto mb-4"></div>
+          <p className="text-neutral-400">Loading...</p>
         </div>
       </div>
     )
@@ -310,23 +310,23 @@ export default function ClientsPage() {
   )
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen bg-neutral-900">
       {/* Header */}
-      <header className="border-b bg-white dark:bg-slate-900">
+      <header className="border-b border-white/5 bg-neutral-800/50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/dashboard">
+            <Button variant="ghost" size="sm" asChild className="text-neutral-400 hover:text-white">
+              <Link href="/photographer/dashboard">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Dashboard
               </Link>
             </Button>
             <div>
-              <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Clients</h1>
-              <p className="text-slate-600 dark:text-slate-400">Manage your photography clients</p>
+              <h1 className="text-2xl font-bold text-neutral-100">Clients</h1>
+              <p className="text-neutral-400">Manage your photography clients</p>
             </div>
           </div>
-          <Button onClick={() => setShowAddModal(true)}>
+          <Button onClick={() => setShowAddModal(true)} className="bg-amber-500 hover:bg-amber-600 text-black">
             <UserPlus className="h-4 w-4 mr-2" />
             Add Client
           </Button>
@@ -336,33 +336,33 @@ export default function ClientsPage() {
       <main className="container mx-auto px-4 py-8">
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card>
+          <Card className="bg-white/[0.03] border-white/5">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Clients</CardTitle>
-              <Users className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium text-neutral-400">Total Clients</CardTitle>
+              <Users className="h-4 w-4 text-blue-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{clients.length}</div>
+              <div className="text-2xl font-bold text-white">{clients.length}</div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-white/[0.03] border-white/5">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Active Galleries</CardTitle>
-              <Camera className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium text-neutral-400">Active Galleries</CardTitle>
+              <Camera className="h-4 w-4 text-purple-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{galleries.length}</div>
+              <div className="text-2xl font-bold text-white">{galleries.length}</div>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="bg-white/[0.03] border-white/5">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Photos</CardTitle>
-              <ImageIcon className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium text-neutral-400">Total Photos</CardTitle>
+              <ImageIcon className="h-4 w-4 text-amber-400" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">
+              <div className="text-2xl font-bold text-white">
                 {galleries.reduce((sum, gallery) => sum + (gallery.photo_count || 0), 0)}
               </div>
             </CardContent>
@@ -370,23 +370,23 @@ export default function ClientsPage() {
         </div>
 
         {/* Clients List */}
-        <Card>
+        <Card className="bg-neutral-800/50 border-white/10">
           <CardHeader>
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle>Your Clients</CardTitle>
-                <CardDescription>
+                <CardTitle className="text-neutral-100">Your Clients</CardTitle>
+                <CardDescription className="text-neutral-400">
                   Manage your photography clients and their galleries
                 </CardDescription>
               </div>
               {clients.length > 0 && (
                 <div className="relative w-64">
-                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-neutral-500" />
                   <Input
                     placeholder="Search clients..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-8"
+                    className="pl-8 bg-neutral-900 border-white/10 text-white placeholder:text-neutral-500"
                   />
                 </div>
               )}
@@ -394,46 +394,46 @@ export default function ClientsPage() {
           </CardHeader>
           <CardContent>
             {loading ? (
-              <div className="flex items-center justify-center py-8">
+              <div className="flex items-center justify-center py-8 text-neutral-400">
                 <Loader2 className="h-6 w-6 animate-spin" />
                 <span className="ml-2">Loading clients...</span>
               </div>
             ) : clients.length === 0 ? (
               <div className="text-center py-8">
-                <Users className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">No clients yet</h3>
-                <p className="text-muted-foreground mb-4">
+                <Users className="h-12 w-12 text-neutral-600 mx-auto mb-4" />
+                <h3 className="text-lg font-medium mb-2 text-neutral-100">No clients yet</h3>
+                <p className="text-neutral-400 mb-4">
                   Start by adding your first photography client
                 </p>
-                <Button onClick={() => setShowAddModal(true)}>
+                <Button onClick={() => setShowAddModal(true)} className="bg-amber-500 hover:bg-amber-600 text-black">
                   <UserPlus className="h-4 w-4 mr-2" />
                   Add Your First Client
                 </Button>
               </div>
             ) : filteredClients.length === 0 ? (
               <div className="text-center py-8">
-                <Search className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-medium mb-2">No clients found</h3>
-                <p className="text-muted-foreground mb-4">
+                <Search className="h-12 w-12 text-neutral-600 mx-auto mb-4" />
+                <h3 className="text-lg font-medium mb-2 text-neutral-100">No clients found</h3>
+                <p className="text-neutral-400 mb-4">
                   Try adjusting your search query
                 </p>
-                <Button variant="outline" onClick={() => setSearchQuery('')}>
+                <Button variant="outline" onClick={() => setSearchQuery('')} className="border-white/10 text-neutral-300 hover:bg-white/5">
                   Clear Search
                 </Button>
               </div>
             ) : (
               <div className="space-y-4">
                 {filteredClients.map((client) => (
-                  <div key={client.id} className="border rounded-lg p-4">
+                  <div key={client.id} className="border border-white/10 bg-white/[0.03] rounded-lg p-4">
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-3 mb-2">
-                          <h3 className="font-medium">{client.name}</h3>
-                          <Badge variant={client.status === 'active' ? 'default' : 'secondary'}>
+                          <h3 className="font-medium text-neutral-100">{client.name}</h3>
+                          <Badge variant={client.status === 'active' ? 'default' : 'secondary'} className="bg-green-500/20 text-green-400 border-green-500/30">
                             {client.status}
                           </Badge>
                         </div>
-                        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                        <div className="flex items-center gap-4 text-sm text-neutral-400">
                           <span className="flex items-center gap-1">
                             <Mail className="h-3 w-3" />
                             {client.email}
@@ -450,13 +450,13 @@ export default function ClientsPage() {
                           </span>
                         </div>
                         {client.client_notes && (
-                          <p className="text-sm text-muted-foreground mt-2">
+                          <p className="text-sm text-neutral-400 mt-2">
                             {client.client_notes}
                           </p>
                         )}
                       </div>
                       <div className="flex items-center gap-2">
-                        <Button size="sm" variant="outline" onClick={() => handleContactClient(client)}>
+                        <Button size="sm" variant="outline" onClick={() => handleContactClient(client)} className="border-white/10 text-neutral-300 hover:bg-white/5">
                           <Mail className="h-4 w-4 mr-2" />
                           Contact
                         </Button>
@@ -471,27 +471,27 @@ export default function ClientsPage() {
 
         {/* Recent Galleries */}
         {galleries.length > 0 && (
-          <Card className="mt-8">
+          <Card className="mt-8 bg-neutral-800/50 border-white/10">
             <CardHeader>
-              <CardTitle>Recent Galleries</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-neutral-100">Recent Galleries</CardTitle>
+              <CardDescription className="text-neutral-400">
                 Your latest photography galleries
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {galleries.slice(0, 6).map((gallery) => (
-                  <div key={gallery.id} className="border rounded-lg p-4">
+                  <div key={gallery.id} className="border border-white/10 bg-white/[0.03] rounded-lg p-4">
                     <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-medium">{gallery.gallery_name}</h4>
-                      <Badge variant="outline">
+                      <h4 className="font-medium text-neutral-100">{gallery.gallery_name}</h4>
+                      <Badge variant="outline" className="border-white/20 text-neutral-300">
                         {gallery.photo_count || 0} photos
                       </Badge>
                     </div>
-                    <p className="text-sm text-muted-foreground mb-3">
+                    <p className="text-sm text-neutral-400 mb-3">
                       {gallery.gallery_description}
                     </p>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-4 text-sm text-neutral-400">
                       <span>{gallery.photo_count} photos</span>
                       {gallery.session_date && (
                         <>
@@ -500,7 +500,7 @@ export default function ClientsPage() {
                         </>
                       )}
                     </div>
-                    <Button size="sm" variant="outline" asChild className="mt-3">
+                    <Button size="sm" variant="outline" asChild className="mt-3 border-white/10 text-neutral-300 hover:bg-white/5">
                       <Link href={`/gallery/${gallery.id}`}>
                         <Eye className="h-4 w-4 mr-2" />
                         View Gallery
@@ -510,8 +510,8 @@ export default function ClientsPage() {
                 ))}
                 {galleries.length > 6 && (
                   <div className="text-center pt-4">
-                    <Button variant="outline" asChild>
-                      <Link href="/dashboard">
+                    <Button variant="outline" asChild className="border-white/10 text-neutral-300 hover:bg-white/5">
+                      <Link href="/photographer/dashboard">
                         View All Galleries
                       </Link>
                     </Button>
@@ -526,20 +526,21 @@ export default function ClientsPage() {
       {/* Add Client Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-slate-800 rounded-lg p-6 w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">Add New Client</h2>
+          <div className="bg-neutral-800 border border-white/10 rounded-lg p-6 w-full max-w-md">
+            <h2 className="text-xl font-bold mb-4 text-neutral-100">Add New Client</h2>
             <div className="space-y-4">
               <div>
-                <Label htmlFor="name">Name *</Label>
+                <Label htmlFor="name" className="text-neutral-300">Name *</Label>
                 <Input
                   id="name"
                   value={newClient.name}
                   onChange={(e) => setNewClient({ ...newClient, name: e.target.value })}
                   placeholder="Client name"
+                  className="bg-neutral-900 border-white/10 text-white placeholder:text-neutral-500"
                 />
               </div>
               <div>
-                <Label htmlFor="email">Email *</Label>
+                <Label htmlFor="email" className="text-neutral-300">Email *</Label>
                 <Input
                   id="email"
                   type="email"
@@ -547,40 +548,44 @@ export default function ClientsPage() {
                   onChange={(e) => setNewClient({ ...newClient, email: e.target.value })}
                   onBlur={(e) => checkExistingEmail(e.target.value)}
                   placeholder="client@example.com"
+                  className="bg-neutral-900 border-white/10 text-white placeholder:text-neutral-500"
                 />
                 {linkExistingClient && existingClientInfo && (
-                  <p className="text-xs text-amber-600 mt-1">
+                  <p className="text-xs text-amber-400 mt-1">
                     ℹ️ This client exists with {existingClientInfo.name}. You can still add them to your client list.
                   </p>
                 )}
               </div>
               <div>
-                <Label htmlFor="phone">Phone</Label>
+                <Label htmlFor="phone" className="text-neutral-300">Phone</Label>
                 <Input
                   id="phone"
                   value={newClient.phone}
                   onChange={(e) => setNewClient({ ...newClient, phone: e.target.value })}
                   placeholder="(555) 123-4567"
+                  className="bg-neutral-900 border-white/10 text-white placeholder:text-neutral-500"
                 />
               </div>
               <div>
-                <Label htmlFor="address">Address</Label>
+                <Label htmlFor="address" className="text-neutral-300">Address</Label>
                 <Textarea
                   id="address"
                   value={newClient.address}
                   onChange={(e) => setNewClient({ ...newClient, address: e.target.value })}
                   placeholder="123 Main St, City, State ZIP"
                   rows={2}
+                  className="bg-neutral-900 border-white/10 text-white placeholder:text-neutral-500"
                 />
               </div>
               <div>
-                <Label htmlFor="notes">Notes (Private)</Label>
+                <Label htmlFor="notes" className="text-neutral-300">Notes (Private)</Label>
                 <Textarea
                   id="notes"
                   value={newClient.notes}
                   onChange={(e) => setNewClient({ ...newClient, notes: e.target.value })}
                   placeholder="Any additional notes about this client (photographer only)..."
                   rows={2}
+                  className="bg-neutral-900 border-white/10 text-white placeholder:text-neutral-500"
                 />
               </div>
               {formError && (
@@ -595,12 +600,14 @@ export default function ClientsPage() {
                 variant="outline"
                 onClick={() => setShowAddModal(false)}
                 disabled={formLoading}
+                className="border-white/10 text-neutral-300 hover:bg-white/5"
               >
                 Cancel
               </Button>
               <Button
                 onClick={handleCreateClient}
                 disabled={formLoading || !newClient.name || !newClient.email}
+                className="bg-amber-500 hover:bg-amber-600 text-black"
               >
                 {formLoading ? (
                   <>

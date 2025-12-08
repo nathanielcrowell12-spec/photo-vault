@@ -121,7 +121,7 @@ export default function MobileUploadPage() {
   // Show loading state during auth check
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
         <Cloud className="h-8 w-8 animate-pulse text-blue-600" />
       </div>
     )
@@ -265,9 +265,9 @@ export default function MobileUploadPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen bg-neutral-900">
       {/* Mobile Header */}
-      <header className="border-b bg-white dark:bg-slate-900 sticky top-0 z-50">
+      <header className="border-b bg-neutral-800/50 border-white/10 sticky top-0 z-50">
         <div className="px-4 py-3 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <Button asChild variant="ghost" size="sm">
@@ -277,7 +277,7 @@ export default function MobileUploadPage() {
             </Button>
             <div className="flex items-center space-x-2">
               <Smartphone className="h-6 w-6 text-blue-600" />
-              <span className="text-lg font-bold">Upload Photos</span>
+              <span className="text-lg font-bold text-neutral-100">Upload Photos</span>
             </div>
           </div>
           <div className="flex items-center space-x-2">
@@ -298,14 +298,14 @@ export default function MobileUploadPage() {
       <main className="px-4 py-6">
         <div className="max-w-md mx-auto">
           {/* Mobile Upload Hero */}
-          <Card className="mb-6 border-2 border-blue-200 dark:border-blue-800">
+          <Card className="mb-6 bg-neutral-800/50 border-white/10">
             <CardContent className="p-6 text-center">
               <div className="flex items-center justify-center space-x-3 mb-4">
                 <Smartphone className="h-8 w-8 text-blue-600" />
                 <Cloud className="h-8 w-8 text-green-600" />
               </div>
-              <h1 className="text-2xl font-bold mb-3">Upload from Phone</h1>
-              <p className="text-slate-600 dark:text-slate-300 mb-4">
+              <h1 className="text-2xl font-bold mb-3 text-neutral-100">Upload from Phone</h1>
+              <p className="text-neutral-400 mb-4">
                 Dump all your phone photos to PhotoVault for safe keeping
               </p>
               <div className="grid grid-cols-2 gap-3 text-sm">
@@ -323,7 +323,7 @@ export default function MobileUploadPage() {
 
           {/* Mobile Upload Options */}
           {!uploadSession && (
-            <Card className="mb-6">
+            <Card className="mb-6 bg-neutral-800/50 border-white/10">
               <CardContent className="p-6">
                 <div className="space-y-4">
                   <Button 
@@ -360,7 +360,7 @@ export default function MobileUploadPage() {
                   onChange={handleCameraCapture}
                   className="hidden"
                 />
-                <p className="text-xs text-slate-500 text-center mt-4">
+                <p className="text-xs text-neutral-400 text-center mt-4">
                   Supports JPG, PNG, HEIC formats
                 </p>
               </CardContent>
@@ -371,7 +371,7 @@ export default function MobileUploadPage() {
           {uploadSession && (
             <>
               {/* Session Header */}
-              <Card className="mb-6">
+              <Card className="mb-6 bg-neutral-800/50 border-white/10">
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
                     <div>
@@ -458,7 +458,7 @@ export default function MobileUploadPage() {
               </Card>
 
               {/* Mobile Photo Grid */}
-              <Card className="mb-6">
+              <Card className="mb-6 bg-neutral-800/50 border-white/10">
                 <CardContent className="p-4">
                   <div className={`${viewMode === 'grid' ? 'grid grid-cols-3 gap-3' : 'space-y-3'}`}>
                     {uploadSession.photos.map((photo) => (
@@ -555,11 +555,11 @@ export default function MobileUploadPage() {
 
               {/* Upload Complete */}
               {uploadSession.upload_completed && (
-                <Card className="border-green-200 dark:border-green-800">
+                <Card className="bg-neutral-800/50 border-white/10">
                   <CardContent className="p-6 text-center">
                     <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-3" />
-                    <h3 className="text-xl font-bold mb-2">Upload Complete!</h3>
-                    <p className="text-slate-600 dark:text-slate-400 mb-4">
+                    <h3 className="text-xl font-bold mb-2 text-neutral-100">Upload Complete!</h3>
+                    <p className="text-neutral-400 mb-4">
                       {uploadSession.photos.length} photos uploaded
                     </p>
                     <div className="space-y-3">

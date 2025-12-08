@@ -30,10 +30,10 @@ export default function PhotoImportPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600 mx-auto mb-4"></div>
-          <p className="text-slate-600 dark:text-slate-300">Loading...</p>
+          <p className="text-neutral-400">Loading...</p>
         </div>
       </div>
     )
@@ -46,9 +46,9 @@ export default function PhotoImportPage() {
 
   return (
     <PaymentGuard requireActivePayment={true}>
-      <div className="min-h-screen bg-white dark:bg-slate-900">
+      <div className="min-h-screen bg-neutral-900">
       {/* Header */}
-      <header className="border-b border-border bg-white dark:bg-slate-900">
+      <header className="border-b bg-neutral-800/50 border-white/10">
         <div className="container-pixieset py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Button asChild variant="ghost" size="sm">
@@ -60,7 +60,7 @@ export default function PhotoImportPage() {
             <Separator orientation="vertical" className="h-6" />
             <div className="flex items-center space-x-2">
               <Download className="h-6 w-6 text-primary" />
-              <span className="text-xl font-semibold tracking-tight">Upload Your Photos</span>
+              <span className="text-xl font-semibold tracking-tight text-neutral-100">Upload Your Photos</span>
             </div>
           </div>
           <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
@@ -72,17 +72,17 @@ export default function PhotoImportPage() {
       <main className="container-pixieset py-12">
         <div className="max-w-6xl mx-auto">
           {/* Hero Section */}
-          <Card className="mb-12 card-shadow border border-border bg-gradient-to-br from-primary/10 to-secondary/30">
+          <Card className="mb-12 card-shadow bg-neutral-800/50 border-white/10">
             <CardContent className="p-12 text-center">
               <div className="flex items-center justify-center space-x-3 mb-6">
                 <Heart className="h-10 w-10 text-red-500" />
                 <Star className="h-10 w-10 text-yellow-500" />
                 <Camera className="h-10 w-10 text-primary" />
               </div>
-              <h1 className="text-4xl md:text-5xl font-semibold mb-4 text-foreground tracking-tight">
+              <h1 className="text-4xl md:text-5xl font-semibold mb-4 text-neutral-100 tracking-tight">
                 Upload Your Photos
               </h1>
-              <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed font-light">
+              <p className="text-lg text-neutral-400 max-w-3xl mx-auto leading-relaxed font-light">
                 Choose the best upload method for your photos. Upload directly from your computer or use our convenient web interface.
               </p>
               <div className="grid md:grid-cols-3 gap-4 mt-8">
@@ -103,7 +103,7 @@ export default function PhotoImportPage() {
           </Card>
 
           {/* Upload Options */}
-          <Card className="card-shadow border border-border">
+          <Card className="card-shadow bg-neutral-800/50 border-white/10">
             <CardHeader>
               <CardTitle className="text-2xl">
                 Upload Your Photos

@@ -52,6 +52,30 @@ export async function middleware(req: NextRequest) {
     '/logout',
   ]
 
+  // Gallery pages are public (paywall handles access control)
+  if (pathname.startsWith('/gallery/')) {
+    console.log('[Middleware] Public gallery access:', pathname)
+    return res
+  }
+
+  // Directory pages are public (photographer/location discovery)
+  if (pathname.startsWith('/directory')) {
+    console.log('[Middleware] Public directory access:', pathname)
+    return res
+  }
+
+  // Family invitation acceptance pages are public
+  if (pathname.startsWith('/family/accept/')) {
+    console.log('[Middleware] Public family accept access:', pathname)
+    return res
+  }
+
+  // Family galleries and takeover pages require auth (handled below)
+  // Just log it for now
+  if (pathname.startsWith('/family/galleries') || pathname.startsWith('/family/takeover')) {
+    console.log('[Middleware] Family page access:', pathname)
+  }
+
   // Check if current path is public
   const isPublicRoute = publicRoutes.some(route => pathname === route || pathname.startsWith('/api/health'))
 
@@ -68,10 +92,14 @@ export async function middleware(req: NextRequest) {
       '/api/test-supabase',
       '/api/webhooks', // Legacy webhooks
       '/api/stripe/webhook', // Stripe webhooks
+      '/api/stripe/public-checkout', // Public checkout (no auth required)
       '/api/cron', // Cron jobs
       '/api/auth/check-session', // Desktop app auth check
       '/api/auth/logout', // Logout endpoint
       '/api/v1/upload', // Desktop app uploads
+      '/api/gallery/', // Public gallery API for paywall
+      '/api/family/secondaries/accept', // Family invitation acceptance
+      '/api/directory/', // Public directory API for locations and photographers
     ]
 
     const isPublicApi = publicApiRoutes.some(route => pathname.startsWith(route))
@@ -147,7 +175,9 @@ export async function middleware(req: NextRequest) {
 
   // Client routes
   if (pathname.startsWith('/client')) {
-    if (userType !== 'client' && userType !== 'admin') {
+    // Allow photographers to preview client galleries
+    const isGalleryPreview = pathname.startsWith('/client/gallery/')
+    if (userType !== 'client' && userType !== 'admin' && !(userType === 'photographer' && isGalleryPreview)) {
       const redirectUrl = req.nextUrl.clone()
       redirectUrl.pathname = '/photographer/dashboard'
       return NextResponse.redirect(redirectUrl)

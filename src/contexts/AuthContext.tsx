@@ -313,6 +313,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         if (photographerError) {
           console.error('Error creating photographer profile:', photographerError)
           console.error('Photographer error details:', JSON.stringify(photographerError, null, 2))
+        } else {
+          // Create platform subscription
+          // Don't block signup if this fails - photographer can create subscription manually later
+          try {
+            const subscriptionResponse = await fetch('/api/stripe/platform-subscription', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            })
+
+            if (subscriptionResponse.ok) {
+              const subscriptionData = await subscriptionResponse.json()
+              console.log('[AuthContext] Platform subscription created:', subscriptionData.data?.subscriptionId)
+            } else {
+              const errorData = await subscriptionResponse.json()
+              console.warn('[AuthContext] Failed to create platform subscription:', errorData.error)
+              // Don't throw - signup should still succeed
+            }
+          } catch (subscriptionError) {
+            console.error('[AuthContext] Error creating platform subscription:', subscriptionError)
+            // Don't throw - signup should still succeed
+          }
         }
       }
       

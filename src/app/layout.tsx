@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ViewProvider } from "@/contexts/ViewContext";
+import { ThemeProvider } from "@/components/ThemeProvider";
 import { Navigation, Footer } from "@/components/navigation";
 import { Toaster } from "@/components/ui/toaster";
 
@@ -60,7 +61,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link rel="canonical" href="https://photovault.com/" />
         <script
@@ -116,19 +117,21 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={inter.className}>
-        <AuthProvider>
-          <ViewProvider>
-            <div className="flex flex-col min-h-screen">
-              <Navigation hideOnPaths={['/photographer/dashboard']} />
-              <main className="flex-1">
-                {children}
-              </main>
-              <Footer hideOnPaths={['/photographer/dashboard']} />
-              <Toaster />
-            </div>
-          </ViewProvider>
-        </AuthProvider>
+      <body className={`${inter.className} bg-background text-foreground`}>
+        <ThemeProvider>
+          <AuthProvider>
+            <ViewProvider>
+              <div className="flex flex-col min-h-screen bg-background">
+                <Navigation hideOnPaths={['/photographer/dashboard', '/login', '/signup', '/auth/signup', '/photographers/signup']} />
+                <main className="flex-1">
+                  {children}
+                </main>
+                <Footer hideOnPaths={['/photographer/dashboard', '/login', '/signup', '/auth/signup', '/photographers/signup']} />
+                <Toaster />
+              </div>
+            </ViewProvider>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

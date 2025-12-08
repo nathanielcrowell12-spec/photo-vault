@@ -275,7 +275,7 @@ export default function AdminDatabasePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-neutral-900">
         <div className="flex items-center gap-3 text-slate-600">
           <Loader2 className="h-5 w-5 animate-spin" />
           <span>Authenticating…</span>
@@ -290,9 +290,9 @@ export default function AdminDatabasePage() {
 
   return (
     <AccessGuard requiredAccess="canAccessAdminDashboard">
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/40 to-slate-100">
+      <div className="min-h-screen bg-neutral-900">
         {/* Header */}
-        <header className="border-b bg-white/95 backdrop-blur-sm">
+        <header className="border-b bg-neutral-800/50 border-white/10">
           <div className="container mx-auto px-4 py-6 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Database className="h-10 w-10 text-blue-600" />
@@ -395,7 +395,7 @@ export default function AdminDatabasePage() {
                     const config = ACTION_CONFIG[key]
                     const isLoadingAction = actionLoading[key]
                     return (
-                      <Card key={key} className="border border-slate-200 bg-slate-50/70">
+                      <Card key={key} className="border border-slate-200 bg-neutral-800">
                         <CardHeader>
                           <CardTitle className="text-base">{config.title}</CardTitle>
                           <CardDescription>{config.successDetail}</CardDescription>
@@ -527,7 +527,7 @@ export default function AdminDatabasePage() {
                     return (
                       <div
                         key={task.title}
-                        className="rounded-lg border border-slate-200 bg-slate-50/70 p-4 flex items-start gap-3"
+                        className="rounded-lg border border-slate-200 bg-neutral-800 p-4 flex items-start gap-3"
                       >
                         <IconComponent className="h-5 w-5 text-blue-500 mt-1" />
                         <div>

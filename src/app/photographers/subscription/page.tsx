@@ -57,7 +57,7 @@ export default function SubscriptionPage() {
   // Show loading or redirect if not photographer
   if (userType !== 'photographer') {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-slate-600 dark:text-slate-300">Redirecting...</p>
@@ -68,22 +68,50 @@ export default function SubscriptionPage() {
 
   const fetchSubscriptionData = async () => {
     try {
-      // Simulate API call - in real implementation, this would fetch from database
-      setTimeout(() => {
-        setSubscription({
-          status: 'trial',
-          current_period_start: '2024-10-01',
-          current_period_end: '2024-11-01',
-          trial_end: '2024-10-15',
-          plan: 'professional',
-          price: 22,
-          next_billing_date: '2024-10-15',
-          payment_method: null
-        })
+      const response = await fetch('/api/stripe/platform-subscription')
+      
+      if (!response.ok) {
+        // Handle any non-200 responses gracefully
+        const errorData = await response.json().catch(() => ({}))
+        console.warn('[Subscription] API returned error:', response.status, errorData)
+        setSubscription(null)
         setLoading(false)
-      }, 1000)
+        return
+      }
+
+      const result = await response.json()
+      
+      // Handle both success with null data and success with data
+      if (result.success) {
+        if (result.data) {
+          const data = result.data
+          setSubscription({
+            status: data.status === 'trialing' ? 'trial' : 
+                    data.status === 'past_due' ? 'past_due' :
+                    data.status === 'canceled' || data.status === 'cancelled' ? 'cancelled' :
+                    'active',
+            current_period_start: data.currentPeriodStart,
+            current_period_end: data.currentPeriodEnd,
+            trial_end: data.trialEnd,
+            plan: 'professional',
+            price: 22,
+            next_billing_date: data.nextBillingDate,
+            payment_method: data.paymentMethod
+          })
+        } else {
+          // No subscription found - this is expected for new photographers
+          setSubscription(null)
+        }
+      } else {
+        // API returned success: false
+        console.warn('[Subscription] API returned success: false:', result)
+        setSubscription(null)
+      }
     } catch (error) {
       console.error('Error fetching subscription data:', error)
+      // On error, set subscription to null so UI can show "no subscription" state
+      setSubscription(null)
+    } finally {
       setLoading(false)
     }
   }
@@ -121,7 +149,7 @@ export default function SubscriptionPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
           <p className="text-slate-600 dark:text-slate-300">Loading subscription...</p>
@@ -131,7 +159,7 @@ export default function SubscriptionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen bg-neutral-900">
       {/* Header */}
       <header className="border-b bg-white dark:bg-slate-900">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -156,7 +184,39 @@ export default function SubscriptionPage() {
 
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-          {subscription && (
+          {!subscription ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>No Active Subscription</CardTitle>
+                <CardDescription>
+                  You don't have an active platform subscription. Create one to get started.
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button
+                  onClick={async () => {
+                    try {
+                      const response = await fetch('/api/stripe/platform-subscription', {
+                        method: 'POST',
+                      })
+                      if (response.ok) {
+                        // Refresh subscription data
+                        await fetchSubscriptionData()
+                      } else {
+                        const error = await response.json()
+                        alert(`Failed to create subscription: ${error.error}`)
+                      }
+                    } catch (error) {
+                      console.error('Error creating subscription:', error)
+                      alert('Failed to create subscription. Please try again.')
+                    }
+                  }}
+                >
+                  Create Subscription
+                </Button>
+              </CardContent>
+            </Card>
+          ) : (
             <>
               {/* Current Plan */}
               <Card className="mb-8">

@@ -4,6 +4,12 @@
     "NODE_ENV": "production"
   },
   "cleanUrls": true,
-  "trailingSlash": false
+  "trailingSlash": false,
+  "crons": [
+    {
+      "path": "/api/cron/grace-period-notifications",
+      "schedule": "0 0 * * *"
+    }
+  ]
 }
 

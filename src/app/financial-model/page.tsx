@@ -2,7 +2,7 @@ import React from 'react'
 
 export default function FinancialModelPage() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-neutral-900">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="bg-white rounded-lg shadow-lg p-8">
           <h1 className="text-4xl font-bold text-gray-900 mb-8 text-center">
@@ -16,7 +16,7 @@ export default function FinancialModelPage() {
             <ul className="list-disc pl-6 mb-6 text-gray-700">
               <li><strong>$22/month per photographer</strong></li>
               <li>Platform access, unlimited galleries, analytics, commission tracking</li>
-              <li>14-day free trial</li>
+              <li>Cancel anytime</li>
             </ul>
 
             <h3 className="text-xl font-semibold text-blue-600 mb-4">2. Client Payments (Split with Photographers)</h3>

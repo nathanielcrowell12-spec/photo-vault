@@ -22,6 +22,7 @@ import {
 import Link from 'next/link'
 import AccessGuard from '@/components/AccessGuard'
 import MessagesButton from '@/components/MessagesButton'
+import { ThemePicker } from '@/components/ThemePicker'
 
 type DashboardStatusResponse = {
   stats: {
@@ -42,28 +43,28 @@ type DashboardStatusResponse = {
 
 const STATUS_STYLES: Record<DashboardStatusResponse['statusCards'][number]['state'], { bg: string; border: string; text: string; badge: string }> = {
   operational: {
-    bg: 'bg-green-50',
-    border: 'border-green-200',
-    text: 'text-green-700',
-    badge: 'bg-green-100 text-green-700',
+    bg: 'bg-green-950/30',
+    border: 'border-green-800/50',
+    text: 'text-green-400',
+    badge: 'bg-green-900/50 text-green-300',
   },
   warning: {
-    bg: 'bg-amber-50',
-    border: 'border-amber-200',
-    text: 'text-amber-700',
-    badge: 'bg-amber-100 text-amber-700',
+    bg: 'bg-amber-950/30',
+    border: 'border-amber-800/50',
+    text: 'text-amber-400',
+    badge: 'bg-amber-900/50 text-amber-300',
   },
   pending: {
-    bg: 'bg-blue-50',
-    border: 'border-blue-200',
-    text: 'text-blue-700',
-    badge: 'bg-blue-100 text-blue-700',
+    bg: 'bg-blue-950/30',
+    border: 'border-blue-800/50',
+    text: 'text-blue-400',
+    badge: 'bg-blue-900/50 text-blue-300',
   },
   error: {
-    bg: 'bg-red-50',
-    border: 'border-red-200',
-    text: 'text-red-700',
-    badge: 'bg-red-100 text-red-700',
+    bg: 'bg-red-950/30',
+    border: 'border-red-800/50',
+    text: 'text-red-400',
+    badge: 'bg-red-900/50 text-red-300',
   },
 }
 
@@ -226,20 +227,20 @@ export default function AdminDashboardPage() {
 
   return (
     <AccessGuard requiredAccess="canAccessAdminDashboard">
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+      <div className="min-h-screen bg-background">
         {/* Header */}
-        <header className="border-b bg-white/95 backdrop-blur-sm">
+        <header className="border-b border-border bg-card backdrop-blur-sm">
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <Shield className="h-8 w-8 text-blue-600" />
+                <Shield className="h-8 w-8 text-primary" />
                 <div>
-                  <h1 className="text-2xl font-bold">PhotoVault Admin</h1>
-                  <p className="text-sm text-gray-600">System Administration Dashboard</p>
+                  <h1 className="text-2xl font-bold text-foreground">PhotoVault Admin</h1>
+                  <p className="text-sm text-muted-foreground">System Administration Dashboard</p>
                 </div>
               </div>
               <div className="flex items-center space-x-4">
-                <Badge variant="outline" className="bg-blue-50 text-blue-700">
+                <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
                   Admin Access
                 </Badge>
                 <MessagesButton variant="icon" />
@@ -255,17 +256,17 @@ export default function AdminDashboardPage() {
           <div className="max-w-7xl mx-auto space-y-8">
             {/* Welcome Section */}
             <div className="text-center">
-              <h2 className="text-3xl font-bold mb-4">Welcome, {user?.email}</h2>
-              <p className="text-lg text-gray-600">
+              <h2 className="text-3xl font-bold mb-4 text-foreground">Welcome, {user?.email}</h2>
+              <p className="text-lg text-muted-foreground">
                 You have full administrative access to the PhotoVault system
               </p>
             </div>
 
             {/* System Status */}
-            <Card className="border-2 border-blue-200">
+            <Card className="border-border bg-card">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Activity className="h-5 w-5 text-blue-600" />
+                <CardTitle className="flex items-center gap-2 text-foreground">
+                  <Activity className="h-5 w-5 text-primary" />
                   System Status
                 </CardTitle>
                 <CardDescription>Real-time system health and performance metrics</CardDescription>
@@ -273,7 +274,7 @@ export default function AdminDashboardPage() {
               <CardContent>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
                   {statusError && (
-                    <div className="md:col-span-2 xl:col-span-4 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+                    <div className="md:col-span-2 xl:col-span-4 rounded-md border border-red-800/50 bg-red-950/30 p-4 text-sm text-red-400">
                       Unable to load live status: {statusError}
                     </div>
                   )}
@@ -289,13 +290,13 @@ export default function AdminDashboardPage() {
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
                             <IconComponent className={`h-4 w-4 ${styles.text}`} />
-                            <span className="font-semibold text-slate-800">{card.title}</span>
+                            <span className="font-semibold text-foreground">{card.title}</span>
                   </div>
                           <span className={`rounded-full px-2 py-1 text-xs font-medium ${styles.badge}`}>
                             {card.summary}
                           </span>
                     </div>
-                        <p className="text-sm text-slate-600">{card.detail}</p>
+                        <p className="text-sm text-muted-foreground">{card.detail}</p>
                   </div>
                     )
                   })}
@@ -303,12 +304,15 @@ export default function AdminDashboardPage() {
               </CardContent>
             </Card>
 
+            {/* Theme Settings */}
+            <ThemePicker />
+
             {/* Admin Actions */}
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer bg-card border-border">
                 <CardHeader>
-                  <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                    <Users className="w-6 h-6 text-blue-600" />
+                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                    <Users className="w-6 h-6 text-primary" />
                   </div>
                   <CardTitle>User Profiles</CardTitle>
                   <CardDescription>
@@ -324,10 +328,10 @@ export default function AdminDashboardPage() {
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer bg-card border-border">
                 <CardHeader>
-                  <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4">
-                    <BarChart3 className="w-6 h-6 text-green-600" />
+                  <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mb-4">
+                    <BarChart3 className="w-6 h-6 text-accent" />
                   </div>
                   <CardTitle>Analytics & Reports</CardTitle>
                   <CardDescription>
@@ -343,10 +347,10 @@ export default function AdminDashboardPage() {
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer bg-card border-border">
                 <CardHeader>
-                  <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-4">
-                    <Settings className="w-6 h-6 text-purple-600" />
+                  <div className="w-12 h-12 bg-secondary rounded-lg flex items-center justify-center mb-4">
+                    <Settings className="w-6 h-6 text-secondary-foreground" />
                   </div>
                   <CardTitle>System Settings</CardTitle>
                   <CardDescription>
@@ -362,10 +366,10 @@ export default function AdminDashboardPage() {
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer bg-card border-border">
                 <CardHeader>
-                  <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center mb-4">
-                    <Database className="w-6 h-6 text-orange-600" />
+                  <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
+                    <Database className="w-6 h-6 text-primary" />
                   </div>
                   <CardTitle>Database Management</CardTitle>
                   <CardDescription>
@@ -381,10 +385,10 @@ export default function AdminDashboardPage() {
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer bg-card border-border">
                 <CardHeader>
-                  <div className="w-12 h-12 bg-amber-100 rounded-lg flex items-center justify-center mb-4">
-                    <AlertTriangle className="w-6 h-6 text-amber-600" />
+                  <div className="w-12 h-12 bg-destructive/10 rounded-lg flex items-center justify-center mb-4">
+                    <AlertTriangle className="w-6 h-6 text-destructive" />
                   </div>
                   <CardTitle>Security & Logs</CardTitle>
                   <CardDescription>
@@ -400,10 +404,10 @@ export default function AdminDashboardPage() {
                 </CardContent>
               </Card>
 
-              <Card className="hover:shadow-lg transition-shadow cursor-pointer">
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer bg-card border-border">
                 <CardHeader>
-                  <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center mb-4">
-                    <DollarSign className="w-6 h-6 text-emerald-600" />
+                  <div className="w-12 h-12 bg-accent/10 rounded-lg flex items-center justify-center mb-4">
+                    <DollarSign className="w-6 h-6 text-accent" />
                   </div>
                   <CardTitle>Revenue Management</CardTitle>
                   <CardDescription>
@@ -423,16 +427,16 @@ export default function AdminDashboardPage() {
             {/* Quick Stats */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               {quickStats.map((stat) => (
-                <Card key={stat.label}>
+                <Card key={stat.label} className="bg-card border-border">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                        <p className="text-sm font-medium text-gray-600">{stat.label}</p>
-                        <p className="text-2xl font-bold">
+                        <p className="text-sm font-medium text-muted-foreground">{stat.label}</p>
+                        <p className="text-2xl font-bold text-foreground">
                           {renderStatValue(stat.value, stat.formatter)}
                         </p>
                     </div>
-                      <stat.icon className="h-8 w-8 text-blue-600" />
+                      <stat.icon className="h-8 w-8 text-primary" />
                   </div>
                 </CardContent>
               </Card>

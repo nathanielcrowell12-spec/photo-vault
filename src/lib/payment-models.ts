@@ -333,7 +333,7 @@ export const PHOTOGRAPHER_SUBSCRIPTION: PhotographerSubscription = {
     'Automated payment reminders'
   ],
   commission_program: true,
-  free_trial_days: 14
+  free_trial_days: 0
 }
 
 export const COMMISSION_RULES: CommissionRules = {
@@ -366,7 +366,7 @@ export const COMMISSION_RULES: CommissionRules = {
     'CROSS-PHOTOGRAPHER COMMISSION: New photographer gets $50 new customer commission',
     'PhotoVault keeps $50 from new session, original photographer keeps $4/month recurring',
     'This creates network effect - all photographers benefit from local photo network',
-    '14-day free trial available for new photographers',
+    'Cancel anytime',
     'FAMILY ACCOUNTS: One login per family, unlimited galleries, $8/month if no photographer',
     'DIRECT-TO-PHOTOGRAPHER CONVERSION: When a Direct Monthly client ($8/mo, 100% PhotoVault) books with a photographer:',
     '  1. Client becomes associated with photographer (primary_photographer_id set)',

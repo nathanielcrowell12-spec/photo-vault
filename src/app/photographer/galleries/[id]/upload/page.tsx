@@ -255,7 +255,7 @@ export default function GalleryUploadPage({ params }: { params: Promise<{ id: st
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
         <Loader2 className="h-12 w-12 animate-spin text-blue-600" />
       </div>
     )
@@ -263,7 +263,7 @@ export default function GalleryUploadPage({ params }: { params: Promise<{ id: st
 
   if (error && !gallery) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
         <Alert variant="destructive" className="max-w-md">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>{error}</AlertDescription>
@@ -273,9 +273,9 @@ export default function GalleryUploadPage({ params }: { params: Promise<{ id: st
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen bg-neutral-900">
       {/* Header */}
-      <header className="border-b bg-white dark:bg-slate-900">
+      <header className="border-b bg-neutral-900">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -325,7 +325,7 @@ export default function GalleryUploadPage({ params }: { params: Promise<{ id: st
             <CardContent>
               <div className="grid md:grid-cols-2 gap-4">
                 {/* Desktop Tool Option */}
-                <div className="border-2 border-purple-300 dark:border-purple-700 rounded-lg p-6 bg-white dark:bg-slate-900 hover:shadow-md transition-shadow">
+                <div className="border-2 border-purple-300 dark:border-purple-700 rounded-lg p-6 bg-neutral-900 hover:shadow-md transition-shadow">
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center flex-shrink-0">
                       <Download className="w-6 h-6 text-purple-600" />
@@ -390,7 +390,7 @@ export default function GalleryUploadPage({ params }: { params: Promise<{ id: st
                 </div>
 
                 {/* Web Upload Option */}
-                <div className="border-2 border-green-300 dark:border-green-700 rounded-lg p-6 bg-white dark:bg-slate-900 hover:shadow-md transition-shadow">
+                <div className="border-2 border-green-300 dark:border-green-700 rounded-lg p-6 bg-neutral-900 hover:shadow-md transition-shadow">
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center flex-shrink-0">
                       <Upload className="w-6 h-6 text-green-600" />

@@ -98,14 +98,6 @@ export default function DevDashboard() {
       bgColor: 'bg-blue-100 dark:bg-blue-900/20'
     },
     {
-      title: 'Session Management',
-      description: 'Track photo sessions and client relationships',
-      href: '/photographers/sessions',
-      icon: Calendar,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-100 dark:bg-purple-900/20'
-    },
-    {
       title: 'Revenue Dashboard',
       description: 'Track earnings, commissions, and revenue breakdown',
       href: '/photographers/revenue',
@@ -199,9 +191,9 @@ export default function DevDashboard() {
   ]
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen bg-neutral-900">
       {/* Header */}
-      <header className="border-b bg-white dark:bg-slate-900">
+      <header className="border-b bg-neutral-900">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">

@@ -1,16 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PDFReportGenerator, ReportData } from '@/lib/pdf-generator'
-import { supabase } from '@/lib/supabase'
+import { createServiceRoleClient } from '@/lib/supabase-server'
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { 
-      photographer_id, 
-      report_type, 
-      start_date, 
+    const {
+      photographer_id,
+      report_type,
+      start_date,
       end_date,
-      include_analytics = true 
+      include_analytics = true
     } = body
 
     if (!photographer_id || !report_type || !start_date || !end_date) {
@@ -19,6 +19,8 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       )
     }
+
+    const supabase = createServiceRoleClient()
 
     // Fetch photographer data
     const { data: photographer, error: photographerError } = await supabase
@@ -49,123 +51,73 @@ export async function POST(request: NextRequest) {
     }
 
     // Get email from auth.users
-    const { data: authUser, error: authError } = await supabase.auth.admin.getUserById(photographer_id)
+    const { data: authUser } = await supabase.auth.admin.getUserById(photographer_id)
     const userEmail = authUser?.user?.email || 'No email'
 
-    // Fetch commission payments for the period
-    const { data: commissionPayments, error: commissionError } = await supabase
-      .from('commission_payments')
-      .select(`
-        *,
-        client_payments:client_payment_id (
-          *,
-          clients:client_id (
-            name,
-            email
-          ),
-          payment_options:payment_option_id (
-            name,
-            price,
-            photographer_commission_rate
-          )
-        )
-      `)
+    // Fetch commissions for the period from the commissions table
+    const { data: commissions, error: commissionError } = await supabase
+      .from('commissions')
+      .select('*')
       .eq('photographer_id', photographer_id)
-      .gte('payment_period_start', start_date)
-      .lte('payment_period_start', end_date)
-      .order('payment_period_start', { ascending: false })
+      .gte('created_at', start_date)
+      .lte('created_at', end_date)
+      .order('created_at', { ascending: false })
 
     if (commissionError) {
-      console.error('Error fetching commission payments:', commissionError)
+      console.error('Error fetching commissions:', commissionError)
       return NextResponse.json(
         { error: 'Failed to fetch commission data' },
         { status: 500 }
       )
     }
 
-    // Fetch client payments for additional context
-    const { data: clientPayments, error: clientError } = await supabase
-      .from('client_payments')
-      .select(`
-        *,
-        clients:client_id (
-          name,
-          email
-        ),
-        payment_options:payment_option_id (
-          name,
-          price,
-          photographer_commission_rate
-        )
-      `)
-      .eq('photographer_id', photographer_id)
-      .gte('payment_date', start_date)
-      .lte('payment_date', end_date)
-      .order('payment_date', { ascending: false })
-
-    if (clientError) {
-      console.error('Error fetching client payments:', clientError)
-      return NextResponse.json(
-        { error: 'Failed to fetch client payment data' },
-        { status: 500 }
-      )
-    }
-
-    // Calculate summary data
-    const totalUpfrontCommission = commissionPayments?.reduce((sum, payment) => {
-      const isUpfront = payment.client_payments?.payment_options?.name?.includes('upfront') || 
-                       payment.client_payments?.payment_options?.name?.includes('Annual')
-      return sum + (isUpfront ? payment.commission_amount : 0)
+    // Calculate summary data from real commissions
+    const totalUpfrontCommission = commissions?.reduce((sum, c) => {
+      return sum + (c.payment_type === 'upfront' ? c.amount_cents / 100 : 0)
     }, 0) || 0
 
-    const totalMonthlyCommission = commissionPayments?.reduce((sum, payment) => {
-      const isRecurring = payment.client_payments?.payment_options?.name?.includes('ongoing') || 
-                         payment.client_payments?.payment_options?.name?.includes('monthly')
-      return sum + (isRecurring ? payment.commission_amount : 0)
+    const totalMonthlyCommission = commissions?.reduce((sum, c) => {
+      return sum + (c.payment_type === 'monthly' || c.payment_type === 'reactivation' ? c.amount_cents / 100 : 0)
     }, 0) || 0
 
-    const activeClients = new Set()
-    const monthlyRecurringClients = new Set()
+    // Get unique clients from commissions
+    const activeClients = new Set<string>()
+    const monthlyRecurringClients = new Set<string>()
 
-    commissionPayments?.forEach(payment => {
-      if (payment.client_payments?.client_id) {
-        activeClients.add(payment.client_payments.client_id)
-        
-        if (payment.client_payments?.payment_options?.name?.includes('ongoing') || 
-            payment.client_payments?.payment_options?.name?.includes('monthly')) {
-          monthlyRecurringClients.add(payment.client_payments.client_id)
+    commissions?.forEach(commission => {
+      if (commission.client_email) {
+        activeClients.add(commission.client_email)
+        if (commission.payment_type === 'monthly') {
+          monthlyRecurringClients.add(commission.client_email)
         }
       }
     })
 
     // Prepare recent transactions
-    const recentTransactions = commissionPayments?.slice(0, 20).map(payment => ({
-      date: payment.payment_period_start,
-      clientName: payment.client_payments?.clients?.name || 'Unknown Client',
-      amount: payment.commission_amount,
-      type: (payment.client_payments?.payment_options?.name?.includes('upfront') || 
-            payment.client_payments?.payment_options?.name?.includes('Annual') ? 'upfront' : 'recurring') as 'upfront' | 'recurring',
-      status: payment.status
+    const recentTransactions = commissions?.slice(0, 20).map(commission => ({
+      date: commission.created_at,
+      clientName: commission.client_email || 'Unknown Client',
+      amount: commission.amount_cents / 100,
+      type: commission.payment_type as 'upfront' | 'recurring',
+      status: commission.status
     })) || []
 
-    // Calculate top clients
-    const clientEarnings = new Map()
-    commissionPayments?.forEach(payment => {
-      const clientId = payment.client_payments?.client_id
-      const clientName = payment.client_payments?.clients?.name || 'Unknown Client'
-      
-      if (clientId) {
-        const current = clientEarnings.get(clientId) || { name: clientName, total: 0, upfront: 0, recurring: 0 }
-        current.total += payment.commission_amount
-        
-        if (payment.client_payments?.payment_options?.name?.includes('upfront') || 
-            payment.client_payments?.payment_options?.name?.includes('Annual')) {
-          current.upfront += payment.commission_amount
+    // Calculate top clients by earnings
+    const clientEarnings = new Map<string, { name: string; total: number; upfront: number; recurring: number }>()
+    commissions?.forEach(commission => {
+      const clientEmail = commission.client_email
+      if (clientEmail) {
+        const current = clientEarnings.get(clientEmail) || { name: clientEmail, total: 0, upfront: 0, recurring: 0 }
+        const amountDollars = commission.amount_cents / 100
+        current.total += amountDollars
+
+        if (commission.payment_type === 'upfront') {
+          current.upfront += amountDollars
         } else {
-          current.recurring += payment.commission_amount
+          current.recurring += amountDollars
         }
-        
-        clientEarnings.set(clientId, current)
+
+        clientEarnings.set(clientEmail, current)
       }
     })
 
@@ -199,45 +151,31 @@ export async function POST(request: NextRequest) {
 
     // Add analytics if requested
     if (include_analytics) {
-      // Fetch historical data for growth calculations
+      // Fetch historical data for growth calculations (previous period)
       const historicalStart = new Date(start_date)
       historicalStart.setMonth(historicalStart.getMonth() - 1)
-      
-      const { data: historicalPayments } = await supabase
-        .from('commission_payments')
-        .select('commission_amount, payment_period_start, client_payments:client_payment_id (payment_options:payment_option_id (name))')
+
+      const { data: historicalCommissions } = await supabase
+        .from('commissions')
+        .select('amount_cents, payment_type')
         .eq('photographer_id', photographer_id)
-        .gte('payment_period_start', historicalStart.toISOString())
-        .lt('payment_period_start', start_date)
+        .gte('created_at', historicalStart.toISOString())
+        .lt('created_at', start_date)
 
-      const historicalUpfront = historicalPayments?.reduce((sum, payment) => {
-        const clientPayments = payment.client_payments as Array<{ payment_options: Array<{ name: string }> }> | null
-        const isUpfront = clientPayments?.some(clientPayment => 
-          clientPayment.payment_options?.some(option => 
-            option?.name?.includes('upfront') || option?.name?.includes('Annual')
-          )
-        )
-        return sum + (isUpfront ? payment.commission_amount : 0)
-      }, 0) || 0
+      const historicalUpfront = historicalCommissions?.reduce((sum, c) =>
+        sum + (c.payment_type === 'upfront' ? c.amount_cents / 100 : 0), 0) || 0
 
-      const historicalRecurring = historicalPayments?.reduce((sum, payment) => {
-        const clientPayments = payment.client_payments as Array<{ payment_options: Array<{ name: string }> }> | null
-        const isRecurring = clientPayments?.some(clientPayment => 
-          clientPayment.payment_options?.some(option => 
-            option?.name?.includes('ongoing') || option?.name?.includes('monthly')
-          )
-        )
-        return sum + (isRecurring ? payment.commission_amount : 0)
-      }, 0) || 0
+      const historicalRecurring = historicalCommissions?.reduce((sum, c) =>
+        sum + (c.payment_type === 'monthly' || c.payment_type === 'reactivation' ? c.amount_cents / 100 : 0), 0) || 0
 
       const historicalTotal = historicalUpfront + historicalRecurring
       const currentTotal = totalUpfrontCommission + totalMonthlyCommission
 
       reportData.analytics = {
-        monthlyBreakdown: [], // Could be populated with monthly data
+        monthlyBreakdown: [],
         growthMetrics: {
           revenueGrowth: historicalTotal > 0 ? ((currentTotal - historicalTotal) / historicalTotal) * 100 : 0,
-          clientGrowth: 0, // Could be calculated with client data
+          clientGrowth: 0,
           recurringGrowth: historicalRecurring > 0 ? ((totalMonthlyCommission - historicalRecurring) / historicalRecurring) * 100 : 0
         }
       }

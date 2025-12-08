@@ -144,7 +144,7 @@ export default function ClientsPage() {
   // Show loading or redirect if not photographer
   if (userType !== 'photographer') {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-slate-600 dark:text-slate-300">Redirecting...</p>
@@ -214,9 +214,9 @@ export default function ClientsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen bg-neutral-900">
       {/* Header */}
-      <header className="border-b bg-white dark:bg-slate-900">
+      <header className="border-b bg-neutral-900">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Button variant="ghost" size="sm" asChild>
@@ -410,7 +410,7 @@ export default function ClientsPage() {
       {/* Add Client Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-slate-800 rounded-lg p-6 w-full max-w-md">
+          <div className="bg-neutral-800 rounded-lg p-6 w-full max-w-md">
             <h2 className="text-xl font-bold mb-4">Add New Client</h2>
             <div className="space-y-4">
               <div>

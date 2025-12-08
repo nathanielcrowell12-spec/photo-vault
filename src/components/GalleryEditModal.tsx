@@ -7,7 +7,8 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Save, X, Calendar, User, MapPin, Users, UserCheck } from 'lucide-react'
+import { Switch } from '@/components/ui/switch'
+import { Save, X, Calendar, User, MapPin, Users, UserCheck, Heart } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 
@@ -53,6 +54,12 @@ export default function GalleryEditModal({ gallery, isOpen, onClose, onSave }: G
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const isPhotographer = userType === 'photographer'
+  const isClient = userType === 'client'
+
+  // Family sharing state
+  const [isFamilyShared, setIsFamilyShared] = useState(false)
+  const [familySharingEnabled, setFamilySharingEnabled] = useState(false)
+  const [togglingSharing, setTogglingSharing] = useState(false)
 
   const fetchClients = async () => {
     try {
@@ -76,6 +83,54 @@ export default function GalleryEditModal({ gallery, isOpen, onClose, onSave }: G
       fetchClients()
     }
   }, [isOpen, isPhotographer, user?.id, fetchClients])
+
+  // Fetch family sharing status for clients
+  useEffect(() => {
+    async function fetchSharingStatus() {
+      if (!isOpen || !isClient || !gallery?.id) return
+
+      try {
+        const res = await fetch(`/api/galleries/${gallery.id}/sharing`)
+        const data = await res.json()
+
+        if (res.ok) {
+          setIsFamilyShared(data.is_family_shared || false)
+          setFamilySharingEnabled(data.family_sharing_enabled || false)
+        }
+      } catch (err) {
+        console.error('Error fetching sharing status:', err)
+      }
+    }
+
+    fetchSharingStatus()
+  }, [isOpen, isClient, gallery?.id])
+
+  // Handle family sharing toggle
+  const handleFamilySharingToggle = async (shared: boolean) => {
+    if (!gallery?.id) return
+
+    setTogglingSharing(true)
+    try {
+      const res = await fetch(`/api/galleries/${gallery.id}/sharing`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ is_family_shared: shared })
+      })
+
+      const data = await res.json()
+
+      if (res.ok) {
+        setIsFamilyShared(shared)
+      } else {
+        setError(data.error || 'Failed to update sharing')
+      }
+    } catch (err) {
+      console.error('Error toggling family sharing:', err)
+      setError('Failed to update sharing')
+    } finally {
+      setTogglingSharing(false)
+    }
+  }
 
   // Update form when gallery changes
   useEffect(() => {
@@ -207,6 +262,41 @@ export default function GalleryEditModal({ gallery, isOpen, onClose, onSave }: G
               <p className="text-xs text-muted-foreground">
                 Assign this gallery to a client to give them access
               </p>
+            </div>
+          )}
+
+          {/* Family Sharing (Client Only) */}
+          {isClient && (
+            <div className="space-y-2 p-4 bg-gradient-to-r from-pink-50 to-orange-50 rounded-lg border border-pink-100">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Heart className="h-4 w-4 text-pink-500" />
+                  <Label htmlFor="family_sharing" className="font-medium">
+                    Share with Family
+                  </Label>
+                </div>
+                <Switch
+                  id="family_sharing"
+                  checked={isFamilyShared}
+                  onCheckedChange={handleFamilySharingToggle}
+                  disabled={togglingSharing || !familySharingEnabled}
+                />
+              </div>
+              {familySharingEnabled ? (
+                <p className="text-xs text-muted-foreground">
+                  {isFamilyShared
+                    ? 'Family members can view this gallery'
+                    : 'Toggle on to share this gallery with your designated family members'}
+                </p>
+              ) : (
+                <p className="text-xs text-amber-600">
+                  Enable family sharing in{' '}
+                  <a href="/client/settings/family" className="underline hover:text-amber-700">
+                    Settings → Family Sharing
+                  </a>{' '}
+                  to share galleries with family
+                </p>
+              )}
             </div>
           )}
 

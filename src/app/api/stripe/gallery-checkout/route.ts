@@ -116,15 +116,43 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // 6. Get photographer info
-    const { data: photographer, error: photographerError } = await supabase
+    // 6. Get photographer info from user_profiles
+    const { data: userProfile, error: profileError } = await supabase
       .from('user_profiles')
-      .select('id, full_name, stripe_account_id')
+      .select('id, full_name')
       .eq('id', gallery.photographer_id)
       .single()
 
-    if (photographerError || !photographer) {
+    if (profileError || !userProfile) {
       return NextResponse.json({ error: 'Photographer not found' }, { status: 404 })
+    }
+
+    // 6b. Get photographer's Stripe Connect account from photographers table
+    const { data: photographerRecord } = await supabase
+      .from('photographers')
+      .select('id, stripe_connect_account_id, stripe_connect_status')
+      .eq('id', gallery.photographer_id)
+      .single()
+
+    // CRITICAL: Block payment if photographer can't receive money
+    if (!photographerRecord?.stripe_connect_account_id || photographerRecord.stripe_connect_status !== 'active') {
+      console.error('[GalleryCheckout] Photographer missing Stripe Connect:', {
+        photographerId: gallery.photographer_id,
+        hasAccountId: !!photographerRecord?.stripe_connect_account_id,
+        status: photographerRecord?.stripe_connect_status
+      })
+
+      return NextResponse.json({
+        error: 'Payment setup incomplete',
+        message: 'The photographer needs to complete their payment setup before you can pay.',
+        code: 'PHOTOGRAPHER_STRIPE_MISSING',
+      }, { status: 400 })
+    }
+
+    const photographer = {
+      id: userProfile.id,
+      full_name: userProfile.full_name,
+      stripe_connect_account_id: photographerRecord.stripe_connect_account_id,
     }
 
     // 7. Get or create Stripe customer
@@ -199,9 +227,18 @@ export async function POST(request: NextRequest) {
     // PhotoVault receives: storage fee minus commission
     const photovaultRevenueCents = storageFeeCents - storageCommissionCents
 
-    // 11. Create checkout session
+    // 11. Create checkout session with DESTINATION CHARGE
     // Client sees ONE line item - "Photography Services" with the total amount
-    // No itemization of shoot fee vs storage - clean and professional
+    // Money goes DIRECTLY to photographer via Stripe Connect
+    // PhotoVault gets its cut via application_fee_amount
+
+    console.log('[GalleryCheckout] Fee breakdown:', {
+      totalAmount: totalAmountCents,
+      shootFee: shootFeeCents,
+      storageFee: storageFeeCents,
+      photographerPayout: photographerPayoutCents,
+      photovaultRevenue: photovaultRevenueCents,
+    })
 
     const session = await stripe.checkout.sessions.create({
       mode: 'payment', // One-time payment for upfront amount
@@ -215,39 +252,45 @@ export async function POST(request: NextRequest) {
             product_data: {
               name: 'Photography Services',
               description: gallery.gallery_name || 'Photo Gallery',
-              // Don't show itemization - just the gallery name
             },
           },
           quantity: 1,
         },
       ],
+      // DESTINATION CHARGE: Money goes directly to photographer
+      payment_intent_data: {
+        application_fee_amount: photovaultRevenueCents, // PhotoVault's cut (guaranteed)
+        transfer_data: {
+          destination: photographer.stripe_connect_account_id, // Photographer's Express account
+        },
+        metadata: {
+          type: 'gallery_payment',
+          galleryId: gallery.id,
+          photographerId: photographer.id,
+          clientId: user.id,
+          billingMode: gallery.billing_mode || '',
+          paymentOptionId: gallery.payment_option_id || '',
+          // Fee breakdown for webhook recording
+          shootFeeCents: shootFeeCents.toString(),
+          storageFeeCents: storageFeeCents.toString(),
+          photographerPayoutCents: photographerPayoutCents.toString(),
+          photovaultRevenueCents: photovaultRevenueCents.toString(),
+        },
+      },
       metadata: {
         type: 'gallery_payment',
         galleryId: gallery.id,
         photographerId: photographer.id,
         clientId: user.id,
-        billingMode: gallery.billing_mode,
+        billingMode: gallery.billing_mode || '',
         paymentOptionId: gallery.payment_option_id || '',
         shootFeeCents: shootFeeCents.toString(),
         storageFeeCents: storageFeeCents.toString(),
         photographerPayoutCents: photographerPayoutCents.toString(),
         photovaultRevenueCents: photovaultRevenueCents.toString(),
       },
-      // If photographer has Stripe Connect, set up transfer
-      ...(photographer.stripe_account_id && {
-        payment_intent_data: {
-          // Don't use destination charges - we'll do a separate transfer
-          // This gives us more control over timing and split
-          metadata: {
-            galleryId: gallery.id,
-            photographerId: photographer.id,
-            photographerStripeAccountId: photographer.stripe_account_id,
-            photographerPayoutCents: photographerPayoutCents.toString(),
-          },
-        },
-      }),
-      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/client/gallery/${galleryId}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/client/gallery/${galleryId}?payment=cancelled`,
+      success_url: `${process.env.NEXT_PUBLIC_SITE_URL}/gallery/${galleryId}?payment=success&session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL}/gallery/${galleryId}?payment=cancelled`,
       allow_promotion_codes: true,
       billing_address_collection: 'auto',
     })

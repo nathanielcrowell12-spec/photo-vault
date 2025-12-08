@@ -1,26 +1,62 @@
-// src/components/directory/LocationCard.tsx
-import Link from 'next/link';
+import Link from 'next/link'
+import Image from 'next/image'
+import { Card, CardContent } from '@/components/ui/card'
+import { MapPin } from 'lucide-react'
+import { PermitBadge } from './PermitBadge'
+import { AttributeBadges } from './AttributeBadges'
+import type { LocationWithDetails } from '@/types/directory'
 
-type LocationCardProps = {
-  location: {
-    slug: string;
-    name: string;
-    city: string;
-    state: string;
-    cover_image_url?: string;
-  };
-};
+interface LocationCardProps {
+  location: LocationWithDetails
+}
 
 export function LocationCard({ location }: LocationCardProps) {
+  const citySlug = location.city.toLowerCase().replace(/ /g, '-')
+  const permitStatus = location.location_business_intelligence?.permit_status
+
   return (
-    <Link href={`/directory/${location.city.toLowerCase().replace(/ /g, '-')}/${location.slug}`}>
-      <div className="block border rounded-lg overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300">
-        <img src={location.cover_image_url || '/placeholder.svg'} alt={`Photo of ${location.name}`} className="w-full h-48 object-cover" />
-        <div className="p-4">
-          <h3 className="text-xl font-semibold">{location.name}</h3>
-          <p className="text-gray-600">{location.city}, {location.state}</p>
+    <Link href={`/directory/${citySlug}/${location.slug}`}>
+      <Card className="bg-slate-800/50 border-slate-700 hover:border-slate-600 transition-all duration-300 overflow-hidden group cursor-pointer h-full">
+        <div className="relative h-48 overflow-hidden">
+          {location.cover_image_url ? (
+            <Image
+              src={location.cover_image_url}
+              alt={`Photo of ${location.name}`}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              className="object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center">
+              <MapPin className="w-12 h-12 text-slate-600" />
+            </div>
+          )}
+          {permitStatus && (
+            <div className="absolute top-3 right-3">
+              <PermitBadge status={permitStatus} />
+            </div>
+          )}
         </div>
-      </div>
+        <CardContent className="p-4">
+          <h3 className="text-lg font-semibold text-white group-hover:text-amber-400 transition-colors line-clamp-1">
+            {location.name}
+          </h3>
+          <p className="text-slate-400 text-sm flex items-center gap-1 mt-1">
+            <MapPin className="w-3 h-3" />
+            {location.city}, {location.state}
+          </p>
+          {location.description && (
+            <p className="text-slate-500 text-sm mt-2 line-clamp-2">
+              {location.description}
+            </p>
+          )}
+          {location.location_attributes && location.location_attributes.length > 0 && (
+            <div className="mt-3">
+              <AttributeBadges attributes={location.location_attributes} />
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </Link>
-  );
+  )
 }

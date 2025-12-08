@@ -14,8 +14,9 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Eye, EyeOff, Lock, User, Mail, CheckCircle2, XCircle } from 'lucide-react'
+import { Eye, EyeOff, Lock, User, Mail, CheckCircle2, XCircle, Users, ChevronRight } from 'lucide-react'
 import AccessGuard from '@/components/AccessGuard'
+import Link from 'next/link'
 
 export default function ClientSettingsPage() {
   const { user, userType, loading, changePassword } = useAuth()
@@ -111,7 +112,7 @@ export default function ClientSettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-neutral-900">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600" />
       </div>
     )
@@ -123,15 +124,15 @@ export default function ClientSettingsPage() {
 
   return (
     <AccessGuard requiredAccess="canAccessClientDashboard">
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-pink-50/40 to-slate-100">
+      <div className="min-h-screen bg-neutral-900">
         {/* Header */}
-        <header className="border-b bg-white/95 backdrop-blur-sm">
+        <header className="border-b bg-neutral-800/50 border-white/10">
           <div className="container mx-auto px-4 py-6">
             <div className="flex items-center gap-4">
               <User className="h-10 w-10 text-pink-600" />
               <div>
-                <h1 className="text-2xl font-bold">Account Settings</h1>
-                <p className="text-sm text-slate-600">
+                <h1 className="text-2xl font-bold text-neutral-100">Account Settings</h1>
+                <p className="text-sm text-neutral-400">
                   Manage your account preferences and security settings
                 </p>
               </div>
@@ -143,7 +144,7 @@ export default function ClientSettingsPage() {
         <main className="container mx-auto px-4 py-8">
           <div className="max-w-2xl mx-auto space-y-6">
             {/* Account Information */}
-            <Card className="border-2 border-pink-100 shadow-sm">
+            <Card className="bg-neutral-800/50 border-white/10 shadow-sm">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <User className="h-5 w-5 text-pink-600" />
@@ -173,8 +174,32 @@ export default function ClientSettingsPage() {
               </CardContent>
             </Card>
 
+            {/* Family Sharing */}
+            <Link href="/client/settings/family">
+              <Card className="bg-neutral-800/50 border-white/10 shadow-sm hover:border-white/20 hover:shadow-md transition-all cursor-pointer group">
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="p-2 bg-gradient-to-br from-pink-500 to-orange-400 rounded-xl">
+                        <Users className="h-5 w-5 text-white" />
+                      </div>
+                      <div>
+                        <CardTitle className="flex items-center gap-2">
+                          Family Sharing
+                        </CardTitle>
+                        <CardDescription>
+                          Share your galleries with trusted family members
+                        </CardDescription>
+                      </div>
+                    </div>
+                    <ChevronRight className="h-5 w-5 text-slate-400 group-hover:text-pink-500 transition-colors" />
+                  </div>
+                </CardHeader>
+              </Card>
+            </Link>
+
             {/* Change Password */}
-            <Card className="border-2 border-pink-100 shadow-sm">
+            <Card className="bg-neutral-800/50 border-white/10 shadow-sm">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Lock className="h-5 w-5 text-pink-600" />

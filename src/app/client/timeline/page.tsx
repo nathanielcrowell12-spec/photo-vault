@@ -378,9 +378,9 @@ export default function PhotoTimelinePage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen bg-neutral-900">
       {/* Header */}
-      <header className="border-b bg-white dark:bg-slate-900">
+      <header className="border-b bg-neutral-800/50 border-white/10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Button asChild variant="ghost" size="sm">
@@ -392,7 +392,7 @@ export default function PhotoTimelinePage() {
             <Separator orientation="vertical" className="h-6" />
             <div className="flex items-center space-x-2">
               <Calendar className="h-6 w-6 text-purple-600" />
-              <span className="text-xl font-bold">Photo Timeline</span>
+              <span className="text-xl font-bold text-neutral-100">Photo Timeline</span>
             </div>
           </div>
           <div className="flex items-center space-x-2">
@@ -406,7 +406,7 @@ export default function PhotoTimelinePage() {
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-7xl mx-auto">
           {/* Filters */}
-          <Card className="mb-8">
+          <Card className="mb-8 bg-neutral-800/50 border-white/10">
             <CardContent className="p-6">
               <div className="flex flex-col lg:flex-row gap-4 items-center">
                 <div className="flex-1">
@@ -470,12 +470,12 @@ export default function PhotoTimelinePage() {
           {/* Timeline */}
           <div className="space-y-8">
             {filteredData.map((year) => (
-              <Card key={year.year} className="overflow-hidden">
-                <CardHeader className="bg-gradient-to-r from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20">
+              <Card key={year.year} className="overflow-hidden bg-neutral-800/50 border-white/10">
+                <CardHeader className="bg-neutral-700/30">
                   <div className="flex items-center justify-between">
                     <div>
-                      <CardTitle className="text-2xl">{year.year}</CardTitle>
-                      <CardDescription>
+                      <CardTitle className="text-2xl text-neutral-100">{year.year}</CardTitle>
+                      <CardDescription className="text-neutral-400">
                         {year.sessions} sessions • {year.total_photos} photos
                       </CardDescription>
                     </div>
@@ -489,22 +489,22 @@ export default function PhotoTimelinePage() {
                 </CardHeader>
                 <CardContent className="p-0">
                   {year.months.map((month) => (
-                    <div key={month.month} className="border-b last:border-b-0">
-                      <div className="p-6 bg-slate-50 dark:bg-slate-800/50">
-                        <h3 className="text-lg font-semibold mb-2">
+                    <div key={month.month} className="border-b last:border-b-0 border-white/10">
+                      <div className="p-6 bg-neutral-800/30">
+                        <h3 className="text-lg font-semibold mb-2 text-neutral-100">
                           {month.month_name} {year.year}
                         </h3>
-                        <p className="text-sm text-slate-600 dark:text-slate-400">
+                        <p className="text-sm text-neutral-400">
                           {month.sessions.length} sessions • {month.total_photos} photos
                         </p>
                       </div>
                       <div className="p-6 space-y-6">
                         {month.sessions.map((session) => (
-                          <div key={session.id} className="border rounded-lg p-6">
+                          <div key={session.id} className="border border-white/10 rounded-lg p-6">
                             <div className="flex items-start justify-between mb-4">
                               <div>
-                                <h4 className="text-xl font-semibold mb-2">{session.name}</h4>
-                                <div className="flex items-center space-x-4 text-sm text-slate-600 dark:text-slate-400">
+                                <h4 className="text-xl font-semibold mb-2 text-neutral-100">{session.name}</h4>
+                                <div className="flex items-center space-x-4 text-sm text-neutral-400">
                                   <div className="flex items-center space-x-1">
                                     <Calendar className="h-4 w-4" />
                                     <span>{new Date(session.date).toLocaleDateString()}</span>
@@ -597,11 +597,11 @@ export default function PhotoTimelinePage() {
 
           {/* Empty State */}
           {filteredData.length === 0 && (
-            <Card className="text-center py-12">
+            <Card className="text-center py-12 bg-neutral-800/50 border-white/10">
               <CardContent>
-                <Camera className="h-16 w-16 text-slate-400 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No photos found</h3>
-                <p className="text-slate-600 dark:text-slate-400 mb-4">
+                <Camera className="h-16 w-16 text-neutral-600 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2 text-neutral-100">No photos found</h3>
+                <p className="text-neutral-400 mb-4">
                   Try adjusting your filters or import photos from your photographers.
                 </p>
                 <Button asChild>

@@ -28,7 +28,10 @@ import {
   Eye,
   EyeOff,
   Shield,
-  Heart
+  Heart,
+  Info,
+  ImageIcon,
+  Wand2
 } from 'lucide-react'
 
 interface NavigationProps {
@@ -59,6 +62,7 @@ export function Navigation({ hideOnPaths = [] }: NavigationProps) {
     { href: '/client/dashboard', icon: Home, label: 'Dashboard' },
     { href: '/client/timeline', icon: Calendar, label: 'Timeline' },
     { href: '/client/upload', icon: Upload, label: 'Upload Photos' },
+    { href: '/download-desktop-app', icon: Download, label: 'Desktop App' },
     { href: '/client/billing', icon: CreditCard, label: 'Billing' },
     { href: '/client/support', icon: HelpCircle, label: 'Support' }
   ]
@@ -66,7 +70,6 @@ export function Navigation({ hideOnPaths = [] }: NavigationProps) {
   const photographerLinks = [
     { href: '/photographer/dashboard', icon: Home, label: 'Dashboard' },
     { href: '/photographer/clients', icon: Users, label: 'Clients' },
-    { href: '/photographers/sessions', icon: Calendar, label: 'Sessions' },
     { href: '/photographers/revenue', icon: DollarSign, label: 'Revenue' },
     { href: '/photographers/reports', icon: FileText, label: 'Reports' },
     { href: '/photographers/settings', icon: Settings, label: 'Settings' }
@@ -77,12 +80,16 @@ export function Navigation({ hideOnPaths = [] }: NavigationProps) {
     { href: '/admin/users', icon: Users, label: 'User Management' },
     { href: '/admin/analytics', icon: BarChart3, label: 'Analytics' },
     { href: '/admin/settings', icon: Settings, label: 'System Settings' },
+    { href: '/admin/image-effects', icon: Wand2, label: 'Image Effects' },
+    { href: '/admin/image-upload', icon: ImageIcon, label: 'Image Upload' },
+    { href: '/admin/photo-upload', icon: Upload, label: 'Photo Upload' },
     { href: '/admin/database', icon: Shield, label: 'Database' },
     { href: '/admin/security', icon: Shield, label: 'Security' }
   ]
 
   const publicLinks = [
     { href: '/', icon: Home, label: 'Home' },
+    { href: '/about', icon: Info, label: 'About' },
     { href: '/photographers', icon: Camera, label: 'For Photographers' },
     { href: '/terms', icon: FileText, label: 'Terms & Pricing' }
   ]
@@ -90,7 +97,7 @@ export function Navigation({ hideOnPaths = [] }: NavigationProps) {
   return (
     <>
       {/* Main Navigation Bar */}
-      <nav className="border-b border-border bg-white dark:bg-slate-900 sticky top-0 z-50">
+      <nav className="border-b border-white/10 bg-neutral-900 sticky top-0 z-50">
         <div className="container-pixieset">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
@@ -178,6 +185,19 @@ export function Navigation({ hideOnPaths = [] }: NavigationProps) {
               ) : (
                 // Public navigation
                 <>
+                  {publicLinks.map((link) => (
+                    <Button
+                      key={link.href}
+                      asChild
+                      variant={isActive(link.href) ? "default" : "ghost"}
+                      size="sm"
+                    >
+                      <Link href={link.href}>
+                        <link.icon className="h-4 w-4 mr-2" />
+                        {link.label}
+                      </Link>
+                    </Button>
+                  ))}
                   <Button asChild variant="default" size="sm">
                     <Link href="/auth/signup">
                       Get Started
@@ -275,7 +295,7 @@ export function Navigation({ hideOnPaths = [] }: NavigationProps) {
 
       {/* Client Dashboard Navigation */}
       {userType === 'client' && pathname.startsWith('/client/') && (
-        <div className="border-b bg-slate-50 dark:bg-slate-800/50">
+        <div className="border-b border-white/10 bg-neutral-800/50">
           <div className="container mx-auto px-4">
             <div className="flex items-center space-x-1 overflow-x-auto py-2">
               {clientLinks.map((link) => (
@@ -298,7 +318,7 @@ export function Navigation({ hideOnPaths = [] }: NavigationProps) {
 
       {/* Photographer Dashboard Navigation */}
       {userType === 'photographer' && pathname.startsWith('/photographer/') && (
-        <div className="border-b bg-slate-50 dark:bg-slate-800/50">
+        <div className="border-b border-white/10 bg-neutral-800/50">
           <div className="container mx-auto px-4">
             <div className="flex items-center space-x-1 overflow-x-auto py-2">
               {photographerLinks.map((link) => (
@@ -321,7 +341,7 @@ export function Navigation({ hideOnPaths = [] }: NavigationProps) {
 
       {/* Admin Dashboard Navigation */}
       {!loading && user && isActuallyAdmin && pathname.startsWith('/admin/') && (
-        <div className="border-b bg-slate-50 dark:bg-slate-800/50">
+        <div className="border-b border-white/10 bg-neutral-800/50">
           <div className="container mx-auto px-4">
             <div className="flex items-center space-x-1 overflow-x-auto py-2">
               {adminLinks.map((link) => (
@@ -359,7 +379,7 @@ export function Footer({ hideOnPaths = [] }: NavigationProps) {
   if (isCustomerSite) {
     // Customer footer - clean and focused
     return (
-      <footer className="border-t border-border bg-secondary/30 dark:bg-slate-900 mt-auto">
+      <footer className="border-t border-white/10 bg-neutral-900 mt-auto">
         <div className="container-pixieset py-12">
           <div className="grid md:grid-cols-2 gap-10">
             <div>
@@ -409,7 +429,7 @@ export function Footer({ hideOnPaths = [] }: NavigationProps) {
 
   // Photographer footer - full feature set
   return (
-    <footer className="border-t bg-slate-50 dark:bg-slate-900 mt-auto">
+    <footer className="border-t border-white/10 bg-neutral-900 mt-auto">
       <div className="container mx-auto px-4 py-8">
         <div className="grid md:grid-cols-4 gap-8">
           <div>

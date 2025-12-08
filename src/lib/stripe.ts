@@ -79,6 +79,7 @@ export const PRICING = {
 export const STRIPE_PRICES = {
   CLIENT_YEAR1: process.env.STRIPE_CLIENT_YEAR1_PRICE_ID || '',      // $100 one-time (Year 1)
   CLIENT_MONTHLY: process.env.STRIPE_CLIENT_MONTHLY_PRICE_ID || '',  // $8/month recurring (Year 2+)
+  PHOTOGRAPHER_PLATFORM: process.env.STRIPE_PRICE_PHOTOGRAPHER_MONTHLY || process.env.STRIPE_PHOTOGRAPHER_PRICE_ID || '', // $22/month platform fee
 } as const
 
 /**
@@ -171,7 +172,7 @@ export async function createConnectAccount(email: string, metadata?: Record<stri
     settings: {
       payouts: {
         schedule: {
-          interval: 'manual', // Platform controls payouts (14-day delay per commission rules)
+          interval: 'daily', // Stripe Express handles T+2 payouts automatically
         },
       },
     },
@@ -220,10 +221,14 @@ export async function cancelSubscription(subscriptionId: string) {
 
 /**
  * Get customer details
+ * @throws Error if customer has been deleted
  */
-export async function getCustomer(customerId: string) {
+export async function getCustomer(customerId: string): Promise<Stripe.Customer> {
   const customer = await stripe.customers.retrieve(customerId)
-  return customer
+  if (customer.deleted) {
+    throw new Error(`Customer ${customerId} has been deleted`)
+  }
+  return customer as Stripe.Customer
 }
 
 /**
@@ -294,6 +299,69 @@ export function formatAmount(amountInCents: number): string {
  */
 export function dollarsToCents(dollars: number): number {
   return Math.round(dollars * 100)
+}
+
+/**
+ * Create a platform subscription for a photographer
+ */
+export async function createPlatformSubscription({
+  customerId,
+  photographerId,
+  email,
+}: {
+  customerId?: string
+  photographerId: string
+  email: string
+}) {
+  const stripe = getStripeClient()
+  
+  if (!STRIPE_PRICES.PHOTOGRAPHER_PLATFORM) {
+    throw new Error('STRIPE_PRICE_PHOTOGRAPHER_MONTHLY or STRIPE_PHOTOGRAPHER_PRICE_ID is not configured')
+  }
+
+  // Create or retrieve customer
+  let customer: Stripe.Customer
+  if (customerId) {
+    console.log('[createPlatformSubscription] Using existing customer:', customerId)
+    customer = await getCustomer(customerId)
+  } else {
+    console.log('[createPlatformSubscription] No customerId provided, creating/retrieving by email:', email)
+    customer = await createOrRetrieveCustomer({
+      email,
+      userId: photographerId,
+      name: email, // Will be updated with business name if available
+    })
+  }
+
+  console.log('[createPlatformSubscription] Final customer:', {
+    id: customer.id,
+    email: customer.email,
+    defaultPaymentMethod: customer.invoice_settings?.default_payment_method,
+  })
+
+  // Create subscription - billing starts immediately
+  const subscription = await stripe.subscriptions.create({
+    customer: customer.id,
+    items: [
+      {
+        price: STRIPE_PRICES.PHOTOGRAPHER_PLATFORM,
+      },
+    ],
+    metadata: {
+      subscription_type: 'platform',
+      photographer_id: photographerId,
+    },
+    payment_settings: {
+      payment_method_types: ['card'],
+      save_default_payment_method: 'on_subscription',
+    },
+    expand: ['latest_invoice.payment_intent'],
+  })
+
+  // Log full subscription for debugging
+  console.log('[createPlatformSubscription] Full subscription:', JSON.stringify(subscription, null, 2))
+
+  return subscription
 }
 
 

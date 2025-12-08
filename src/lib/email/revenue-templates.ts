@@ -149,51 +149,52 @@ export function getSubscriptionExpiringEmailHTML(data: SubscriptionExpiringEmail
     <div class="email-container">
         <div class="header">
             <div class="warning-icon">⚠️</div>
-            <h1>Subscription Expiring Soon</h1>
-            <p>Don't lose access to your photos!</p>
+            <h1>Your ${data.galleryName} Photos Need Protection</h1>
+            <p>Memory Insurance expires soon</p>
         </div>
 
         <div class="content">
-            <h2>Hi ${data.customerName}! 👋</h2>
+            <h2>Hi ${data.customerName},</h2>
 
-            <p>Your subscription to <strong>"${data.galleryName}"</strong> is expiring soon.</p>
+            <p>Your photographer delivered something <strong>irreplaceable</strong>—the only high-resolution record of ${data.galleryName}.</p>
+
+            <p>Right now, those photos are protected in your digital safety deposit box. But in <strong>${data.expiresInDays} days</strong>, that protection expires.</p>
 
             <div class="expiry-notice">
-                <h3>Time Remaining</h3>
+                <h3>Memory Insurance Expires In</h3>
                 <div class="days-remaining">${data.expiresInDays}</div>
-                <p style="margin: 0; font-size: 18px; color: #92400e;">day${data.expiresInDays !== 1 ? 's' : ''} until expiration</p>
+                <p style="margin: 0; font-size: 18px; color: #92400e;">day${data.expiresInDays !== 1 ? 's' : ''}</p>
             </div>
 
             <div class="cta-container">
-                <a href="${data.renewalLink}" class="cta-button">Renew Subscription →</a>
+                <a href="${data.renewalLink}" class="cta-button">Keep My Photos Protected →</a>
             </div>
 
             <div class="info-box">
-                <h3>What happens if I don't renew?</h3>
-                <p>Don't worry! We understand life gets busy. Here's what you need to know:</p>
+                <h3>Why Memory Insurance Matters</h3>
+                <p><strong>Hard drives have a 100% failure rate eventually.</strong> Professional data recovery costs $500-$5,000—and success isn't guaranteed.</p>
+                <p>Without PhotoVault, these are your only options:</p>
                 <ul style="margin: 10px 0; padding-left: 20px;">
-                    <li><strong>90-Day Grace Period:</strong> Your photos remain safe for 90 days after cancellation</li>
-                    <li><strong>Download Anytime:</strong> You can still download your photos during this period</li>
-                    <li><strong>Easy Reactivation:</strong> Resume access anytime within the grace period</li>
-                    <li><strong>After 90 Days:</strong> Photos may be archived or removed</li>
+                    <li>Download everything to a hard drive (that will eventually fail)</li>
+                    <li>Hope the zip file you saved years ago still works</li>
+                    <li>Pay your photographer again for re-delivery (if they still have the files)</li>
                 </ul>
             </div>
 
-            <h3>Why Keep Your Subscription Active?</h3>
+            <h3>What $${data.monthlyPrice.toFixed(2)}/month Gets You</h3>
             <ul class="benefits-list">
-                <li>📱 <strong>Access Anywhere:</strong> View photos from any device, anytime</li>
-                <li>⬇️ <strong>Unlimited Downloads:</strong> Download high-resolution images whenever you need</li>
-                <li>🔒 <strong>Secure Storage:</strong> Your memories are safely backed up in the cloud</li>
-                <li>👨‍👩‍👧 <strong>Easy Sharing:</strong> Share galleries with family and friends</li>
-                <li>🆕 <strong>New Photos Added:</strong> Your photographer may add more photos to your gallery</li>
+                <li>🛡️ <strong>Memory Insurance:</strong> Professional-grade protection from hard drive crashes, phone losses, house fires</li>
+                <li>📱 <strong>One-Tap Access:</strong> Full resolution photos delivered to your camera roll instantly</li>
+                <li>👨‍👩‍👧 <strong>Family Sharing:</strong> Share with family without tech headaches or zip files</li>
+                <li>♾️ <strong>Forever Protection:</strong> Your wedding photos, baby's first steps—safe for generations</li>
             </ul>
 
             <p style="text-align: center; font-size: 18px; margin: 30px 0;">
-                <strong>Just $${data.monthlyPrice.toFixed(2)}/month</strong> to keep all your memories accessible forever
+                <strong>For the price of one coffee a month:</strong> never worry about losing your most precious photos again
             </p>
 
             <div class="cta-container">
-                <a href="${data.renewalLink}" class="cta-button">Renew Now for $${data.monthlyPrice.toFixed(2)}/mo →</a>
+                <a href="${data.renewalLink}" class="cta-button">Protect My Photos for $${data.monthlyPrice.toFixed(2)}/mo →</a>
             </div>
 
             <div class="footer">
@@ -214,37 +215,38 @@ export function getSubscriptionExpiringEmailHTML(data: SubscriptionExpiringEmail
 
 export function getSubscriptionExpiringEmailText(data: SubscriptionExpiringEmailData): string {
   return `
-⚠️ SUBSCRIPTION EXPIRING SOON
+⚠️ YOUR ${data.galleryName.toUpperCase()} PHOTOS NEED PROTECTION
 
-Hi ${data.customerName}!
+Hi ${data.customerName},
 
-Your subscription to "${data.galleryName}" is expiring soon.
+Your photographer delivered something irreplaceable—the only high-resolution record of ${data.galleryName}.
 
-TIME REMAINING: ${data.expiresInDays} DAY${data.expiresInDays !== 1 ? 'S' : ''}
+Right now, those photos are protected in your digital safety deposit box. But in ${data.expiresInDays} day${data.expiresInDays !== 1 ? 's' : ''}, that protection expires.
 
-RENEW NOW:
+MEMORY INSURANCE EXPIRES IN: ${data.expiresInDays} DAY${data.expiresInDays !== 1 ? 'S' : ''}
+
+KEEP MY PHOTOS PROTECTED:
 ${data.renewalLink}
 
-WHAT HAPPENS IF I DON'T RENEW?
+WHY MEMORY INSURANCE MATTERS
 
-Don't worry! We understand life gets busy. Here's what you need to know:
+Hard drives have a 100% failure rate eventually. Professional data recovery costs $500-$5,000—and success isn't guaranteed.
 
-• 90-Day Grace Period: Your photos remain safe for 90 days after cancellation
-• Download Anytime: You can still download your photos during this period
-• Easy Reactivation: Resume access anytime within the grace period
-• After 90 Days: Photos may be archived or removed
+Without PhotoVault, these are your only options:
+• Download everything to a hard drive (that will eventually fail)
+• Hope the zip file you saved years ago still works
+• Pay your photographer again for re-delivery (if they still have the files)
 
-WHY KEEP YOUR SUBSCRIPTION ACTIVE?
+WHAT $${data.monthlyPrice.toFixed(2)}/MONTH GETS YOU
 
-📱 Access Anywhere: View photos from any device, anytime
-⬇️ Unlimited Downloads: Download high-resolution images whenever you need
-🔒 Secure Storage: Your memories are safely backed up in the cloud
-👨‍👩‍👧 Easy Sharing: Share galleries with family and friends
-🆕 New Photos Added: Your photographer may add more photos to your gallery
+🛡️ Memory Insurance: Professional-grade protection from hard drive crashes, phone losses, house fires
+📱 One-Tap Access: Full resolution photos delivered to your camera roll instantly
+👨‍👩‍👧 Family Sharing: Share with family without tech headaches or zip files
+♾️ Forever Protection: Your wedding photos, baby's first steps—safe for generations
 
-Just $${data.monthlyPrice.toFixed(2)}/month to keep all your memories accessible forever
+For the price of one coffee a month: never worry about losing your most precious photos again
 
-RENEW NOW:
+PROTECT MY PHOTOS:
 ${data.renewalLink}
 
 ---
@@ -369,14 +371,14 @@ export function getPaymentFailedEmailHTML(data: PaymentFailedEmailData): string 
     <div class="email-container">
         <div class="header">
             <div class="alert-icon">❌</div>
-            <h1>Payment Failed</h1>
-            <p>Action Required - Update Your Payment Method</p>
+            <h1>Your Memory Insurance Payment Failed</h1>
+            <p>Action Required - Your photos need protection</p>
         </div>
 
         <div class="content">
-            <h2>Hi ${data.customerName}! 👋</h2>
+            <h2>Hi ${data.customerName},</h2>
 
-            <p>We tried to process your subscription payment${data.galleryName ? ` for "${data.galleryName}"` : ''}, but unfortunately it failed.</p>
+            <p>We tried to process your Memory Insurance payment${data.galleryName ? ` for "${data.galleryName}"` : ''}, but it didn't go through. <strong>Your photos are still protected</strong>—but we need to fix this soon.</p>
 
             <div class="payment-notice">
                 <h3>Amount Due</h3>
@@ -389,9 +391,9 @@ export function getPaymentFailedEmailHTML(data: PaymentFailedEmailData): string 
             </div>
 
             <div class="grace-period-box">
-                <h3>Don't worry - You have ${data.gracePeriodDays} days</h3>
-                <p>Your access continues uninterrupted during this grace period. Simply update your payment method when convenient, and we'll retry the payment automatically.</p>
-                <p style="margin-bottom: 0;"><strong>No action needed right away</strong> - but the sooner you update, the better!</p>
+                <h3>Your photos are safe for ${data.gracePeriodDays >= 30 ? Math.ceil(data.gracePeriodDays / 30) + ' more month' + (Math.ceil(data.gracePeriodDays / 30) !== 1 ? 's' : '') : data.gracePeriodDays + ' more days'}</h3>
+                <p>Your Memory Insurance is still active during this grace period. Simply update your payment method, and we'll keep your digital safety deposit box protected.</p>
+                <p style="margin-bottom: 0;"><strong>Don't let your protection lapse</strong>—those memories are irreplaceable.</p>
             </div>
 
             <h3>Common reasons for payment failures:</h3>
@@ -405,7 +407,7 @@ export function getPaymentFailedEmailHTML(data: PaymentFailedEmailData): string 
 
             <p><strong>What happens next?</strong></p>
             <ul style="color: #6b7280;">
-                <li>Update your payment method within ${data.gracePeriodDays} days</li>
+                <li>Update your payment method anytime during the ${data.gracePeriodDays >= 30 ? Math.ceil(data.gracePeriodDays / 30) + '-month' : data.gracePeriodDays + '-day'} grace period</li>
                 <li>We'll automatically retry the payment</li>
                 <li>Your access continues without interruption</li>
                 <li>If not resolved, access may be suspended after the grace period</li>
@@ -448,7 +450,7 @@ AMOUNT DUE: $${data.amountDue.toFixed(2)}
 UPDATE PAYMENT METHOD:
 ${data.updatePaymentLink}
 
-DON'T WORRY - YOU HAVE ${data.gracePeriodDays} DAYS
+DON'T WORRY - YOU HAVE ${data.gracePeriodDays >= 30 ? Math.ceil(data.gracePeriodDays / 30) + ' MONTHS' : data.gracePeriodDays + ' DAYS'}
 
 Your access continues uninterrupted during this grace period. Simply update your payment method when convenient, and we'll retry the payment automatically.
 
@@ -464,7 +466,7 @@ COMMON REASONS FOR PAYMENT FAILURES:
 
 WHAT HAPPENS NEXT?
 
-• Update your payment method within ${data.gracePeriodDays} days
+• Update your payment method anytime during the ${data.gracePeriodDays >= 30 ? Math.ceil(data.gracePeriodDays / 30) + '-month' : data.gracePeriodDays + '-day'} grace period
 • We'll automatically retry the payment
 • Your access continues without interruption
 • If not resolved, access may be suspended after the grace period

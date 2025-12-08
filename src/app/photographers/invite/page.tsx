@@ -47,7 +47,7 @@ export default function InvitePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
@@ -85,7 +85,7 @@ export default function InvitePage() {
 
   if (sent) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardContent className="p-8 text-center">
             <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
@@ -112,7 +112,7 @@ export default function InvitePage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen bg-neutral-900">
       {/* Header */}
       <header className="border-b bg-white dark:bg-slate-900">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">

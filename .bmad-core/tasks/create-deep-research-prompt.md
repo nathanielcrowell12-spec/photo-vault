@@ -1,3 +1,7 @@
+# /create-deep-research-prompt Task
+
+When this command is used, execute the following task:
+
 <!-- Powered by BMAD™ Core -->
 
 # Create Deep Research Prompt Task

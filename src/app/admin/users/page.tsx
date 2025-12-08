@@ -102,7 +102,7 @@ export default function UserProfilesPage() {
 
       const usersWithEmails = data.map((userProfile) => ({
         ...userProfile,
-        email: userProfile.email || `user-${userProfile.id.slice(0, 8)}@example.com`,
+        email: userProfile.email || '(no email)',
         is_suspended: userProfile.payment_status === 'suspended' || false,
         suspension_reason: userProfile.payment_status === 'suspended' ? userProfile.suspension_reason ?? 'Administrative suspension' : null,
       }))
@@ -268,7 +268,7 @@ export default function UserProfilesPage() {
 
   return (
     <AccessGuard requiredAccess="canAccessAdminDashboard">
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+      <div className="min-h-screen bg-neutral-900">
         {/* Header */}
         <header className="border-b bg-white/95 backdrop-blur-sm">
           <div className="container mx-auto px-4 py-4">

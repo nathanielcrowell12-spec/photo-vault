@@ -21,6 +21,15 @@ export interface WelcomeEmailData {
   accountType: 'photographer' | 'client' | 'family'
 }
 
+export interface WelcomeEmailWithPasswordData {
+  customerName: string
+  customerEmail: string
+  tempPassword: string
+  galleryName: string
+  galleryUrl: string
+  loginUrl: string
+}
+
 export interface PasswordResetEmailData {
   customerName: string
   resetToken: string
@@ -216,7 +225,7 @@ export function getGalleryReadyEmailHTML(data: GalleryReadyEmailData): string {
                 <span class="gallery-stat">📷 ${data.photoCount} photo${data.photoCount !== 1 ? 's' : ''} ready</span>
             </div>
 
-            <p>Your photos are safely stored and ready to view, download, and share with family and friends.</p>
+            <p>Your photos are now protected in your digital safety deposit box—safe from hard drive crashes, phone losses, and tech disasters. View, download, and share with one tap.</p>
 
             <div class="steps">
                 <div class="step">
@@ -250,7 +259,7 @@ export function getGalleryReadyEmailHTML(data: GalleryReadyEmailData): string {
 
             <p style="font-size: 14px; color: #6b7280;">
                 <strong>What is PhotoVault?</strong><br>
-                PhotoVault is a secure platform where you can access all your professional photos from different photographers in one beautiful place. No more lost USB drives or expired download links!
+                PhotoVault is Memory Insurance for your family photos—a digital safety deposit box where your most precious memories are protected forever. Hard drives fail. Phones get lost. But your wedding photos, baby's first steps, and grandma's last Christmas? Safe with PhotoVault.
             </p>
 
             <div class="footer">
@@ -285,7 +294,7 @@ GALLERY DETAILS:
 ${data.galleryDescription ? `- ${data.galleryDescription}` : ''}
 - ${data.photoCount} photo${data.photoCount !== 1 ? 's' : ''} ready to view
 
-Your photos are safely stored and ready to view, download, and share with family and friends.
+Your photos are now protected in your digital safety deposit box—safe from hard drive crashes, phone losses, and tech disasters. View, download, and share with one tap.
 
 HOW TO ACCESS YOUR PHOTOS:
 
@@ -299,7 +308,7 @@ HOW TO ACCESS YOUR PHOTOS:
 From: ${data.photographerBusinessName || data.photographerName}
 
 WHAT IS PHOTOVAULT?
-PhotoVault is a secure platform where you can access all your professional photos from different photographers in one beautiful place. No more lost USB drives or expired download links!
+PhotoVault is Memory Insurance for your family photos—a digital safety deposit box where your most precious memories are protected forever. Hard drives fail. Phones get lost. But your wedding photos, baby's first steps, and grandma's last Christmas? Safe with PhotoVault.
 
 ---
 This gallery was shared with you by ${data.photographerName}
@@ -373,13 +382,13 @@ export function getWelcomeEmailHTML(data: WelcomeEmailData): string {
     <div class="email-container">
         <div class="header">
             <h1>🎉 Welcome to PhotoVault!</h1>
-            <p>Your photos, beautifully organized</p>
+            <p>Memory Insurance for your most precious photos</p>
         </div>
 
         <div class="content">
             <h2>Hi ${data.customerName}!</h2>
-            <p>Welcome to PhotoVault! We're thrilled to have you here.</p>
-            <p>Your account has been successfully created and you're ready to start organizing and accessing your professional photos.</p>
+            <p>Welcome to PhotoVault—your digital safety deposit box for family memories.</p>
+            <p>Your account is ready. Your photos are now protected from hard drive crashes, phone losses, and tech disasters. Access them anytime with one tap.</p>
 
             <div class="cta-container">
                 <a href="${dashboardLink}" class="cta-button">Go to Dashboard →</a>
@@ -406,11 +415,189 @@ export function getWelcomeEmailText(data: WelcomeEmailData): string {
 
 Hi ${data.customerName}!
 
-Welcome to PhotoVault! We're thrilled to have you here.
+Welcome to PhotoVault—your digital safety deposit box for family memories.
 
-Your account has been successfully created and you're ready to start organizing and accessing your professional photos.
+Your account is ready. Your photos are now protected from hard drive crashes, phone losses, and tech disasters. Access them anytime with one tap.
 
 Get started: ${dashboardLink}
+
+Questions? Contact us at support@photovault.com
+
+© ${new Date().getFullYear()} PhotoVault. All rights reserved.
+  `.trim()
+}
+
+/**
+ * Welcome Email with Temp Password Template
+ * Sent after payment when account is auto-created
+ */
+export function getWelcomeEmailWithPasswordHTML(data: WelcomeEmailWithPasswordData): string {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to PhotoVault - Your Account is Ready!</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .email-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #ec4899, #f97316);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+        }
+        .content {
+            padding: 40px 30px;
+        }
+        .password-box {
+            background: #f9fafb;
+            border: 2px solid #ec4899;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 30px 0;
+            text-align: center;
+        }
+        .password-box .label {
+            font-size: 14px;
+            color: #6b7280;
+            margin-bottom: 8px;
+            display: block;
+        }
+        .password-box .password {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ec4899;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+        }
+        .warning {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 16px;
+            margin: 20px 0;
+            border-radius: 6px;
+        }
+        .warning p {
+            margin: 0;
+            color: #92400e;
+            font-size: 14px;
+        }
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #ec4899, #f97316);
+            color: white;
+            padding: 16px 40px;
+            text-decoration: none;
+            border-radius: 8px;
+            margin: 30px 0;
+            font-weight: 600;
+            font-size: 16px;
+            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
+        }
+        .cta-container {
+            text-align: center;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #e5e7eb;
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <h1>🎉 Your Memories Are Protected!</h1>
+            <p>Memory Insurance activated - payment successful!</p>
+        </div>
+
+        <div class="content">
+            <h2>Hi ${data.customerName}! 👋</h2>
+
+            <p>Great news! Your Memory Insurance is now active. <strong>${data.galleryName}</strong> is safely stored in your digital safety deposit box—protected from hard drive crashes, phone losses, and tech disasters forever.</p>
+
+            <div class="password-box">
+                <span class="label">Your Temporary Password:</span>
+                <div class="password">${data.tempPassword}</div>
+            </div>
+
+            <div class="warning">
+                <p><strong>⚠️ Important:</strong> Please change this password after your first login for security.</p>
+            </div>
+
+            <p>Here's how to get started:</p>
+            <ol style="padding-left: 20px;">
+                <li>Click the button below to log in</li>
+                <li>Use your email: <strong>${data.customerEmail}</strong></li>
+                <li>Enter the temporary password shown above</li>
+                <li>You'll be prompted to change your password</li>
+                <li>Enjoy your photos!</li>
+            </ol>
+
+            <div class="cta-container">
+                <a href="${data.loginUrl}" class="cta-button">Log In to Your Account →</a>
+            </div>
+
+            <p style="margin-top: 30px; font-size: 14px; color: #6b7280;">
+                Or visit your gallery directly: <a href="${data.galleryUrl}">${data.galleryUrl}</a>
+            </p>
+
+            <div class="footer">
+                <p>Questions? Contact us at <a href="mailto:support@photovault.com">support@photovault.com</a></p>
+                <p>© ${new Date().getFullYear()} PhotoVault. All rights reserved.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+  `.trim()
+}
+
+export function getWelcomeEmailWithPasswordText(data: WelcomeEmailWithPasswordData): string {
+  return `
+🎉 YOUR MEMORIES ARE PROTECTED!
+
+Hi ${data.customerName}!
+
+Great news! Your Memory Insurance is now active. ${data.galleryName} is safely stored in your digital safety deposit box—protected from hard drive crashes, phone losses, and tech disasters forever.
+
+YOUR ACCOUNT DETAILS:
+- Email: ${data.customerEmail}
+- Temporary Password: ${data.tempPassword}
+
+⚠️ IMPORTANT: Please change this password after your first login for security.
+
+HOW TO GET STARTED:
+
+1. Visit: ${data.loginUrl}
+2. Log in with your email and the temporary password above
+3. You'll be prompted to change your password
+4. Enjoy your photos!
+
+Or visit your gallery directly: ${data.galleryUrl}
 
 Questions? Contact us at support@photovault.com
 

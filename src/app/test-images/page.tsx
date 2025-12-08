@@ -5,7 +5,7 @@ import { Camera } from 'lucide-react'
 
 export default function TestImagesPage() {
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-900">
+    <div className="min-h-screen bg-neutral-900">
       <div className="container-pixieset py-12">
         {/* Header */}
         <div className="mb-8">

@@ -8,6 +8,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import {
   ArrowLeft,
   CreditCard,
   CheckCircle,
@@ -31,13 +41,18 @@ import { PaymentMethodManager } from '@/components/stripe'
 interface Subscription {
   id: string
   stripe_subscription_id: string
-  status: 'active' | 'past_due' | 'canceled' | 'trialing'
+  status: 'active' | 'past_due' | 'canceled' | 'trialing' | 'inactive'
   current_period_start: string
   current_period_end: string
   cancel_at_period_end: boolean
   gallery_id: string
   gallery_name?: string
   photographer_name?: string
+  // Grace period tracking
+  last_payment_failure_at?: string
+  payment_failure_count?: number
+  access_suspended?: boolean
+  access_suspended_at?: string
 }
 
 interface PaymentHistory {
@@ -57,6 +72,9 @@ function ClientBillingContent() {
   const [loading, setLoading] = useState(true)
   const [subscribing, setSubscribing] = useState(false)
   const [subscriptionSuccess, setSubscriptionSuccess] = useState(false)
+  const [cancellingId, setCancellingId] = useState<string | null>(null)
+  const [showCancelConfirm, setShowCancelConfirm] = useState<string | null>(null)
+  const [reactivatingId, setReactivatingId] = useState<string | null>(null)
 
   // Check for success redirect
   useEffect(() => {
@@ -90,9 +108,13 @@ function ClientBillingContent() {
           current_period_start,
           current_period_end,
           cancel_at_period_end,
-          gallery_id
+          gallery_id,
+          last_payment_failure_at,
+          payment_failure_count,
+          access_suspended,
+          access_suspended_at
         `)
-        .eq('client_id', user?.id)
+        .eq('user_id', user?.id)
         .order('created_at', { ascending: false })
 
       // Don't throw on missing table - just show empty state
@@ -148,9 +170,63 @@ function ClientBillingContent() {
     }
   }
 
-  const handleManageSubscription = async (subscriptionId: string) => {
-    // In production, this would create a Stripe Customer Portal session
-    alert('Stripe Customer Portal coming soon! Contact support@photovault.photo to manage your subscription.')
+  const handleCancelSubscription = async (subscriptionId: string) => {
+    try {
+      setCancellingId(subscriptionId)
+      
+      const response = await fetch('/api/stripe/cancel-subscription', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subscriptionId })
+      })
+      
+      const data = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to cancel subscription')
+      }
+      
+      // Refresh billing data
+      await fetchBillingData()
+      setShowCancelConfirm(null)
+    } catch (error) {
+      console.error('[Billing] Error cancelling subscription:', error)
+      alert(error instanceof Error ? error.message : 'Failed to cancel subscription. Please try again.')
+    } finally {
+      setCancellingId(null)
+    }
+  }
+
+  const handleReactivateSubscription = async (subscriptionId: string) => {
+    try {
+      setReactivatingId(subscriptionId)
+      
+      const response = await fetch('/api/stripe/reactivate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ subscriptionId })
+      })
+      
+      const data = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to reactivate subscription')
+      }
+      
+      // If needs payment, redirect to checkout
+      if (data.checkoutUrl) {
+        window.location.href = data.checkoutUrl
+        return
+      }
+      
+      // Otherwise refresh billing data
+      await fetchBillingData()
+    } catch (error) {
+      console.error('[Billing] Error reactivating subscription:', error)
+      alert(error instanceof Error ? error.message : 'Failed to reactivate subscription. Please try again.')
+    } finally {
+      setReactivatingId(null)
+    }
   }
 
   const handleSubscribeDirectMonthly = async () => {
@@ -197,6 +273,35 @@ function ClientBillingContent() {
     }).format(cents / 100)
   }
 
+  // Calculate grace period remaining (6 months from first failure)
+  const getGracePeriodInfo = (sub: Subscription) => {
+    if (!sub.last_payment_failure_at) return null
+    
+    const GRACE_PERIOD_MONTHS = 6
+    const firstFailure = new Date(sub.last_payment_failure_at)
+    const graceEndDate = new Date(firstFailure)
+    graceEndDate.setMonth(graceEndDate.getMonth() + GRACE_PERIOD_MONTHS)
+    
+    const now = new Date()
+    const msRemaining = graceEndDate.getTime() - now.getTime()
+    
+    if (msRemaining <= 0) {
+      return { expired: true, daysRemaining: 0, monthsRemaining: 0, graceEndDate }
+    }
+    
+    const daysRemaining = Math.ceil(msRemaining / (24 * 60 * 60 * 1000))
+    const monthsRemaining = Math.floor(daysRemaining / 30)
+    const extraDays = daysRemaining % 30
+    
+    return { 
+      expired: false, 
+      daysRemaining, 
+      monthsRemaining, 
+      extraDays,
+      graceEndDate 
+    }
+  }
+
   const getStatusBadge = (status: string, cancelAtPeriodEnd: boolean) => {
     if (cancelAtPeriodEnd) {
       return <Badge variant="outline" className="border-amber-500 text-amber-700">Canceling</Badge>
@@ -218,16 +323,16 @@ function ClientBillingContent() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen bg-neutral-900">
       {/* Header */}
-      <header className="border-b bg-white dark:bg-slate-900">
+      <header className="border-b bg-neutral-800/50 border-white/10">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Button asChild variant="ghost" size="sm">
@@ -239,7 +344,7 @@ function ClientBillingContent() {
             <Separator orientation="vertical" className="h-6" />
             <div className="flex items-center space-x-2">
               <CreditCard className="h-6 w-6 text-green-600" />
-              <span className="text-xl font-bold">Billing & Subscriptions</span>
+              <span className="text-xl font-bold text-neutral-100">Billing & Subscriptions</span>
             </div>
           </div>
           <Button variant="outline" size="sm" onClick={fetchBillingData}>
@@ -253,24 +358,24 @@ function ClientBillingContent() {
         <div className="max-w-4xl mx-auto space-y-8">
           {/* Active Subscriptions */}
           <section>
-            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+            <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-neutral-100">
               <Camera className="h-5 w-5 text-purple-600" />
               Your Subscriptions
             </h2>
 
             {/* Subscription Success Message */}
             {subscriptionSuccess && (
-              <Card className="border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20 mb-6">
+              <Card className="bg-neutral-800/50 border-white/10 mb-6">
                 <CardContent className="py-6">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center">
+                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
                       <PartyPopper className="h-6 w-6 text-green-600" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-green-800 dark:text-green-200">
+                      <h3 className="font-semibold text-neutral-100">
                         Welcome to PhotoVault!
                       </h3>
-                      <p className="text-sm text-green-700 dark:text-green-300">
+                      <p className="text-sm text-neutral-400">
                         Your subscription is now active. You can start uploading and organizing your photos.
                       </p>
                     </div>
@@ -282,7 +387,7 @@ function ClientBillingContent() {
             {subscriptions.length === 0 ? (
               <div className="space-y-6">
                 {/* Direct Monthly Subscription Card */}
-                <Card className="border-2 border-purple-200 dark:border-purple-800">
+                <Card className="bg-neutral-800/50 border-white/10">
                   <CardHeader className="pb-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -339,7 +444,7 @@ function ClientBillingContent() {
                     </div>
 
                     {/* Security Note */}
-                    <div className="flex items-center gap-2 text-xs text-slate-500 bg-slate-50 dark:bg-slate-800 p-3 rounded-lg">
+                    <div className="flex items-center gap-2 text-xs text-slate-500 bg-neutral-800 p-3 rounded-lg">
                       <Shield className="h-4 w-4" />
                       <span>Secure payment powered by Stripe. Your card details are never stored on our servers.</span>
                     </div>
@@ -347,10 +452,10 @@ function ClientBillingContent() {
                 </Card>
 
                 {/* Alternative: Already have a photographer? */}
-                <Card className="bg-slate-50 dark:bg-slate-800/50">
+                <Card className="bg-neutral-800/50 border-white/10">
                   <CardContent className="py-6">
                     <div className="text-center">
-                      <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
+                      <p className="text-sm text-neutral-400 mb-3">
                         Working with a photographer? They may have already set up a gallery for you.
                       </p>
                       <Button asChild variant="outline" size="sm">
@@ -366,18 +471,18 @@ function ClientBillingContent() {
             ) : (
               <div className="space-y-4">
                 {subscriptions.map((sub) => (
-                  <Card key={sub.id}>
+                  <Card key={sub.id} className="bg-neutral-800/50 border-white/10">
                     <CardContent className="p-6">
                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
-                            <h3 className="text-lg font-semibold">{sub.gallery_name}</h3>
+                            <h3 className="text-lg font-semibold text-neutral-100">{sub.gallery_name}</h3>
                             {getStatusBadge(sub.status, sub.cancel_at_period_end)}
                           </div>
-                          <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
+                          <p className="text-sm text-neutral-400 mb-2">
                             by {sub.photographer_name}
                           </p>
-                          <div className="flex flex-wrap gap-4 text-sm text-slate-500">
+                          <div className="flex flex-wrap gap-4 text-sm text-neutral-400">
                             <div className="flex items-center gap-1">
                               <Calendar className="h-4 w-4" />
                               <span>Renews {formatDate(sub.current_period_end)}</span>
@@ -390,37 +495,96 @@ function ClientBillingContent() {
                         </div>
 
                         <div className="flex flex-col sm:flex-row gap-2">
-                          <Button asChild variant="outline" size="sm">
-                            <Link href={`/gallery/${sub.gallery_id}`}>
-                              <Camera className="h-4 w-4 mr-2" />
-                              View Gallery
-                            </Link>
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleManageSubscription(sub.stripe_subscription_id)}
-                          >
-                            <ExternalLink className="h-4 w-4 mr-2" />
-                            Manage
-                          </Button>
+                          {!sub.access_suspended && (
+                            <Button asChild variant="outline" size="sm">
+                              <Link href={`/gallery/${sub.gallery_id}`}>
+                                <Camera className="h-4 w-4 mr-2" />
+                                View Gallery
+                              </Link>
+                            </Button>
+                          )}
+                          {sub.status === 'active' && !sub.cancel_at_period_end && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                              onClick={() => setShowCancelConfirm(sub.id)}
+                            >
+                              Cancel Subscription
+                            </Button>
+                          )}
                         </div>
                       </div>
 
-                      {sub.status === 'past_due' && (
+                      {sub.status === 'past_due' && !sub.access_suspended && (
+                        <div className="mt-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
+                          <div className="flex items-start gap-3">
+                            <AlertCircle className="h-5 w-5 text-amber-600 mt-0.5" />
+                            <div className="flex-1">
+                              <h4 className="font-medium text-amber-800 dark:text-amber-200">
+                                Payment Failed - Grace Period Active
+                              </h4>
+                              {(() => {
+                                const graceInfo = getGracePeriodInfo(sub)
+                                return graceInfo ? (
+                                  <div className="mt-2">
+                                    <div className="text-2xl font-bold text-amber-700 dark:text-amber-300">
+                                      {graceInfo.monthsRemaining > 0 
+                                        ? `${graceInfo.monthsRemaining} month${graceInfo.monthsRemaining !== 1 ? 's' : ''}${graceInfo.extraDays ? ` ${graceInfo.extraDays} day${graceInfo.extraDays !== 1 ? 's' : ''}` : ''}`
+                                        : `${graceInfo.daysRemaining} day${graceInfo.daysRemaining !== 1 ? 's' : ''}`
+                                      } remaining
+                                    </div>
+                                    <p className="text-sm text-amber-700 dark:text-amber-300 mt-2">
+                                      <strong>You still have full access to your photos.</strong> Update your payment method anytime 
+                                      before {formatDate(graceInfo.graceEndDate.toISOString())} to continue without interruption. 
+                                      No back payments required.
+                                    </p>
+                                  </div>
+                                ) : (
+                                  <p className="text-sm text-amber-700 dark:text-amber-300 mt-1">
+                                    Your payment didn&apos;t go through. You have a 6-month grace period to update your payment method.
+                                  </p>
+                                )
+                              })()}
+                              <Button size="sm" className="mt-3 bg-amber-600 hover:bg-amber-700">
+                                Update Payment Method
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      
+                      {sub.access_suspended && (
                         <div className="mt-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
                           <div className="flex items-start gap-3">
                             <AlertCircle className="h-5 w-5 text-red-600 mt-0.5" />
-                            <div>
+                            <div className="flex-1">
                               <h4 className="font-medium text-red-800 dark:text-red-200">
-                                Payment Failed
+                                Access Suspended - Reactivation Required
                               </h4>
-                              <p className="text-sm text-red-700 dark:text-red-300 mt-1">
-                                Your last payment didn&apos;t go through. Please update your payment method
-                                to keep access to your photos.
+                              <p className="text-sm text-red-700 dark:text-red-300 mt-2">
+                                Your 6-month grace period has ended. <strong>Your photos are still safely stored</strong> and 
+                                will never be deleted. To regain access:
                               </p>
-                              <Button size="sm" className="mt-3 bg-red-600 hover:bg-red-700">
-                                Update Payment Method
+                              <ul className="text-sm text-red-700 dark:text-red-300 mt-2 list-disc list-inside space-y-1">
+                                <li>Pay a $20 reactivation fee</li>
+                                <li>Get 30 days to decide your next step</li>
+                                <li>Resume $8/month subscription, OR download your photos</li>
+                              </ul>
+                              <Button 
+                                size="sm" 
+                                className="mt-3 bg-red-600 hover:bg-red-700"
+                                onClick={() => handleReactivateSubscription(sub.stripe_subscription_id)}
+                                disabled={reactivatingId === sub.stripe_subscription_id}
+                              >
+                                {reactivatingId === sub.stripe_subscription_id ? (
+                                  <>
+                                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                                    Processing...
+                                  </>
+                                ) : (
+                                  'Reactivate Access - $20'
+                                )}
                               </Button>
                             </div>
                           </div>
@@ -460,25 +624,25 @@ function ClientBillingContent() {
 
           {/* Payment History */}
           <section>
-            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+            <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-neutral-100">
               <DollarSign className="h-5 w-5 text-green-600" />
               Payment History
             </h2>
 
             {payments.length === 0 ? (
-              <Card>
+              <Card className="bg-neutral-800/50 border-white/10">
                 <CardContent className="py-8 text-center">
-                  <p className="text-slate-600">No payment history yet.</p>
+                  <p className="text-neutral-400">No payment history yet.</p>
                 </CardContent>
               </Card>
             ) : (
-              <Card>
+              <Card className="bg-neutral-800/50 border-white/10">
                 <CardContent className="p-0">
                   <div className="divide-y dark:divide-slate-700">
                     {payments.map((payment) => (
                       <div
                         key={payment.id}
-                        className="flex items-center justify-between p-4 hover:bg-slate-50 dark:hover:bg-slate-800"
+                        className="flex items-center justify-between p-4 hover:bg-neutral-800"
                       >
                         <div className="flex items-center gap-4">
                           <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
@@ -517,10 +681,10 @@ function ClientBillingContent() {
           </section>
 
           {/* Help Section */}
-          <Card className="border-blue-200 dark:border-blue-800">
+          <Card className="bg-neutral-800/50 border-white/10">
             <CardContent className="p-6">
-              <h3 className="font-semibold mb-2">Need Help?</h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
+              <h3 className="font-semibold mb-2 text-neutral-100">Need Help?</h3>
+              <p className="text-sm text-neutral-400 mb-4">
                 If you have questions about billing or need to make changes to your subscription,
                 our support team is here to help.
               </p>
@@ -533,6 +697,47 @@ function ClientBillingContent() {
           </Card>
         </div>
       </main>
+
+      {/* Cancel Subscription Confirmation Dialog */}
+      <AlertDialog open={!!showCancelConfirm} onOpenChange={() => setShowCancelConfirm(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Cancel Subscription?</AlertDialogTitle>
+            <AlertDialogDescription className="space-y-3">
+              <p>
+                If you cancel, you&apos;ll enter a <strong>6-month grace period</strong> where you can 
+                still access your photos and resume your subscription anytime without penalty.
+              </p>
+              <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3 text-sm">
+                <strong className="text-amber-800 dark:text-amber-200">Your photos are never deleted.</strong>
+                <p className="text-amber-700 dark:text-amber-300 mt-1">
+                  After the grace period, you&apos;ll need to pay a $20 reactivation fee to access them again.
+                </p>
+              </div>
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Keep Subscription</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-red-600 hover:bg-red-700"
+              onClick={() => {
+                const sub = subscriptions.find(s => s.id === showCancelConfirm)
+                if (sub) handleCancelSubscription(sub.stripe_subscription_id)
+              }}
+              disabled={!!cancellingId}
+            >
+              {cancellingId ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Cancelling...
+                </>
+              ) : (
+                'Yes, Cancel Subscription'
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
@@ -541,7 +746,7 @@ function ClientBillingContent() {
 export default function ClientBillingPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     }>

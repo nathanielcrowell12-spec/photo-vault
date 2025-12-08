@@ -160,12 +160,6 @@ export default function PhotographerDashboardPage() {
                     Galleries
                   </Link>
                   <Link
-                    href="/photographers/sessions"
-                    className="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
-                  >
-                    Sessions
-                  </Link>
-                  <Link
                     href="/photographers/revenue"
                     className="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
                   >
@@ -177,12 +171,6 @@ export default function PhotographerDashboardPage() {
                   >
                     Reports
                   </Link>
-                  <Link
-                    href="/photographers/subscription"
-                    className="px-4 py-2 text-sm font-medium text-slate-300 hover:text-white hover:bg-white/5 rounded-lg transition-colors"
-                  >
-                    Subscription
-                  </Link>
                 </nav>
               </div>
 
@@ -193,12 +181,12 @@ export default function PhotographerDashboardPage() {
                     <Bell size={20} />
                     <span className="absolute top-1 right-1 w-2 h-2 bg-[#f59e0b] rounded-full"></span>
                   </button>
-                  <div className="flex items-center gap-2 px-3 py-1.5 bg-white/10 rounded-lg">
+                  <Link href="/photographers/settings" className="flex items-center gap-2 px-3 py-1.5 bg-white/10 rounded-lg hover:bg-white/20 transition-colors cursor-pointer">
                     <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-purple-500 to-blue-500 flex items-center justify-center text-sm font-bold">
                       {user?.email?.charAt(0).toUpperCase()}
                     </div>
                     <span className="text-sm text-white font-medium">{user?.email?.split('@')[0]}</span>
-                  </div>
+                  </Link>
                   <Button
                     onClick={signOut}
                     className="bg-white/10 text-white hover:bg-white/20 border-0"
@@ -241,12 +229,6 @@ export default function PhotographerDashboardPage() {
               Galleries
             </Link>
             <Link
-              href="/photographers/sessions"
-              className="block px-4 py-3 rounded-lg text-slate-300 hover:bg-white/5"
-            >
-              Sessions
-            </Link>
-            <Link
               href="/photographers/revenue"
               className="block px-4 py-3 rounded-lg text-slate-300 hover:bg-white/5"
             >
@@ -257,12 +239,6 @@ export default function PhotographerDashboardPage() {
               className="block px-4 py-3 rounded-lg text-slate-300 hover:bg-white/5"
             >
               Reports
-            </Link>
-            <Link
-              href="/photographers/subscription"
-              className="block px-4 py-3 rounded-lg text-slate-300 hover:bg-white/5"
-            >
-              Subscription
             </Link>
             <div className="h-px bg-white/10 my-4" />
             <Link
@@ -343,7 +319,7 @@ export default function PhotographerDashboardPage() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
                 {/* Active Clients */}
-                <div className="group p-6 rounded-2xl bg-white/[0.03] border border-white/5 hover:bg-white/[0.06] hover:border-white/10 transition-all duration-300 backdrop-blur-sm relative overflow-hidden">
+                <Link href="/photographer/clients" className="group p-6 rounded-2xl bg-white/[0.03] border border-white/5 hover:bg-white/[0.06] hover:border-white/10 transition-all duration-300 backdrop-blur-sm relative overflow-hidden cursor-pointer">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl"></div>
                   <div className="flex justify-between items-start mb-4 relative">
                     <div className="p-3 rounded-xl bg-neutral-900/50 text-blue-400 bg-opacity-10 border border-white/5">
@@ -360,10 +336,10 @@ export default function PhotographerDashboardPage() {
                     </h4>
                     <p className="text-sm text-neutral-500 font-medium uppercase tracking-wide">Active Clients</p>
                   </div>
-                </div>
+                </Link>
 
                 {/* Total Galleries */}
-                <div className="group p-6 rounded-2xl bg-white/[0.03] border border-white/5 hover:bg-white/[0.06] hover:border-white/10 transition-all duration-300 backdrop-blur-sm relative overflow-hidden">
+                <Link href="/photographer/galleries" className="group p-6 rounded-2xl bg-white/[0.03] border border-white/5 hover:bg-white/[0.06] hover:border-white/10 transition-all duration-300 backdrop-blur-sm relative overflow-hidden cursor-pointer">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-purple-500/10 rounded-full blur-3xl"></div>
                   <div className="flex justify-between items-start mb-4 relative">
                     <div className="p-3 rounded-xl bg-neutral-900/50 text-purple-400 bg-opacity-10 border border-white/5">
@@ -379,10 +355,10 @@ export default function PhotographerDashboardPage() {
                     </h4>
                     <p className="text-sm text-neutral-500 font-medium uppercase tracking-wide">Total Galleries</p>
                   </div>
-                </div>
+                </Link>
 
                 {/* Monthly Revenue - Highlighted */}
-                <div className="group p-6 rounded-2xl bg-gradient-to-br from-amber-500/20 to-amber-600/10 border border-amber-500/20 hover:border-amber-500/40 transition-all duration-300 backdrop-blur-sm relative overflow-hidden">
+                <Link href="/photographers/revenue" className="group p-6 rounded-2xl bg-gradient-to-br from-amber-500/20 to-amber-600/10 border border-amber-500/20 hover:border-amber-500/40 transition-all duration-300 backdrop-blur-sm relative overflow-hidden cursor-pointer">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-amber-500/20 rounded-full blur-3xl"></div>
                   <div className="flex justify-between items-start mb-4 relative">
                     <div className="p-3 rounded-xl bg-amber-500/20 border border-amber-500/30">
@@ -398,26 +374,32 @@ export default function PhotographerDashboardPage() {
                     </h4>
                     <p className="text-sm text-amber-400/80 font-medium uppercase tracking-wide">Monthly Earnings</p>
                   </div>
-                </div>
+                </Link>
 
                 {/* Client Rating */}
-                <div className="group p-6 rounded-2xl bg-white/[0.03] border border-white/5 hover:bg-white/[0.06] hover:border-white/10 transition-all duration-300 backdrop-blur-sm relative overflow-hidden">
+                <Link href="/photographer/feedback" className="group p-6 rounded-2xl bg-white/[0.03] border border-white/5 hover:bg-white/[0.06] hover:border-white/10 transition-all duration-300 backdrop-blur-sm relative overflow-hidden cursor-pointer">
                   <div className="absolute top-0 right-0 w-32 h-32 bg-yellow-500/10 rounded-full blur-3xl"></div>
                   <div className="flex justify-between items-start mb-4 relative">
                     <div className="p-3 rounded-xl bg-neutral-900/50 text-yellow-400 bg-opacity-10 border border-white/5">
                       <Star size={20} className="text-yellow-400 fill-yellow-400" />
                     </div>
-                    <span className="text-xs font-medium text-emerald-400 bg-emerald-400/10 px-2 py-1 rounded-full">
-                      Perfect Score
+                    <span className={`text-xs font-medium px-2 py-1 rounded-full ${
+                      stats.clientRating >= 4.5
+                        ? 'text-emerald-400 bg-emerald-400/10'
+                        : stats.clientRating > 0
+                          ? 'text-amber-400 bg-amber-400/10'
+                          : 'text-neutral-500 bg-white/5'
+                    }`}>
+                      {stats.clientRating >= 4.5 ? 'Excellent' : stats.clientRating > 0 ? 'Reviews' : 'No reviews yet'}
                     </span>
                   </div>
                   <div className="space-y-1 relative">
                     <h4 className="text-3xl font-semibold text-white tracking-tight group-hover:scale-105 transition-transform origin-left duration-300">
-                      {statsLoading ? '...' : stats.clientRating.toFixed(1)}
+                      {statsLoading ? '...' : stats.clientRating > 0 ? stats.clientRating.toFixed(1) : '-'}
                     </h4>
                     <p className="text-sm text-neutral-500 font-medium uppercase tracking-wide">Client Rating</p>
                   </div>
-                </div>
+                </Link>
               </div>
             </section>
 

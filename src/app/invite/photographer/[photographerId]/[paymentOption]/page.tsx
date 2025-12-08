@@ -75,10 +75,10 @@ export default function InviteAcceptancePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600 mx-auto mb-4"></div>
-          <p className="text-slate-600 dark:text-slate-300">Loading invitation...</p>
+          <p className="text-slate-300">Loading invitation...</p>
         </div>
       </div>
     )
@@ -86,7 +86,7 @@ export default function InviteAcceptancePage() {
 
   if (!photographerInfo || !paymentOption) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardContent className="p-8 text-center">
             <AlertTriangle className="h-16 w-16 text-orange-500 mx-auto mb-4" />
@@ -104,9 +104,9 @@ export default function InviteAcceptancePage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen bg-neutral-900">
       {/* Header */}
-      <header className="border-b bg-white dark:bg-slate-900">
+      <header className="border-b bg-neutral-900">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Heart className="h-6 w-6 text-pink-600" />
@@ -158,7 +158,7 @@ export default function InviteAcceptancePage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="border rounded-lg p-6 bg-slate-50 dark:bg-slate-800">
+              <div className="border rounded-lg p-6 bg-neutral-800">
                 <div className="flex items-start justify-between mb-4">
                   <div>
                     <h3 className="text-xl font-bold">{paymentOption.name}</h3>

@@ -61,6 +61,36 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Not authorized' }, { status: 403 })
     }
 
+    // CRITICAL: Check if photographer has Stripe Connect set up
+    // Photographers cannot send gallery ready emails until they can receive payments
+    const { data: photographerRecord, error: photographerError } = await supabase
+      .from('photographers')
+      .select('id, stripe_connect_account_id, stripe_connect_status')
+      .eq('id', user.id)
+      .single()
+
+    if (photographerError || !photographerRecord) {
+      console.error('[GalleryReady] Photographer record not found:', photographerError)
+      return NextResponse.json({
+        error: 'Payment setup required',
+        message: 'You must complete your payment setup before sending gallery notifications. Please connect your Stripe account in Settings.',
+        code: 'PHOTOGRAPHER_STRIPE_MISSING'
+      }, { status: 400 })
+    }
+
+    if (!photographerRecord.stripe_connect_account_id || photographerRecord.stripe_connect_status !== 'active') {
+      console.error('[GalleryReady] Photographer missing Stripe Connect:', {
+        photographerId: user.id,
+        hasAccountId: !!photographerRecord.stripe_connect_account_id,
+        status: photographerRecord.stripe_connect_status
+      })
+      return NextResponse.json({
+        error: 'Payment setup required',
+        message: 'You must complete your payment setup before sending gallery notifications. Please connect your Stripe account in Settings.',
+        code: 'PHOTOGRAPHER_STRIPE_MISSING'
+      }, { status: 400 })
+    }
+
     // Handle both array and object formats from Supabase join
     // Supabase returns an object for single relations, array for multi relations
     const clientsData = gallery.clients
@@ -98,7 +128,7 @@ export async function POST(request: NextRequest) {
 
     // Build gallery URL
     const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://photovault.photo'
-    const galleryUrl = `${siteUrl}/client/gallery/${galleryId}`
+    const galleryUrl = `${siteUrl}/gallery/${galleryId}`
 
     // Format price
     const priceDisplay = gallery.total_amount

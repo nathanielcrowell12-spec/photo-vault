@@ -1,7 +1,42 @@
 # Commission System v2.0 - Implementation Complete
 
 **Date:** 2025-11-08
-**Status:** ✅ Implementation Complete - Ready for Testing
+**Status:** ⚠️ **OUTDATED** - Migrated to Destination Charges System (Dec 1, 2025)
+
+---
+
+## ⚠️ IMPORTANT: This Document Is Outdated
+
+**As of December 1, 2025, the commission system has been migrated to Stripe destination charges.**
+
+### Old System (Documented Here)
+- Tiered commission rates (15%, 17.5%, 20%, 22.5%)
+- 14-day payout delay
+- Cron jobs for automated payouts
+- Manual Stripe Transfer API calls
+
+### New System (Current - Dec 1, 2025)
+- **Commission Rate:** 50% (flat rate)
+- **Payout Method:** Stripe destination charges (automatic routing)
+- **Payout Timing:** Immediate (2-day Stripe settlement, not 14 days)
+- **Architecture:** Money routes directly to photographer via `transfer_data.destination`
+- **No Cron Jobs:** Stripe handles everything automatically
+
+### See Current Implementation
+- **Main Documentation:** `photovault-hub/CLAUDE.md` - SESSION STATE section (Dec 1, 2025)
+- **Key Files:**
+  - `src/app/api/stripe/public-checkout/route.ts`
+  - `src/app/api/stripe/gallery-checkout/route.ts`
+  - `src/app/api/webhooks/stripe/route.ts`
+  - `src/lib/server/commission-service.ts` (simplified)
+
+### Migration Details
+- Destination charges implemented: `application_fee_amount` + `transfer_data.destination`
+- Commissions recorded as `status: 'paid'` immediately (not 'pending')
+- `stripe_transfer_id` captured automatically from Stripe
+- Old cron job (`/api/cron/process-payouts`) is now deprecated
+
+**This document is kept for historical reference only.**
 
 ---
 

@@ -16,7 +16,7 @@ export default function AdminTestPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-8">
+    <div className="min-h-screen bg-neutral-900 p-8">
       <div className="max-w-2xl mx-auto">
         <Card>
           <CardHeader>

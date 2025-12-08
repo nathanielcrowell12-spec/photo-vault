@@ -83,7 +83,7 @@ function DesktopAuthCallbackContent() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
@@ -169,7 +169,7 @@ function DesktopAuthCallbackContent() {
 export default function DesktopAuthCallbackPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-purple-50 to-blue-50 dark:from-purple-900/20 dark:to-blue-900/20 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardContent className="flex items-center justify-center p-8">
             <Loader2 className="h-8 w-8 animate-spin" />

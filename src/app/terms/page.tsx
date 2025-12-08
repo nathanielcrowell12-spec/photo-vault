@@ -18,9 +18,9 @@ import { PAYMENT_OPTIONS, COMMISSION_RULES } from "@/lib/payment-models";
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen bg-neutral-900">
       {/* Header */}
-      <header className="border-b bg-white dark:bg-slate-900">
+      <header className="border-b border-white/10 bg-neutral-800/50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Button asChild variant="ghost" size="sm">
@@ -96,7 +96,7 @@ export default function TermsPage() {
                     </div>
                   </div>
                   <div className="text-center text-xs text-green-600 dark:text-green-400">
-                    Photographers earn $50 upfront + $4/month passive income (14-day free trial)
+                    Photographers earn $50 upfront + $4/month passive income
                   </div>
                 </div>
               </div>
@@ -158,7 +158,7 @@ export default function TermsPage() {
                   Commission Rules Summary
                 </h3>
                 <ul className="space-y-1 text-sm text-blue-700 dark:text-blue-300">
-                  <li>• <strong>Platform Fee:</strong> Photographers pay $22/month (14-day free trial)</li>
+                  <li>• <strong>Platform Fee:</strong> Photographers pay $22/month</li>
                   <li>• <strong>Year 1:</strong> Client pays $100 upfront → Photographer gets $50 commission</li>
                   <li>• <strong>Year 2+:</strong> Client pays $8/month ongoing → Photographer gets $4/month passive commission</li>
                   <li>• PhotoVault handles all billing - no payment processing needed</li>

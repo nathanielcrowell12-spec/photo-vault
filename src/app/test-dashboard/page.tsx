@@ -115,9 +115,6 @@ export default function TestDashboard() {
     { id: 'clients-2', category: 'Photographer Features', page: 'Clients', url: '/photographers/clients', feature: 'Send invitations works', status: 'pending' },
     { id: 'clients-3', category: 'Photographer Features', page: 'Clients', url: '/photographers/clients', feature: 'Payment reminders work', status: 'pending' },
     
-    { id: 'sessions-1', category: 'Photographer Features', page: 'Sessions', url: '/photographers/sessions', feature: 'New session form works', status: 'pending' },
-    { id: 'sessions-2', category: 'Photographer Features', page: 'Sessions', url: '/photographers/sessions', feature: 'Session list displays', status: 'pending' },
-    
     { id: 'revenue-1', category: 'Photographer Features', page: 'Revenue', url: '/photographers/revenue', feature: 'Summary cards display', status: 'pending' },
     { id: 'revenue-2', category: 'Photographer Features', page: 'Revenue', url: '/photographers/revenue', feature: 'Revenue breakdown shows', status: 'pending' },
     { id: 'revenue-3', category: 'Photographer Features', page: 'Revenue', url: '/photographers/revenue', feature: 'Transaction history displays', status: 'pending' },
@@ -184,9 +181,9 @@ export default function TestDashboard() {
   const pendingTests = tests.filter(t => t.status === 'pending').length
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen bg-neutral-900">
       {/* Header */}
-      <header className="border-b bg-white dark:bg-slate-900 sticky top-0 z-50">
+      <header className="border-b bg-neutral-900 sticky top-0 z-50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">

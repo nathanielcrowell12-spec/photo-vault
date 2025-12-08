@@ -4,6 +4,20 @@ const nextConfig: NextConfig = {
   // External packages for server-side functionality
   serverExternalPackages: ['jszip', 'unzipper', '@tus/server', '@tus/file-store'],
 
+  // Image optimization domains
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'gqmycgopitxpjkxzrnyv.supabase.co',
+      },
+    ],
+  },
+
   // Fix for multiple lockfiles warning
   turbopack: {
     root: __dirname,

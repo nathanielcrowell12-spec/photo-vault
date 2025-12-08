@@ -21,9 +21,9 @@ import Link from 'next/link'
 
 export default function CommissionDetailsPage() {
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen bg-neutral-900">
       {/* Header */}
-      <header className="border-b bg-white dark:bg-slate-900">
+      <header className="border-b bg-neutral-900">
         <div className="container mx-auto px-4 py-4">
           <Button asChild variant="ghost" size="sm">
             <Link href="/photographers">
@@ -39,13 +39,13 @@ export default function CommissionDetailsPage() {
           {/* Hero Section */}
           <div className="text-center mb-12">
             <Badge className="mb-4 bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">
-              Commission Structure
+              Guardian Earnings
             </Badge>
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
-              How PhotoVault Commissions Work
+              Earn While You Protect Family Memories
             </h1>
             <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
-              A complete breakdown of how you earn money with every client, including real-world scenarios and calculations
+              You're not just a photographer—you're the guardian of your clients' family history. Here's how you earn passive income while delivering Memory Insurance.
             </p>
           </div>
 
@@ -54,25 +54,25 @@ export default function CommissionDetailsPage() {
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Target className="h-6 w-6 text-green-600" />
-                <span>Commission Summary</span>
+                <span>Guardian Earnings Summary</span>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid md:grid-cols-3 gap-6">
                 <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
                   <div className="text-3xl font-bold text-green-600 mb-2">$50</div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Upfront Commission</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">When client pays $100 first year</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">Upfront Earnings</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">When family activates Memory Insurance ($100)</p>
                 </div>
                 <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                   <div className="text-3xl font-bold text-blue-600 mb-2">$4/mo</div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Recurring Commission</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">From year 2 onwards ($8/mo client payment)</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">Passive Income</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">For every family you protect (Year 2+)</p>
                 </div>
                 <div className="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
                   <div className="text-3xl font-bold text-purple-600 mb-2">$22/mo</div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Platform Fee</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">Your PhotoVault subscription</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">Guardian Platform Fee</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">Unlimited families, unlimited protection</p>
                 </div>
               </div>
             </CardContent>
@@ -91,27 +91,27 @@ export default function CommissionDetailsPage() {
             <TabsContent value="basic" className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>The Basic Commission Flow</CardTitle>
-                  <CardDescription>How it works with a typical new client</CardDescription>
+                  <CardTitle>The Guardian Earnings Flow</CardTitle>
+                  <CardDescription>How you earn while protecting a family's memories</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="space-y-4">
                     <div className="flex items-start space-x-4">
                       <div className="flex-shrink-0 w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center text-green-600 font-bold">1</div>
                       <div>
-                        <h3 className="font-semibold mb-1">Client Books Session</h3>
-                        <p className="text-sm text-slate-600 dark:text-slate-400">You photograph a wedding, newborn session, or family portrait. Total charge includes your photography fee.</p>
+                        <h3 className="font-semibold mb-1">You Capture Their Family History</h3>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">Wedding, newborn, family portrait—you're creating irreplaceable memories. These photos can never be retaken.</p>
                       </div>
                     </div>
 
                     <div className="flex items-start space-x-4">
                       <div className="flex-shrink-0 w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center text-green-600 font-bold">2</div>
                       <div>
-                        <h3 className="font-semibold mb-1">Client Pays $100 First Year</h3>
-                        <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">Client pays $100 to PhotoVault for first year of storage. This is baked into your package pricing.</p>
+                        <h3 className="font-semibold mb-1">Family Activates Memory Insurance ($100)</h3>
+                        <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">You deliver their photos to PhotoVault—a digital safety deposit box. First year of protection is built into your package.</p>
                         <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg text-sm">
-                          <strong>You Earn: $50 upfront commission</strong>
-                          <br />PhotoVault keeps: $50
+                          <strong>You Earn: $50 upfront</strong>
+                          <br />You're now their guardian—they trust you with their family history
                         </div>
                       </div>
                     </div>
@@ -119,11 +119,11 @@ export default function CommissionDetailsPage() {
                     <div className="flex items-start space-x-4">
                       <div className="flex-shrink-0 w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 font-bold">3</div>
                       <div>
-                        <h3 className="font-semibold mb-1">Client Renews (Year 2+)</h3>
-                        <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">After first year, client pays $8/month to keep their photos accessible forever.</p>
+                        <h3 className="font-semibold mb-1">Family Continues Protection (Year 2+)</h3>
+                        <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">For $8/month—the price of one coffee—their memories stay protected from hard drive failures.</p>
                         <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg text-sm">
                           <strong>You Earn: $4/month passive income</strong>
-                          <br />PhotoVault keeps: $4/month
+                          <br />For every family you protect, forever
                         </div>
                       </div>
                     </div>
@@ -131,11 +131,11 @@ export default function CommissionDetailsPage() {
                     <div className="flex items-start space-x-4">
                       <div className="flex-shrink-0 w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center text-purple-600 font-bold">4</div>
                       <div>
-                        <h3 className="font-semibold mb-1">You Pay Platform Fee</h3>
-                        <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">Your PhotoVault subscription covers unlimited galleries and all features.</p>
+                        <h3 className="font-semibold mb-1">Your Guardian Platform Fee</h3>
+                        <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">Unlimited families, unlimited memories, unlimited protection.</p>
                         <div className="bg-purple-50 dark:bg-purple-900/20 p-3 rounded-lg text-sm">
                           <strong>Your Cost: $22/month</strong>
-                          <br />Covers: Unlimited clients, storage, features
+                          <br />Covered by just 6 protected families
                         </div>
                       </div>
                     </div>
@@ -144,14 +144,14 @@ export default function CommissionDetailsPage() {
                   <Separator />
 
                   <div className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 p-6 rounded-lg">
-                    <h3 className="font-semibold mb-4">Example: First Year Math</h3>
+                    <h3 className="font-semibold mb-4">Example: First Protected Family</h3>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span>Client pays for session + storage:</span>
-                        <span className="font-semibold">$100 (to PhotoVault)</span>
+                        <span>Family activates Memory Insurance:</span>
+                        <span className="font-semibold">$100</span>
                       </div>
                       <div className="flex justify-between text-green-600">
-                        <span>Your upfront commission:</span>
+                        <span>You earn as their guardian:</span>
                         <span className="font-semibold">+$50</span>
                       </div>
                       <div className="flex justify-between text-purple-600">
@@ -545,15 +545,15 @@ export default function CommissionDetailsPage() {
               <Card className="border-2 border-green-200 dark:border-green-800">
                 <CardContent className="pt-6">
                   <div className="text-center">
-                    <h3 className="font-semibold text-xl mb-3">The Bottom Line</h3>
+                    <h3 className="font-semibold text-xl mb-3">The Guardian Bottom Line</h3>
                     <p className="text-slate-600 dark:text-slate-400 mb-6 max-w-2xl mx-auto">
-                      You earn $50 upfront per client, then $4/month passive income for every client who stays active. 
-                      With just 6 active clients, your platform fee is covered and everything else is profit.
+                      You earn $50 upfront per family, then $4/month passive income for every family you protect.
+                      With just 6 protected families, your platform fee is covered—everything else is profit while you safeguard their irreplaceable memories.
                     </p>
                     <Button asChild size="lg" className="bg-green-600 hover:bg-green-700">
                       <Link href="/photographers/signup">
                         <DollarSign className="h-5 w-5 mr-2" />
-                        Start Earning Today - 14 Day Free Trial
+                        Become a Guardian
                       </Link>
                     </Button>
                   </div>
@@ -566,14 +566,14 @@ export default function CommissionDetailsPage() {
           <Card className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 border-2 border-green-200 dark:border-green-800">
             <CardContent className="pt-8 pb-8">
               <div className="text-center">
-                <h2 className="text-2xl font-bold mb-4">Ready to Start Earning?</h2>
+                <h2 className="text-2xl font-bold mb-4">Ready to Become a Guardian?</h2>
                 <p className="text-slate-600 dark:text-slate-400 mb-6 max-w-2xl mx-auto">
-                  Join PhotoVault today and turn your client galleries into recurring revenue streams
+                  You're not just delivering photos—you're protecting irreplaceable memories while building passive income. That's what being a Guardian means.
                 </p>
                 <div className="flex justify-center">
                   <Button asChild size="lg" className="bg-green-600 hover:bg-green-700">
                     <Link href="/photographers/signup">
-                      Start 14-Day Free Trial
+                      Start Protecting Memories
                     </Link>
                   </Button>
                 </div>

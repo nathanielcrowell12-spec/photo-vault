@@ -33,8 +33,8 @@ export default function SharePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
       </div>
     )
   }
@@ -53,24 +53,24 @@ export default function SharePage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen bg-neutral-900">
       {/* Header */}
-      <header className="border-b bg-white dark:bg-slate-900">
+      <header className="border-b border-white/5 bg-neutral-800/50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <Button asChild variant="ghost" size="sm">
+            <Button asChild variant="ghost" size="sm" className="text-neutral-400 hover:text-white">
               <Link href="/photographer/dashboard">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Dashboard
               </Link>
             </Button>
-            <Separator orientation="vertical" className="h-6" />
+            <Separator orientation="vertical" className="h-6 bg-white/10" />
             <div className="flex items-center space-x-2">
-              <Share2 className="h-6 w-6 text-purple-600" />
-              <span className="text-xl font-bold">Share Galleries</span>
+              <Share2 className="h-6 w-6 text-purple-400" />
+              <span className="text-xl font-bold text-neutral-100">Share Galleries</span>
             </div>
           </div>
-          <Badge variant="outline" className="bg-purple-50 text-purple-700 dark:bg-purple-900 dark:text-purple-200">
+          <Badge variant="outline" className="bg-purple-500/10 text-purple-400 border-purple-500/20">
             Photographer
           </Badge>
         </div>
@@ -78,31 +78,40 @@ export default function SharePage() {
 
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
-          <Card>
+          <Card className="bg-neutral-800/50 border-white/10">
             <CardHeader>
-              <CardTitle>Share a Gallery</CardTitle>
-              <CardDescription>
+              <CardTitle className="text-neutral-100">Share a Gallery</CardTitle>
+              <CardDescription className="text-neutral-400">
                 Select a gallery and share it with your clients.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label htmlFor="gallery-select" className="block text-sm font-medium text-gray-700">
+                <label htmlFor="gallery-select" className="block text-sm font-medium text-neutral-300">
                   Select Gallery
                 </label>
                 {/* This would be a dropdown with the photographer's galleries */}
-                <Input id="gallery-select" value={selectedGallery} onChange={(e) => setSelectedGallery(e.target.value)} />
+                <Input
+                  id="gallery-select"
+                  value={selectedGallery}
+                  onChange={(e) => setSelectedGallery(e.target.value)}
+                  className="bg-neutral-900 border-white/10 text-white placeholder:text-neutral-500"
+                />
               </div>
               <div className="flex space-x-2">
-                <Input readOnly value={`http://localhost:3000/gallery/${selectedGallery}`} />
-                <Button onClick={copyToClipboard} variant="outline">
+                <Input
+                  readOnly
+                  value={`http://localhost:3000/gallery/${selectedGallery}`}
+                  className="bg-neutral-900 border-white/10 text-white"
+                />
+                <Button onClick={copyToClipboard} variant="outline" className="border-white/10 text-neutral-300 hover:bg-white/5">
                   <Copy className="h-4 w-4 mr-2" />
                   Copy Link
                 </Button>
               </div>
-              <Separator />
+              <Separator className="bg-white/10" />
               <div className="flex justify-around">
-                <Button variant="ghost">
+                <Button variant="ghost" className="text-neutral-400 hover:text-white hover:bg-white/5">
                   <Mail className="h-4 w-4 mr-2" />
                   Email
                 </Button>

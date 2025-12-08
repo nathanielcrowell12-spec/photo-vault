@@ -98,10 +98,31 @@ export function PaymentMethodManager({
     }
   }
 
-  const handlePaymentMethodAdded = () => {
+  const handlePaymentMethodAdded = async () => {
     setIsAddingNew(false)
     setClientSecret(null)
-    fetchPaymentMethods()
+    
+    // Fetch updated payment methods
+    try {
+      const response = await fetch('/api/stripe/setup-intent')
+      const data = await response.json()
+      
+      if (response.ok && data.paymentMethods?.length > 0) {
+        setPaymentMethods(data.paymentMethods)
+        
+        // If no default payment method exists, automatically set the first one as default
+        const hasDefault = data.paymentMethods.some((pm: PaymentMethod) => pm.isDefault)
+        if (!hasDefault) {
+          console.log('[PaymentMethodManager] No default found, setting first payment method as default')
+          await setDefaultPaymentMethod(data.paymentMethods[0].id)
+        }
+      }
+    } catch (err) {
+      console.error('[PaymentMethodManager] Error fetching payment methods:', err)
+      // Still call fetchPaymentMethods as fallback
+      await fetchPaymentMethods()
+    }
+    
     onPaymentMethodAdded?.()
   }
 

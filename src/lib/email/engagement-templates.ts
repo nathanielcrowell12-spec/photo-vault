@@ -186,65 +186,65 @@ export function getFirstGalleryUploadEmailHTML(data: FirstGalleryUploadEmailData
 <body>
     <div class="email-container">
         <div class="header">
-            <div class="celebration-icon">🎉</div>
-            <h1>First Gallery Uploaded!</h1>
-            <p>Congratulations on this important milestone</p>
+            <div class="celebration-icon">🛡️</div>
+            <h1>You're Now Protecting Memories</h1>
+            <p>Your first gallery is secured and ready to deliver</p>
         </div>
 
         <div class="content">
-            <h2>Amazing work, ${data.photographerName}! 🎊</h2>
+            <h2>Well done, ${data.photographerName}!</h2>
 
             <div class="success-message">
-                ✅ Your gallery has been uploaded successfully!
+                ✅ These memories are now protected in PhotoVault
             </div>
 
             <div class="gallery-info">
                 <h3>"${data.galleryName}"</h3>
                 <div class="photo-count">${data.photoCount}</div>
-                <p style="margin: 0; font-size: 16px; color: #6b7280;">beautiful photo${data.photoCount !== 1 ? 's' : ''} ready to share</p>
+                <p style="margin: 0; font-size: 16px; color: #6b7280;">irreplaceable photo${data.photoCount !== 1 ? 's' : ''} now protected</p>
             </div>
 
             <p style="font-size: 18px; text-align: center;">
-                You've just taken the first step toward transforming how you deliver photos to your clients. Your gallery is beautifully organized and ready to go!
+                You've just become the guardian of another family's history. These photos are now safe from hard drive failures, lost USB drives, and expired download links.
             </p>
 
             <div class="next-step-box">
-                <h3>🚀 Next Step: Invite Your Client</h3>
+                <h3>🛡️ Next Step: Deliver Their Memory Insurance</h3>
                 <p style="font-size: 16px; margin: 15px 0;">
                     <span class="step-number">1</span>
-                    <strong>Send a professional invitation email to your client</strong>
+                    <strong>Send their protected gallery invitation</strong>
                 </p>
                 <p style="margin-left: 42px; color: #6b7280;">
-                    They'll receive a beautiful email with instant access to their photos. No downloads, no USB drives—just pure convenience!
+                    They'll receive instant access to their photos—one tap to download full resolution directly to their camera roll. No zip files. No hassle.
                 </p>
 
                 <div style="text-align: center; margin-top: 20px;">
-                    <a href="${data.nextStepsLink}" class="cta-button">Invite Your Client Now →</a>
+                    <a href="${data.nextStepsLink}" class="cta-button">Deliver Memory Insurance →</a>
                 </div>
             </div>
 
             <div class="tips-box">
-                <h3>💡 Tips for Success</h3>
+                <h3>Guardian Tips</h3>
                 <ul>
-                    <li><strong>Add a personal message:</strong> Include a note in the invitation to make it extra special</li>
-                    <li><strong>Set expectations:</strong> Let clients know they can access photos anytime, anywhere</li>
-                    <li><strong>Mention the subscription:</strong> Explain the small monthly fee keeps their photos accessible forever</li>
-                    <li><strong>Follow up:</strong> Check in after a few days to ensure they received the invitation</li>
+                    <li><strong>Tell the story:</strong> Remind them that hard drives fail—their photos are now protected</li>
+                    <li><strong>Make it personal:</strong> Add a note about what made this session special</li>
+                    <li><strong>Explain the value:</strong> For the price of one coffee a month, they never have to worry about losing these memories</li>
+                    <li><strong>Follow up:</strong> Check that they've set up their Memory Insurance</li>
                 </ul>
             </div>
 
-            <p><strong>What happens after you send the invitation?</strong></p>
+            <p><strong>What happens when they activate their Memory Insurance?</strong></p>
             <ul style="color: #6b7280;">
-                <li>✉️ Your client receives a beautiful invitation email</li>
-                <li>🔐 They create a free PhotoVault account</li>
-                <li>💳 They subscribe ($8/month after Year 1) to access photos</li>
-                <li>💰 You earn 50% commission ($4/month) for each active subscription</li>
-                <li>📊 Track everything in your dashboard</li>
+                <li>🛡️ Their photos are protected in a digital safety deposit box</li>
+                <li>📱 One-tap downloads to their camera roll—full resolution</li>
+                <li>💰 You earn $4/month passive income for every protected family</li>
+                <li>👨‍👩‍👧 They can share with family members they authorize</li>
+                <li>📊 Track all your protected families in your dashboard</li>
             </ul>
 
             <div class="encouragement">
                 <p>
-                    "You're not just uploading photos—you're building a new revenue stream while delivering an incredible client experience. Keep it up!"
+                    "You're not just delivering photos—you're protecting irreplaceable memories while building recurring income. That's what being a Guardian means."
                 </p>
             </div>
 
@@ -272,42 +272,42 @@ export function getFirstGalleryUploadEmailHTML(data: FirstGalleryUploadEmailData
 
 export function getFirstGalleryUploadEmailText(data: FirstGalleryUploadEmailData): string {
   return `
-🎉 FIRST GALLERY UPLOADED!
+🛡️ YOU'RE NOW PROTECTING MEMORIES
 
-Amazing work, ${data.photographerName}!
+Well done, ${data.photographerName}!
 
-✅ YOUR GALLERY HAS BEEN UPLOADED SUCCESSFULLY!
+✅ THESE MEMORIES ARE NOW PROTECTED IN PHOTOVAULT
 
 Gallery: "${data.galleryName}"
-Photos: ${data.photoCount} beautiful photo${data.photoCount !== 1 ? 's' : ''} ready to share
+Photos: ${data.photoCount} irreplaceable photo${data.photoCount !== 1 ? 's' : ''} now protected
 
-You've just taken the first step toward transforming how you deliver photos to your clients. Your gallery is beautifully organized and ready to go!
+You've just become the guardian of another family's history. These photos are now safe from hard drive failures, lost USB drives, and expired download links.
 
-🚀 NEXT STEP: INVITE YOUR CLIENT
+🛡️ NEXT STEP: DELIVER THEIR MEMORY INSURANCE
 
-1. Send a professional invitation email to your client
+1. Send their protected gallery invitation
 
-They'll receive a beautiful email with instant access to their photos. No downloads, no USB drives—just pure convenience!
+They'll receive instant access to their photos—one tap to download full resolution directly to their camera roll. No zip files. No hassle.
 
-INVITE YOUR CLIENT:
+DELIVER MEMORY INSURANCE:
 ${data.nextStepsLink}
 
-💡 TIPS FOR SUCCESS
+GUARDIAN TIPS
 
-• Add a personal message: Include a note in the invitation to make it extra special
-• Set expectations: Let clients know they can access photos anytime, anywhere
-• Mention the subscription: Explain the small monthly fee keeps their photos accessible forever
-• Follow up: Check in after a few days to ensure they received the invitation
+• Tell the story: Remind them that hard drives fail—their photos are now protected
+• Make it personal: Add a note about what made this session special
+• Explain the value: For the price of one coffee a month, they never have to worry about losing these memories
+• Follow up: Check that they've set up their Memory Insurance
 
-WHAT HAPPENS AFTER YOU SEND THE INVITATION?
+WHAT HAPPENS WHEN THEY ACTIVATE THEIR MEMORY INSURANCE?
 
-✉️ Your client receives a beautiful invitation email
-🔐 They create a free PhotoVault account
-💳 They subscribe ($8/month after Year 1) to access photos
-💰 You earn 50% commission ($4/month) for each active subscription
-📊 Track everything in your dashboard
+🛡️ Their photos are protected in a digital safety deposit box
+📱 One-tap downloads to their camera roll—full resolution
+💰 You earn $4/month passive income for every protected family
+👨‍👩‍👧 They can share with family members they authorize
+📊 Track all your protected families in your dashboard
 
-"You're not just uploading photos—you're building a new revenue stream while delivering an incredible client experience. Keep it up!"
+"You're not just delivering photos—you're protecting irreplaceable memories while building recurring income. That's what being a Guardian means."
 
 SEND INVITATION:
 ${data.nextStepsLink}
@@ -456,46 +456,46 @@ export function getGalleryAccessRestoredEmailHTML(data: GalleryAccessRestoredEma
 <body>
     <div class="email-container">
         <div class="header">
-            <div class="welcome-icon">👋</div>
-            <h1>Welcome Back!</h1>
-            <p>Your gallery access has been restored</p>
+            <div class="welcome-icon">🛡️</div>
+            <h1>Your Memories Are Protected Again</h1>
+            <p>Memory Insurance restored</p>
         </div>
 
         <div class="content">
-            <h2>Hi ${data.customerName}! 😊</h2>
+            <h2>Hi ${data.customerName}!</h2>
 
-            <p>Great news! Your subscription to <strong>"${data.galleryName}"</strong> has been successfully renewed.</p>
+            <p>Great news! Your Memory Insurance for <strong>"${data.galleryName}"</strong> is active again. Your photos are protected.</p>
 
             <div class="restoration-notice">
                 <div class="checkmark">✅</div>
-                <h3>Access Restored</h3>
-                <p>All your photos are available again</p>
+                <h3>Protection Restored</h3>
+                <p>Your irreplaceable memories are safe</p>
             </div>
 
             <div class="cta-container">
-                <a href="${data.accessLink}" class="cta-button">Access My Gallery →</a>
+                <a href="${data.accessLink}" class="cta-button">Access My Protected Photos →</a>
             </div>
 
             <div class="benefits-reminder">
-                <h3>Everything You Love is Back:</h3>
+                <h3>Your Memory Insurance Includes:</h3>
                 <ul>
-                    <li>📱 <strong>Access Anywhere:</strong> View your photos from any device</li>
-                    <li>⬇️ <strong>Unlimited Downloads:</strong> Download high-resolution images anytime</li>
-                    <li>🔒 <strong>Secure Storage:</strong> Your photos are safely backed up in the cloud</li>
-                    <li>👨‍👩‍👧 <strong>Easy Sharing:</strong> Share your gallery with family and friends</li>
-                    <li>📸 <strong>Professional Quality:</strong> All photos maintained in original quality</li>
+                    <li>🛡️ <strong>Digital Safety Deposit Box:</strong> Protected from hard drive failures</li>
+                    <li>📱 <strong>One-Tap Downloads:</strong> Full resolution directly to your camera roll</li>
+                    <li>👨‍👩‍👧 <strong>Family Sharing:</strong> Share with family members you authorize</li>
+                    <li>📸 <strong>Full Resolution:</strong> Every detail preserved in original quality</li>
+                    <li>♾️ <strong>Lifetime Archival:</strong> No expiring download links</li>
                 </ul>
             </div>
 
             <p><strong>Your Photographer:</strong> ${data.photographerName}</p>
             <p style="color: #6b7280;">
-                ${data.photographerName} continues to maintain your photos on PhotoVault. You can access them anytime, and they may even add more photos to your gallery in the future!
+                ${data.photographerName} is the guardian of your family history. They'll continue protecting your photos and may add more memories to your vault in the future.
             </p>
 
             <div class="thank-you-box">
-                <h3>Thank You for Coming Back! 🙏</h3>
+                <h3>Welcome Back</h3>
                 <p>
-                    We're glad you decided to keep your precious memories accessible. Your photos deserve to be enjoyed, not lost on a hard drive somewhere.
+                    Smart choice. Hard drives fail. Cloud accounts get hacked. Your memories deserve real protection—a digital safety deposit box that keeps them safe for generations.
                 </p>
             </div>
 
@@ -526,33 +526,33 @@ export function getGalleryAccessRestoredEmailHTML(data: GalleryAccessRestoredEma
 
 export function getGalleryAccessRestoredEmailText(data: GalleryAccessRestoredEmailData): string {
   return `
-👋 WELCOME BACK!
+🛡️ YOUR MEMORIES ARE PROTECTED AGAIN
 
 Hi ${data.customerName}!
 
-Great news! Your subscription to "${data.galleryName}" has been successfully renewed.
+Great news! Your Memory Insurance for "${data.galleryName}" is active again. Your photos are protected.
 
-✅ ACCESS RESTORED
-All your photos are available again
+✅ PROTECTION RESTORED
+Your irreplaceable memories are safe
 
-ACCESS YOUR GALLERY:
+ACCESS YOUR PROTECTED PHOTOS:
 ${data.accessLink}
 
-EVERYTHING YOU LOVE IS BACK:
+YOUR MEMORY INSURANCE INCLUDES:
 
-📱 Access Anywhere: View your photos from any device
-⬇️ Unlimited Downloads: Download high-resolution images anytime
-🔒 Secure Storage: Your photos are safely backed up in the cloud
-👨‍👩‍👧 Easy Sharing: Share your gallery with family and friends
-📸 Professional Quality: All photos maintained in original quality
+🛡️ Digital Safety Deposit Box: Protected from hard drive failures
+📱 One-Tap Downloads: Full resolution directly to your camera roll
+👨‍👩‍👧 Family Sharing: Share with family members you authorize
+📸 Full Resolution: Every detail preserved in original quality
+♾️ Lifetime Archival: No expiring download links
 
 YOUR PHOTOGRAPHER: ${data.photographerName}
 
-${data.photographerName} continues to maintain your photos on PhotoVault. You can access them anytime, and they may even add more photos to your gallery in the future!
+${data.photographerName} is the guardian of your family history. They'll continue protecting your photos and may add more memories to your vault in the future.
 
-🙏 THANK YOU FOR COMING BACK!
+WELCOME BACK
 
-We're glad you decided to keep your precious memories accessible. Your photos deserve to be enjoyed, not lost on a hard drive somewhere.
+Smart choice. Hard drives fail. Cloud accounts get hacked. Your memories deserve real protection—a digital safety deposit box that keeps them safe for generations.
 
 Ready to dive back in? All your photos are waiting for you!
 

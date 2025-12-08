@@ -16,7 +16,6 @@ import {
 import {
   BarChart3,
   Users,
-  Calendar,
   DollarSign,
   Settings,
   LogOut,
@@ -46,7 +45,6 @@ export default function PhotographerPortalLayout({
     { name: 'Analytics', href: '/photographers/analytics', icon: BarChart3 },
     { name: 'Revenue', href: '/photographers/revenue', icon: DollarSign },
     { name: 'Clients', href: '/photographers/clients', icon: Users },
-    { name: 'Sessions', href: '/photographers/sessions', icon: Calendar },
     { name: 'Reports', href: '/photographers/reports', icon: FileText },
     { name: 'Upload', href: '/photographers/upload', icon: Upload },
     { name: 'Settings', href: '/photographers/settings', icon: Settings },

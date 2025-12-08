@@ -41,9 +41,9 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen bg-neutral-900">
       {/* Header */}
-      <header className="border-b bg-white dark:bg-slate-900">
+      <header className="border-b border-white/10 bg-neutral-800/50">
         <div className="container mx-auto px-4 py-4">
           <Button asChild variant="ghost" size="sm">
             <Link href="/">

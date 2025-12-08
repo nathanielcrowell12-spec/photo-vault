@@ -22,9 +22,9 @@ import {
 
 export default function PhotographersPage() {
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-900">
+    <div className="min-h-screen bg-neutral-900">
       {/* Header */}
-      <header className="border-b border-border bg-white/95 backdrop-blur-sm dark:bg-slate-900/95 sticky top-0 z-50">
+      <header className="border-b border-white/10 bg-neutral-900/95 backdrop-blur-sm sticky top-0 z-50">
         <div className="container-pixieset py-5 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
@@ -33,7 +33,7 @@ export default function PhotographersPage() {
                 alt="PhotoVault Pro" 
                 className="h-8 w-auto"
               />
-              <span className="text-xl font-semibold text-foreground tracking-tight ml-2">Pro</span>
+              <span className="text-xl font-semibold text-neutral-100 tracking-tight ml-2">Pro</span>
             </div>
           </div>
           <div className="flex items-center space-x-3">
@@ -44,7 +44,7 @@ export default function PhotographersPage() {
             </Button>
             <Button asChild className="bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-lg">
               <Link href="/photographers/signup">
-                Join as a Partner
+                Start Protecting Memories
               </Link>
             </Button>
           </div>
@@ -54,27 +54,27 @@ export default function PhotographersPage() {
       <main className="container-pixieset section-spacing">
         {/* Hero Section */}
         <div className="text-center mb-24 fade-in-up">
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-semibold mb-6 text-foreground leading-[1.1] tracking-tight">
-            Keep Your Clients Engaged Forever —<br />No More Expiring Galleries
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-semibold mb-6 text-neutral-100 leading-[1.1] tracking-tight">
+            You&apos;re not just a photographer.<br />You&apos;re the guardian of their family history.
           </h1>
-          <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed font-light">
-            Stop losing clients to gallery expirations. PhotoVault gives photographers permanent client storage, automated engagement, and referral revenue. Grow your business with lifetime client access.
+          <p className="text-lg md:text-xl text-neutral-400 mb-10 max-w-3xl mx-auto leading-relaxed font-light">
+            Hard drives fail. The Cloud is someone else&apos;s computer. Your clients&apos; memories need real protection. PhotoVault is Memory Insurance—turn every photoshoot into passive income while giving families a digital safety deposit box for their most precious moments.
           </p>
           
           {/* Pricing Highlight */}
-          <div className="bg-secondary/50 border border-border rounded-2xl p-10 md:p-12 mb-12 max-w-4xl mx-auto card-shadow">
+          <div className="bg-neutral-800/50 border border-white/10 rounded-2xl p-10 md:p-12 mb-12 max-w-4xl mx-auto card-shadow">
             <div className="grid md:grid-cols-2 gap-10 items-center">
               <div className="text-center md:text-left">
                 <div className="text-4xl md:text-5xl font-semibold text-primary mb-3">$22/month</div>
-                <div className="text-lg text-foreground mb-4 font-medium">Professional Photo Sharing Platform</div>
-                <div className="text-sm text-muted-foreground">
+                <div className="text-lg text-neutral-100 mb-4 font-medium">Professional Photo Sharing Platform</div>
+                <div className="text-sm text-neutral-400">
                   Unlimited galleries • Advanced analytics • Commission tracking
                 </div>
               </div>
               <div className="text-center md:text-left">
                 <div className="text-2xl md:text-3xl font-semibold text-primary mb-3">Earn $25-$50 + $4/month</div>
-                <div className="text-lg text-foreground mb-2 font-medium">Commission Program</div>
-                <div className="text-sm text-muted-foreground">
+                <div className="text-lg text-neutral-100 mb-2 font-medium">Commission Program</div>
+                <div className="text-sm text-neutral-400">
                   $25 (6mo) or $50 (1yr) upfront + $4/month passive income per client
                 </div>
               </div>
@@ -82,7 +82,7 @@ export default function PhotographersPage() {
             <div className="text-center mt-8">
               <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-5 py-2.5 rounded-full text-sm font-medium">
                 <CheckCircle className="h-4 w-4" />
-                <span>14-day free trial • No setup fees</span>
+                <span>No setup fees • Cancel anytime</span>
               </div>
             </div>
           </div>
@@ -90,7 +90,7 @@ export default function PhotographersPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
             <Button asChild size="lg" className="btn-primary px-10 py-6">
               <Link href="/photographers/signup">
-                Get Started
+                Start Protecting Memories
                 <Camera className="ml-2 h-5 w-5" />
               </Link>
             </Button>
@@ -126,50 +126,50 @@ export default function PhotographersPage() {
         </div>
 
         {/* Problem Section */}
-        <section className="section-spacing-sm bg-secondary/50 -mx-4 md:-mx-6 lg:-mx-8 px-4 md:px-6 lg:px-8">
+        <section className="section-spacing-sm bg-neutral-800/30 -mx-4 md:-mx-6 lg:-mx-8 px-4 md:px-6 lg:px-8">
           <div className="container-pixieset">
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-5 text-foreground tracking-tight">
-                Expired Galleries Are Costing You Clients
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-5 text-neutral-100 tracking-tight">
+                Your Clients&apos; Memories Are at Risk
               </h2>
-              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto font-light">
-                Your clients lose access to their photos after 6-12 months. They can&apos;t share memories, order prints, or refer you to friends. You&apos;re missing opportunities every day.
+              <p className="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto font-light">
+                It&apos;s not <em>if</em> your clients&apos; hard drive will fail. It&apos;s <em>when</em>. Professional data recovery costs $500-$5,000. PhotoVault costs $8/month.
               </p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
-              <Card className="border border-border card-shadow-hover bg-card">
+              <Card className="border border-white/10 card-shadow-hover bg-neutral-800/50">
                 <CardContent className="p-8 text-center">
-                  <div className="w-14 h-14 bg-secondary rounded-full mx-auto mb-5 flex items-center justify-center">
-                    <Clock className="h-7 w-7 text-foreground/70" />
+                  <div className="w-14 h-14 bg-neutral-700/50 rounded-full mx-auto mb-5 flex items-center justify-center">
+                    <Clock className="h-7 w-7 text-neutral-300" />
                   </div>
-                  <h3 className="text-lg font-semibold mb-3 text-foreground">Gallery Expirations</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
-                    Pixieset, ShootProof, and SmugMug galleries expire. Your clients lose access to their memories and your work.
+                  <h3 className="text-lg font-semibold mb-3 text-neutral-100">Hard Drives Have a 100% Failure Rate</h3>
+                  <p className="text-neutral-400 text-sm leading-relaxed">
+                    Eventually. Your clients&apos; wedding photos, baby&apos;s first steps, grandma&apos;s last Christmas—sitting on hardware that will someday fail.
                   </p>
                 </CardContent>
               </Card>
 
-              <Card className="border border-border card-shadow-hover bg-card">
+              <Card className="border border-white/10 card-shadow-hover bg-neutral-800/50">
                 <CardContent className="p-8 text-center">
-                  <div className="w-14 h-14 bg-secondary rounded-full mx-auto mb-5 flex items-center justify-center">
-                    <Users className="h-7 w-7 text-foreground/70" />
+                  <div className="w-14 h-14 bg-neutral-700/50 rounded-full mx-auto mb-5 flex items-center justify-center">
+                    <Users className="h-7 w-7 text-neutral-300" />
                   </div>
-                  <h3 className="text-lg font-semibold mb-3 text-foreground">Lost Engagement</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
-                    Clients can&apos;t share your photos after galleries expire. No social media buzz, no word-of-mouth referrals.
+                  <h3 className="text-lg font-semibold mb-3 text-neutral-100">Zip Files Are a Nightmare</h3>
+                  <p className="text-neutral-400 text-sm leading-relaxed">
+                    Remember sending clients a 4GB zip file? Remember them asking how to open it on their phone? We fixed that.
                   </p>
                 </CardContent>
               </Card>
 
-              <Card className="border border-border card-shadow-hover bg-card">
+              <Card className="border border-white/10 card-shadow-hover bg-neutral-800/50">
                 <CardContent className="p-8 text-center">
-                  <div className="w-14 h-14 bg-secondary rounded-full mx-auto mb-5 flex items-center justify-center">
-                    <TrendingUp className="h-7 w-7 text-foreground/70" />
+                  <div className="w-14 h-14 bg-neutral-700/50 rounded-full mx-auto mb-5 flex items-center justify-center">
+                    <TrendingUp className="h-7 w-7 text-neutral-300" />
                   </div>
-                  <h3 className="text-lg font-semibold mb-3 text-foreground">Missed Revenue</h3>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
-                    No re-orders, no anniversary sessions, no referrals. You&apos;re leaving money on the table every month.
+                  <h3 className="text-lg font-semibold mb-3 text-neutral-100">Expired Galleries = Lost Revenue</h3>
+                  <p className="text-neutral-400 text-sm leading-relaxed">
+                    Your clients can&apos;t share memories they can&apos;t access. No anniversary re-orders, no referrals, no passive income.
                   </p>
                 </CardContent>
               </Card>
@@ -180,48 +180,48 @@ export default function PhotographersPage() {
         {/* Solution Section */}
         <section className="section-spacing-sm">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-5 text-foreground tracking-tight">
-              Your Clients&apos; Photos. Always There. Always Branded.
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-5 text-neutral-100 tracking-tight">
+              Memory Insurance for Your Clients&apos; Most Precious Moments
             </h2>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto font-light">
-              PhotoVault gives your clients permanent access to their galleries while keeping your branding front and center. Automated engagement keeps you top-of-mind for future bookings.
+            <p className="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto font-light">
+              PhotoVault is a digital safety deposit box for family memories. One tap downloads to camera roll. Professional-grade protection. And you earn $4/month forever on every client.
             </p>
           </div>
 
-          <div className="bg-card border border-border rounded-2xl p-10 md:p-12 card-shadow">
+          <div className="bg-neutral-800/50 border border-white/10 rounded-2xl p-10 md:p-12 card-shadow">
             <div className="grid md:grid-cols-2 gap-12">
               <div>
-                <h3 className="text-2xl font-semibold mb-6 text-primary">Photographer Benefits</h3>
+                <h3 className="text-2xl font-semibold mb-6 text-primary">Why Photographers Love PhotoVault</h3>
                 <div className="space-y-4">
                   {[
-                    "Permanent client galleries that never expire",
-                    "Automated engagement emails to keep clients active", 
-                    "Your branding on every client interaction",
-                    "Referral revenue when clients renew storage",
-                    "Client analytics and engagement tracking",
-                    "Easy integration with existing workflow"
+                    "Become the guardian of your clients' family history",
+                    "Earn $4/month passive income on every client—forever",
+                    "Your branding on their digital safety deposit box",
+                    "One-tap delivery to camera roll (no more zip files)",
+                    "Automated anniversary reminders drive re-bookings",
+                    "Replace Pixieset, ShootProof, SmugMug—and earn more"
                   ].map((benefit, index) => (
                     <div key={index} className="flex items-center gap-3">
                       <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />
-                      <span className="text-foreground text-sm">{benefit}</span>
+                      <span className="text-neutral-300 text-sm">{benefit}</span>
                     </div>
                   ))}
                 </div>
               </div>
               <div>
-                <h3 className="text-2xl font-semibold mb-6 text-primary">Client Experience</h3>
+                <h3 className="text-2xl font-semibold mb-6 text-primary">What Your Clients Get</h3>
                 <div className="space-y-4">
                   {[
-                    "All photos organized in one beautiful dashboard",
-                    "Easy sharing with family and friends",
-                    "Download options for prints and social media",
-                    "Timeline view of all their photo sessions",
-                    "Secure, private access forever",
-                    "Connection to other photographer galleries"
+                    "Memory Insurance: Professional-grade protection for irreplaceable photos",
+                    "One tap to camera roll—full resolution, instant",
+                    "Share with family without zip files or tech headaches",
+                    "All their photographers, all their memories, one place",
+                    "For the price of one coffee a month: never lose a photo",
+                    "Peace of mind that wedding photos survive any hard drive crash"
                   ].map((benefit, index) => (
                     <div key={index} className="flex items-center gap-3">
                       <Heart className="h-5 w-5 text-primary flex-shrink-0" />
-                      <span className="text-foreground text-sm">{benefit}</span>
+                      <span className="text-neutral-300 text-sm">{benefit}</span>
                     </div>
                   ))}
                 </div>
@@ -231,13 +231,13 @@ export default function PhotographersPage() {
         </section>
 
         {/* How It Works */}
-        <section id="how-it-works" className="section-spacing-sm bg-secondary/50 -mx-4 md:-mx-6 lg:-mx-8 px-4 md:px-6 lg:px-8">
+        <section id="how-it-works" className="section-spacing-sm bg-neutral-800/30 -mx-4 md:-mx-6 lg:-mx-8 px-4 md:px-6 lg:px-8">
           <div className="container-pixieset">
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-5 text-foreground tracking-tight">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-5 text-neutral-100 tracking-tight">
                 Simple Integration — Lasting Results
               </h2>
-              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto font-light">
+              <p className="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto font-light">
                 Connect your existing workflow in minutes. No learning curve, no disruption to your current process.
               </p>
             </div>
@@ -266,7 +266,7 @@ export default function PhotographersPage() {
                   image: "https://images.unsplash.com/photo-1553877522-43269d4ea984?w=400&h=300&fit=crop&crop=center"
                 }
               ].map((item, index) => (
-                <Card key={index} className="overflow-hidden border border-border card-shadow-hover bg-card group">
+                <Card key={index} className="overflow-hidden border border-white/10 card-shadow-hover bg-neutral-800/50 group">
                   <div className="image-card h-48">
                     <img 
                       src={item.image} 
@@ -298,32 +298,32 @@ export default function PhotographersPage() {
         {/* Revenue Section */}
         <section className="section-spacing-sm">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-5 text-foreground tracking-tight">
-              Turn Every Gallery Into Ongoing Income
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-5 text-neutral-100 tracking-tight">
+              Every Photoshoot Becomes Passive Income
             </h2>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto font-light">
-              Earn referral revenue when clients renew their storage. Turn one-time clients into recurring revenue streams.
+            <p className="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto font-light">
+              Your clients pay $8/month for Memory Insurance—you earn $4/month forever. No extra work. Just protecting the moments you already captured.
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
-            <Card className="border border-border card-shadow-hover bg-card">
+            <Card className="border border-white/10 card-shadow-hover bg-neutral-800/50">
               <CardHeader>
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-primary/10 rounded-lg">
                     <DollarSign className="h-6 w-6 text-primary" />
                   </div>
-                  <CardTitle className="text-foreground">Referral Revenue</CardTitle>
+                  <CardTitle className="text-neutral-100">Referral Revenue</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div className="text-3xl font-semibold text-primary">$25-$50 + $4/month</div>
-                  <p className="text-muted-foreground text-sm leading-relaxed">
+                  <p className="text-neutral-400 text-sm leading-relaxed">
                     Earn $25 (6-month) or $50 (1-year) upfront commission + $4/month passive income for every client through PhotoVault.
                   </p>
-                  <div className="bg-secondary/50 p-4 rounded-lg">
-                    <p className="text-sm text-foreground">
+                  <div className="bg-neutral-700/30 p-4 rounded-lg">
+                    <p className="text-sm text-neutral-300">
                       <strong>Example:</strong> 25 clients × $50 upfront (1-year) = $1,250 + 25 clients × $4/month = $100/month passive income
                     </p>
                   </div>
@@ -373,46 +373,46 @@ export default function PhotographersPage() {
         {/* Testimonials */}
         <section className="mb-16">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-6 text-slate-800 dark:text-white">
-              Trusted by Forward-Thinking Photographers
+            <h2 className="text-4xl font-bold mb-6 text-neutral-100">
+              Photographers Who Became Memory Guardians
             </h2>
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
-                quote: "PhotoVault solved my biggest problem - clients losing access to their galleries. Now they can always find their photos and I earn passive income.",
+                quote: "I used to worry about clients losing their photos after galleries expired. Now I tell them: 'Your memories are insured. You'll never lose these.' The relief on their faces—and the $4/month I earn—makes it a no-brainer.",
                 author: "Emma Rodriguez",
                 business: "Emma Photography",
                 location: "Wedding Specialist"
               },
               {
-                quote: "My clients love having all their photos in one place. The automated engagement keeps me top-of-mind for future bookings.",
-                author: "Mike Chen", 
+                quote: "One of my clients lost everything in a house fire. Everything except the photos in PhotoVault. I'm not just their photographer anymore—I'm the guardian of their family history.",
+                author: "Mike Chen",
                 business: "Chen Studios",
                 location: "Family & Portrait"
               },
               {
-                quote: "The referral revenue is a game-changer. I'm earning $200/month from past clients who now have permanent access to their galleries.",
+                quote: "I earn $400/month in passive income from 100 past clients. But honestly? The best part is knowing their wedding photos, their kids' first birthdays—all of it is safe. That matters.",
                 author: "Sarah Thompson",
                 business: "Thompson Photography",
                 location: "Event Specialist"
               }
             ].map((testimonial, index) => (
-              <Card key={index} className="border-2">
+              <Card key={index} className="border border-white/10 bg-neutral-800/50">
                 <CardContent className="p-6">
                   <div className="flex mb-4">
                     {[...Array(5)].map((_, i) => (
                       <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
                     ))}
                   </div>
-                  <p className="text-slate-700 dark:text-slate-300 mb-4 italic">
+                  <p className="text-neutral-300 mb-4 italic">
                     &quot;{testimonial.quote}&quot;
                   </p>
                   <div>
-                    <p className="font-semibold text-slate-800 dark:text-white">{testimonial.author}</p>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">{testimonial.business}</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-500">{testimonial.location}</p>
+                    <p className="font-semibold text-neutral-100">{testimonial.author}</p>
+                    <p className="text-sm text-neutral-400">{testimonial.business}</p>
+                    <p className="text-xs text-neutral-500">{testimonial.location}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -423,7 +423,7 @@ export default function PhotographersPage() {
         {/* FAQ Section */}
         <section className="mb-16">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-6 text-slate-800 dark:text-white">
+            <h2 className="text-4xl font-bold mb-6 text-neutral-100">
               Questions We Hear Every Day
             </h2>
           </div>
@@ -440,7 +440,7 @@ export default function PhotographersPage() {
               },
               {
                 question: "What's the commission program?",
-                answer: "Earn $25 (6-month) or $50 (1-year) upfront + $4/month passive income for every client. Plus $22/month platform fee with 14-day free trial."
+                answer: "Earn $25 (6-month) or $50 (1-year) upfront + $4/month passive income for every family you protect. Plus $22/month platform fee."
               },
               {
                 question: "How does PhotoVault compare to Pixieset/ShootProof?",
@@ -451,10 +451,10 @@ export default function PhotographersPage() {
                 answer: "Unlimited galleries, advanced analytics, commission tracking, PDF reports, client invitations, and professional CMS integration."
               }
             ].map((faq, index) => (
-              <Card key={index} className="border-2">
+              <Card key={index} className="border border-white/10 bg-neutral-800/50">
                 <CardContent className="p-6">
-                  <h3 className="text-lg font-semibold mb-3 text-slate-800 dark:text-white">{faq.question}</h3>
-                  <p className="text-slate-600 dark:text-slate-300">{faq.answer}</p>
+                  <h3 className="text-lg font-semibold mb-3 text-neutral-100">{faq.question}</h3>
+                  <p className="text-neutral-400">{faq.answer}</p>
                 </CardContent>
               </Card>
             ))}
@@ -462,44 +462,43 @@ export default function PhotographersPage() {
         </section>
 
         {/* CTA Section */}
-        <section className="text-center bg-gradient-to-r from-green-600 to-blue-600 rounded-2xl p-12 text-white">
+        <section className="text-center bg-gradient-to-r from-green-600 to-blue-600 rounded-2xl p-12 text-white shadow-xl">
           <h2 className="text-4xl font-bold mb-6">
-            Start Your 14-Day Free Trial Today
+            Become a Memory Guardian Today
           </h2>
           <p className="text-xl mb-8 opacity-90 max-w-2xl mx-auto">
-            Join hundreds of photographers earning $25-$50 + $4/month commission on every client.
-            Replace expensive platforms with a profitable alternative.
+            Your clients&apos; memories deserve better than a failing hard drive. Give them Memory Insurance—and earn $4/month passive income on every client, forever.
           </p>
           <div className="flex justify-center">
             <Button asChild size="lg" className="text-lg px-8 py-6 bg-white text-green-600 hover:bg-gray-100">
               <Link href="/photographers/signup">
-                Get Started
+                Start Protecting Memories
                 <Camera className="ml-2 h-5 w-5" />
               </Link>
             </Button>
           </div>
           <div className="mt-6 text-sm opacity-75">
-            No credit card required • Cancel anytime • 14-day free trial
+            No credit card required • Cancel anytime
           </div>
         </section>
       </main>
 
       {/* Footer */}
-      <footer className="border-t bg-white dark:bg-slate-900 mt-16">
+      <footer className="border-t border-white/10 bg-neutral-900 mt-16">
         <div className="container mx-auto px-4 py-12">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center space-x-2 mb-4">
                 <Camera className="h-6 w-6 text-blue-600" />
-                <span className="text-xl font-bold">PhotoVault</span>
+                <span className="text-xl font-bold text-neutral-100">PhotoVault</span>
               </div>
-              <p className="text-slate-600 dark:text-slate-400">
-                Keep clients engaged forever and earn recurring revenue.
+              <p className="text-neutral-400">
+                Memory Insurance for families. Passive income for photographers.
               </p>
             </div>
             <div>
-              <h3 className="font-semibold mb-4">For Photographers</h3>
-              <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+              <h3 className="font-semibold mb-4 text-neutral-100">For Photographers</h3>
+              <ul className="space-y-2 text-sm text-neutral-400">
                 <li><Link href="/photographers/benefits" className="hover:text-blue-600">Benefits</Link></li>
                 <li><Link href="/photographers/pricing" className="hover:text-blue-600">Pricing</Link></li>
                 <li><Link href="/photographers/integration" className="hover:text-blue-600">Integration</Link></li>
@@ -507,8 +506,8 @@ export default function PhotographersPage() {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-4">Resources</h3>
-              <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+              <h3 className="font-semibold mb-4 text-neutral-100">Resources</h3>
+              <ul className="space-y-2 text-sm text-neutral-400">
                 <li><Link href="/photographers/case-studies" className="hover:text-blue-600">Case Studies</Link></li>
                 <li><Link href="/photographers/blog" className="hover:text-blue-600">Blog</Link></li>
                 <li><Link href="/photographers/webinars" className="hover:text-blue-600">Webinars</Link></li>
@@ -516,8 +515,8 @@ export default function PhotographersPage() {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-4">Company</h3>
-              <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400">
+              <h3 className="font-semibold mb-4 text-neutral-100">Company</h3>
+              <ul className="space-y-2 text-sm text-neutral-400">
                 <li><Link href="/about" className="hover:text-blue-600">About</Link></li>
                 <li><Link href="/privacy" className="hover:text-blue-600">Privacy</Link></li>
                 <li><Link href="/terms" className="hover:text-blue-600">Terms</Link></li>
@@ -525,8 +524,8 @@ export default function PhotographersPage() {
               </ul>
             </div>
           </div>
-          <Separator className="my-8" />
-          <div className="text-center text-sm text-slate-500 dark:text-slate-400">
+          <Separator className="my-8 bg-white/10" />
+          <div className="text-center text-sm text-neutral-500">
             © 2024 PhotoVault. Grow your photography business with lifetime client access.
           </div>
         </div>

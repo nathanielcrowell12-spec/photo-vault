@@ -70,11 +70,11 @@ const plans: PricingPlan[] = [
       'PDF reports',
       'Commission tracking',
       'Professional CMS integration',
-      '14-day free trial'
+      'Cancel anytime'
     ],
     commission: '$50 upfront + $4/month per client',
     isPhotoVault: true,
-    cta: 'Start Free Trial',
+    cta: 'Become a Guardian',
     ctaLink: '/photographers/signup'
   }
 ]

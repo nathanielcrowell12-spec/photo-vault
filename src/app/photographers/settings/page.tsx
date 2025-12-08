@@ -72,6 +72,15 @@ function PhotographerSettingsContent() {
   const [stripeError, setStripeError] = useState('')
   const [stripeSuccess, setStripeSuccess] = useState(false)
 
+  // Platform Subscription state
+  const [subscription, setSubscription] = useState<{
+    status: 'active' | 'trial' | 'cancelled' | 'past_due' | null
+    nextBillingDate: string | null
+    price: number
+  } | null>(null)
+  const [subscriptionLoading, setSubscriptionLoading] = useState(true)
+  const [creatingSubscription, setCreatingSubscription] = useState(false)
+
   useEffect(() => {
     if (!loading && (!user || userType !== 'photographer')) {
       router.push('/login')
@@ -93,6 +102,7 @@ function PhotographerSettingsContent() {
   useEffect(() => {
     if (user && userType === 'photographer') {
       fetchStripeStatus()
+      fetchSubscriptionStatus()
     }
   }, [user, userType])
 
@@ -109,6 +119,59 @@ function PhotographerSettingsContent() {
       console.error('Error fetching Stripe status:', error)
     } finally {
       setStripeLoading(false)
+    }
+  }
+
+  const fetchSubscriptionStatus = async () => {
+    try {
+      setSubscriptionLoading(true)
+      const response = await fetch('/api/stripe/platform-subscription')
+      
+      if (!response.ok) {
+        setSubscription(null)
+        return
+      }
+
+      const result = await response.json()
+      
+      if (result.success && result.data) {
+        const data = result.data
+        setSubscription({
+          status: data.status === 'trialing' ? 'trial' : 
+                  data.status === 'past_due' ? 'past_due' :
+                  data.status === 'canceled' || data.status === 'cancelled' ? 'cancelled' :
+                  'active',
+          nextBillingDate: data.nextBillingDate,
+          price: 22
+        })
+      } else {
+        setSubscription(null)
+      }
+    } catch (error) {
+      console.error('Error fetching subscription status:', error)
+      setSubscription(null)
+    } finally {
+      setSubscriptionLoading(false)
+    }
+  }
+
+  const handleCreateSubscription = async () => {
+    setCreatingSubscription(true)
+    try {
+      const response = await fetch('/api/stripe/platform-subscription', {
+        method: 'POST',
+      })
+      if (response.ok) {
+        await fetchSubscriptionStatus()
+      } else {
+        const error = await response.json()
+        alert(`Failed to create subscription: ${error.error || error.message}`)
+      }
+    } catch (error) {
+      console.error('Error creating subscription:', error)
+      alert('Failed to create subscription. Please try again.')
+    } finally {
+      setCreatingSubscription(false)
     }
   }
 
@@ -206,7 +269,7 @@ function PhotographerSettingsContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-neutral-900">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
       </div>
     )
@@ -218,9 +281,9 @@ function PhotographerSettingsContent() {
 
   return (
     <AccessGuard requiredAccess="canAccessPhotographerDashboard">
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/40 to-slate-100">
+      <div className="min-h-screen bg-neutral-900">
         {/* Header */}
-        <header className="border-b bg-white/95 backdrop-blur-sm">
+        <header className="border-b bg-neutral-800/50 border-white/10">
           <div className="container mx-auto px-4 py-6">
             <div className="flex items-center gap-4">
               <Camera className="h-10 w-10 text-blue-600" />
@@ -284,15 +347,15 @@ function PhotographerSettingsContent() {
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-4">
+                      <div className="bg-neutral-800 rounded-lg p-4">
                         <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">Commission Rate</div>
                         <div className="text-2xl font-bold text-green-600">50%</div>
                         <div className="text-xs text-slate-500">of client payments</div>
                       </div>
-                      <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-4">
+                      <div className="bg-neutral-800 rounded-lg p-4">
                         <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">Payout Schedule</div>
-                        <div className="text-2xl font-bold text-blue-600">14 days</div>
-                        <div className="text-xs text-slate-500">after payment received</div>
+                        <div className="text-2xl font-bold text-blue-600">T+2</div>
+                        <div className="text-xs text-slate-500">Stripe Express automatic</div>
                       </div>
                     </div>
 
@@ -351,7 +414,7 @@ function PhotographerSettingsContent() {
                 ) : (
                   // Not Connected State
                   <div className="space-y-4">
-                    <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-6 text-center">
+                    <div className="bg-neutral-800 rounded-lg p-6 text-center">
                       <div className="w-16 h-16 bg-green-100 dark:bg-green-800 rounded-full flex items-center justify-center mx-auto mb-4">
                         <DollarSign className="h-8 w-8 text-green-600" />
                       </div>
@@ -375,7 +438,7 @@ function PhotographerSettingsContent() {
                         </div>
                         <div className="flex items-start gap-2">
                           <CheckCircle2 className="h-4 w-4 text-green-500 mt-0.5" />
-                          <span className="text-sm">14-day payout cycle</span>
+                          <span className="text-sm">Fast T+2 payouts</span>
                         </div>
                       </div>
                     </div>
@@ -420,6 +483,102 @@ function PhotographerSettingsContent() {
               title="Your Payment Methods"
               description="Add a payment method for your PhotoVault subscription"
             />
+
+            {/* Platform Subscription */}
+            <Card className="border-2 border-purple-100 shadow-sm">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <CreditCard className="h-5 w-5 text-purple-600" />
+                  Platform Subscription
+                </CardTitle>
+                <CardDescription>
+                  Your $22/month PhotoVault platform subscription
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                {subscriptionLoading ? (
+                  <div className="flex items-center justify-center py-6">
+                    <Loader2 className="h-6 w-6 animate-spin text-slate-400" />
+                  </div>
+                ) : subscription ? (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <div className="font-semibold">Professional Plan</div>
+                        <div className="text-sm text-slate-600">${subscription.price}/month</div>
+                      </div>
+                      <Badge className={
+                        subscription.status === 'active' ? 'bg-green-100 text-green-800' :
+                        subscription.status === 'trial' ? 'bg-blue-100 text-blue-800' :
+                        subscription.status === 'past_due' ? 'bg-orange-100 text-orange-800' :
+                        'bg-red-100 text-red-800'
+                      }>
+                        {subscription.status === 'active' ? 'Active' :
+                         subscription.status === 'trial' ? 'Trial' :
+                         subscription.status === 'past_due' ? 'Past Due' :
+                         'Cancelled'}
+                      </Badge>
+                    </div>
+                    {subscription.nextBillingDate && (
+                      <div className="text-sm text-slate-600">
+                        Next billing: {new Date(subscription.nextBillingDate).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                      </div>
+                    )}
+                    <Button variant="outline" asChild className="w-full">
+                      <a href="/photographers/subscription">
+                        View Subscription Details
+                        <ExternalLink className="h-4 w-4 ml-2" />
+                      </a>
+                    </Button>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="bg-neutral-800 rounded-lg p-4 text-center">
+                      <div className="text-lg font-semibold mb-2">No Active Subscription</div>
+                      <p className="text-sm text-slate-600 mb-4">
+                        Subscribe to access the full PhotoVault platform and commission program.
+                      </p>
+                      <div className="text-2xl font-bold text-purple-600 mb-2">$22/month</div>
+                      <ul className="text-sm text-slate-600 space-y-1 mb-4">
+                        <li className="flex items-center gap-2 justify-center">
+                          <CheckCircle2 className="h-4 w-4 text-green-500" />
+                          Unlimited client galleries
+                        </li>
+                        <li className="flex items-center gap-2 justify-center">
+                          <CheckCircle2 className="h-4 w-4 text-green-500" />
+                          50% commission on client payments
+                        </li>
+                        <li className="flex items-center gap-2 justify-center">
+                          <CheckCircle2 className="h-4 w-4 text-green-500" />
+                          Advanced analytics & reporting
+                        </li>
+                      </ul>
+                    </div>
+                    <Button
+                      onClick={handleCreateSubscription}
+                      disabled={creatingSubscription}
+                      className="w-full bg-purple-600 hover:bg-purple-700"
+                    >
+                      {creatingSubscription ? (
+                        <>
+                          <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                          Creating Subscription...
+                        </>
+                      ) : (
+                        <>
+                          <CreditCard className="h-4 w-4 mr-2" />
+                          Subscribe Now
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
 
             {/* Account Information */}
             <Card className="border-2 border-blue-100 shadow-sm">
@@ -611,7 +770,7 @@ function PhotographerSettingsContent() {
 export default function PhotographerSettingsPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+      <div className="min-h-screen flex items-center justify-center bg-neutral-900">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     }>

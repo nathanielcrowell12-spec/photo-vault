@@ -119,14 +119,14 @@ export function getClientInvitationEmailHTML(data: ClientInvitationEmailData): s
 <body>
     <div class="email-container">
         <div class="header">
-            <h1>📸 You're Invited!</h1>
-            <p>View your professional photos on PhotoVault</p>
+            <h1>Your Memories Are Ready</h1>
+            <p>Memory Insurance for your most precious photos</p>
         </div>
 
         <div class="content">
-            <h2>Hi ${data.clientName}! 👋</h2>
+            <h2>Hi ${data.clientName}!</h2>
 
-            <p>${data.photographerName} from ${data.photographerBusinessName || data.photographerName} has invited you to view ${data.galleryName ? `your "${data.galleryName}"` : 'your photos'} on PhotoVault.</p>
+            <p>${data.photographerName} from ${data.photographerBusinessName || data.photographerName} has delivered ${data.galleryName ? `your "${data.galleryName}"` : 'your photos'}—and they're now protected in your PhotoVault.</p>
 
             ${data.personalMessage ? `
             <div class="personal-message">
@@ -136,16 +136,17 @@ export function getClientInvitationEmailHTML(data: ClientInvitationEmailData): s
             ` : ''}
 
             <p><strong>What is PhotoVault?</strong></p>
-            <p>PhotoVault is a secure platform where you can access, download, and share all your professional photos in one beautiful place. No more lost USB drives or expired download links!</p>
+            <p>PhotoVault is Memory Insurance—a digital safety deposit box for your irreplaceable photos. Hard drives fail. Download links expire. Your memories deserve real protection.</p>
+
+            <p style="font-size: 14px; color: #4b5563;">One tap downloads to your camera roll. Full resolution. No zip files to wrestle with on your phone.</p>
 
             <div class="cta-container">
-                <a href="${invitationLink}" class="cta-button">View My Photos →</a>
+                <a href="${invitationLink}" class="cta-button">Access My Protected Photos →</a>
             </div>
 
             <p style="font-size: 14px; color: #6b7280;">
                 <strong>This invitation expires in ${data.expiresInDays} days.</strong><br>
-                Create your free PhotoVault account to access your photos anytime, anywhere.
-            </p>
+                Create your PhotoVault account to keep these memories protected.</p>
 
             <div class="footer">
                 <p>This invitation was sent by ${data.photographerBusinessName || data.photographerName}</p>
@@ -167,11 +168,11 @@ export function getClientInvitationEmailText(data: ClientInvitationEmailData): s
   const invitationLink = `${process.env.NEXT_PUBLIC_APP_URL}/invite/${data.invitationToken}`
 
   return `
-📸 YOU'RE INVITED!
+YOUR MEMORIES ARE READY
 
 Hi ${data.clientName}!
 
-${data.photographerName} from ${data.photographerBusinessName || data.photographerName} has invited you to view ${data.galleryName ? `your "${data.galleryName}"` : 'your photos'} on PhotoVault.
+${data.photographerName} from ${data.photographerBusinessName || data.photographerName} has delivered ${data.galleryName ? `your "${data.galleryName}"` : 'your photos'}—and they're now protected in your PhotoVault.
 
 ${data.personalMessage ? `
 Message from ${data.photographerName}:
@@ -179,13 +180,15 @@ Message from ${data.photographerName}:
 ` : ''}
 
 WHAT IS PHOTOVAULT?
-PhotoVault is a secure platform where you can access, download, and share all your professional photos in one beautiful place. No more lost USB drives or expired download links!
+PhotoVault is Memory Insurance—a digital safety deposit box for your irreplaceable photos. Hard drives fail. Download links expire. Your memories deserve real protection.
 
-VIEW YOUR PHOTOS:
+One tap downloads to your camera roll. Full resolution. No zip files to wrestle with on your phone.
+
+ACCESS YOUR PROTECTED PHOTOS:
 ${invitationLink}
 
 This invitation expires in ${data.expiresInDays} days.
-Create your free PhotoVault account to access your photos anytime, anywhere.
+Create your PhotoVault account to keep these memories protected.
 
 ---
 This invitation was sent by ${data.photographerBusinessName || data.photographerName}
@@ -326,15 +329,16 @@ export function getPhotographerWelcomeEmailHTML(data: PhotographerWelcomeEmailDa
 <body>
     <div class="email-container">
         <div class="header">
-            <h1>🎉 Welcome to PhotoVault!</h1>
-            <p>Let's get your photography business set up</p>
+            <h1>Welcome, Guardian</h1>
+            <p>You're now protecting your clients' family history</p>
         </div>
 
         <div class="content">
             <div class="welcome-message">
-                <p>Hi ${data.photographerName}! 👋</p>
-                <p>Welcome to PhotoVault${data.businessName ? `, representing ${data.businessName}` : ''}! We're thrilled to have you join our community of professional photographers.</p>
-                <p>You're about to transform how you deliver photos to your clients. Let's get you started!</p>
+                <p>Hi ${data.photographerName}!</p>
+                <p>Welcome to PhotoVault${data.businessName ? `, representing ${data.businessName}` : ''}. You've just joined a community of photographers who understand something important:</p>
+                <p><strong>You're not just a photographer. You're the guardian of your clients' family history.</strong></p>
+                <p>Every wedding, every newborn session, every family portrait—these are irreplaceable moments. With PhotoVault, you'll deliver Memory Insurance that protects these photos while building passive income for your business.</p>
             </div>
 
             <div class="steps-container">
@@ -377,18 +381,18 @@ export function getPhotographerWelcomeEmailHTML(data: PhotographerWelcomeEmailDa
                 <a href="${dashboardLink}" class="cta-button">Go to My Dashboard →</a>
             </div>
 
-            <h3>What You Can Do with PhotoVault</h3>
+            <h3>What You Get as a Guardian</h3>
             <ul class="feature-list">
-                <li>✅ <strong>Unlimited Photo Storage</strong> - Upload as many photos as you need</li>
-                <li>✅ <strong>Automatic Client Management</strong> - Track all your clients in one place</li>
-                <li>✅ <strong>Recurring Revenue</strong> - Earn 50% commission on client subscriptions</li>
-                <li>✅ <strong>Beautiful Galleries</strong> - Professional presentation for your work</li>
-                <li>✅ <strong>Secure Sharing</strong> - Your clients' photos are protected and private</li>
-                <li>✅ <strong>Download Tracking</strong> - See when clients access their photos</li>
+                <li>✅ <strong>Memory Insurance for Clients</strong> - Protection they can't get from a hard drive</li>
+                <li>✅ <strong>Passive Income</strong> - Earn $4/month for every client who stays protected</li>
+                <li>✅ <strong>No More Zip Files</strong> - One-tap delivery to your clients' camera rolls</li>
+                <li>✅ <strong>Lifetime Archival</strong> - Photos stay safe even when hard drives fail</li>
+                <li>✅ <strong>Client Management</strong> - Track all your families in one place</li>
+                <li>✅ <strong>Professional Galleries</strong> - Beautiful presentation of your work</li>
             </ul>
 
             <div class="pro-tip">
-                <strong>💡 Pro Tip:</strong> Start by uploading a recent photo session for a current client. It's the fastest way to see PhotoVault in action and delight your client with instant access to their photos!
+                <strong>The Reality:</strong> Hard drives have a 100% failure rate eventually. Professional data recovery costs $500-$5,000. You're now offering your clients real protection for their memories.
             </div>
 
             <div class="footer">
@@ -414,13 +418,15 @@ export function getPhotographerWelcomeEmailText(data: PhotographerWelcomeEmailDa
   const stripeSetupLink = `${process.env.NEXT_PUBLIC_APP_URL}/photographer/settings/payments`
 
   return `
-🎉 WELCOME TO PHOTOVAULT!
+WELCOME, GUARDIAN
 
 Hi ${data.photographerName}!
 
-Welcome to PhotoVault${data.businessName ? `, representing ${data.businessName}` : ''}! We're thrilled to have you join our community of professional photographers.
+Welcome to PhotoVault${data.businessName ? `, representing ${data.businessName}` : ''}. You've just joined a community of photographers who understand something important:
 
-You're about to transform how you deliver photos to your clients. Let's get you started!
+You're not just a photographer. You're the guardian of your clients' family history.
+
+Every wedding, every newborn session, every family portrait—these are irreplaceable moments. With PhotoVault, you'll deliver Memory Insurance that protects these photos while building passive income for your business.
 
 GETTING STARTED IN 3 EASY STEPS:
 
@@ -438,16 +444,16 @@ GETTING STARTED IN 3 EASY STEPS:
 GO TO YOUR DASHBOARD:
 ${dashboardLink}
 
-WHAT YOU CAN DO WITH PHOTOVAULT:
+WHAT YOU GET AS A GUARDIAN:
 
-✅ Unlimited Photo Storage - Upload as many photos as you need
-✅ Automatic Client Management - Track all your clients in one place
-✅ Recurring Revenue - Earn 50% commission on client subscriptions
-✅ Beautiful Galleries - Professional presentation for your work
-✅ Secure Sharing - Your clients' photos are protected and private
-✅ Download Tracking - See when clients access their photos
+✅ Memory Insurance for Clients - Protection they can't get from a hard drive
+✅ Passive Income - Earn $4/month for every client who stays protected
+✅ No More Zip Files - One-tap delivery to your clients' camera rolls
+✅ Lifetime Archival - Photos stay safe even when hard drives fail
+✅ Client Management - Track all your families in one place
+✅ Professional Galleries - Beautiful presentation of your work
 
-💡 PRO TIP: Start by uploading a recent photo session for a current client. It's the fastest way to see PhotoVault in action and delight your client with instant access to their photos!
+THE REALITY: Hard drives have a 100% failure rate eventually. Professional data recovery costs $500-$5,000. You're now offering your clients real protection for their memories.
 
 ---
 NEED HELP GETTING STARTED?

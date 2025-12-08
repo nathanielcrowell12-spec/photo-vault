@@ -157,7 +157,7 @@ export default function AnalyticsDemoPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-slate-600 dark:text-slate-300">Loading analytics...</p>
@@ -168,7 +168,7 @@ export default function AnalyticsDemoPage() {
 
   if (!analyticsData) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardContent className="p-8 text-center">
             <BarChart3 className="h-16 w-16 text-blue-500 mx-auto mb-4" />
@@ -188,7 +188,7 @@ export default function AnalyticsDemoPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen bg-neutral-900">
       {/* DEMO MODE BANNER */}
       <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white">
         <div className="container mx-auto px-4 py-3">

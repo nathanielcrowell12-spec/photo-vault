@@ -17,8 +17,11 @@ import {
   getGalleryReadyEmailText,
   getWelcomeEmailHTML,
   getWelcomeEmailText,
+  getWelcomeEmailWithPasswordHTML,
+  getWelcomeEmailWithPasswordText,
   type GalleryReadyEmailData,
   type WelcomeEmailData,
+  type WelcomeEmailWithPasswordData,
 } from './templates'
 import {
   getClientInvitationEmailHTML,
@@ -50,6 +53,20 @@ import {
   type FirstGalleryUploadEmailData,
   type GalleryAccessRestoredEmailData,
 } from './engagement-templates'
+import {
+  getSecondaryInvitationEmailHTML,
+  getSecondaryInvitationEmailText,
+  getGracePeriodAlertEmailHTML,
+  getGracePeriodAlertEmailText,
+  getTakeoverConfirmationEmailHTML,
+  getTakeoverConfirmationEmailText,
+  getPhotographerTakeoverNotificationHTML,
+  getPhotographerTakeoverNotificationText,
+  type SecondaryInvitationEmailData,
+  type GracePeriodAlertEmailData,
+  type TakeoverConfirmationEmailData,
+  type PhotographerTakeoverNotificationData,
+} from './family-templates'
 
 /**
  * Unified Email Service for PhotoVault
@@ -97,6 +114,28 @@ export class EmailService {
       return { success: true }
     } catch (error: any) {
       console.error('[Email] Error sending welcome email:', error)
+      return { success: false, error: error.message }
+    }
+  }
+
+  /**
+   * Send welcome email with temporary password
+   * Triggered after payment when account is auto-created
+   */
+  static async sendWelcomeEmailWithPassword(data: WelcomeEmailWithPasswordData): Promise<{ success: boolean; error?: string }> {
+    try {
+      await (await getClient()).emails.send({
+        from: await getFromEmail(),
+        to: data.customerEmail,
+        subject: '🎉 Welcome to PhotoVault - Your Account is Ready!',
+        html: getWelcomeEmailWithPasswordHTML(data),
+        text: getWelcomeEmailWithPasswordText(data),
+      })
+
+      console.log(`[Email] Welcome email with password sent to ${data.customerEmail}`)
+      return { success: true }
+    } catch (error: any) {
+      console.error('[Email] Error sending welcome email with password:', error)
       return { success: false, error: error.message }
     }
   }
@@ -386,6 +425,102 @@ Update payment method: ${process.env.NEXT_PUBLIC_APP_URL}/billing
       return { success: true }
     } catch (error: any) {
       console.error('[Email] Error sending gallery access restored email:', error)
+      return { success: false, error: error.message }
+    }
+  }
+
+  // ============================================================================
+  // FAMILY ACCOUNTS EMAILS
+  // ============================================================================
+
+  /**
+   * Send secondary invitation email
+   * Triggered when primary designates a new secondary (family member)
+   */
+  static async sendSecondaryInvitationEmail(data: SecondaryInvitationEmailData): Promise<{ success: boolean; error?: string }> {
+    try {
+      await (await getClient()).emails.send({
+        from: await getFromEmail(),
+        to: data.secondaryEmail,
+        subject: `👨‍👩‍👧‍👦 ${data.primaryName} designated you as family on PhotoVault`,
+        html: getSecondaryInvitationEmailHTML(data),
+        text: getSecondaryInvitationEmailText(data),
+      })
+
+      console.log(`[Email] Secondary invitation email sent to ${data.secondaryEmail}`)
+      return { success: true }
+    } catch (error: any) {
+      console.error('[Email] Error sending secondary invitation email:', error)
+      return { success: false, error: error.message }
+    }
+  }
+
+  /**
+   * Send grace period alert email to secondaries
+   * Triggered at 3, 4, 5, and 5.5 months into grace period
+   */
+  static async sendGracePeriodAlertEmail(data: GracePeriodAlertEmailData): Promise<{ success: boolean; error?: string }> {
+    try {
+      const urgency = data.monthsRemaining <= 0.5 ? 'FINAL NOTICE' : 
+                      data.monthsRemaining <= 1 ? 'URGENT' : 
+                      data.monthsRemaining <= 2 ? 'Reminder' : 'Attention Needed'
+      
+      await (await getClient()).emails.send({
+        from: await getFromEmail(),
+        to: data.secondaryEmail,
+        subject: `⚠️ ${urgency}: ${data.primaryName}'s PhotoVault account needs attention`,
+        html: getGracePeriodAlertEmailHTML(data),
+        text: getGracePeriodAlertEmailText(data),
+      })
+
+      console.log(`[Email] Grace period alert (${data.monthsRemaining}mo remaining) sent to ${data.secondaryEmail}`)
+      return { success: true }
+    } catch (error: any) {
+      console.error('[Email] Error sending grace period alert email:', error)
+      return { success: false, error: error.message }
+    }
+  }
+
+  /**
+   * Send takeover confirmation email
+   * Triggered when a secondary takes over billing or becomes primary
+   */
+  static async sendTakeoverConfirmationEmail(data: TakeoverConfirmationEmailData): Promise<{ success: boolean; error?: string }> {
+    try {
+      await (await getClient()).emails.send({
+        from: await getFromEmail(),
+        to: data.newPayerEmail,
+        subject: '✅ Account Takeover Confirmed - PhotoVault',
+        html: getTakeoverConfirmationEmailHTML(data),
+        text: getTakeoverConfirmationEmailText(data),
+      })
+
+      console.log(`[Email] Takeover confirmation email sent to ${data.newPayerEmail}`)
+      return { success: true }
+    } catch (error: any) {
+      console.error('[Email] Error sending takeover confirmation email:', error)
+      return { success: false, error: error.message }
+    }
+  }
+
+  /**
+   * Send photographer notification about account takeover
+   * Helps photographer understand client relationship changes
+   */
+  static async sendPhotographerTakeoverNotificationEmail(data: PhotographerTakeoverNotificationData): Promise<{ success: boolean; error?: string }> {
+    try {
+      await (await getClient()).emails.send({
+        from: await getFromEmail(),
+        to: data.photographerEmail,
+        subject: `📋 Account Update: ${data.originalClientName}'s account`,
+        html: getPhotographerTakeoverNotificationHTML(data),
+        text: getPhotographerTakeoverNotificationText(data),
+      })
+
+      console.log(`[Email] Photographer takeover notification sent to ${data.photographerEmail}`)
+      return { success: true }
+    } catch (error: any) {
+      console.error('[Email] Error sending photographer takeover notification:', error)
       return { success: false, error: error.message }
     }
   }

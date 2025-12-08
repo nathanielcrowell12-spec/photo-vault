@@ -200,7 +200,7 @@ element.addEventListener('mousemove', (e) => {
   ]
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-900">
+    <div className="min-h-screen bg-neutral-900">
       <div className="container-pixieset py-12">
         {/* Header */}
         <div className="mb-12">

@@ -36,7 +36,10 @@ CREATE INDEX IF NOT EXISTS idx_client_invitations_status ON client_invitations(s
 -- Function to auto-link client record to user account on signup
 -- This runs when a new user_profile is created
 CREATE OR REPLACE FUNCTION link_client_to_user_account()
-RETURNS TRIGGER AS $$
+RETURNS TRIGGER
+SECURITY DEFINER
+SET search_path = public, auth
+AS $$
 DECLARE
   v_client_record RECORD;
   v_invitation_token TEXT;
@@ -69,6 +72,13 @@ BEGIN
 
     -- Update all galleries for this client
     UPDATE galleries
+    SET user_id = NEW.id,
+        updated_at = NOW()
+    WHERE client_id = v_client_record.id
+    AND user_id IS NULL;
+
+    -- Update photo_galleries for this client
+    UPDATE photo_galleries
     SET user_id = NEW.id,
         updated_at = NOW()
     WHERE client_id = v_client_record.id

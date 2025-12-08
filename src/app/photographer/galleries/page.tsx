@@ -1,29 +1,25 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
-import { Input } from '@/components/ui/input'
 import {
   ArrowLeft,
   Plus,
-  Search,
   Image as ImageIcon,
   Calendar,
-  Users,
-  DollarSign,
   ExternalLink,
   Upload,
   MoreHorizontal,
   Eye,
-  Trash2,
   Edit,
   Loader2,
   Send,
-  RefreshCw
+  MapPin,
+  Users
 } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
 import Link from 'next/link'
@@ -34,6 +30,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { GallerySearchBar } from '@/components/GallerySearchBar'
+import { GalleryFilters, GalleryFiltersState } from '@/components/GalleryFilters'
 
 interface Gallery {
   id: string
@@ -42,10 +40,15 @@ interface Gallery {
   photo_count: number
   created_at: string
   session_date: string | null
+  event_date: string | null
+  location: string | null
+  people: string[] | null
+  event_type: string | null
   payment_status: string | null
   billing_mode: string | null
   total_amount: number | null
   payment_option_id: string | null
+  relevance?: number
   client: {
     id: string
     name: string
@@ -60,7 +63,110 @@ export default function GalleriesPage() {
   const [galleries, setGalleries] = useState<Gallery[]>([])
   const [loading, setLoading] = useState(true)
   const [searchQuery, setSearchQuery] = useState('')
+  const [filters, setFilters] = useState<GalleryFiltersState>({
+    eventType: null,
+    year: null,
+    location: null,
+    person: null
+  })
+  const [filterOptions, setFilterOptions] = useState({
+    years: [] as number[],
+    locations: [] as string[],
+    people: [] as string[]
+  })
   const [sendingNotification, setSendingNotification] = useState<string | null>(null)
+
+  // Fetch filter options
+  const fetchFilterOptions = useCallback(async () => {
+    try {
+      const response = await fetch('/api/photographer/galleries/filter-options')
+      if (response.ok) {
+        const data = await response.json()
+        setFilterOptions({
+          years: data.years || [],
+          locations: data.locations || [],
+          people: data.people || []
+        })
+      }
+    } catch (error) {
+      console.error('Error fetching filter options:', error)
+    }
+  }, [])
+
+  // Search galleries using API
+  const searchGalleries = useCallback(async () => {
+    if (!user?.id) return
+
+    try {
+      setLoading(true)
+
+      // Build search request
+      const searchRequest: Record<string, unknown> = {}
+      if (searchQuery) searchRequest.query = searchQuery
+      if (filters.eventType) searchRequest.event_type = filters.eventType
+      if (filters.location) searchRequest.location = filters.location
+      if (filters.person) searchRequest.people = [filters.person]
+      if (filters.year) {
+        searchRequest.event_date_start = `${filters.year}-01-01`
+        searchRequest.event_date_end = `${filters.year}-12-31`
+      }
+
+      const response = await fetch('/api/photographer/galleries/search', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(searchRequest)
+      })
+
+      if (!response.ok) throw new Error('Search failed')
+
+      const data = await response.json()
+      setGalleries(data.galleries || [])
+    } catch (err) {
+      console.error('Error searching galleries:', err)
+      // Fallback to direct query
+      await fetchGalleriesDirect()
+    } finally {
+      setLoading(false)
+    }
+  }, [user?.id, searchQuery, filters])
+
+  // Direct query fallback
+  const fetchGalleriesDirect = async () => {
+    if (!user?.id) return
+
+    try {
+      const { data, error } = await supabase
+        .from('photo_galleries')
+        .select(`
+          id,
+          gallery_name,
+          gallery_description,
+          photo_count,
+          created_at,
+          session_date,
+          event_date,
+          location,
+          people,
+          event_type,
+          payment_status,
+          billing_mode,
+          total_amount,
+          payment_option_id,
+          client:clients(id, name, email)
+        `)
+        .eq('photographer_id', user.id)
+        .order('created_at', { ascending: false })
+
+      if (error) throw error
+      const transformedData = (data || []).map(gallery => ({
+        ...gallery,
+        client: Array.isArray(gallery.client) ? gallery.client[0] || null : gallery.client
+      }))
+      setGalleries(transformedData)
+    } catch (err) {
+      console.error('Error fetching galleries:', err)
+    }
+  }
 
   useEffect(() => {
     if (authLoading) return
@@ -72,55 +178,16 @@ export default function GalleriesPage() {
       router.push('/client/dashboard')
       return
     }
-    fetchGalleries()
-  }, [user, userType, authLoading, router])
+    fetchFilterOptions()
+    searchGalleries()
+  }, [user, userType, authLoading, router, fetchFilterOptions, searchGalleries])
 
-  const fetchGalleries = async () => {
-    if (!user?.id) return
-
-    try {
-      setLoading(true)
-      // Use photo_galleries (canonical table) - photos FK references this table
-      const { data, error } = await supabase
-        .from('photo_galleries')
-        .select(`
-          id,
-          gallery_name,
-          gallery_description,
-          photo_count,
-          created_at,
-          session_date,
-          payment_status,
-          billing_mode,
-          total_amount,
-          payment_option_id,
-          client:clients(id, name, email)
-        `)
-        .eq('photographer_id', user.id)
-        .order('created_at', { ascending: false })
-
-      if (error) throw error
-      // Supabase returns joined relations as arrays - transform to single object
-      const transformedData = (data || []).map(gallery => ({
-        ...gallery,
-        client: Array.isArray(gallery.client) ? gallery.client[0] || null : gallery.client
-      }))
-      setGalleries(transformedData)
-    } catch (err) {
-      console.error('Error fetching galleries:', err)
-    } finally {
-      setLoading(false)
+  // Re-search when search or filters change
+  useEffect(() => {
+    if (user?.id && !authLoading) {
+      searchGalleries()
     }
-  }
-
-  const filteredGalleries = galleries.filter(gallery => {
-    const searchLower = searchQuery.toLowerCase()
-    return (
-      gallery.gallery_name?.toLowerCase().includes(searchLower) ||
-      gallery.client?.name?.toLowerCase().includes(searchLower) ||
-      gallery.client?.email?.toLowerCase().includes(searchLower)
-    )
-  })
+  }, [searchQuery, filters, user?.id, authLoading, searchGalleries])
 
   const handleResendNotification = async (galleryId: string, clientEmail: string | undefined) => {
     if (!clientEmail) {
@@ -143,7 +210,10 @@ export default function GalleriesPage() {
       const data = await response.json()
 
       if (!response.ok) {
-        throw new Error(data.error || 'Failed to send notification')
+        const errorMessage = data.code === 'PHOTOGRAPHER_STRIPE_MISSING'
+          ? 'You must complete your payment setup before sending gallery notifications. Please connect your Stripe account in Settings.'
+          : data.message || data.error || 'Failed to send notification'
+        throw new Error(errorMessage)
       }
 
       toast({
@@ -153,7 +223,7 @@ export default function GalleriesPage() {
     } catch (err: any) {
       console.error('Error sending notification:', err)
       toast({
-        title: 'Failed to send',
+        title: 'Payment setup required',
         description: err.message || 'Could not send notification email',
         variant: 'destructive'
       })
@@ -195,14 +265,14 @@ export default function GalleriesPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-amber-400" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950">
+    <div className="min-h-screen bg-neutral-900">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
@@ -225,19 +295,22 @@ export default function GalleriesPage() {
           </Link>
         </div>
 
-        {/* Search */}
-        <div className="relative mb-6">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-          <Input
-            placeholder="Search galleries by name or client..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 bg-slate-800/50 border-slate-700 text-white placeholder:text-slate-500"
+        {/* Search & Filters */}
+        <div className="space-y-4 mb-6">
+          <GallerySearchBar
+            onSearch={setSearchQuery}
+            placeholder="Search galleries by name, location, people, or notes..."
+          />
+          <GalleryFilters
+            onFiltersChange={setFilters}
+            availableYears={filterOptions.years}
+            availableLocations={filterOptions.locations}
+            availablePeople={filterOptions.people}
           />
         </div>
 
         {/* Gallery Grid */}
-        {filteredGalleries.length === 0 ? (
+        {galleries.length === 0 ? (
           <Card className="bg-slate-800/50 border-slate-700">
             <CardContent className="flex flex-col items-center justify-center py-12">
               <ImageIcon className="h-12 w-12 text-slate-600 mb-4" />
@@ -261,7 +334,7 @@ export default function GalleriesPage() {
           </Card>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {filteredGalleries.map((gallery) => (
+            {galleries.map((gallery) => (
               <Card key={gallery.id} className="bg-slate-800/50 border-slate-700 hover:border-slate-600 transition-colors">
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
@@ -323,18 +396,39 @@ export default function GalleriesPage() {
                 </CardHeader>
                 <CardContent className="space-y-3">
                   {/* Stats Row */}
-                  <div className="flex items-center gap-4 text-sm">
+                  <div className="flex items-center gap-4 text-sm flex-wrap">
                     <div className="flex items-center gap-1 text-slate-400">
                       <ImageIcon className="h-4 w-4" />
                       <span>{gallery.photo_count || 0} photos</span>
                     </div>
-                    {gallery.session_date && (
+                    {(gallery.event_date || gallery.session_date) && (
                       <div className="flex items-center gap-1 text-slate-400">
                         <Calendar className="h-4 w-4" />
-                        <span>{formatDate(gallery.session_date)}</span>
+                        <span>{formatDate(gallery.event_date || gallery.session_date)}</span>
+                      </div>
+                    )}
+                    {gallery.location && (
+                      <div className="flex items-center gap-1 text-slate-400">
+                        <MapPin className="h-4 w-4" />
+                        <span className="truncate max-w-[100px]">{gallery.location}</span>
                       </div>
                     )}
                   </div>
+
+                  {/* People Tags */}
+                  {gallery.people && gallery.people.length > 0 && (
+                    <div className="flex items-center gap-1 flex-wrap">
+                      <Users className="h-3 w-3 text-slate-500" />
+                      {gallery.people.slice(0, 3).map((person, idx) => (
+                        <Badge key={idx} variant="secondary" className="text-xs bg-slate-700/50 text-slate-300">
+                          {person}
+                        </Badge>
+                      ))}
+                      {gallery.people.length > 3 && (
+                        <span className="text-xs text-slate-500">+{gallery.people.length - 3} more</span>
+                      )}
+                    </div>
+                  )}
 
                   {/* Payment Info */}
                   <div className="flex items-center justify-between">
@@ -363,9 +457,8 @@ export default function GalleriesPage() {
                       View
                     </Button>
                     <Button
-                      variant="outline"
                       size="sm"
-                      className="flex-1 border-slate-600 text-slate-300 hover:text-white hover:bg-slate-700"
+                      className="flex-1 bg-amber-500 hover:bg-amber-600 text-black font-medium"
                       onClick={() => router.push(`/photographer/galleries/${gallery.id}/upload`)}
                     >
                       <Upload className="h-3 w-3 mr-1" />

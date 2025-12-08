@@ -146,7 +146,7 @@ export default function PaymentPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600 mx-auto mb-4"></div>
           <p className="text-slate-600 dark:text-slate-300">Loading payment information...</p>
@@ -157,7 +157,7 @@ export default function PaymentPage() {
 
   if (!paymentData) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardContent className="p-8 text-center">
             <AlertTriangle className="h-16 w-16 text-orange-500 mx-auto mb-4" />
@@ -176,7 +176,7 @@ export default function PaymentPage() {
 
   if (paymentSuccess) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardContent className="p-8 text-center">
             <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
@@ -202,7 +202,7 @@ export default function PaymentPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen bg-neutral-900">
       {/* Header */}
       <header className="border-b bg-white dark:bg-slate-900">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">

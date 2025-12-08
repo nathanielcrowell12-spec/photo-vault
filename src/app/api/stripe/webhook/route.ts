@@ -14,6 +14,7 @@ type StripeSubscription = {
   canceled_at: number | null
   customer: string | Stripe.Customer
   metadata: Record<string, string>
+  trial_end: number | null
 }
 
 type StripeInvoice = {
@@ -114,7 +115,7 @@ export async function POST(request: NextRequest) {
         break
 
       case 'invoice.payment_failed':
-        await handleInvoicePaymentFailed(event.data.object as Stripe.Invoice, supabase)
+        await handleInvoicePaymentFailed(event.data.object as Stripe.Invoice, supabase, stripe)
         break
 
       case 'payment_intent.succeeded':
@@ -256,6 +257,44 @@ async function handleSubscriptionUpdated(
 ) {
   try {
     const subscription = rawSubscription as unknown as StripeSubscription
+    const metadata = subscription.metadata || {}
+    const subscriptionType = metadata.subscription_type
+
+    // Handle platform subscriptions (photographer $22/month)
+    if (subscriptionType === 'platform' && metadata.photographer_id) {
+      const photographerId = metadata.photographer_id
+
+      // Update photographer subscription
+      await supabase
+        .from('photographers')
+        .update({
+          platform_subscription_status: subscription.status === 'trialing' ? 'trialing' : subscription.status,
+          platform_subscription_current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
+          platform_subscription_current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+          platform_subscription_trial_end: subscription.trial_end
+            ? new Date(subscription.trial_end * 1000).toISOString()
+            : null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', photographerId)
+
+      // Update photographer's user_profiles payment status
+      if (subscription.status === 'active' || subscription.status === 'trialing') {
+        await supabase
+          .from('user_profiles')
+          .update({
+            payment_status: 'active',
+            subscription_end_date: new Date(subscription.current_period_end * 1000).toISOString(),
+            updated_at: new Date().toISOString(),
+          })
+          .eq('id', photographerId)
+      }
+
+      console.log(`[Webhook] Platform subscription ${subscription.status}: ${subscription.id} for photographer ${photographerId}`)
+      return
+    }
+
+    // Handle client subscriptions (existing logic)
     const { data: existingSubscription } = await supabase
       .from('subscriptions')
       .select('id')
@@ -276,7 +315,6 @@ async function handleSubscriptionUpdated(
         .eq('id', existingSubscription.id)
     } else {
       // Try to get metadata from subscription
-      const metadata = subscription.metadata || {}
       const clientId = metadata.client_id
       const photographerId = metadata.photographer_id
       const galleryId = metadata.gallery_id
@@ -329,6 +367,36 @@ async function handleSubscriptionDeleted(
   supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>
 ) {
   try {
+    const metadata = subscription.metadata || {}
+    const subscriptionType = metadata.subscription_type
+
+    // Handle platform subscriptions (photographer $22/month)
+    if (subscriptionType === 'platform' && metadata.photographer_id) {
+      const photographerId = metadata.photographer_id
+
+      // Update photographer subscription status
+      await supabase
+        .from('photographers')
+        .update({
+          platform_subscription_status: 'cancelled',
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', photographerId)
+
+      // Update photographer's user_profiles payment status
+      await supabase
+        .from('user_profiles')
+        .update({
+          payment_status: 'inactive',
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', photographerId)
+
+      console.log(`[Webhook] Platform subscription cancelled: ${subscription.id} for photographer ${photographerId}`)
+      return
+    }
+
+    // Handle client subscriptions (existing logic)
     await supabase
       .from('subscriptions')
       .update({
@@ -376,8 +444,46 @@ async function handleInvoicePaid(
       return // Not a subscription invoice
     }
 
-    // Update subscription period
+    // Get subscription to check metadata
     const subscription = await stripe.subscriptions.retrieve(subscriptionId) as unknown as StripeSubscription
+    const metadata = subscription.metadata || {}
+    const subscriptionType = metadata.subscription_type
+
+    // Handle platform subscriptions (photographer $22/month)
+    if (subscriptionType === 'platform' && metadata.photographer_id) {
+      const photographerId = metadata.photographer_id
+
+      // Update photographer subscription
+      await supabase
+        .from('photographers')
+        .update({
+          platform_subscription_status: subscription.status === 'trialing' ? 'trialing' : 'active',
+          platform_subscription_current_period_start: new Date(subscription.current_period_start * 1000).toISOString(),
+          platform_subscription_current_period_end: new Date(subscription.current_period_end * 1000).toISOString(),
+          platform_subscription_trial_end: subscription.trial_end
+            ? new Date(subscription.trial_end * 1000).toISOString()
+            : null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', photographerId)
+
+      // Update photographer's user_profiles payment status
+      await supabase
+        .from('user_profiles')
+        .update({
+          last_payment_date: new Date().toISOString(),
+          payment_status: 'active',
+          subscription_start_date: new Date(subscription.current_period_start * 1000).toISOString(),
+          subscription_end_date: new Date(subscription.current_period_end * 1000).toISOString(),
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', photographerId)
+
+      console.log(`[Webhook] Platform subscription invoice paid: ${invoice.id} for photographer ${photographerId}`)
+      return
+    }
+
+    // Handle client subscriptions (existing logic)
     await supabase
       .from('subscriptions')
       .update({
@@ -417,7 +523,8 @@ async function handleInvoicePaid(
  */
 async function handleInvoicePaymentFailed(
   rawInvoice: Stripe.Invoice,
-  supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>
+  supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>,
+  stripe: Stripe
 ) {
   try {
     const invoice = rawInvoice as unknown as StripeInvoice
@@ -426,7 +533,38 @@ async function handleInvoicePaymentFailed(
       return
     }
 
-    // Update subscription status
+    // Get subscription to check metadata
+    const subscription = await stripe.subscriptions.retrieve(subscriptionId) as unknown as StripeSubscription
+    const metadata = subscription.metadata || {}
+    const subscriptionType = metadata.subscription_type
+
+    // Handle platform subscriptions (photographer $22/month)
+    if (subscriptionType === 'platform' && metadata.photographer_id) {
+      const photographerId = metadata.photographer_id
+
+      // Update photographer subscription status
+      await supabase
+        .from('photographers')
+        .update({
+          platform_subscription_status: 'past_due',
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', photographerId)
+
+      // Update photographer's user_profiles payment status
+      await supabase
+        .from('user_profiles')
+        .update({
+          payment_status: 'grace_period',
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', photographerId)
+
+      console.log(`[Webhook] Platform subscription payment failed: ${invoice.id} for photographer ${photographerId}`)
+      return
+    }
+
+    // Handle client subscriptions (existing logic)
     await supabase
       .from('subscriptions')
       .update({
@@ -551,7 +689,7 @@ async function handlePaymentIntentSucceeded(
       if (photographer?.stripe_account_id) {
         try {
           // Create transfer to photographer's connected account
-          // Transfer happens after 14-day delay (configured in Stripe dashboard or via schedule)
+          // Stripe Express accounts receive funds via T+2 automatic payouts
           const transfer = await stripe.transfers.create({
             amount: photographerPayoutCents,
             currency: 'usd',

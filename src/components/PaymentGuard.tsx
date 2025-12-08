@@ -25,6 +25,8 @@ export default function PaymentGuard({
   const router = useRouter()
   const [isGracePeriod, setIsGracePeriod] = useState(false)
   const [isExpired, setIsExpired] = useState(false)
+  const [photographerSubscriptionStatus, setPhotographerSubscriptionStatus] = useState<string | null>(null)
+  const [checkingSubscription, setCheckingSubscription] = useState(false)
 
   const checkPaymentStatus = useCallback(() => {
     // Check if customer is in grace period (6 months after last payment)
@@ -45,8 +47,101 @@ export default function PaymentGuard({
     }
   }, [loading, user, userType, paymentStatus, checkPaymentStatus])
 
-  // Don't show payment guards for photographers or admins
-  if (userType === 'photographer' || userType === 'admin') {
+  // Check photographer subscription status
+  useEffect(() => {
+    if (!loading && user && userType === 'photographer') {
+      setCheckingSubscription(true)
+      fetch('/api/stripe/platform-subscription')
+        .then(res => res.json())
+        .then(data => {
+          if (data.success && data.data) {
+            setPhotographerSubscriptionStatus(data.data.status)
+          } else {
+            // No subscription - allow access during beta transition
+            setPhotographerSubscriptionStatus(null)
+          }
+        })
+        .catch(err => {
+          console.error('Error checking subscription:', err)
+          // On error, allow access (graceful degradation)
+          setPhotographerSubscriptionStatus(null)
+        })
+        .finally(() => {
+          setCheckingSubscription(false)
+        })
+    }
+  }, [loading, user, userType])
+
+  // Handle photographer subscription status
+  if (userType === 'photographer') {
+    if (checkingSubscription) {
+      return (
+        <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-slate-600 dark:text-slate-300">Checking subscription...</p>
+          </div>
+        </div>
+      )
+    }
+
+    // Block access if subscription is cancelled or unpaid
+    if (photographerSubscriptionStatus === 'cancelled' || photographerSubscriptionStatus === 'unpaid') {
+      return (
+        <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center p-4">
+          <Card className="w-full max-w-md">
+            <CardHeader className="text-center">
+              <div className="mx-auto mb-4 w-12 h-12 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center">
+                <Lock className="h-6 w-6 text-red-600" />
+              </div>
+              <CardTitle>Subscription Required</CardTitle>
+              <CardDescription>
+                Your platform subscription is inactive. Please reactivate to access the photographer dashboard.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Alert>
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>
+                  Your $22/month platform subscription is required to access PhotoVault.
+                </AlertDescription>
+              </Alert>
+              <Button asChild className="w-full">
+                <Link href="/photographers/subscription">
+                  <CreditCard className="h-4 w-4 mr-2" />
+                  Manage Subscription
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      )
+    }
+
+    // Show warning if subscription is past_due
+    if (photographerSubscriptionStatus === 'past_due' && showGracePeriodWarning) {
+      return (
+        <>
+          <Alert className="mb-6 border-orange-200 bg-orange-50 dark:bg-orange-900/20">
+            <AlertCircle className="h-4 w-4 text-orange-600" />
+            <AlertDescription className="text-orange-800 dark:text-orange-200">
+              <strong>Payment Failed:</strong> Your platform subscription payment failed. Please update your payment method to avoid service interruption.
+              <Button asChild size="sm" className="ml-2">
+                <Link href="/photographers/subscription">Update Payment</Link>
+              </Button>
+            </AlertDescription>
+          </Alert>
+          {children}
+        </>
+      )
+    }
+
+    // Allow access for active, trialing, or null (no subscription yet - beta transition)
+    return <>{children}</>
+  }
+
+  // Don't show payment guards for admins
+  if (userType === 'admin') {
     return <>{children}</>
   }
 

@@ -21,9 +21,9 @@ export default function UserTypeSelectionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-slate-800">
+    <div className="min-h-screen bg-neutral-900">
       {/* Header */}
-      <header className="border-b bg-white/95 backdrop-blur-sm dark:bg-slate-900/95">
+      <header className="border-b bg-neutral-800/50 border-white/10">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center space-x-2">
