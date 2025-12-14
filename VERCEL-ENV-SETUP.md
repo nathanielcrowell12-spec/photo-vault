@@ -55,6 +55,14 @@ CHUNK_SIZE=6291456
 UPLOAD_TIMEOUT=300000
 ```
 
+#### **PostHog Analytics (Story 6.1)**
+```
+NEXT_PUBLIC_POSTHOG_KEY=phc_your_project_key_here
+NEXT_PUBLIC_POSTHOG_HOST=https://app.posthog.com
+POSTHOG_API_KEY=phc_your_project_key_here
+```
+Get these from: https://app.posthog.com/project/settings
+
 ### 🚀 After Setting Environment Variables
 
 1. **Save all environment variables** in Vercel

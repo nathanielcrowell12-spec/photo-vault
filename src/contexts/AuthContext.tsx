@@ -4,16 +4,19 @@ import { createContext, useContext, useEffect, useState, useRef } from 'react'
 import { User, Session } from '@supabase/supabase-js'
 import { supabaseBrowser as supabase } from '@/lib/supabase-browser'
 import { validateUserType } from '@/lib/access-control'
+import { identifyUser, resetAnalytics } from '@/lib/analytics/client'
+
+type UserType = 'client' | 'photographer' | 'admin' | 'secondary'
 
 interface AuthContextType {
   user: User | null
   session: Session | null
   loading: boolean
-  signUp: (email: string, password: string, userType: 'client' | 'photographer' | 'admin', fullName?: string) => Promise<{ error: unknown }>
+  signUp: (email: string, password: string, userType: UserType, fullName?: string) => Promise<{ error: unknown }>
   signIn: (email: string, password: string) => Promise<{ error: unknown }>
   signOut: () => Promise<void>
   changePassword: (newPassword: string) => Promise<{ error: unknown }>
-  userType: 'client' | 'photographer' | 'admin' | null
+  userType: UserType | null
   userFullName: string | null
   paymentStatus: string | null
   isPaymentActive: boolean
@@ -25,7 +28,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null)
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
-  const [userType, setUserType] = useState<'client' | 'photographer' | 'admin' | null>(null)
+  const [userType, setUserType] = useState<UserType | null>(null)
   const [userFullName, setUserFullName] = useState<string | null>(null)
   const [paymentStatus, setPaymentStatus] = useState<string | null>(null)
   const [isPaymentActive, setIsPaymentActive] = useState(false)
@@ -64,6 +67,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUserFullName('Admin User')
         setPaymentStatus('admin_bypass')
         setIsPaymentActive(true)
+        // Identify admin user in PostHog
+        identifyUser(userId, {
+          user_type: 'admin',
+          signup_date: session?.user?.created_at || new Date().toISOString(),
+          stripe_connected: false,
+        })
         return
       }
 
@@ -90,6 +99,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setUserFullName(data.full_name || data.business_name || null)
         setPaymentStatus(data.payment_status)
         setIsPaymentActive(true)
+        // Identify user in PostHog
+        identifyUser(userId, {
+          user_type: data.user_type,
+          signup_date: session?.user?.created_at || new Date().toISOString(),
+          stripe_connected: data.user_type === 'photographer',
+        })
       } else {
         console.log('[AuthContext] No profile found, defaulting to client')
         setUserType('client')
@@ -446,6 +461,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signOut = async () => {
     try {
       console.log('[AuthContext] Signing out...')
+      // Reset PostHog identity before signing out
+      resetAnalytics()
       const { error } = await supabase.auth.signOut()
 
       if (error) {

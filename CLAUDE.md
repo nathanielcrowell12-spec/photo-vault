@@ -514,37 +514,57 @@ Next: [What to do next session]
 
 ---
 
-## SESSION STATE (Dec 8, 2025)
+## SESSION STATE (Dec 9, 2025)
 
-### Current Session - Orchestration System Fix
+### Story 2.3 - IMPLEMENTED (UNTESTED)
 
-**Date:** December 8, 2025
-**Focus:** Fixing Claude Code orchestration system - correcting CLAUDE.md files
+**Date:** December 9, 2025
+**Status:** Code written, needs manual testing
 
-### Completed This Session
+### What Was Built This Session
 
-1. ✅ Created missing `shadcn-skill.md` in PhotoVault skills folder
-2. ✅ Fixed CLAUDE-MD-ADDITIONS.md to read TWO skills for UI tasks
-3. ✅ Corrected parent CLAUDE.md with protected sections
-4. ✅ Corrected this hub CLAUDE.md with protected sections
+1. **MessagingPanel Modal Sizing** - Changed `h-[600px]` to `h-[85vh] max-h-[800px] min-h-[500px]`
+2. **Start New Chat Button** - Added `showPhotographerList` state, button at top of conversation list
+3. **Client Upload Web Form** - Full form with all metadata fields (Event Date, Location, People, Event Type, Photographer Name, Notes)
+4. **Fixed Upload Buttons** - Desktop App uses protocol handler + fallback modal, Online Upload scrolls to form
 
-### Previous Session - Story 2.3 Fix Client Dashboard - COMPLETE
+### Files Modified
+- `src/components/MessagingPanel.tsx` - Responsive sizing, Start New Chat
+- `src/app/client/upload/page.tsx` - Complete rebuild with web upload form
 
-**Date:** December 8, 2025
-**Focus:** Fix client dashboard to show real stats and populate Recent Sessions
+### Testing Required (Next Session)
+```
+npm run dev -- -p 3002
+```
+1. MessagingPanel - Open messages, verify fits screen
+2. Start New Chat - With conversations, click button, verify photographer list
+3. Client Upload - Navigate to `/client/upload`, test form creates gallery
 
-**Completed:**
-- Created Client Stats API (`/api/client/stats`)
-- Updated Client Dashboard Stats Cards
-- Populated Recent Photo Sessions Section
-- Updated WORK_PLAN.md
+### Story 2.3b Created - Support/Timeline/Favorites
 
-**Beta MVP Progress:** 65% complete (13/20 stories)
+**Issues found during user testing:**
+
+| Page | Issue | Fix |
+|------|-------|-----|
+| `/client/support` | Fake phone `(555) 123-4567` | Change to `(608) 571-7532` |
+| `/client/support` | Live Chat card | REMOVE - no feature |
+| `/client/support` | Support Hours card | REMOVE - no set hours |
+| `/client/timeline` | 100% mock data | Pull from real galleries |
+| `/client/dashboard` | "Downloaded" stat | REMOVE - useless |
+| `/client/dashboard` | "Favorites" stat | Link to timeline with filter |
+
+**Favorites Feature (discussed):**
+- Mark favorites in lightbox (heart icon)
+- `gallery_photos.is_favorite` column exists
+- Dashboard stat links to `/client/timeline?favorites=true`
+
+### Beta MVP Progress
+**60% complete (12/20 stories)** - Story 2.3 needs testing, 2.3b not started
 
 ### Next Steps
-1. Story 2.4 - Fix Admin Dashboard (last dashboard story)
-2. Then Epic 4 - Onboarding Polish
-3. Then Epic 5 - Beta Launch Prep
+1. Test Story 2.3 changes
+2. Story 2.3b - Support cleanup, timeline real data, favorites
+3. Story 2.4 - Admin Dashboard
 
 ---
 

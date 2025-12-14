@@ -6,6 +6,7 @@ import { ViewProvider } from "@/contexts/ViewContext";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Navigation, Footer } from "@/components/navigation";
 import { Toaster } from "@/components/ui/toaster";
+import { PostHogProvider } from "@/app/providers/PostHogProvider";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -118,9 +119,10 @@ export default function RootLayout({
         />
       </head>
       <body className={`${inter.className} bg-background text-foreground`}>
-        <ThemeProvider>
-          <AuthProvider>
-            <ViewProvider>
+        <PostHogProvider>
+          <ThemeProvider>
+            <AuthProvider>
+              <ViewProvider>
               <div className="flex flex-col min-h-screen bg-background">
                 <Navigation hideOnPaths={['/photographer/dashboard', '/login', '/signup', '/auth/signup', '/photographers/signup']} />
                 <main className="flex-1">
@@ -129,9 +131,10 @@ export default function RootLayout({
                 <Footer hideOnPaths={['/photographer/dashboard', '/login', '/signup', '/auth/signup', '/photographers/signup']} />
                 <Toaster />
               </div>
-            </ViewProvider>
-          </AuthProvider>
-        </ThemeProvider>
+              </ViewProvider>
+            </AuthProvider>
+          </ThemeProvider>
+        </PostHogProvider>
       </body>
     </html>
   );
