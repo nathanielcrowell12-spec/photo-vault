@@ -24,7 +24,7 @@ import {
   RefreshCw,
   Search,
 } from 'lucide-react'
-import type { Transaction, TransactionsResponse } from '@/app/api/admin/transactions/route'
+import type { Transaction, TransactionsResponse } from '@/types/admin'
 
 type PeriodFilter = 'month' | 'year' | 'all'
 

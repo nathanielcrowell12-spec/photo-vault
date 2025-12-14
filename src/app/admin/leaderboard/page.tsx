@@ -23,7 +23,7 @@ import {
   Trophy,
   Users,
 } from 'lucide-react'
-import type { LeaderboardEntry, LeaderboardResponse } from '@/app/api/admin/leaderboard/route'
+import type { LeaderboardEntry, LeaderboardResponse } from '@/types/admin'
 
 type PeriodFilter = 'month' | 'year' | 'all'
 
