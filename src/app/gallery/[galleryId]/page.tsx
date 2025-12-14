@@ -1,20 +1,18 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useAuth } from '@/contexts/AuthContext'
+import { useTrackEvent } from '@/hooks/useAnalytics'
+import { EVENTS } from '@/types/analytics'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import {
   ArrowLeft,
-  Grid3X3,
   Maximize2,
   Download,
-  Heart,
-  Share2,
-  MoreHorizontal,
   X,
   ChevronLeft,
   ChevronRight,
@@ -24,7 +22,8 @@ import {
   Upload,
   Lock,
   CreditCard,
-  CheckCircle
+  CheckCircle,
+  Heart
 } from 'lucide-react'
 import { supabaseBrowser as supabase } from '@/lib/supabase-browser'
 import Link from 'next/link'
@@ -44,12 +43,15 @@ interface Gallery {
   import_started_at?: string
   import_completed_at?: string
   client_id?: string
+  user_id?: string  // Owner for self-uploaded galleries
   // Pricing fields
   total_amount?: number
   shoot_fee?: number
   storage_fee?: number
   payment_option_id?: string
   billing_mode?: string
+  // Joined data for access control
+  clients?: { user_id: string } | { user_id: string }[] | null
 }
 
 interface Photo {
@@ -68,6 +70,8 @@ export default function GalleryViewerPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const { user, userType, loading: authLoading } = useAuth()
+  const track = useTrackEvent()
+  const hasTrackedViewRef = useRef(false)
   const [gallery, setGallery] = useState<Gallery | null>(null)
   const [photos, setPhotos] = useState<Photo[]>([])
   const [loading, setLoading] = useState(true)
@@ -80,7 +84,6 @@ export default function GalleryViewerPage() {
   const [checkingAccess, setCheckingAccess] = useState(true)
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false)
   const [accessSuspended, setAccessSuspended] = useState(false)
-  const [showShareCopied, setShowShareCopied] = useState(false)
 
   const galleryId = params.galleryId as string
   const paymentStatus = searchParams.get('payment')
@@ -101,7 +104,12 @@ export default function GalleryViewerPage() {
       if (currentUser) {
         const { data: galleryData, error: galleryError } = await supabase
           .from('photo_galleries')
-          .select('*')
+          .select(`
+            *,
+            clients (
+              user_id
+            )
+          `)
           .eq('id', galleryId)
           .single()
 
@@ -112,7 +120,7 @@ export default function GalleryViewerPage() {
 
           // Fetch photos for this gallery
           const { data: photosData, error: photosError } = await supabase
-            .from('photos')
+            .from('gallery_photos')
             .select('*')
             .eq('gallery_id', galleryId)
             .order('created_at', { ascending: true })
@@ -191,17 +199,23 @@ export default function GalleryViewerPage() {
     // Client - check access
     if (userType === 'client') {
       // FIRST: Check if this is a self-uploaded gallery (no photographer involved)
-      // Self-uploaded galleries have no photographer_id, and the client_id matches the user
-      if (!galleryData.photographer_id && galleryData.client_id === user.id) {
+      // Self-uploaded galleries have photographer_id = NULL and user_id = auth.uid
+      // Note: client_id is NULL for self-uploads, ownership is via user_id
+      if (!galleryData.photographer_id && galleryData.user_id === user.id) {
         console.log('[Gallery] Self-uploaded gallery - owner has free access')
         setHasAccess(true)
         setCheckingAccess(false)
         return
       }
 
-      // SECOND: Check if client owns this gallery (client_id matches) but no pricing was set
+      // SECOND: Check if client owns this gallery via client record but no pricing was set
       // This handles galleries where photographer assigned to client but didn't set up payment
-      if (galleryData.client_id === user.id && !galleryData.total_amount) {
+      // NOTE: client_id is FK to clients.id, we need to check clients.user_id = auth.uid
+      const clientData = Array.isArray(galleryData.clients)
+        ? galleryData.clients[0]
+        : galleryData.clients
+
+      if (clientData?.user_id === user.id && !galleryData.total_amount) {
         console.log('[Gallery] Gallery assigned to client with no pricing - free access')
         setHasAccess(true)
         setCheckingAccess(false)
@@ -308,6 +322,32 @@ export default function GalleryViewerPage() {
       }
     }
   }, [gallery, user, userType, authLoading, checkAccess, paymentStatus])
+
+  // Track gallery view when user has access (once per page load)
+  useEffect(() => {
+    if (!gallery || !hasAccess || checkingAccess || hasTrackedViewRef.current) return
+
+    // Track the view
+    if (userType === 'client') {
+      track(EVENTS.CLIENT_VIEWED_GALLERY, {
+        gallery_id: gallery.id,
+        photographer_id: gallery.photographer_id || '',
+        photo_count: photos.length,
+      })
+    } else {
+      // Generic gallery_viewed for photographers, admins, or anonymous
+      const isOwner = user?.id === gallery.photographer_id || user?.id === gallery.user_id
+      track(EVENTS.GALLERY_VIEWED, {
+        gallery_id: gallery.id,
+        photographer_id: gallery.photographer_id || '',
+        photo_count: photos.length,
+        is_owner: isOwner,
+        viewer_type: userType || 'anonymous',
+      })
+    }
+
+    hasTrackedViewRef.current = true
+  }, [gallery, hasAccess, checkingAccess, photos.length, userType, track])
 
   const handleImportPhotos = async () => {
     if (!user || !gallery) return
@@ -449,37 +489,39 @@ export default function GalleryViewerPage() {
     }
   }
 
-  const handleShare = async () => {
-    const shareUrl = window.location.href
-    const shareTitle = gallery?.gallery_name || 'Photo Gallery'
-    const shareText = `Check out this photo gallery: ${shareTitle}`
-
-    // Try native Web Share API first (works well on mobile)
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: shareTitle,
-          text: shareText,
-          url: shareUrl,
-        })
-        return
-      } catch (error) {
-        // User cancelled or share failed, fall through to clipboard
-        if ((error as Error).name !== 'AbortError') {
-          console.log('Web Share failed, falling back to clipboard')
-        }
-      }
-    }
-
-    // Fallback: Copy to clipboard
+  const toggleFavorite = async (photoId: string) => {
     try {
-      await navigator.clipboard.writeText(shareUrl)
-      setShowShareCopied(true)
-      setTimeout(() => setShowShareCopied(false), 3000)
+      const response = await fetch(`/api/photos/${photoId}/favorite`, {
+        method: 'POST',
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+        console.error('[Gallery] Failed to toggle favorite:', error)
+        return
+      }
+
+      const data = await response.json()
+
+      // Track favorite event if adding to favorites (not unfavoriting)
+      if (data.is_favorite && gallery) {
+        track(EVENTS.PHOTO_FAVORITED, {
+          gallery_id: gallery.id,
+          photo_id: photoId,
+          photographer_id: gallery.photographer_id || '',
+        })
+      }
+
+      // Update local state optimistically
+      setPhotos(prevPhotos =>
+        prevPhotos.map(photo =>
+          photo.id === photoId
+            ? { ...photo, is_favorite: data.is_favorite }
+            : photo
+        )
+      )
     } catch (error) {
-      console.error('Failed to copy to clipboard:', error)
-      // Final fallback: prompt user to copy manually
-      prompt('Copy this link to share:', shareUrl)
+      console.error('[Gallery] Error toggling favorite:', error)
     }
   }
 
@@ -839,18 +881,6 @@ export default function GalleryViewerPage() {
             </div>
 
             <div className="flex items-center space-x-2">
-              <div className="relative">
-                <Button variant="outline" size="sm" onClick={handleShare}>
-                  <Share2 className="h-4 w-4 mr-2" />
-                  Share
-                </Button>
-                {showShareCopied && (
-                  <div className="absolute top-full mt-2 left-1/2 -translate-x-1/2 bg-green-600 text-white text-xs px-3 py-1.5 rounded-md whitespace-nowrap shadow-lg z-50">
-                    <CheckCircle className="h-3 w-3 inline mr-1" />
-                    Link copied!
-                  </div>
-                )}
-              </div>
               <Button variant="outline" size="sm" onClick={downloadAllPhotos} disabled={photos.length === 0}>
                 <Download className="h-4 w-4 mr-2" />
                 Download All ({photos.length})
@@ -989,6 +1019,21 @@ export default function GalleryViewerPage() {
           <div className="fixed inset-0 bg-black z-50 flex items-center justify-center">
             {/* Top Action Buttons */}
             <div className="absolute top-4 right-4 flex items-center gap-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-white hover:bg-white/20"
+                onClick={() => toggleFavorite(photos[selectedPhotoIndex].id)}
+                title={photos[selectedPhotoIndex].is_favorite ? 'Remove from favorites' : 'Add to favorites'}
+              >
+                <Heart
+                  className={`h-5 w-5 transition-colors ${
+                    photos[selectedPhotoIndex].is_favorite
+                      ? 'fill-red-500 text-red-500'
+                      : 'text-white'
+                  }`}
+                />
+              </Button>
               <Button
                 variant="ghost"
                 size="icon"

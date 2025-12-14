@@ -3,16 +3,17 @@
 import { createContext, useContext, useEffect, useState, useRef } from 'react'
 import { User, Session } from '@supabase/supabase-js'
 import { supabaseBrowser as supabase } from '@/lib/supabase-browser'
-import { validateUserType } from '@/lib/access-control'
+import { validateUserType, UserType } from '@/lib/access-control'
 import { identifyUser, resetAnalytics } from '@/lib/analytics/client'
 
-type UserType = 'client' | 'photographer' | 'admin' | 'secondary'
+// Types for signup - excludes 'secondary' (created via family invitation) and null
+type SignUpUserType = 'client' | 'photographer' | 'admin'
 
 interface AuthContextType {
   user: User | null
   session: Session | null
   loading: boolean
-  signUp: (email: string, password: string, userType: UserType, fullName?: string) => Promise<{ error: unknown }>
+  signUp: (email: string, password: string, userType: SignUpUserType, fullName?: string) => Promise<{ error: unknown }>
   signIn: (email: string, password: string) => Promise<{ error: unknown }>
   signOut: () => Promise<void>
   changePassword: (newPassword: string) => Promise<{ error: unknown }>
@@ -329,6 +330,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           console.error('Error creating photographer profile:', photographerError)
           console.error('Photographer error details:', JSON.stringify(photographerError, null, 2))
         } else {
+          // Track photographer signup (server-side to bypass ad blockers)
+          try {
+            await fetch('/api/analytics/track', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                userId: data.user.id,
+                eventName: 'photographer_signed_up',
+                properties: {
+                  signup_method: 'email',
+                  // UTM tracking can be added later by reading from URL params
+                },
+              }),
+            })
+          } catch (trackError) {
+            // Don't block signup if tracking fails
+            console.error('[AuthContext] Error tracking photographer signup:', trackError)
+          }
+
           // Create platform subscription
           // Don't block signup if this fails - photographer can create subscription manually later
           try {

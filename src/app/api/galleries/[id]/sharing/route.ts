@@ -26,10 +26,18 @@ export async function GET(
 
     const serviceSupabase = createServiceRoleClient()
 
-    // Get gallery with sharing status
+    // Get gallery with sharing status and client join for access check
     const { data: gallery, error: galleryError } = await serviceSupabase
       .from('photo_galleries')
-      .select('id, client_id, is_family_shared')
+      .select(`
+        id,
+        client_id,
+        user_id,
+        is_family_shared,
+        clients (
+          user_id
+        )
+      `)
       .eq('id', galleryId)
       .single()
 
@@ -40,8 +48,13 @@ export async function GET(
       )
     }
 
-    // Check user owns this gallery
-    if (gallery.client_id !== user.id) {
+    // Check user owns this gallery (either via clients.user_id or user_id for self-uploads)
+    // NOTE: client_id is FK to clients.id, we need to check clients.user_id = auth.uid
+    const clientData = Array.isArray(gallery.clients)
+      ? gallery.clients[0]
+      : gallery.clients
+    const isOwner = clientData?.user_id === user.id || gallery.user_id === user.id
+    if (!isOwner) {
       return NextResponse.json(
         { error: 'You can only view sharing status of your own galleries' },
         { status: 403 }
@@ -105,10 +118,18 @@ export async function PATCH(
 
     const serviceSupabase = createServiceRoleClient()
 
-    // Get gallery to verify ownership
+    // Get gallery to verify ownership with client join for access check
     const { data: gallery, error: galleryError } = await serviceSupabase
       .from('photo_galleries')
-      .select('id, client_id, gallery_name')
+      .select(`
+        id,
+        client_id,
+        user_id,
+        gallery_name,
+        clients (
+          user_id
+        )
+      `)
       .eq('id', galleryId)
       .single()
 
@@ -119,8 +140,13 @@ export async function PATCH(
       )
     }
 
-    // Check user owns this gallery
-    if (gallery.client_id !== user.id) {
+    // Check user owns this gallery (either via clients.user_id or user_id for self-uploads)
+    // NOTE: client_id is FK to clients.id, we need to check clients.user_id = auth.uid
+    const clientData = Array.isArray(gallery.clients)
+      ? gallery.clients[0]
+      : gallery.clients
+    const isOwner = clientData?.user_id === user.id || gallery.user_id === user.id
+    if (!isOwner) {
       return NextResponse.json(
         { error: 'You can only change sharing status of your own galleries' },
         { status: 403 }
