@@ -163,6 +163,7 @@ export interface GalleryViewedEvent extends AuthenticatedEventProperties {
   photographer_id: string
   photo_count: number
   is_owner: boolean
+  viewer_type?: 'photographer' | 'client' | 'secondary' | 'admin' | 'anonymous'
 }
 
 export interface PhotoFavoritedEvent extends AuthenticatedEventProperties {
