@@ -20,12 +20,12 @@ export default function EmptyState({
   onAction
 }: EmptyStateProps) {
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardContent className="p-8 text-center">
           <Icon className="h-16 w-16 text-blue-500 mx-auto mb-4" />
           <h2 className="text-2xl font-bold mb-2">{title}</h2>
-          <p className="text-slate-600 dark:text-slate-300 mb-6">
+          <p className="text-muted-foreground dark:text-foreground mb-6">
             {description}
           </p>
           {actionLabel && (actionHref || onAction) && (

@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createServiceRoleClient } from '@/lib/supabase-server'
 import { getStripeClient } from '@/lib/stripe'
+import { trackServerEvent } from '@/lib/analytics/server'
+import { EVENTS } from '@/types/analytics'
+import { calculateTimeFromSignup } from '@/lib/analytics/helpers'
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic'
@@ -68,6 +71,30 @@ export async function GET(request: NextRequest) {
 
     // Redirect based on onboarding completion
     if (account.details_submitted) {
+      // Track Stripe Connect completion (server-side - critical event)
+      try {
+        // Get photographer signup date for time calculation
+        const { data: photographerData } = await adminClient
+          .from('photographers')
+          .select('created_at, stripe_connect_onboarded_at')
+          .eq('id', user.id)
+          .single()
+
+        // Check if this is the first connection (onboarded_at was just set, check if it was previously null)
+        // We check by seeing if we just set it in the update above (updateError was null and details_submitted is true)
+        const wasFirstConnection = !updateError
+
+        const timeFromSignup = calculateTimeFromSignup(photographerData?.created_at)
+
+        await trackServerEvent(user.id, EVENTS.PHOTOGRAPHER_CONNECTED_STRIPE, {
+          time_from_signup_seconds: timeFromSignup ?? 0,
+          is_first_connection: wasFirstConnection,
+        })
+      } catch (trackError) {
+        console.error('[Stripe Connect] Error tracking Stripe Connect:', trackError)
+        // Don't block redirect if tracking fails
+      }
+
       return NextResponse.redirect(
         new URL('/photographers/settings?stripe=success', request.url)
       )

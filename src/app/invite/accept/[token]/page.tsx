@@ -196,7 +196,7 @@ export default function InviteAcceptancePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="text-center">
           <Loader2 className="h-12 w-12 text-pink-600 animate-spin mx-auto mb-4" />
           <p className="text-gray-600">Loading invitation...</p>
@@ -207,7 +207,7 @@ export default function InviteAcceptancePage() {
 
   if (error && !invitation) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardContent className="p-8 text-center">
             <AlertTriangle className="h-16 w-16 text-orange-500 mx-auto mb-4" />
@@ -226,7 +226,7 @@ export default function InviteAcceptancePage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900 py-12 px-4">
+    <div className="min-h-screen bg-background py-12 px-4">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">

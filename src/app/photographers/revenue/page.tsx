@@ -73,10 +73,10 @@ export default function RevenuePage() {
   // Show loading or redirect if not photographer
   if (userType !== 'photographer') {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-neutral-300">Redirecting...</p>
+          <p className="text-muted-foreground">Redirecting...</p>
         </div>
       </div>
     )
@@ -242,10 +242,10 @@ export default function RevenuePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-neutral-300">Loading revenue data...</p>
+          <p className="text-muted-foreground">Loading revenue data...</p>
         </div>
       </div>
     )
@@ -253,12 +253,12 @@ export default function RevenuePage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md bg-neutral-800/50 border-white/10">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="w-full max-w-md bg-card/50 border-border">
           <CardContent className="p-8 text-center">
             <AlertTriangle className="h-16 w-16 text-red-500 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold mb-2 text-neutral-100">Error Loading Data</h2>
-            <p className="text-neutral-400 mb-6">{error}</p>
+            <h2 className="text-2xl font-bold mb-2 text-foreground">Error Loading Data</h2>
+            <p className="text-muted-foreground mb-6">{error}</p>
             <Button onClick={fetchRevenueData}>
               Try Again
             </Button>
@@ -270,12 +270,12 @@ export default function RevenuePage() {
 
   if (!revenueData) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-4">
-        <Card className="w-full max-w-md bg-neutral-800/50 border-white/10">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="w-full max-w-md bg-card/50 border-border">
           <CardContent className="p-8 text-center">
-            <DollarSign className="h-16 w-16 text-neutral-600 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold mb-2 text-neutral-100">No Revenue Yet</h2>
-            <p className="text-neutral-400 mb-6">
+            <DollarSign className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+            <h2 className="text-2xl font-bold mb-2 text-foreground">No Revenue Yet</h2>
+            <p className="text-muted-foreground mb-6">
               Once clients pay for their galleries, your commission earnings will appear here.
             </p>
             <Button asChild>
@@ -290,9 +290,9 @@ export default function RevenuePage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b border-white/10 bg-neutral-800/50">
+      <header className="border-b border-border bg-card/50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Button asChild variant="ghost" size="sm">
@@ -304,7 +304,7 @@ export default function RevenuePage() {
             <Separator orientation="vertical" className="h-6" />
             <div className="flex items-center space-x-2">
               <DollarSign className="h-6 w-6 text-green-600" />
-              <span className="text-xl font-bold text-neutral-100">Revenue Dashboard</span>
+              <span className="text-xl font-bold text-foreground">Revenue Dashboard</span>
             </div>
           </div>
           <div className="flex items-center space-x-2">
@@ -346,11 +346,11 @@ export default function RevenuePage() {
 
           {/* Summary Cards */}
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <Card className="bg-neutral-800/50 border-white/10">
+            <Card className="bg-card/50 border-border">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-neutral-400">Total Upfront</p>
+                    <p className="text-sm font-medium text-muted-foreground">Total Upfront</p>
                     <p className="text-2xl font-bold text-green-600">
                       {formatCurrency(revenueData.summary.totalUpfrontCommission)}
                     </p>
@@ -359,17 +359,17 @@ export default function RevenuePage() {
                     <DollarSign className="h-6 w-6 text-green-600" />
                   </div>
                 </div>
-                <p className="text-xs text-neutral-400 mt-2">
+                <p className="text-xs text-muted-foreground mt-2">
                   $50 (6mo) or $100 (1yr) per client
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="bg-neutral-800/50 border-white/10">
+            <Card className="bg-card/50 border-border">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-neutral-400">Monthly Recurring</p>
+                    <p className="text-sm font-medium text-muted-foreground">Monthly Recurring</p>
                     <p className="text-2xl font-bold text-blue-600">
                       {formatCurrency(revenueData.summary.projectedMonthlyRecurring)}
                     </p>
@@ -378,17 +378,17 @@ export default function RevenuePage() {
                     <TrendingUp className="h-6 w-6 text-blue-600" />
                   </div>
                 </div>
-                <p className="text-xs text-neutral-400 mt-2">
+                <p className="text-xs text-muted-foreground mt-2">
                   $4/month per active client
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="bg-neutral-800/50 border-white/10">
+            <Card className="bg-card/50 border-border">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-neutral-400">Active Clients</p>
+                    <p className="text-sm font-medium text-muted-foreground">Active Clients</p>
                     <p className="text-2xl font-bold text-purple-600">
                       {revenueData.summary.activeClientsCount}
                     </p>
@@ -397,17 +397,17 @@ export default function RevenuePage() {
                     <Users className="h-6 w-6 text-purple-600" />
                   </div>
                 </div>
-                <p className="text-xs text-neutral-400 mt-2">
+                <p className="text-xs text-muted-foreground mt-2">
                   {revenueData.summary.monthlyRecurringClientsCount} paying monthly
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="bg-neutral-800/50 border-white/10">
+            <Card className="bg-card/50 border-border">
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-neutral-400">Projected Yearly</p>
+                    <p className="text-sm font-medium text-muted-foreground">Projected Yearly</p>
                     <p className="text-2xl font-bold text-orange-600">
                       {formatCurrency(revenueData.summary.projectedYearlyTotal)}
                     </p>
@@ -416,7 +416,7 @@ export default function RevenuePage() {
                     <Target className="h-6 w-6 text-orange-600" />
                   </div>
                 </div>
-                <p className="text-xs text-neutral-400 mt-2">
+                <p className="text-xs text-muted-foreground mt-2">
                   Upfront + recurring
                 </p>
               </CardContent>
@@ -425,13 +425,13 @@ export default function RevenuePage() {
 
           <div className="grid lg:grid-cols-2 gap-8">
             {/* Revenue Breakdown */}
-            <Card className="bg-neutral-800/50 border-white/10">
+            <Card className="bg-card/50 border-border">
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2 text-neutral-100">
+                <CardTitle className="flex items-center space-x-2 text-foreground">
                   <PieChart className="h-5 w-5 text-green-600" />
                   <span>Revenue Breakdown</span>
                 </CardTitle>
-                <CardDescription className="text-neutral-400">
+                <CardDescription className="text-muted-foreground">
                   Upfront vs recurring commission earnings
                 </CardDescription>
               </CardHeader>
@@ -441,8 +441,8 @@ export default function RevenuePage() {
                     <div className="flex items-center space-x-3">
                       <div className="h-4 w-4 bg-green-500 rounded-full"></div>
                       <div>
-                        <p className="font-medium text-neutral-100">Upfront Commissions</p>
-                        <p className="text-sm text-neutral-400">
+                        <p className="font-medium text-foreground">Upfront Commissions</p>
+                        <p className="text-sm text-muted-foreground">
                           Year 1 client payments
                         </p>
                       </div>
@@ -451,7 +451,7 @@ export default function RevenuePage() {
                       <p className="font-bold text-green-600">
                         {formatCurrency(revenueData.summary.totalUpfrontCommission)}
                       </p>
-                      <p className="text-sm text-neutral-400">
+                      <p className="text-sm text-muted-foreground">
                         {revenueData.summary.activeClientsCount} client{revenueData.summary.activeClientsCount !== 1 ? 's' : ''}
                       </p>
                     </div>
@@ -461,8 +461,8 @@ export default function RevenuePage() {
                     <div className="flex items-center space-x-3">
                       <div className="h-4 w-4 bg-blue-500 rounded-full"></div>
                       <div>
-                        <p className="font-medium text-neutral-100">Recurring Commissions</p>
-                        <p className="text-sm text-neutral-400">
+                        <p className="font-medium text-foreground">Recurring Commissions</p>
+                        <p className="text-sm text-muted-foreground">
                           Year 2+ monthly payments
                         </p>
                       </div>
@@ -471,7 +471,7 @@ export default function RevenuePage() {
                       <p className="font-bold text-blue-600">
                         {formatCurrency(revenueData.summary.totalMonthlyCommission)}
                       </p>
-                      <p className="text-sm text-neutral-400">
+                      <p className="text-sm text-muted-foreground">
                         {revenueData.summary.monthlyRecurringClientsCount} recurring
                       </p>
                     </div>
@@ -479,15 +479,15 @@ export default function RevenuePage() {
 
                   <Separator />
 
-                  <div className="flex items-center justify-between p-4 bg-neutral-800 rounded-lg">
+                  <div className="flex items-center justify-between p-4 bg-card rounded-lg">
                     <div>
-                      <p className="font-medium text-neutral-100">Total Earnings</p>
-                      <p className="text-sm text-neutral-400">
+                      <p className="font-medium text-foreground">Total Earnings</p>
+                      <p className="text-sm text-muted-foreground">
                         {revenueData.summary.transactionCount} transaction{revenueData.summary.transactionCount !== 1 ? 's' : ''}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-2xl font-bold text-neutral-100">
+                      <p className="text-2xl font-bold text-foreground">
                         {formatCurrency(revenueData.summary.totalEarnings)}
                       </p>
                     </div>
@@ -497,27 +497,27 @@ export default function RevenuePage() {
             </Card>
 
             {/* Top Earning Clients */}
-            <Card className="bg-neutral-800/50 border-white/10">
+            <Card className="bg-card/50 border-border">
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2 text-neutral-100">
+                <CardTitle className="flex items-center space-x-2 text-foreground">
                   <BarChart3 className="h-5 w-5 text-purple-600" />
                   <span>Top Earning Clients</span>
                 </CardTitle>
-                <CardDescription className="text-neutral-400">
+                <CardDescription className="text-muted-foreground">
                   Your highest revenue generating clients
                 </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   {revenueData.topClients.map((client, index) => (
-                    <div key={index} className="flex items-center justify-between p-3 border border-white/10 rounded-lg">
+                    <div key={index} className="flex items-center justify-between p-3 border border-border rounded-lg">
                       <div className="flex items-center space-x-3">
-                        <div className="h-8 w-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                        <div className="h-8 w-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-foreground text-sm font-bold">
                           {index + 1}
                         </div>
                         <div>
-                          <p className="font-medium text-neutral-100">{client.name}</p>
-                          <p className="text-sm text-neutral-400">
+                          <p className="font-medium text-foreground">{client.name}</p>
+                          <p className="text-sm text-muted-foreground">
                             {formatCurrency(client.upfront)} upfront + {formatCurrency(client.recurring)} recurring
                           </p>
                         </div>
@@ -547,20 +547,20 @@ export default function RevenuePage() {
           </div>
 
           {/* Recent Transactions */}
-          <Card className="mt-8 bg-neutral-800/50 border-white/10">
+          <Card className="mt-8 bg-card/50 border-border">
             <CardHeader>
-              <CardTitle className="flex items-center space-x-2 text-neutral-100">
+              <CardTitle className="flex items-center space-x-2 text-foreground">
                 <Clock className="h-5 w-5 text-blue-600" />
                 <span>Recent Transactions</span>
               </CardTitle>
-              <CardDescription className="text-neutral-400">
+              <CardDescription className="text-muted-foreground">
                 Your latest commission payments
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
                 {revenueData.recentTransactions.map((transaction) => (
-                  <div key={transaction.id} className="flex items-center justify-between p-4 border border-white/10 rounded-lg">
+                  <div key={transaction.id} className="flex items-center justify-between p-4 border border-border rounded-lg">
                     <div className="flex items-center space-x-4">
                       <div className={`h-10 w-10 rounded-full flex items-center justify-center ${
                         transaction.type === 'upfront'
@@ -574,15 +574,15 @@ export default function RevenuePage() {
                         )}
                       </div>
                       <div>
-                        <p className="font-medium text-neutral-100">{transaction.clientName}</p>
-                        <p className="text-sm text-neutral-400">
+                        <p className="font-medium text-foreground">{transaction.clientName}</p>
+                        <p className="text-sm text-muted-foreground">
                           {formatDate(transaction.date)}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center space-x-3">
                       <div className="text-right">
-                        <p className="font-bold text-neutral-100">
+                        <p className="font-bold text-foreground">
                           {formatCurrency(transaction.amount)}
                         </p>
                         <Badge

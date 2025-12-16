@@ -422,6 +422,44 @@ export default function AdminDashboardPage() {
                   </Button>
                 </CardContent>
               </Card>
+
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer bg-card border-border">
+                <CardHeader>
+                  <div className="w-12 h-12 bg-blue-600/10 rounded-lg flex items-center justify-center mb-4">
+                    <Camera className="w-6 h-6 text-blue-600" />
+                  </div>
+                  <CardTitle>Photographers</CardTitle>
+                  <CardDescription>
+                    View all photographers, their galleries, clients, and revenue
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button className="w-full justify-center" asChild>
+                    <Link href="/admin/photographers" className="flex items-center justify-center">
+                      View Photographers
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+
+              <Card className="hover:shadow-lg transition-shadow cursor-pointer bg-card border-border">
+                <CardHeader>
+                  <div className="w-12 h-12 bg-pink-600/10 rounded-lg flex items-center justify-center mb-4">
+                    <Users className="w-6 h-6 text-pink-600" />
+                  </div>
+                  <CardTitle>Clients</CardTitle>
+                  <CardDescription>
+                    View all clients, their galleries, subscriptions, and spending
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Button className="w-full justify-center" asChild>
+                    <Link href="/admin/clients" className="flex items-center justify-center">
+                      View Clients
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
             </div>
 
             {/* Quick Stats */}

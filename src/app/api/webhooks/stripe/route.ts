@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import Stripe from 'stripe'
 import { createServerSupabaseClient } from '@/lib/supabase'
 import { createServiceRoleClient } from '@/lib/supabase-server'
+import { trackServerEvent } from '@/lib/analytics/server'
+import { EVENTS } from '@/types/analytics'
+import { isFirstTime, calculateTimeFromSignup, getPhotographerSignupDate, mapPaymentOptionToPlanType } from '@/lib/analytics/helpers'
 
 // Force dynamic rendering to prevent module evaluation during build
 export const dynamic = 'force-dynamic'
@@ -296,6 +299,19 @@ async function handleCheckoutCompleted(
       } else {
         userId = newUser.user.id
         console.log('[Webhook] Created new user account:', userId)
+
+        // Track client account creation (server-side - critical funnel event)
+        // userId is guaranteed to be set here (assigned on line above)
+        try {
+          await trackServerEvent(userId!, EVENTS.CLIENT_CREATED_ACCOUNT, {
+            gallery_id: galleryId || undefined,
+            photographer_id: photographerId || undefined,
+            signup_method: 'email' as const,
+          })
+        } catch (trackError) {
+          console.error('[Webhook] Error tracking client account creation:', trackError)
+          // Don't block checkout if tracking fails
+        }
       }
 
       // Create user_profiles record (user_profiles doesn't have email column)
@@ -350,10 +366,14 @@ async function handleCheckoutCompleted(
 
     // Record the commission for the photographer
     // With DESTINATION CHARGES, money is ALREADY transferred to photographer!
-    // Commission structure for upfront payments:
-    // - Photographer receives: total - application_fee (shoot_fee + 50% of storage_fee)
-    // - PhotoVault receives: application_fee (50% of storage_fee)
-    // - Stripe fees are deducted from photographer's share automatically
+    //
+    // FEE MODEL (PhotoVault absorbs Stripe fees):
+    // - Photographer receives: shoot_fee + 50% of storage_fee (FULL amount, no deductions)
+    // - PhotoVault receives: 50% of storage_fee MINUS Stripe fees (~2.9% + $0.30)
+    // - Example: $350 payment ($250 shoot + $100 storage)
+    //   → Photographer gets $300 (shoot + 50% storage)
+    //   → PhotoVault gets ~$40 ($50 minus ~$10 Stripe fees)
+    // - This protects photographer earnings and simplifies their accounting
     
     // Handle both metadata formats:
     // - Public checkout: shootFee, storageFee, photovaultFee
@@ -434,6 +454,53 @@ async function handleCheckoutCompleted(
     }).then(({ error }: { error: any }) => {
       if (error) console.warn('[Webhook] Commission insert error (may be duplicate):', error.message)
     })
+
+    // Track payment analytics (server-side - critical funnel events)
+    try {
+      // Get the payment option ID from gallery metadata for plan_type
+      const planType = mapPaymentOptionToPlanType(metadata.paymentOptionId || metadata.payment_option_id)
+
+      // Track client payment completed
+      if (userId) {
+        // Check if this is the client's first payment
+        const isFirstPayment = await isFirstTime('commissions', 'client_email', customerEmail)
+
+        await trackServerEvent(userId, EVENTS.CLIENT_PAYMENT_COMPLETED, {
+          gallery_id: galleryId,
+          photographer_id: photographerId || '',
+          plan_type: planType || 'annual',
+          amount_cents: amountPaidCents,
+          is_first_payment: isFirstPayment,
+        })
+      }
+
+      // Track photographer received first payment
+      if (photographerId) {
+        // Check if this is the photographer's first payment (before this one was recorded)
+        const photographerSignupDate = await getPhotographerSignupDate(photographerId)
+        const timeFromSignup = calculateTimeFromSignup(photographerSignupDate)
+
+        // Check existing paid commissions count (excluding this one since we just inserted)
+        const { count: existingCommissions } = await supabase
+          .from('commissions')
+          .select('id', { count: 'exact', head: true })
+          .eq('photographer_id', photographerId)
+          .eq('status', 'paid')
+
+        // If this is their first (count includes the one we just inserted)
+        if ((existingCommissions || 0) === 1) {
+          await trackServerEvent(photographerId, EVENTS.PHOTOGRAPHER_RECEIVED_FIRST_PAYMENT, {
+            amount_cents: photographerGrossCents,
+            client_id: clientId || '',
+            gallery_id: galleryId,
+            time_from_signup_seconds: timeFromSignup ?? 0,
+          })
+        }
+      }
+    } catch (trackError) {
+      console.error('[Webhook] Error tracking payment analytics:', trackError)
+      // Don't block webhook if tracking fails
+    }
 
     // Send welcome email with temp password if account was just created
     if (tempPassword && userId) {
@@ -975,6 +1042,28 @@ async function handlePaymentFailed(
     status: 'failed',
     created_at: now.toISOString()
   })
+
+  // Track client payment failed (server-side - critical event for churn tracking)
+  try {
+    // Get subscription to find user and gallery
+    const { data: subData } = await supabase
+      .from('subscriptions')
+      .select('user_id, gallery_id')
+      .eq('stripe_subscription_id', subscriptionId)
+      .single()
+
+    if (subData?.user_id) {
+      await trackServerEvent(subData.user_id, EVENTS.CLIENT_PAYMENT_FAILED, {
+        gallery_id: subData.gallery_id || '',
+        failure_reason: 'card_declined', // Generic - actual reason in Stripe dashboard
+        failure_count: newFailureCount,
+        amount_cents: invoice.amount_due,
+      })
+    }
+  } catch (trackError) {
+    console.error('[Webhook] Error tracking payment failure:', trackError)
+    // Don't block webhook if tracking fails
+  }
 
   // Get user and subscription details for notification
   const { data: subscription } = await supabase

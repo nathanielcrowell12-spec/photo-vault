@@ -21,9 +21,9 @@ export default function UserTypeSelectionPage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-neutral-800/50 border-white/10">
+      <header className="border-b bg-card/50 border-border">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center space-x-2">
@@ -31,7 +31,7 @@ export default function UserTypeSelectionPage() {
               <span className="text-2xl font-bold">PhotoVault</span>
             </Link>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-slate-600 dark:text-slate-300">Already have an account?</span>
+              <span className="text-sm text-muted-foreground dark:text-foreground">Already have an account?</span>
               <Button asChild variant="outline" size="sm">
                 <Link href="/login">Sign In</Link>
               </Button>
@@ -47,7 +47,7 @@ export default function UserTypeSelectionPage() {
               Choose Your Account Type
             </Badge>
             <h1 className="text-4xl font-bold mb-4">How will you use PhotoVault?</h1>
-            <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
+            <p className="text-lg text-muted-foreground dark:text-foreground max-w-2xl mx-auto">
               Select the option that best describes how you&apos;ll use PhotoVault to get started with the right experience.
             </p>
           </div>
@@ -77,21 +77,21 @@ export default function UserTypeSelectionPage() {
                     <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
                     <div>
                       <div className="font-medium">Find all your photos</div>
-                      <div className="text-sm text-slate-600 dark:text-slate-400">From every photographer in your area</div>
+                      <div className="text-sm text-muted-foreground dark:text-muted-foreground">From every photographer in your area</div>
                     </div>
                   </div>
                   <div className="flex items-start space-x-3">
                     <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
                     <div>
                       <div className="font-medium">Never lose access</div>
-                      <div className="text-sm text-slate-600 dark:text-slate-400">Permanent storage, no expiring links</div>
+                      <div className="text-sm text-muted-foreground dark:text-muted-foreground">Permanent storage, no expiring links</div>
                     </div>
                   </div>
                   <div className="flex items-start space-x-3">
                     <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
                     <div>
                       <div className="font-medium">Organize everything</div>
-                      <div className="text-sm text-slate-600 dark:text-slate-400">Import from other platforms & upload phone photos</div>
+                      <div className="text-sm text-muted-foreground dark:text-muted-foreground">Import from other platforms & upload phone photos</div>
                     </div>
                   </div>
                 </div>
@@ -122,14 +122,14 @@ export default function UserTypeSelectionPage() {
                     <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
                     <div>
                       <div className="font-medium">Professional dashboard</div>
-                      <div className="text-sm text-slate-600 dark:text-slate-400">Manage clients, galleries, and payments</div>
+                      <div className="text-sm text-muted-foreground dark:text-muted-foreground">Manage clients, galleries, and payments</div>
                     </div>
                   </div>
                   <div className="flex items-start space-x-3">
                     <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
                     <div>
                       <div className="font-medium">Bulk upload tools</div>
-                      <div className="text-sm text-slate-600 dark:text-slate-400">
+                      <div className="text-sm text-muted-foreground dark:text-muted-foreground">
                         Optimized, resumable uploads for large galleries without babysitting progress
                       </div>
                     </div>
@@ -138,7 +138,7 @@ export default function UserTypeSelectionPage() {
                     <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
                     <div>
                       <div className="font-medium">Client delivery</div>
-                      <div className="text-sm text-slate-600 dark:text-slate-400">Beautiful galleries with download controls</div>
+                      <div className="text-sm text-muted-foreground dark:text-muted-foreground">Beautiful galleries with download controls</div>
                     </div>
                   </div>
                 </div>
@@ -158,7 +158,7 @@ export default function UserTypeSelectionPage() {
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
             
-            <p className="text-sm text-slate-500 dark:text-slate-400 mt-4">
+            <p className="text-sm text-muted-foreground dark:text-muted-foreground mt-4">
               You can always change your account type later in settings
             </p>
           </div>

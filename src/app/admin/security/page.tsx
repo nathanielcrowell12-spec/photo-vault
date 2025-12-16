@@ -86,7 +86,7 @@ export default function SecurityPage() {
 
   return (
     <AccessGuard requiredAccess="canAccessAdminDashboard">
-      <div className="min-h-screen bg-neutral-900">
+      <div className="min-h-screen bg-background">
         {/* Header */}
         <header className="border-b bg-white/95 backdrop-blur-sm">
           <div className="container mx-auto px-4 py-6 flex items-center justify-between">
@@ -94,7 +94,7 @@ export default function SecurityPage() {
               <ShieldAlert className="h-10 w-10 text-blue-600" />
               <div>
                 <h1 className="text-2xl font-bold">Security &amp; Logs</h1>
-                <p className="text-sm text-slate-600">
+                <p className="text-sm text-muted-foreground">
                   Monitor PhotoVault security events, audit logs, and access controls. Real telemetry will appear once the security stack is connected.
                 </p>
               </div>
@@ -126,9 +126,9 @@ export default function SecurityPage() {
                       key={item.label}
                       className="rounded-lg border border-blue-100 bg-white p-4"
                     >
-                      <p className="text-sm text-slate-500">{item.label}</p>
+                      <p className="text-sm text-muted-foreground">{item.label}</p>
                       <p className="mt-2 text-2xl font-semibold text-slate-900">{item.value}</p>
-                      <p className="text-xs text-slate-400">{item.description}</p>
+                      <p className="text-xs text-muted-foreground">{item.description}</p>
                     </div>
                   ))}
                 </div>
@@ -186,9 +186,9 @@ export default function SecurityPage() {
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="font-semibold text-slate-800">{entry.actor}</p>
-                          <p className="text-sm text-slate-500">{entry.action}</p>
+                          <p className="text-sm text-muted-foreground">{entry.action}</p>
                         </div>
-                        <span className="text-xs text-slate-400">{entry.timestamp}</span>
+                        <span className="text-xs text-muted-foreground">{entry.timestamp}</span>
                       </div>
                     </div>
                   ))}
@@ -209,19 +209,19 @@ export default function SecurityPage() {
               </CardHeader>
               <CardContent className="grid gap-4 md:grid-cols-3">
                 <div className="rounded-lg border border-slate-200 bg-white p-4">
-                  <p className="text-sm text-slate-500">IP Allowlist</p>
+                  <p className="text-sm text-muted-foreground">IP Allowlist</p>
                   <p className="mt-2 text-xl font-semibold text-slate-900">Disabled</p>
-                  <p className="text-xs text-slate-400">Enable to restrict admin access</p>
+                  <p className="text-xs text-muted-foreground">Enable to restrict admin access</p>
                 </div>
                 <div className="rounded-lg border border-slate-200 bg-white p-4">
-                  <p className="text-sm text-slate-500">Rate Limit</p>
+                  <p className="text-sm text-muted-foreground">Rate Limit</p>
                   <p className="mt-2 text-xl font-semibold text-slate-900">Standard</p>
-                  <p className="text-xs text-slate-400">Adjust via API gateway</p>
+                  <p className="text-xs text-muted-foreground">Adjust via API gateway</p>
                 </div>
                 <div className="rounded-lg border border-slate-200 bg-white p-4">
-                  <p className="text-sm text-slate-500">Session Timeout</p>
+                  <p className="text-sm text-muted-foreground">Session Timeout</p>
                   <p className="mt-2 text-xl font-semibold text-slate-900">60 min</p>
-                  <p className="text-xs text-slate-400">Configurable in settings</p>
+                  <p className="text-xs text-muted-foreground">Configurable in settings</p>
                 </div>
               </CardContent>
             </Card>
@@ -238,11 +238,11 @@ export default function SecurityPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="grid gap-4 md:grid-cols-2">
-                <div className="rounded-lg border border-slate-200 bg-white p-4 text-sm text-slate-600">
+                <div className="rounded-lg border border-slate-200 bg-white p-4 text-sm text-muted-foreground">
                   <p className="font-semibold text-slate-800">Webhook Verification</p>
                   <p>Confirm Stripe and Supabase webhooks are verified and monitored.</p>
                 </div>
-                <div className="rounded-lg border border-slate-200 bg-white p-4 text-sm text-slate-600">
+                <div className="rounded-lg border border-slate-200 bg-white p-4 text-sm text-muted-foreground">
                   <p className="font-semibold text-slate-800">SOC/Compliance</p>
                   <p>Document compliance posture (SOC 2, GDPR, COPPA as needed).</p>
                 </div>
@@ -264,15 +264,15 @@ export default function SecurityPage() {
                 <div className="grid gap-4 md:grid-cols-3">
                   <div className="rounded-lg border border-slate-200 bg-white p-4">
                     <p className="font-semibold text-slate-800">Supabase Logs</p>
-                    <p className="text-xs text-slate-500">Pending connection</p>
+                    <p className="text-xs text-muted-foreground">Pending connection</p>
                   </div>
                   <div className="rounded-lg border border-slate-200 bg-white p-4">
                     <p className="font-semibold text-slate-800">Cloudflare WAF</p>
-                    <p className="text-xs text-slate-500">Pending</p>
+                    <p className="text-xs text-muted-foreground">Pending</p>
                   </div>
                   <div className="rounded-lg border border-slate-200 bg-white p-4">
                     <p className="font-semibold text-slate-800">Sentry Alerts</p>
-                    <p className="text-xs text-slate-500">Pending</p>
+                    <p className="text-xs text-muted-foreground">Pending</p>
                   </div>
                 </div>
               </CardContent>

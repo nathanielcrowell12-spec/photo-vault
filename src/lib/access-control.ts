@@ -10,7 +10,7 @@ const ADMIN_EMAILS = [
   'nathaniel.crowell12@gmail.com'
 ]
 
-export type UserType = 'client' | 'photographer' | 'admin' | null
+export type UserType = 'client' | 'photographer' | 'admin' | 'secondary' | null
 
 /**
  * Check if a user is an admin based on email and user type

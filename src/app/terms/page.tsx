@@ -18,9 +18,9 @@ import { PAYMENT_OPTIONS, COMMISSION_RULES } from "@/lib/payment-models";
 
 export default function TermsPage() {
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b border-white/10 bg-neutral-800/50">
+      <header className="border-b border-border bg-card/50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Button asChild variant="ghost" size="sm">
@@ -43,7 +43,7 @@ export default function TermsPage() {
           {/* Introduction */}
           <div className="mb-8">
             <h1 className="text-4xl font-bold mb-4">Terms of Service & Commission Structure</h1>
-            <p className="text-lg text-slate-600 dark:text-slate-300">
+            <p className="text-lg text-muted-foreground dark:text-foreground">
               Please read these terms carefully. By using PhotoVault, you agree to these terms and our commission structure.
             </p>
           </div>
@@ -104,7 +104,7 @@ export default function TermsPage() {
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <h4 className="font-semibold mb-3">For Photographers</h4>
-                  <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-300">
+                  <ul className="space-y-2 text-sm text-muted-foreground dark:text-foreground">
                     <li>• Replace Pixieset, ShootProof, SmugMug with PhotoVault</li>
                     <li>• Earn $50 upfront + $4/month passive income per client</li>
                     <li>• No payment processing needed - PhotoVault handles billing</li>
@@ -114,7 +114,7 @@ export default function TermsPage() {
                 </div>
                 <div>
                   <h4 className="font-semibold mb-3">For PhotoVault</h4>
-                  <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-300">
+                  <ul className="space-y-2 text-sm text-muted-foreground dark:text-foreground">
                     <li>• $50 upfront + $4/month per active client</li>
                     <li>• Immediate revenue from upfront payments</li>
                     <li>• Scalable monthly recurring revenue</li>
@@ -174,7 +174,7 @@ export default function TermsPage() {
                     <CheckCircle className="h-5 w-5 text-green-500" />
                     <span>Commission Applies</span>
                   </h4>
-                  <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-300">
+                  <ul className="space-y-2 text-sm text-muted-foreground dark:text-foreground">
                     <li>• <strong>Photographer-billed monthly ($4/month commission)</strong></li>
                     <li>• 6-month trial subscriptions ($10 commission)</li>
                     <li>• Direct client monthly subscriptions ($4/month commission)</li>
@@ -187,7 +187,7 @@ export default function TermsPage() {
                     <AlertTriangle className="h-5 w-5 text-orange-500" />
                     <span>No Commission</span>
                   </h4>
-                  <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-300">
+                  <ul className="space-y-2 text-sm text-muted-foreground dark:text-foreground">
                     <li>• Reactivated galleries after 6+ months</li>
                     <li>• Clients who stopped paying for 6+ months</li>
                     <li>• Any gallery inactive for 6+ months</li>
@@ -213,11 +213,11 @@ export default function TermsPage() {
                     <div className="flex items-start justify-between mb-3">
                       <div>
                         <h3 className="font-semibold text-lg">{option.name}</h3>
-                        <p className="text-slate-600 dark:text-slate-300">{option.description}</p>
+                        <p className="text-muted-foreground dark:text-foreground">{option.description}</p>
                       </div>
                       <div className="text-right">
                         <div className="text-2xl font-bold text-green-600">${option.price}</div>
-                        <div className="text-sm text-slate-500">
+                        <div className="text-sm text-muted-foreground">
                           {option.duration === 12 ? 'per year' : option.duration === 6 ? 'for 6 months' : 'per month'}
                         </div>
                       </div>
@@ -235,7 +235,7 @@ export default function TermsPage() {
                     </div>
                     <div className="mt-3">
                       <h4 className="font-medium text-sm mb-2">Terms:</h4>
-                      <ul className="space-y-1 text-sm text-slate-600 dark:text-slate-300">
+                      <ul className="space-y-1 text-sm text-muted-foreground dark:text-foreground">
                         {option.terms.map((term, termIndex) => (
                           <li key={termIndex}>• {term}</li>
                         ))}
@@ -281,7 +281,7 @@ export default function TermsPage() {
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <h4 className="font-semibold mb-3">Benefits for Photographers</h4>
-                  <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-300">
+                  <ul className="space-y-2 text-sm text-muted-foreground dark:text-foreground">
                     <li>• Incentive to maintain client relationships</li>
                     <li>• Reward for bringing clients back</li>
                     <li>• Commission resets with new sessions</li>
@@ -290,7 +290,7 @@ export default function TermsPage() {
                 </div>
                 <div>
                   <h4 className="font-semibold mb-3">Benefits for PhotoVault</h4>
-                  <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-300">
+                  <ul className="space-y-2 text-sm text-muted-foreground dark:text-foreground">
                     <li>• Photographers motivated to re-engage clients</li>
                     <li>• Higher client retention rates</li>
                     <li>• More active subscriptions</li>
@@ -329,7 +329,7 @@ export default function TermsPage() {
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <h4 className="font-semibold mb-3">For Photographers</h4>
-                  <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-300">
+                  <ul className="space-y-2 text-sm text-muted-foreground dark:text-foreground">
                     <li>• Include PhotoVault access in your package pricing</li>
                     <li>• Earn 50% commission on active client subscriptions</li>
                     <li>• Commission stops after 6 months of client inactivity</li>
@@ -338,7 +338,7 @@ export default function TermsPage() {
                 </div>
                 <div>
                   <h4 className="font-semibold mb-3">For Clients</h4>
-                  <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-300">
+                  <ul className="space-y-2 text-sm text-muted-foreground dark:text-foreground">
                     <li>• Gallery becomes inactive after 6 months of non-payment</li>
                     <li>• Pay $8/month to reactivate inactive galleries</li>
                     <li>• Reactivated galleries have no photographer commission</li>
@@ -360,7 +360,7 @@ export default function TermsPage() {
             <CardContent className="space-y-6">
               <div>
                 <h3 className="font-semibold mb-3">Service Agreement</h3>
-                <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">
+                <p className="text-sm text-muted-foreground dark:text-foreground mb-4">
                   By using PhotoVault, you agree to these terms and our commission structure. 
                   These terms may be updated, and continued use constitutes acceptance.
                 </p>
@@ -368,10 +368,10 @@ export default function TermsPage() {
 
               <div>
                 <h3 className="font-semibold mb-3">Commission Structure Agreement</h3>
-                <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">
+                <p className="text-sm text-muted-foreground dark:text-foreground mb-4">
                   Photographers acknowledge and agree that:
                 </p>
-                <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-300 ml-4">
+                <ul className="space-y-2 text-sm text-muted-foreground dark:text-foreground ml-4">
                   <li>• Commission rates are subject to change with 30 days notice</li>
                   <li>• Commission stops after 6 months of client inactivity</li>
                   <li>• Reactivated galleries belong to PhotoVault</li>
@@ -382,10 +382,10 @@ export default function TermsPage() {
 
               <div>
                 <h3 className="font-semibold mb-3">Client Payment Agreement</h3>
-                <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">
+                <p className="text-sm text-muted-foreground dark:text-foreground mb-4">
                   Clients acknowledge and agree that:
                 </p>
-                <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-300 ml-4">
+                <ul className="space-y-2 text-sm text-muted-foreground dark:text-foreground ml-4">
                   <li>• Gallery access requires active subscription</li>
                   <li>• Gallery becomes inactive after 6 months of non-payment</li>
                   <li>• Reactivation requires $8/month payment</li>
@@ -396,7 +396,7 @@ export default function TermsPage() {
 
               <div>
                 <h3 className="font-semibold mb-3">Data & Privacy</h3>
-                <p className="text-sm text-slate-600 dark:text-slate-300 mb-4">
+                <p className="text-sm text-muted-foreground dark:text-foreground mb-4">
                   PhotoVault respects your privacy and protects your photos with bank-level security. 
                   We never sell or share your photos with third parties.
                 </p>
@@ -415,10 +415,10 @@ export default function TermsPage() {
             <CardContent>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-slate-600 dark:text-slate-300">
+                  <p className="text-sm text-muted-foreground dark:text-foreground">
                     Email: legal@photovault.com
                   </p>
-                  <p className="text-sm text-slate-600 dark:text-slate-300">
+                  <p className="text-sm text-muted-foreground dark:text-foreground">
                     Last updated: {new Date().toLocaleDateString()}
                   </p>
                 </div>

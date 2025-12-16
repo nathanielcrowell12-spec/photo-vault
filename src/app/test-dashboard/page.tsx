@@ -161,7 +161,7 @@ export default function TestDashboard() {
       case 'passed': return <CheckCircle className="h-5 w-5 text-green-600" />
       case 'failed': return <XCircle className="h-5 w-5 text-red-600" />
       case 'testing': return <Clock className="h-5 w-5 text-blue-600 animate-spin" />
-      default: return <AlertTriangle className="h-5 w-5 text-slate-400" />
+      default: return <AlertTriangle className="h-5 w-5 text-muted-foreground" />
     }
   }
 
@@ -181,16 +181,16 @@ export default function TestDashboard() {
   const pendingTests = tests.filter(t => t.status === 'pending').length
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-neutral-900 sticky top-0 z-50">
+      <header className="border-b bg-background sticky top-0 z-50 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <CheckCircle className="h-8 w-8 text-green-600" />
               <div>
                 <h1 className="text-2xl font-bold">Interactive Test Dashboard</h1>
-                <p className="text-sm text-slate-600 dark:text-slate-400">
+                <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                   Test every feature systematically
                 </p>
               </div>
@@ -219,23 +219,23 @@ export default function TestDashboard() {
               <div className="grid md:grid-cols-5 gap-6">
                 <div className="text-center">
                   <div className="text-3xl font-bold text-slate-800 dark:text-slate-200">{totalTests}</div>
-                  <div className="text-sm text-slate-600 dark:text-slate-400">Total Tests</div>
+                  <div className="text-sm text-muted-foreground dark:text-muted-foreground">Total Tests</div>
                 </div>
                 <div className="text-center">
                   <div className="text-3xl font-bold text-green-600">{passedTests}</div>
-                  <div className="text-sm text-slate-600 dark:text-slate-400">Passed</div>
+                  <div className="text-sm text-muted-foreground dark:text-muted-foreground">Passed</div>
                 </div>
                 <div className="text-center">
                   <div className="text-3xl font-bold text-red-600">{failedTests}</div>
-                  <div className="text-sm text-slate-600 dark:text-slate-400">Failed</div>
+                  <div className="text-sm text-muted-foreground dark:text-muted-foreground">Failed</div>
                 </div>
                 <div className="text-center">
                   <div className="text-3xl font-bold text-blue-600">{testingTests}</div>
-                  <div className="text-sm text-slate-600 dark:text-slate-400">Testing</div>
+                  <div className="text-sm text-muted-foreground dark:text-muted-foreground">Testing</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-3xl font-bold text-slate-400">{pendingTests}</div>
-                  <div className="text-sm text-slate-600 dark:text-slate-400">Pending</div>
+                  <div className="text-3xl font-bold text-muted-foreground">{pendingTests}</div>
+                  <div className="text-sm text-muted-foreground dark:text-muted-foreground">Pending</div>
                 </div>
               </div>
               <div className="mt-4">
@@ -245,7 +245,7 @@ export default function TestDashboard() {
                     style={{ width: `${(passedTests / totalTests) * 100}%` }}
                   />
                 </div>
-                <p className="text-center text-sm text-slate-600 dark:text-slate-400 mt-2">
+                <p className="text-center text-sm text-muted-foreground dark:text-muted-foreground mt-2">
                   {Math.round((passedTests / totalTests) * 100)}% Complete
                 </p>
               </div>
@@ -267,7 +267,7 @@ export default function TestDashboard() {
                         {categoryTests.length} tests • {categoryPassed} passed
                       </CardDescription>
                     </div>
-                    <div className="text-sm text-slate-600">
+                    <div className="text-sm text-muted-foreground">
                       {Math.round((categoryPassed / categoryTests.length) * 100)}% Complete
                     </div>
                   </div>
@@ -286,7 +286,7 @@ export default function TestDashboard() {
                                 <h3 className="font-medium">{test.page}</h3>
                                 {getStatusBadge(test.status)}
                               </div>
-                              <p className="text-sm text-slate-600 dark:text-slate-400">{test.feature}</p>
+                              <p className="text-sm text-muted-foreground dark:text-muted-foreground">{test.feature}</p>
                             </div>
                           </div>
                           <div className="flex items-center space-x-2 ml-4">
@@ -340,7 +340,7 @@ export default function TestDashboard() {
                   <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                   <div>
                     <h4 className="font-medium">Dual URL System</h4>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                    <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                       ✅ Implemented: Separate customer and photographer experiences
                     </p>
                   </div>
@@ -349,7 +349,7 @@ export default function TestDashboard() {
                   <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                   <div>
                     <h4 className="font-medium">Customer Site Isolation</h4>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                    <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                       ✅ Fixed: Removed all photographer links from customer homepage
                     </p>
                   </div>
@@ -358,7 +358,7 @@ export default function TestDashboard() {
                   <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                   <div>
                     <h4 className="font-medium">Photographer Customer View</h4>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                    <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                       ✅ Added: &quot;View as Customer&quot; button for photographers
                     </p>
                   </div>
@@ -367,7 +367,7 @@ export default function TestDashboard() {
                   <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                   <div>
                     <h4 className="font-medium">Context-Aware Navigation</h4>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                    <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                       ✅ Fixed: Navigation adapts based on site type (customer vs photographer)
                     </p>
                   </div>
@@ -376,7 +376,7 @@ export default function TestDashboard() {
                   <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                   <div>
                     <h4 className="font-medium">Routing & Links</h4>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                    <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                       ✅ Fixed: All pages now properly routed and accessible
                     </p>
                   </div>
@@ -385,7 +385,7 @@ export default function TestDashboard() {
                   <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                   <div>
                     <h4 className="font-medium">User Types</h4>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                    <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                       ✅ Fixed: Updated AuthContext to use &apos;client&apos; instead of &apos;consumer&apos;
                     </p>
                   </div>
@@ -394,7 +394,7 @@ export default function TestDashboard() {
                   <Clock className="h-5 w-5 text-blue-600 mt-0.5" />
                   <div>
                     <h4 className="font-medium">Mock Data</h4>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                    <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                       ⏳ Next: All features have mock data for testing (no backend required yet)
                     </p>
                   </div>
@@ -403,7 +403,7 @@ export default function TestDashboard() {
                   <Clock className="h-5 w-5 text-blue-600 mt-0.5" />
                   <div>
                     <h4 className="font-medium">Responsive Design</h4>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                    <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                       ⏳ Next: Test mobile responsiveness on all pages
                     </p>
                   </div>

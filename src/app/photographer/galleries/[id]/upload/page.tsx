@@ -255,7 +255,7 @@ export default function GalleryUploadPage({ params }: { params: Promise<{ id: st
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-12 w-12 animate-spin text-blue-600" />
       </div>
     )
@@ -263,7 +263,7 @@ export default function GalleryUploadPage({ params }: { params: Promise<{ id: st
 
   if (error && !gallery) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <Alert variant="destructive" className="max-w-md">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>{error}</AlertDescription>
@@ -273,9 +273,9 @@ export default function GalleryUploadPage({ params }: { params: Promise<{ id: st
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-neutral-900">
+      <header className="border-b bg-background">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -294,7 +294,7 @@ export default function GalleryUploadPage({ params }: { params: Promise<{ id: st
                     {gallery?.gallery_status}
                   </Badge>
                 </div>
-                <p className="text-slate-600 dark:text-slate-400">
+                <p className="text-muted-foreground dark:text-muted-foreground">
                   {gallery?.clients?.name} • ${((gallery?.total_amount || 0) / 100).toFixed(2)}
                 </p>
               </div>
@@ -325,7 +325,7 @@ export default function GalleryUploadPage({ params }: { params: Promise<{ id: st
             <CardContent>
               <div className="grid md:grid-cols-2 gap-4">
                 {/* Desktop Tool Option */}
-                <div className="border-2 border-purple-300 dark:border-purple-700 rounded-lg p-6 bg-neutral-900 hover:shadow-md transition-shadow">
+                <div className="border-2 border-purple-300 dark:border-purple-700 rounded-lg p-6 bg-background hover:shadow-md transition-shadow">
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center flex-shrink-0">
                       <Download className="w-6 h-6 text-purple-600" />
@@ -390,7 +390,7 @@ export default function GalleryUploadPage({ params }: { params: Promise<{ id: st
                 </div>
 
                 {/* Web Upload Option */}
-                <div className="border-2 border-green-300 dark:border-green-700 rounded-lg p-6 bg-neutral-900 hover:shadow-md transition-shadow">
+                <div className="border-2 border-green-300 dark:border-green-700 rounded-lg p-6 bg-background hover:shadow-md transition-shadow">
                   <div className="flex items-start gap-4">
                     <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center flex-shrink-0">
                       <Upload className="w-6 h-6 text-green-600" />
@@ -429,12 +429,12 @@ export default function GalleryUploadPage({ params }: { params: Promise<{ id: st
             </CardHeader>
             <CardContent className="space-y-4">
               {/* File Input */}
-              <div className="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-lg p-8 text-center">
-                <Upload className="h-12 w-12 text-slate-400 mx-auto mb-4" />
+              <div className="border-2 border-dashed border-slate-300 dark:border-border rounded-lg p-8 text-center">
+                <Upload className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
                 <p className="text-lg font-medium mb-2">
                   Drop files here or click to browse
                 </p>
-                <p className="text-sm text-slate-500 mb-4">
+                <p className="text-sm text-muted-foreground mb-4">
                   Supports JPG, PNG, HEIC (max 50MB per file)
                 </p>
                 <input
@@ -461,7 +461,7 @@ export default function GalleryUploadPage({ params }: { params: Promise<{ id: st
                     {files.map((file, index) => (
                       <div key={index} className="flex items-center justify-between p-2 bg-slate-100 dark:bg-slate-800 rounded">
                         <span className="text-sm truncate flex-1">{file.name}</span>
-                        <span className="text-xs text-slate-500 mx-2">
+                        <span className="text-xs text-muted-foreground mx-2">
                           {(file.size / 1024 / 1024).toFixed(2)} MB
                         </span>
                         <Button
@@ -499,7 +499,7 @@ export default function GalleryUploadPage({ params }: { params: Promise<{ id: st
               {uploading && (
                 <div className="space-y-2">
                   <Progress value={uploadProgress} />
-                  <p className="text-sm text-center text-slate-600">
+                  <p className="text-sm text-center text-muted-foreground">
                     {uploadStatus}
                   </p>
                 </div>
@@ -544,7 +544,7 @@ export default function GalleryUploadPage({ params }: { params: Promise<{ id: st
                         alt={photo.filename}
                         className="w-full h-full object-cover"
                       />
-                      <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-2 truncate">
+                      <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-foreground text-xs p-2 truncate">
                         {photo.filename}
                       </div>
                     </div>
@@ -558,9 +558,9 @@ export default function GalleryUploadPage({ params }: { params: Promise<{ id: st
           {photos.length === 0 && !uploading && (
             <Card className="text-center py-12">
               <CardContent>
-                <ImageIcon className="h-16 w-16 text-slate-300 mx-auto mb-4" />
+                <ImageIcon className="h-16 w-16 text-foreground mx-auto mb-4" />
                 <h3 className="text-lg font-medium mb-2">No photos yet</h3>
-                <p className="text-slate-500 mb-4">
+                <p className="text-muted-foreground mb-4">
                   Upload your edited photos to get started
                 </p>
               </CardContent>

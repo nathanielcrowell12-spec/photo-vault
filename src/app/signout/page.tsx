@@ -24,10 +24,10 @@ export default function SignOutPage() {
   }, [signOut, router])
 
   return (
-    <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+    <div className="min-h-screen bg-background flex items-center justify-center">
       <div className="text-center">
         <h1 className="text-2xl font-bold mb-4">Signing out...</h1>
-        <p className="text-slate-600 dark:text-slate-300">Please wait...</p>
+        <p className="text-muted-foreground dark:text-foreground">Please wait...</p>
       </div>
     </div>
   )

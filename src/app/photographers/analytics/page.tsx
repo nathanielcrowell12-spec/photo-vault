@@ -94,10 +94,10 @@ export default function AnalyticsPage() {
   // Show loading or redirect if not photographer
   if (userType !== 'photographer') {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-slate-600 dark:text-slate-300">Redirecting...</p>
+          <p className="text-muted-foreground dark:text-foreground">Redirecting...</p>
         </div>
       </div>
     )
@@ -136,10 +136,10 @@ export default function AnalyticsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-slate-600 dark:text-slate-300">Loading analytics...</p>
+          <p className="text-muted-foreground dark:text-foreground">Loading analytics...</p>
         </div>
       </div>
     )
@@ -147,12 +147,12 @@ export default function AnalyticsPage() {
 
   if (!analyticsData) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardContent className="p-8 text-center">
             <BarChart3 className="h-16 w-16 text-blue-500 mx-auto mb-4" />
             <h2 className="text-2xl font-bold mb-2">No Analytics Data</h2>
-            <p className="text-slate-600 dark:text-slate-300 mb-6">
+            <p className="text-muted-foreground dark:text-foreground mb-6">
               Start earning commissions to see detailed analytics.
             </p>
             <Button asChild>
@@ -167,7 +167,7 @@ export default function AnalyticsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b bg-white dark:bg-slate-900">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -217,7 +217,7 @@ export default function AnalyticsPage() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Revenue Growth</p>
+                    <p className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">Revenue Growth</p>
                     <p className={`text-2xl font-bold ${analyticsData.growthMetrics.revenueGrowth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                       {formatPercentage(analyticsData.growthMetrics.revenueGrowth)}
                     </p>
@@ -232,7 +232,7 @@ export default function AnalyticsPage() {
                     )}
                   </div>
                 </div>
-                <p className="text-xs text-slate-500 mt-2">
+                <p className="text-xs text-muted-foreground mt-2">
                   vs previous month
                 </p>
               </CardContent>
@@ -242,7 +242,7 @@ export default function AnalyticsPage() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Client Growth</p>
+                    <p className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">Client Growth</p>
                     <p className={`text-2xl font-bold ${analyticsData.growthMetrics.clientGrowth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                       {formatPercentage(analyticsData.growthMetrics.clientGrowth)}
                     </p>
@@ -257,7 +257,7 @@ export default function AnalyticsPage() {
                     )}
                   </div>
                 </div>
-                <p className="text-xs text-slate-500 mt-2">
+                <p className="text-xs text-muted-foreground mt-2">
                   new clients this month
                 </p>
               </CardContent>
@@ -267,7 +267,7 @@ export default function AnalyticsPage() {
               <CardContent className="p-6">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-slate-600 dark:text-slate-400">Recurring Growth</p>
+                    <p className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">Recurring Growth</p>
                     <p className={`text-2xl font-bold ${analyticsData.growthMetrics.recurringGrowth >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                       {formatPercentage(analyticsData.growthMetrics.recurringGrowth)}
                     </p>
@@ -282,7 +282,7 @@ export default function AnalyticsPage() {
                     )}
                   </div>
                 </div>
-                <p className="text-xs text-slate-500 mt-2">
+                <p className="text-xs text-muted-foreground mt-2">
                   passive income growth
                 </p>
               </CardContent>
@@ -349,7 +349,7 @@ export default function AnalyticsPage() {
                   <div className="flex items-center justify-between p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
                     <div>
                       <p className="font-medium">Next Month</p>
-                      <p className="text-sm text-slate-600 dark:text-slate-400">Projected revenue</p>
+                      <p className="text-sm text-muted-foreground dark:text-muted-foreground">Projected revenue</p>
                     </div>
                     <div className="text-right">
                       <p className="text-xl font-bold text-purple-600">
@@ -361,7 +361,7 @@ export default function AnalyticsPage() {
                   <div className="flex items-center justify-between p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                     <div>
                       <p className="font-medium">Next 3 Months</p>
-                      <p className="text-sm text-slate-600 dark:text-slate-400">Quarterly projection</p>
+                      <p className="text-sm text-muted-foreground dark:text-muted-foreground">Quarterly projection</p>
                     </div>
                     <div className="text-right">
                       <p className="text-xl font-bold text-blue-600">
@@ -373,7 +373,7 @@ export default function AnalyticsPage() {
                   <div className="flex items-center justify-between p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
                     <div>
                       <p className="font-medium">Next Year</p>
-                      <p className="text-sm text-slate-600 dark:text-slate-400">Annual projection</p>
+                      <p className="text-sm text-muted-foreground dark:text-muted-foreground">Annual projection</p>
                     </div>
                     <div className="text-right">
                       <p className="text-xl font-bold text-green-600">
@@ -387,7 +387,7 @@ export default function AnalyticsPage() {
                   <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
                     <div>
                       <p className="font-medium">Recurring Run Rate</p>
-                      <p className="text-sm text-slate-600 dark:text-slate-400">Annual recurring revenue</p>
+                      <p className="text-sm text-muted-foreground dark:text-muted-foreground">Annual recurring revenue</p>
                     </div>
                     <div className="text-right">
                       <p className="text-xl font-bold text-slate-900 dark:text-slate-100">
@@ -457,14 +457,14 @@ export default function AnalyticsPage() {
                   <div className="text-3xl font-bold text-blue-600 mb-2">
                     {analyticsData.retentionMetrics.totalClients}
                   </div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Total Clients</p>
+                  <p className="text-sm text-muted-foreground dark:text-muted-foreground">Total Clients</p>
                 </div>
                 
                 <div className="text-center">
                   <div className="text-3xl font-bold text-green-600 mb-2">
                     {analyticsData.retentionMetrics.activeClients}
                   </div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Active Clients</p>
+                  <p className="text-sm text-muted-foreground dark:text-muted-foreground">Active Clients</p>
                   <Badge variant="outline" className="mt-1">
                     {((analyticsData.retentionMetrics.activeClients / analyticsData.retentionMetrics.totalClients) * 100).toFixed(1)}% retention
                   </Badge>
@@ -474,14 +474,14 @@ export default function AnalyticsPage() {
                   <div className="text-3xl font-bold text-purple-600 mb-2">
                     {analyticsData.retentionMetrics.avgClientLifetime.toFixed(0)}
                   </div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Avg Lifetime (days)</p>
+                  <p className="text-sm text-muted-foreground dark:text-muted-foreground">Avg Lifetime (days)</p>
                 </div>
                 
                 <div className="text-center">
                   <div className="text-3xl font-bold text-orange-600 mb-2">
                     {formatCurrency(analyticsData.retentionMetrics.avgClientValue)}
                   </div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Avg Client Value</p>
+                  <p className="text-sm text-muted-foreground dark:text-muted-foreground">Avg Client Value</p>
                 </div>
               </div>
             </CardContent>

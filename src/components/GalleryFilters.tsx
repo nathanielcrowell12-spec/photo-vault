@@ -74,7 +74,7 @@ export function GalleryFilters({
           variant="outline"
           size="sm"
           onClick={() => setShowFilters(!showFilters)}
-          className="border-white/10 text-neutral-300 hover:bg-white/5"
+          className="border-border text-muted-foreground hover:bg-accent/50"
         >
           <Filter className="h-4 w-4 mr-2" />
           Filters
@@ -93,7 +93,7 @@ export function GalleryFilters({
             variant="ghost"
             size="sm"
             onClick={clearAllFilters}
-            className="text-neutral-400 hover:text-white"
+            className="text-muted-foreground hover:text-foreground"
           >
             Clear all
           </Button>
@@ -169,33 +169,33 @@ export function GalleryFilters({
       )}
 
       {showFilters && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-4 bg-neutral-800/30 rounded-lg border border-white/10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 p-4 bg-card/30 rounded-lg border border-border">
           <div>
-            <label className="text-xs text-neutral-400 mb-1 block">Event Type</label>
+            <label className="text-xs text-muted-foreground mb-1 block">Event Type</label>
             <Select
               value={filters.eventType || undefined}
               onValueChange={(value) => updateFilter('eventType', value)}
             >
-              <SelectTrigger className="bg-neutral-900 border-white/10 text-white">
+              <SelectTrigger className="bg-background border-border text-foreground">
                 <SelectValue placeholder="All events" />
               </SelectTrigger>
-              <SelectContent className="bg-neutral-800 border-white/10">
-                <SelectItem value="wedding" className="text-white hover:bg-white/5">
+              <SelectContent className="bg-card border-border">
+                <SelectItem value="wedding" className="text-foreground hover:bg-accent/50">
                   Wedding
                 </SelectItem>
-                <SelectItem value="birthday" className="text-white hover:bg-white/5">
+                <SelectItem value="birthday" className="text-foreground hover:bg-accent/50">
                   Birthday
                 </SelectItem>
-                <SelectItem value="family" className="text-white hover:bg-white/5">
+                <SelectItem value="family" className="text-foreground hover:bg-accent/50">
                   Family Session
                 </SelectItem>
-                <SelectItem value="portrait" className="text-white hover:bg-white/5">
+                <SelectItem value="portrait" className="text-foreground hover:bg-accent/50">
                   Portrait
                 </SelectItem>
-                <SelectItem value="graduation" className="text-white hover:bg-white/5">
+                <SelectItem value="graduation" className="text-foreground hover:bg-accent/50">
                   Graduation
                 </SelectItem>
-                <SelectItem value="other" className="text-white hover:bg-white/5">
+                <SelectItem value="other" className="text-foreground hover:bg-accent/50">
                   Other
                 </SelectItem>
               </SelectContent>
@@ -203,20 +203,20 @@ export function GalleryFilters({
           </div>
 
           <div>
-            <label className="text-xs text-neutral-400 mb-1 block">Year</label>
+            <label className="text-xs text-muted-foreground mb-1 block">Year</label>
             <Select
               value={filters.year?.toString() || undefined}
               onValueChange={(value) => updateFilter('year', parseInt(value))}
             >
-              <SelectTrigger className="bg-neutral-900 border-white/10 text-white">
+              <SelectTrigger className="bg-background border-border text-foreground">
                 <SelectValue placeholder="All years" />
               </SelectTrigger>
-              <SelectContent className="bg-neutral-800 border-white/10">
+              <SelectContent className="bg-card border-border">
                 {availableYears.map((year) => (
                   <SelectItem
                     key={year}
                     value={year.toString()}
-                    className="text-white hover:bg-white/5"
+                    className="text-foreground hover:bg-accent/50"
                   >
                     {year}
                   </SelectItem>
@@ -226,20 +226,20 @@ export function GalleryFilters({
           </div>
 
           <div>
-            <label className="text-xs text-neutral-400 mb-1 block">Location</label>
+            <label className="text-xs text-muted-foreground mb-1 block">Location</label>
             <Select
               value={filters.location || undefined}
               onValueChange={(value) => updateFilter('location', value)}
             >
-              <SelectTrigger className="bg-neutral-900 border-white/10 text-white">
+              <SelectTrigger className="bg-background border-border text-foreground">
                 <SelectValue placeholder="All locations" />
               </SelectTrigger>
-              <SelectContent className="bg-neutral-800 border-white/10">
+              <SelectContent className="bg-card border-border">
                 {availableLocations.map((location) => (
                   <SelectItem
                     key={location}
                     value={location}
-                    className="text-white hover:bg-white/5"
+                    className="text-foreground hover:bg-accent/50"
                   >
                     {location}
                   </SelectItem>
@@ -249,20 +249,20 @@ export function GalleryFilters({
           </div>
 
           <div>
-            <label className="text-xs text-neutral-400 mb-1 block">Person</label>
+            <label className="text-xs text-muted-foreground mb-1 block">Person</label>
             <Select
               value={filters.person || undefined}
               onValueChange={(value) => updateFilter('person', value)}
             >
-              <SelectTrigger className="bg-neutral-900 border-white/10 text-white">
+              <SelectTrigger className="bg-background border-border text-foreground">
                 <SelectValue placeholder="All people" />
               </SelectTrigger>
-              <SelectContent className="bg-neutral-800 border-white/10">
+              <SelectContent className="bg-card border-border">
                 {availablePeople.map((person) => (
                   <SelectItem
                     key={person}
                     value={person}
-                    className="text-white hover:bg-white/5"
+                    className="text-foreground hover:bg-accent/50"
                   >
                     {person}
                   </SelectItem>

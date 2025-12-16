@@ -123,6 +123,35 @@ export async function GET(request: NextRequest) {
       createdAt: p.created_at,
     }))
 
+    // Step 7: Calculate platform-wide stats (not just current page)
+    // Get ALL photographers for stats (no pagination)
+    const { data: allPhotographers } = await supabase
+      .from('user_profiles')
+      .select('id, payment_status')
+      .eq('user_type', 'photographer')
+
+    const allPhotographerIds = allPhotographers?.map(p => p.id) || []
+
+    // Get all galleries count
+    const { count: totalGalleriesCount } = await supabase
+      .from('photo_galleries')
+      .select('id', { count: 'exact', head: true })
+      .in('photographer_id', allPhotographerIds)
+
+    // Get total revenue from all commissions
+    const { data: allCommissions } = await supabase
+      .from('commissions')
+      .select('photovault_commission_cents')
+      .in('photographer_id', allPhotographerIds)
+      .eq('status', 'paid')
+
+    const platformTotalRevenue = allCommissions?.reduce(
+      (sum, c) => sum + (c.photovault_commission_cents || 0),
+      0
+    ) || 0
+
+    const platformActiveCount = allPhotographers?.filter(p => p.payment_status === 'active').length || 0
+
     return NextResponse.json({
       success: true,
       data: {
@@ -130,6 +159,12 @@ export async function GET(request: NextRequest) {
         total: totalCount || 0,
         page,
         pageSize,
+        stats: {
+          totalPhotographers: totalCount || 0,
+          activeCount: platformActiveCount,
+          totalGalleries: totalGalleriesCount || 0,
+          totalRevenueCents: platformTotalRevenue,
+        },
       },
     })
   } catch (error) {

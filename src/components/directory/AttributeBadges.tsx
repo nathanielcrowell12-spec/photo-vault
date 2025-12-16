@@ -18,7 +18,7 @@ export function AttributeBadges({ attributes, maxDisplay = 3 }: AttributeBadgesP
         <Badge
           key={attr.id}
           variant="secondary"
-          className="bg-slate-700/50 text-slate-300 border-slate-600 text-xs"
+          className="bg-secondary/50 text-foreground border-border text-xs"
         >
           {attr.value}
         </Badge>
@@ -26,7 +26,7 @@ export function AttributeBadges({ attributes, maxDisplay = 3 }: AttributeBadgesP
       {remaining > 0 && (
         <Badge
           variant="secondary"
-          className="bg-slate-700/50 text-slate-400 border-slate-600 text-xs"
+          className="bg-secondary/50 text-muted-foreground border-border text-xs"
         >
           +{remaining} more
         </Badge>

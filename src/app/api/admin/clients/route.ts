@@ -147,6 +147,40 @@ export async function GET(request: NextRequest) {
       createdAt: c.created_at,
     }))
 
+    // Step 8: Calculate platform-wide stats (not just current page)
+    // Get ALL clients for stats (no pagination)
+    const { data: allClients } = await supabase
+      .from('user_profiles')
+      .select('id, payment_status')
+      .eq('user_type', 'client')
+
+    const allClientIds = allClients?.map(c => c.id) || []
+
+    // Get all active subscriptions count
+    const { count: totalActiveSubscriptions } = await supabase
+      .from('subscriptions')
+      .select('id', { count: 'exact', head: true })
+      .in('client_id', allClientIds)
+      .eq('status', 'active')
+
+    // Get total spent from all commissions (by client email)
+    const allClientEmails = allClientIds.map(id => emailMap.get(id)).filter(Boolean) as string[]
+    let platformTotalSpent = 0
+    if (allClientEmails.length > 0) {
+      const { data: allClientCommissions } = await supabase
+        .from('commissions')
+        .select('total_paid_cents')
+        .in('client_email', allClientEmails)
+        .eq('status', 'paid')
+
+      platformTotalSpent = allClientCommissions?.reduce(
+        (sum, c) => sum + (c.total_paid_cents || 0),
+        0
+      ) || 0
+    }
+
+    const platformActiveCount = allClients?.filter(c => c.payment_status === 'active').length || 0
+
     return NextResponse.json({
       success: true,
       data: {
@@ -154,6 +188,12 @@ export async function GET(request: NextRequest) {
         total: totalCount || 0,
         page,
         pageSize,
+        stats: {
+          totalClients: totalCount || 0,
+          activeCount: platformActiveCount,
+          totalSubscriptions: totalActiveSubscriptions || 0,
+          totalSpentCents: platformTotalSpent,
+        },
       },
     })
   } catch (error) {

@@ -11,6 +11,8 @@
 - **Year 1:** $100 upfront (PhotoVault gets $50, Photographer gets $50)
 - **Year 2+:** $8/month ongoing (PhotoVault gets $4, Photographer gets $4)
 
+**Note on Stripe Fees:** PhotoVault absorbs ALL Stripe processing fees (~2.9% + $0.30) via destination charges. This protects photographer earnings - they receive the full amounts shown above. PhotoVault's actual revenue is reduced by Stripe fees (e.g., $50 becomes ~$47 after fees on a $100 payment).
+
 ### 3. Reactivation Revenue (PhotoVault keeps 100%)
 - **Inactive clients:** PhotoVault keeps all $8/month from reactivated galleries
 - **New photographer sessions:** PhotoVault keeps $50, new photographer gets $50, original photographer keeps $4/month recurring

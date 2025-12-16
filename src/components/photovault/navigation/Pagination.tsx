@@ -80,7 +80,7 @@ export default function Pagination({
           return (
             <span
               key={`ellipsis-${index}`}
-              className="px-3 py-2 text-slate-500"
+              className="px-3 py-2 text-muted-foreground"
             >
               ...
             </span>

@@ -540,10 +540,10 @@ export default function GalleryViewerPage() {
 
   if (loading || authLoading || checkingAccess) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
-          <p className="text-slate-600 dark:text-slate-300">Loading gallery...</p>
+          <p className="text-muted-foreground dark:text-foreground">Loading gallery...</p>
         </div>
       </div>
     )
@@ -551,12 +551,12 @@ export default function GalleryViewerPage() {
 
   if (!gallery) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card className="max-w-md">
           <CardContent className="p-6 text-center">
             <AlertCircle className="h-12 w-12 text-red-500 mx-auto mb-4" />
             <h2 className="text-xl font-bold mb-2">Gallery Not Found</h2>
-            <p className="text-slate-600 mb-4">This gallery doesn&apos;t exist or you don&apos;t have access to it.</p>
+            <p className="text-muted-foreground mb-4">This gallery doesn&apos;t exist or you don&apos;t have access to it.</p>
             <Button asChild>
               <Link href="/dashboard">
                 <ArrowLeft className="h-4 w-4 mr-2" />
@@ -572,19 +572,19 @@ export default function GalleryViewerPage() {
   // Access Suspended - show payment required message for suspended subscriptions
   if (!checkingAccess && !hasAccess && accessSuspended) {
     return (
-      <div className="min-h-screen bg-neutral-900">
+      <div className="min-h-screen bg-background">
         {/* Header */}
-        <header className="border-b border-white/10 bg-slate-900/50 backdrop-blur-sm">
+        <header className="border-b border-border bg-slate-900/50 backdrop-blur-sm">
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center space-x-4">
-              <Button asChild variant="ghost" size="sm" className="text-white hover:bg-white/10">
+              <Button asChild variant="ghost" size="sm" className="text-foreground hover:bg-accent/50">
                 <Link href="/client/dashboard">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back
                 </Link>
               </Button>
               <div>
-                <h1 className="text-xl font-semibold text-white">{gallery.gallery_name}</h1>
+                <h1 className="text-xl font-semibold text-foreground">{gallery.gallery_name}</h1>
                 <p className="text-sm text-red-400">
                   Access suspended - payment required
                 </p>
@@ -624,8 +624,8 @@ export default function GalleryViewerPage() {
                   <AlertCircle className="h-8 w-8 text-red-500" />
                 </div>
 
-                <h2 className="text-2xl font-bold text-white mb-2">Access Suspended</h2>
-                <p className="text-slate-400 mb-6">
+                <h2 className="text-2xl font-bold text-foreground mb-2">Access Suspended</h2>
+                <p className="text-muted-foreground mb-6">
                   Your payment could not be processed. Please update your payment method to restore access to your {gallery.photo_count} photos.
                 </p>
 
@@ -635,7 +635,7 @@ export default function GalleryViewerPage() {
                     <AlertCircle className="h-5 w-5" />
                     Why was my access suspended?
                   </h3>
-                  <ul className="text-slate-400 text-sm space-y-2">
+                  <ul className="text-muted-foreground text-sm space-y-2">
                     <li>• We tried to process your payment but it was declined</li>
                     <li>• Your card may have expired or has insufficient funds</li>
                     <li>• The 48-hour grace period has ended</li>
@@ -648,7 +648,7 @@ export default function GalleryViewerPage() {
                     <CheckCircle className="h-5 w-5" />
                     How to restore access
                   </h3>
-                  <p className="text-slate-400 text-sm">
+                  <p className="text-muted-foreground text-sm">
                     Simply update your payment method and your access will be restored immediately. 
                     All your photos are safe and waiting for you.
                   </p>
@@ -666,7 +666,7 @@ export default function GalleryViewerPage() {
                   </Link>
                 </Button>
 
-                <p className="text-xs text-slate-500 mt-4">
+                <p className="text-xs text-muted-foreground mt-4">
                   Need help? Contact us at{' '}
                   <a href="mailto:support@photovault.photo" className="text-amber-500 hover:underline">
                     support@photovault.photo
@@ -683,20 +683,20 @@ export default function GalleryViewerPage() {
   // Paywall - show subscription prompt if user doesn't have access
   if (!checkingAccess && !hasAccess) {
     return (
-      <div className="min-h-screen bg-neutral-900">
+      <div className="min-h-screen bg-background">
         {/* Header */}
-        <header className="border-b border-white/10 bg-slate-900/50 backdrop-blur-sm">
+        <header className="border-b border-border bg-slate-900/50 backdrop-blur-sm">
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center space-x-4">
-              <Button asChild variant="ghost" size="sm" className="text-white hover:bg-white/10">
+              <Button asChild variant="ghost" size="sm" className="text-foreground hover:bg-accent/50">
                 <Link href="/client/dashboard">
                   <ArrowLeft className="h-4 w-4 mr-2" />
                   Back
                 </Link>
               </Button>
               <div>
-                <h1 className="text-xl font-semibold text-white">{gallery.gallery_name}</h1>
-                <p className="text-sm text-slate-400">
+                <h1 className="text-xl font-semibold text-foreground">{gallery.gallery_name}</h1>
+                <p className="text-sm text-muted-foreground">
                   {gallery.photo_count} photos ready for you
                 </p>
               </div>
@@ -722,21 +722,21 @@ export default function GalleryViewerPage() {
                 </div>
                 <div className="absolute inset-0 flex items-center justify-center">
                   <div className="bg-black/60 backdrop-blur-sm rounded-full p-4">
-                    <Lock className="h-8 w-8 text-white" />
+                    <Lock className="h-8 w-8 text-foreground" />
                   </div>
                 </div>
               </div>
             )}
 
             {/* Subscribe Card */}
-            <Card className="bg-slate-800/50 border-slate-700 backdrop-blur-sm">
+            <Card className="bg-slate-800/50 border-border backdrop-blur-sm">
               <CardContent className="p-8 text-center">
                 <div className="w-16 h-16 bg-amber-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Camera className="h-8 w-8 text-amber-500" />
                 </div>
 
-                <h2 className="text-2xl font-bold text-white mb-2">Your Photos Are Ready!</h2>
-                <p className="text-slate-400 mb-6">
+                <h2 className="text-2xl font-bold text-foreground mb-2">Your Photos Are Ready!</h2>
+                <p className="text-muted-foreground mb-6">
                   Subscribe to unlock full access to all {gallery.photo_count} photos in this gallery.
                 </p>
 
@@ -745,31 +745,31 @@ export default function GalleryViewerPage() {
                   {gallery.total_amount ? (
                     <>
                       <div className="text-amber-500 font-semibold mb-2">Photography Services</div>
-                      <div className="text-3xl font-bold text-white mb-1">
+                      <div className="text-3xl font-bold text-foreground mb-1">
                         ${(gallery.total_amount / 100).toFixed(0)}
                       </div>
-                      <div className="text-slate-400 text-sm">One-time payment</div>
+                      <div className="text-muted-foreground text-sm">One-time payment</div>
 
                       {gallery.billing_mode === 'all_in_one' && (
                         <>
-                          <div className="border-t border-slate-700 my-4" />
+                          <div className="border-t border-border my-4" />
                           <div className="text-green-500 font-semibold mb-2">After Year 1</div>
-                          <div className="text-xl font-bold text-white mb-1">$8/month</div>
-                          <div className="text-slate-400 text-sm">Continued access</div>
+                          <div className="text-xl font-bold text-foreground mb-1">$8/month</div>
+                          <div className="text-muted-foreground text-sm">Continued access</div>
                         </>
                       )}
                     </>
                   ) : (
                     <>
                       <div className="text-amber-500 font-semibold mb-2">Year 1</div>
-                      <div className="text-3xl font-bold text-white mb-1">$100</div>
-                      <div className="text-slate-400 text-sm">Full year of access</div>
+                      <div className="text-3xl font-bold text-foreground mb-1">$100</div>
+                      <div className="text-muted-foreground text-sm">Full year of access</div>
 
-                      <div className="border-t border-slate-700 my-4" />
+                      <div className="border-t border-border my-4" />
 
                       <div className="text-green-500 font-semibold mb-2">Year 2+</div>
-                      <div className="text-xl font-bold text-white mb-1">$8/month</div>
-                      <div className="text-slate-400 text-sm">Continued access</div>
+                      <div className="text-xl font-bold text-foreground mb-1">$8/month</div>
+                      <div className="text-muted-foreground text-sm">Continued access</div>
                     </>
                   )}
                 </div>
@@ -782,7 +782,7 @@ export default function GalleryViewerPage() {
                     'Share with family & friends',
                     'Photos stored securely forever',
                   ].map((feature, index) => (
-                    <div key={index} className="flex items-center gap-2 text-slate-300 text-sm">
+                    <div key={index} className="flex items-center gap-2 text-foreground text-sm">
                       <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
                       <span>{feature}</span>
                     </div>
@@ -837,7 +837,7 @@ export default function GalleryViewerPage() {
                   Pay Now
                 </Button>
 
-                <p className="text-xs text-slate-500 mt-4">
+                <p className="text-xs text-muted-foreground mt-4">
                   Secure payment powered by Stripe.
                 </p>
               </CardContent>
@@ -849,10 +849,10 @@ export default function GalleryViewerPage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       {/* Payment Success Banner */}
       {showPaymentSuccess && (
-        <div className="bg-green-500 text-white py-3 px-4 text-center">
+        <div className="bg-green-500 text-foreground py-3 px-4 text-center">
           <div className="flex items-center justify-center gap-2">
             <CheckCircle className="h-5 w-5" />
             <span className="font-medium">Payment successful! Welcome to your gallery.</span>
@@ -861,7 +861,7 @@ export default function GalleryViewerPage() {
       )}
 
       {/* Header */}
-      <header className="border-b border-border bg-neutral-900 sticky top-0 z-40">
+      <header className="border-b border-border bg-background sticky top-0 z-40 backdrop-blur-sm">
         <div className="container-pixieset py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
@@ -1001,7 +1001,7 @@ export default function GalleryViewerPage() {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                   />
                   <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors flex items-center justify-center">
-                    <Maximize2 className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <Maximize2 className="h-8 w-8 text-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
                 </div>
               </Card>
@@ -1022,7 +1022,7 @@ export default function GalleryViewerPage() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-white hover:bg-white/20"
+                className="text-foreground hover:bg-white/20"
                 onClick={() => toggleFavorite(photos[selectedPhotoIndex].id)}
                 title={photos[selectedPhotoIndex].is_favorite ? 'Remove from favorites' : 'Add to favorites'}
               >
@@ -1030,14 +1030,14 @@ export default function GalleryViewerPage() {
                   className={`h-5 w-5 transition-colors ${
                     photos[selectedPhotoIndex].is_favorite
                       ? 'fill-red-500 text-red-500'
-                      : 'text-white'
+                      : 'text-foreground'
                   }`}
                 />
               </Button>
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-white hover:bg-white/20"
+                className="text-foreground hover:bg-white/20"
                 onClick={() => {
                   const photo = photos[selectedPhotoIndex]
                   const filename = photo.original_filename || `photo-${selectedPhotoIndex + 1}.jpg`
@@ -1049,7 +1049,7 @@ export default function GalleryViewerPage() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-white hover:bg-white/20"
+                className="text-foreground hover:bg-white/20"
                 onClick={closeSlideshow}
               >
                 <X className="h-6 w-6" />
@@ -1061,7 +1061,7 @@ export default function GalleryViewerPage() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute left-4 text-white hover:bg-white/20"
+                className="absolute left-4 text-foreground hover:bg-white/20"
                 onClick={prevPhoto}
               >
                 <ChevronLeft className="h-8 w-8" />
@@ -1084,7 +1084,7 @@ export default function GalleryViewerPage() {
               />
 
               {/* Photo Counter */}
-              <div className="text-center mt-4 text-white text-sm">
+              <div className="text-center mt-4 text-foreground text-sm">
                 {selectedPhotoIndex + 1} of {photos.length}
               </div>
             </div>
@@ -1094,7 +1094,7 @@ export default function GalleryViewerPage() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute right-4 text-white hover:bg-white/20"
+                className="absolute right-4 text-foreground hover:bg-white/20"
                 onClick={nextPhoto}
               >
                 <ChevronRight className="h-8 w-8" />

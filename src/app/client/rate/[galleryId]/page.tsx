@@ -133,7 +133,7 @@ export default function RatePhotographerPage() {
 
     return (
       <div>
-        {label && <p className="text-sm text-neutral-400 mb-2">{label}</p>}
+        {label && <p className="text-sm text-muted-foreground mb-2">{label}</p>}
         <div className="flex gap-1">
           {[1, 2, 3, 4, 5].map((star) => (
             <button
@@ -148,7 +148,7 @@ export default function RatePhotographerPage() {
                 className={`${sizeClass} transition-colors ${
                   star <= displayValue
                     ? 'text-yellow-400 fill-yellow-400'
-                    : 'text-neutral-600 hover:text-yellow-400/50'
+                    : 'text-muted-foreground hover:text-yellow-400/50'
                 }`}
               />
             </button>
@@ -160,7 +160,7 @@ export default function RatePhotographerPage() {
 
   if (loading || pageLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-neutral-900">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500"></div>
       </div>
     )
@@ -168,14 +168,14 @@ export default function RatePhotographerPage() {
 
   if (submitted) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-6">
-        <Card className="max-w-md w-full bg-white/[0.03] border-white/10">
+      <div className="min-h-screen bg-background flex items-center justify-center p-6">
+        <Card className="max-w-md w-full bg-card border-border">
           <CardContent className="pt-8 pb-8 text-center">
             <div className="w-16 h-16 bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
               <Check className="w-8 h-8 text-emerald-400" />
             </div>
-            <h2 className="text-2xl font-bold text-white mb-2">Thank You!</h2>
-            <p className="text-neutral-400 mb-6">
+            <h2 className="text-2xl font-bold text-foreground mb-2">Thank You!</h2>
+            <p className="text-muted-foreground mb-6">
               Your feedback helps photographers improve their service.
             </p>
             <Button asChild className="bg-amber-500 hover:bg-amber-400 text-black">
@@ -189,15 +189,15 @@ export default function RatePhotographerPage() {
 
   if (!canRate) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-6">
-        <Card className="max-w-md w-full bg-white/[0.03] border-white/10">
+      <div className="min-h-screen bg-background flex items-center justify-center p-6">
+        <Card className="max-w-md w-full bg-card border-border">
           <CardContent className="pt-8 pb-8 text-center">
-            <Camera className="w-12 h-12 text-neutral-600 mx-auto mb-4" />
-            <h2 className="text-xl font-bold text-white mb-2">Cannot Rate</h2>
-            <p className="text-neutral-400 mb-6">
+            <Camera className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+            <h2 className="text-xl font-bold text-foreground mb-2">Cannot Rate</h2>
+            <p className="text-muted-foreground mb-6">
               You need to be a client with access to this gallery to leave a rating.
             </p>
-            <Button asChild variant="outline" className="border-neutral-600">
+            <Button asChild variant="outline" className="border-border">
               <Link href="/client/dashboard">Go to Dashboard</Link>
             </Button>
           </CardContent>
@@ -207,19 +207,19 @@ export default function RatePhotographerPage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900 text-neutral-100">
+    <div className="min-h-screen bg-background text-foreground">
       <div className="max-w-2xl mx-auto p-6 lg:p-10 space-y-8">
         {/* Header */}
         <div className="flex items-center gap-4">
           <Link
             href={`/client/gallery/${galleryId}`}
-            className="p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+            className="p-2 rounded-lg bg-muted hover:bg-accent/50 transition-colors"
           >
             <ArrowLeft size={20} />
           </Link>
           <div>
             <h1 className="text-2xl font-bold">Rate Your Experience</h1>
-            <p className="text-neutral-400 mt-1">
+            <p className="text-muted-foreground mt-1">
               {gallery?.title || 'Gallery'} by {gallery?.photographerName || 'Photographer'}
             </p>
           </div>
@@ -234,7 +234,7 @@ export default function RatePhotographerPage() {
         )}
 
         {/* Main Rating */}
-        <Card className="bg-white/[0.03] border-white/5">
+        <Card className="bg-card border-border">
           <CardHeader>
             <CardTitle className="text-lg font-medium flex items-center gap-2">
               <Star className="w-5 h-5 text-yellow-400" />
@@ -242,7 +242,7 @@ export default function RatePhotographerPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <p className="text-neutral-400 text-sm">
+            <p className="text-muted-foreground text-sm">
               How would you rate your overall experience?
             </p>
             <div className="flex items-center gap-4">
@@ -261,7 +261,7 @@ export default function RatePhotographerPage() {
         </Card>
 
         {/* Detailed Ratings */}
-        <Card className="bg-white/[0.03] border-white/5">
+        <Card className="bg-card border-border">
           <CardHeader>
             <CardTitle className="text-lg font-medium">Detailed Feedback (Optional)</CardTitle>
           </CardHeader>
@@ -269,7 +269,7 @@ export default function RatePhotographerPage() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
               {/* Communication */}
               <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm text-neutral-400">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <MessageSquare className="w-4 h-4 text-blue-400" />
                   Communication
                 </div>
@@ -284,7 +284,7 @@ export default function RatePhotographerPage() {
 
               {/* Quality */}
               <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm text-neutral-400">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <ThumbsUp className="w-4 h-4 text-purple-400" />
                   Photo Quality
                 </div>
@@ -299,7 +299,7 @@ export default function RatePhotographerPage() {
 
               {/* Timeliness */}
               <div className="space-y-2">
-                <div className="flex items-center gap-2 text-sm text-neutral-400">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Zap className="w-4 h-4 text-emerald-400" />
                   Timeliness
                 </div>
@@ -316,7 +316,7 @@ export default function RatePhotographerPage() {
         </Card>
 
         {/* Written Review */}
-        <Card className="bg-white/[0.03] border-white/5">
+        <Card className="bg-card border-border">
           <CardHeader>
             <CardTitle className="text-lg font-medium">Written Review (Optional)</CardTitle>
           </CardHeader>
@@ -325,10 +325,10 @@ export default function RatePhotographerPage() {
               value={reviewText}
               onChange={(e) => setReviewText(e.target.value)}
               placeholder="Share your experience with this photographer..."
-              className="bg-neutral-800 border-neutral-700 text-white min-h-[120px]"
+              className="bg-card border-border text-foreground min-h-[120px]"
               maxLength={1000}
             />
-            <p className="text-xs text-neutral-500 mt-2 text-right">
+            <p className="text-xs text-muted-foreground mt-2 text-right">
               {reviewText.length}/1000 characters
             </p>
           </CardContent>
@@ -346,7 +346,7 @@ export default function RatePhotographerPage() {
           <Button
             variant="outline"
             asChild
-            className="border-neutral-600 text-neutral-300 py-6"
+            className="border-border text-muted-foreground py-6"
           >
             <Link href={`/client/gallery/${galleryId}`}>Cancel</Link>
           </Button>

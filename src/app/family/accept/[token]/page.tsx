@@ -11,7 +11,7 @@ interface InvitationData {
   relationship: string
   primaryName: string
   sharedGalleryCount: number
-  invitedAt: string
+  invitedAt?: string
 }
 
 export default function AcceptInvitationPage() {
@@ -25,6 +25,7 @@ export default function AcceptInvitationPage() {
   const [invitation, setInvitation] = useState<InvitationData | null>(null)
   const [accepted, setAccepted] = useState(false)
   const [requiresLogin, setRequiresLogin] = useState(false)
+  const [accountCreated, setAccountCreated] = useState(false)
 
   // Fetch invitation details on mount
   useEffect(() => {
@@ -81,8 +82,15 @@ export default function AcceptInvitationPage() {
       }
 
       setAccepted(true)
-      
-      // Redirect after short delay
+
+      // Check if a new account was created
+      if (data.accountCreated) {
+        setAccountCreated(true)
+        // Don't auto-redirect - they need to check email first
+        return
+      }
+
+      // Redirect after short delay for existing users
       setTimeout(() => {
         router.push(data.redirectUrl || '/family/galleries')
       }, 2000)
@@ -97,7 +105,7 @@ export default function AcceptInvitationPage() {
   // Loading state
   if (loading) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500 mx-auto"></div>
           <p className="mt-4 text-gray-600">Loading invitation...</p>
@@ -109,14 +117,14 @@ export default function AcceptInvitationPage() {
   // Error state
   if (error && !invitation) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-8 text-center">
           <div className="text-6xl mb-4">😕</div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Invitation Not Found</h1>
           <p className="text-gray-600 mb-6">{error}</p>
           <Link 
             href="/"
-            className="inline-block bg-gradient-to-r from-pink-500 to-orange-500 text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition"
+            className="inline-block bg-gradient-to-r from-pink-500 to-orange-500 text-foreground px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition"
           >
             Go to Homepage
           </Link>
@@ -128,7 +136,7 @@ export default function AcceptInvitationPage() {
   // Requires login state
   if (requiresLogin && invitation) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-8 text-center">
           <div className="text-6xl mb-4">🔐</div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Please Log In</h1>
@@ -138,7 +146,7 @@ export default function AcceptInvitationPage() {
           </p>
           <Link 
             href={`/login?redirect=/family/accept/${token}`}
-            className="inline-block bg-gradient-to-r from-pink-500 to-orange-500 text-white px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition"
+            className="inline-block bg-gradient-to-r from-pink-500 to-orange-500 text-foreground px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition"
           >
             Log In
           </Link>
@@ -147,10 +155,34 @@ export default function AcceptInvitationPage() {
     )
   }
 
-  // Success state
+  // Success state - account created
+  if (accepted && accountCreated) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-8 text-center">
+          <div className="text-6xl mb-4">📧</div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Account Created!</h1>
+          <p className="text-gray-600 mb-4">
+            We've created your PhotoVault account. Check your email at <strong>{invitation?.email}</strong> for a link to set your password.
+          </p>
+          <p className="text-sm text-gray-500 mb-6">
+            Once you set your password, you'll have access to {invitation?.primaryName}'s shared galleries.
+          </p>
+          <Link
+            href="/login"
+            className="inline-block bg-gradient-to-r from-pink-500 to-orange-500 text-foreground px-6 py-3 rounded-lg font-semibold hover:opacity-90 transition"
+          >
+            Go to Login
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  // Success state - existing user
   if (accepted) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-8 text-center">
           <div className="text-6xl mb-4">🎉</div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Welcome to the Family!</h1>
@@ -165,10 +197,10 @@ export default function AcceptInvitationPage() {
 
   // Main invitation view
   return (
-    <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-xl max-w-lg w-full overflow-hidden">
         {/* Header */}
-        <div className="bg-gradient-to-r from-pink-500 to-orange-500 p-8 text-center text-white">
+        <div className="bg-gradient-to-r from-pink-500 to-orange-500 p-8 text-center text-foreground">
           <div className="text-6xl mb-4">👨‍👩‍👧‍👦</div>
           <h1 className="text-2xl font-bold">You're Invited!</h1>
         </div>
@@ -180,7 +212,7 @@ export default function AcceptInvitationPage() {
           </p>
 
           {/* What you'll get */}
-          <div className="bg-neutral-800 border border-amber-700 rounded-xl p-5 mb-6">
+          <div className="bg-card border border-amber-700 rounded-xl p-5 mb-6">
             <h3 className="font-semibold text-amber-800 mb-3">What you'll have access to:</h3>
             <ul className="space-y-2 text-amber-700">
               <li className="flex items-start gap-2">
@@ -215,7 +247,7 @@ export default function AcceptInvitationPage() {
           <button
             onClick={handleAccept}
             disabled={accepting}
-            className="w-full bg-gradient-to-r from-pink-500 to-orange-500 text-white py-4 rounded-xl font-semibold text-lg hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-gradient-to-r from-pink-500 to-orange-500 text-foreground py-4 rounded-xl font-semibold text-lg hover:opacity-90 transition disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {accepting ? 'Accepting...' : 'Accept Invitation'}
           </button>

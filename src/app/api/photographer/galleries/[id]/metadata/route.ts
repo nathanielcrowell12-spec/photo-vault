@@ -55,13 +55,14 @@ export async function PATCH(
     }
 
     // Trigger materialized view refresh (async, don't wait)
-    supabase.rpc('refresh_gallery_metadata_suggestions').then((result) => {
+    void (async () => {
+      const result = await supabase.rpc('refresh_gallery_metadata_suggestions')
       if (result.error) {
         console.error('[Metadata] Failed to refresh suggestions:', result.error)
       } else {
         console.log('[Metadata] Refreshed suggestions view')
       }
-    })
+    })()
 
     return NextResponse.json({
       success: true,

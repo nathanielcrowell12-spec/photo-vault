@@ -524,12 +524,12 @@ Fix issues found in photographer dashboard - replace mock data, fix broken links
 ---
 
 ## Story 2.3: Fix Client Dashboard
-**Size:** Small (1 session)
-**Files:** 2-3 files
-**Status:** ✅ COMPLETE (Dec 8, 2025)
+**Size:** Medium (2-3 sessions)
+**Files:** 5-8 files
+**Status:** 🟢 MESSAGING COMPLETE - Minor Tests Pending (Dec 10, 2025)
 
 ### Description
-Fix issues found in client dashboard - ensure real data, working links.
+Fix issues found in client dashboard - ensure real data, working links, functional messaging and upload.
 
 ### Tasks
 - [x] Verify gallery stats are real
@@ -537,11 +537,20 @@ Fix issues found in client dashboard - ensure real data, working links.
 - [x] Fix any broken navigation
 - [x] Test gallery access
 - [x] Ensure responsive on mobile
+- [x] Fix MessagingPanel modal sizing (h-[600px] → responsive)
+- [x] Add "Start New Chat" button to MessagingPanel
+- [x] Fix client upload page - add web upload form with metadata
+- [x] Fix upload page button handlers (Desktop + Web)
 
 ### Acceptance Criteria
 - [x] Client sees accurate gallery info
 - [x] Payment status is correct
 - [x] All navigation works
+- [?] Messaging modal fits screen without zooming - **NEEDS VISUAL TEST**
+- [x] Users can start new chats even with existing conversations - **TESTED WORKING (Dec 10)**
+- [x] Bi-directional messaging works (client↔photographer) - **TESTED WORKING (Dec 10)**
+- [?] Client upload page has working web upload form - **NEEDS TESTING**
+- [?] Upload page supports gallery metadata (Event Date, Location, People, Event Type, Photographer Name, Notes) - **NEEDS TESTING**
 
 ### What Was Fixed (Dec 8, 2025)
 1. **Created Client Stats API** (`/api/client/stats`):
@@ -557,40 +566,188 @@ Fix issues found in client dashboard - ensure real data, working links.
    - Shows gallery cover image, name, photo count, and date
    - "View all galleries" button when more than 3 galleries
 
+### Issues Discovered (Dec 9, 2025)
+1. **MessagingPanel** - Fixed height doesn't fit small screens, no way to start new chat
+2. **Client Upload Page** - Missing entire web upload form section, buttons broken
+
+### Implementation Plan
+See: `docs/claude/plans/ui-client-dashboard-fixes-plan.md`
+
+### Client Upload Requirements
+- Mirror photographer upload page structure
+- Gallery name (required), Description (optional)
+- ALL metadata fields OPTIONAL (some clients upload professional photographer work)
+- Database: `photographer_id` = NULL for client-uploaded galleries
+
 ### Files Created
 | File | Purpose |
 |------|---------|
 | `src/app/api/client/stats/route.ts` | Client stats API endpoint |
 
-### Files Modified
+### Files Modified (Dec 8, 2025)
 | File | Changes |
 |------|---------|
 | `src/app/client/dashboard/page.tsx` | Added stats fetching, real data display, Recent Sessions |
+
+### Files Modified (Dec 9, 2025) - UNTESTED
+| File | Changes |
+|------|---------|
+| `src/components/MessagingPanel.tsx` | Responsive height (`h-[85vh] max-h-[800px] min-h-[500px]`), "Start New Chat" button with `showPhotographerList` state, improved conversation selection after starting chat |
+| `src/app/client/upload/page.tsx` | Complete rebuild: Added web upload form with metadata fields (Event Date, Location, People, Event Type, Photographer Name, Notes), fixed Desktop App button (shows modal if not installed), fixed Online Upload button (scrolls to form instead of redirect loop) |
+
+### Database Fixes (Dec 10, 2025) - APPLIED & TESTED
+| Fix | Description |
+|-----|-------------|
+| `can_user_message` RPC | Multi-pattern checks for BOTH directions (client↔photographer). Checks: direct auth ID, FK join through clients table, and legacy tables |
+| `update_conversation_on_message` trigger | Fixed UUID→boolean assignment bug. Was assigning `user2_id` (UUID) to `v_is_user1` (BOOLEAN) |
+
+### Code Changes (Dec 10, 2025)
+| File | Changes |
+|------|---------|
+| `src/app/photographer/dashboard/page.tsx` | Switched from `Messages` component to `MessagesButton` - unified on `conversations` table |
+
+### Testing Results (Dec 10, 2025)
+| Test | Result |
+|------|--------|
+| MessagingPanel fits screen | ✅ PASS |
+| Bi-directional messaging | ✅ PASS |
+| Start New Chat button | ✅ PASS |
+| Desktop App protocol launch | ✅ PASS (fixed `photovault://` protocol) |
+| Desktop auth handoff | ✅ PASS (token sent via protocol) |
+| Client Upload web form | 🔴 BLOCKED - RLS policy issue |
+
+### Current Blocker: Client Upload RLS
+
+**Error:** `new row violates row-level security policy for table "photo_galleries"`
+
+**Investigation:**
+- RLS policy "Clients can insert own galleries" exists and looks correct
+- `gallery_status` fixed from 'active' to 'draft' (check constraint)
+- Required columns `platform` and `gallery_name` are being set
+
+**Next Step:** Test INSERT directly in Supabase SQL Editor as authenticated client user to isolate issue:
+```sql
+SELECT id, email FROM auth.users WHERE email LIKE '%anotherdude%';
+-- Get UUID, then:
+SELECT set_config('request.jwt.claims', '{"sub": "UUID_HERE"}', true);
+SET ROLE authenticated;
+INSERT INTO photo_galleries (photographer_id, client_id, gallery_name, platform, gallery_status)
+VALUES (NULL, NULL, 'Test', 'photovault', 'draft');
+RESET ROLE;
+```
+
+**Bandaid Created (TO BE DELETED):**
+- `/api/client/galleries/route.ts` - Uses service role to bypass RLS
+- Upload page calls this API instead of direct Supabase
+- **This is wrong** - delete and fix RLS properly
+
+---
+
+## Story 2.3b: Client Dashboard Cleanup & Favorites Feature
+**Size:** Small (1 session)
+**Files:** 2-3 files
+**Status:** ✅ COMPLETE (Dec 12, 2025)
+
+### Description
+Fix remaining client dashboard issues discovered during testing. Remove placeholder content, fix support page, implement favorites feature.
+
+### COMPLETED (Dec 11-12, 2025)
+
+**Client Support Page (`/client/support`):** ✅ ALL DONE
+- [x] Change phone number from `(555) 123-4567` to `(608) 571-7532` ✅
+- [x] Remove "Live Chat" card entirely ✅
+- [x] Remove "Support Hours" card entirely ✅
+- [x] Email address correct: `support@photovault.com` ✅
+
+**Timeline Page (`/client/timeline`):** ✅ ALL DONE
+- [x] Fetches from real API `/api/client/timeline` ✅
+- [x] Photos come from user's actual galleries ✅
+- [x] Empty state when user has no galleries/photos ✅
+- [x] Has filters for photographer, event_type, search ✅
+
+**Client Dashboard (`/client/dashboard`):** ✅ ALL DONE
+- [x] "Downloaded" stat removed (only 3 stats now) ✅
+- [x] Stats from real API `/api/client/stats` ✅
+- [x] Favorites stat shows real count from `is_favorite` ✅
+- [x] Clicking Favorites stat → navigates to `/client/favorites` ✅
+
+**Favorites Infrastructure:** ✅ ALL DONE
+- [x] `/api/client/stats` counts favorites from database ✅ (line 77)
+- [x] `/api/client/favorites` returns favorited photos ✅
+- [x] `/client/favorites` page displays favorites with lightbox ✅
+- [x] Dashboard Favorites card links to `/client/favorites` ✅
+- [x] Lightbox component exists with heart icon ✅ (`src/app/gallery/[galleryId]/components/Lightbox.tsx`)
+
+### COMPLETED (Dec 12, 2025)
+
+**Favorites Toggle Implementation:**
+- [x] Added heart icon to gallery slideshow (lines 971-985)
+- [x] Created `POST /api/photos/[id]/favorite` endpoint to toggle `is_favorite`
+- [x] Wired heart icon click to API call with optimistic UI updates
+- [x] Heart fills red when favorited, white outline when not
+
+### Files Created/Modified
+- `src/app/gallery/[galleryId]/page.tsx` - Added Heart import, toggleFavorite function, heart button in slideshow
+- `src/app/api/photos/[id]/favorite/route.ts` (NEW) - Toggle favorite endpoint with access control
+
+### Existing Files (Already Complete)
+| File | Status |
+|------|--------|
+| `src/app/client/support/page.tsx` | ✅ Phone fixed, cards removed |
+| `src/app/client/timeline/page.tsx` | ✅ Real API, filters, empty state |
+| `src/app/client/dashboard/page.tsx` | ✅ Real stats, clickable Favorites |
+| `src/app/api/client/stats/route.ts` | ✅ Counts favorites |
+| `src/app/api/client/favorites/route.ts` | ✅ Returns favorited photos |
+| `src/app/client/favorites/page.tsx` | ✅ Displays favorites |
+| `src/app/gallery/[galleryId]/components/Lightbox.tsx` | ✅ Has heart icon (not used) |
 
 ---
 
 ## Story 2.4: Fix Admin Dashboard
 **Size:** Medium (1 session)
 **Files:** 3-4 files
+**Status:** 🟢 PARTIALLY COMPLETE - Revenue Page Done (Dec 12, 2025)
 
 ### Description
 Fix admin dashboard to show real platform metrics.
 
-### Tasks
-- [ ] Replace mock data with real queries
-- [ ] Show actual: total users, revenue, commissions paid
+### COMPLETED (Dec 12, 2025)
+
+**Admin Revenue Page:**
+- [x] Payment Activity shows THIS MONTH's transactions (matching header stat)
+- [x] Clickable stats → navigate to transactions page with period filter
+- [x] Working Sync button
+- [x] Removed fake "Payment Integrations" card
+- [x] Leaderboard link enabled and working
+
+**Files Created:**
+| File | Purpose |
+|------|---------|
+| `src/app/api/admin/transactions/route.ts` | Full transactions API with period filtering, pagination, search |
+| `src/app/admin/transactions/page.tsx` | Full transactions page with filters, pagination, search |
+| `src/app/api/admin/leaderboard/route.ts` | Leaderboard API showing PhotoVault rev AND photographer earnings |
+| `src/app/admin/leaderboard/page.tsx` | Photographer rankings with gold/silver/bronze styling |
+
+**Files Modified:**
+| File | Changes |
+|------|---------|
+| `src/lib/server/admin-revenue-service.ts` | Payment Activity now shows THIS MONTH's transactions |
+| `src/app/admin/revenue/page.tsx` | Clickable stats, working Sync button, removed fake card |
+
+### REMAINING
 - [ ] Show photographer list with real data
 - [ ] Show client list with real data
-- [ ] Add basic filtering/search
+- [ ] Add basic filtering/search to main admin dashboard
 
 ### Acceptance Criteria
-- [ ] Admin sees real platform metrics
+- [x] Admin sees real platform metrics (revenue page complete)
 - [ ] Can view photographer/client lists
 - [ ] Data matches database
 
-### Files Likely Touched
+### Files Likely Touched (Remaining)
 - `src/app/admin/dashboard/page.tsx`
-- `src/app/admin/*/page.tsx` (sub-pages)
+- `src/app/admin/photographers/page.tsx`
+- `src/app/admin/clients/page.tsx`
 
 ---
 
@@ -849,13 +1006,335 @@ Final verification before inviting beta photographers.
 
 ---
 
+# EPIC 6: Customer Intelligence System (CIS)
+
+**Priority:** 🔴 **PHASE 1 BLOCKS BETA** (6.1-6.3) → 🟢 Phase 2-4 POST-BETA
+**Dependencies:** None for Phase 1; Phase 2+ requires beta event data
+**Estimated Stories:** 10 (3 pre-beta, 5 during-beta, 2 future)
+**Strategic Intent:** Transform PhotoVault from assumption-driven to data-driven. Track beta behavior from day one.
+**Detailed Plan:** `docs/claude/plans/cis-customer-intelligence-system-plan.md`
+
+**Execution Order:**
+```
+Epic 2.4 (finish) → CIS Phase 1 (6.1-6.3) → Epic 5 (Beta Prep) → 🚀 BETA → CIS Phase 2-4
+```
+
+---
+
+## Story 6.1: PostHog Foundation
+**Size:** Small-Medium (4-6 hours)
+**Files:** 6-8 files
+**Status:** ✅ COMPLETE (Dec 14, 2025)
+**Phase:** 1a - **BLOCKING BETA**
+**Commit:** `0ca798c feat(analytics): Add PostHog analytics foundation (Story 6.1)`
+
+### Description
+Install and configure PostHog analytics with BOTH client-side and server-side tracking. Server-side is critical because ad blockers kill 30%+ of client-side events.
+
+### Tasks
+- [ ] Install `posthog-js` (client) and `posthog-node` (server) packages
+- [ ] Create `src/lib/analytics.ts` - client-side initialization, identify, track, reset
+- [ ] Create `src/lib/analytics-server.ts` - server-side tracking for critical events
+- [ ] Create `src/types/analytics.ts` - strict TypeScript types for all events
+- [ ] Add PostHog environment variables (NEXT_PUBLIC_POSTHOG_KEY, POSTHOG_API_KEY)
+- [ ] Wrap app with PostHog provider in root layout
+- [ ] Add `identifyUser()` call after authentication in AuthContext
+- [ ] Add `resetAnalytics()` call on logout
+- [ ] Configure: autocapture ON, session recording OFF (privacy), respect_dnt ON
+- [ ] Verify events in PostHog Live Events dashboard
+
+### Critical: Server-Side Events (ad blockers can't block)
+- `photographer_signed_up`, `photographer_connected_stripe`
+- `payment_completed`, `payment_failed`
+- `photographer_churned`, `client_churned`
+
+### Acceptance Criteria
+- [ ] PostHog receiving `$pageview` events (client-side)
+- [ ] Server-side events firing from API routes
+- [ ] Users identified after login with properties (user_type, signup_date, stripe_connected)
+- [ ] `trackEvent()` (client) and `trackServerEvent()` (server) both working
+- [ ] Works in production (Vercel)
+
+### Files Likely Touched
+- `package.json`, `src/lib/analytics.ts` (NEW), `src/lib/analytics-server.ts` (NEW)
+- `src/types/analytics.ts` (NEW), `src/app/layout.tsx`, `src/contexts/AuthContext.tsx`
+- `.env.local`, `.env.example`, `VERCEL-ENV-SETUP.md`
+
+---
+
+## Story 6.2: Core Event Tracking
+**Size:** Medium (1-2 sessions)
+**Files:** 14 files modified
+**Status:** ✅ COMPLETE (Dec 14, 2025)
+**Phase:** 1b - **BLOCKING BETA**
+
+### Description
+Implement core journey event tracking for photographers and clients. These events form the conversion funnel.
+
+### What Was Implemented (Dec 14, 2025)
+
+**New Files Created (3):**
+- `src/lib/analytics/helpers.ts` - Server-side helper functions (isFirstTime, calculateTimeFromSignup)
+- `src/lib/analytics/client-helpers.ts` - Client-side helper functions
+- `src/app/api/analytics/track/route.ts` - Server-side tracking API for client components
+
+**Files Modified (11):**
+- `src/contexts/AuthContext.tsx` - photographer_signed_up (via API)
+- `src/app/photographers/onboarding/page.tsx` - started/completed_onboarding
+- `src/app/api/stripe/connect/callback/route.ts` - photographer_connected_stripe
+- `src/app/photographer/galleries/create/page.tsx` - photographer_created_gallery
+- `src/app/api/v1/upload/process/route.ts` - photographer_uploaded_first_photo
+- `src/app/api/webhooks/stripe/route.ts` - 4 events: client_created_account, client_payment_completed, photographer_received_first_payment, client_payment_failed
+- `src/app/api/stripe/gallery-checkout/route.ts` - client_started_payment
+- `src/app/gallery/[galleryId]/page.tsx` - gallery_viewed, client_viewed_gallery, photo_favorited
+- `src/app/api/gallery/download/route.ts` - client_downloaded_photo
+
+**Events Implemented (15 of 18):**
+| Event | Type | Location |
+|-------|------|----------|
+| photographer_signed_up | Server | AuthContext → /api/analytics/track |
+| photographer_started_onboarding | Client | onboarding/page.tsx |
+| photographer_completed_onboarding | Client | onboarding/page.tsx |
+| photographer_connected_stripe | Server | connect/callback/route.ts |
+| photographer_created_gallery | Client | galleries/create/page.tsx |
+| photographer_uploaded_first_photo | Server | upload/process/route.ts |
+| photographer_received_first_payment | Server | webhooks/stripe/route.ts |
+| client_created_account | Server | webhooks/stripe/route.ts |
+| client_viewed_gallery | Client | gallery/[id]/page.tsx |
+| client_started_payment | Server | gallery-checkout/route.ts |
+| client_payment_completed | Server | webhooks/stripe/route.ts |
+| client_payment_failed | Server | webhooks/stripe/route.ts |
+| client_downloaded_photo | Server | gallery/download/route.ts |
+| gallery_viewed | Client | gallery/[id]/page.tsx |
+| photo_favorited | Client | gallery/[id]/page.tsx |
+
+**Deferred (features don't exist yet):**
+- photographer_invited_client (no invite UI)
+- photographer_skipped_onboarding (no skip button)
+- client_shared_gallery (share feature not built)
+
+### QA Critic Fixes Applied
+- ✅ Fixed first-time flag logic (count BEFORE, not AFTER)
+- ✅ Added helper functions for DRY code
+- ✅ Server-side tracking for all critical funnel events (ad-blocker proof)
+
+### Acceptance Criteria
+- [x] All photographer journey events firing with properties (7/9 - 2 deferred)
+- [x] All client journey events firing with properties (6/8 - 2 deferred)
+- [x] Server-side events for payment flows (bypass ad blockers)
+- [x] Funnel visible: Signup → Onboarding → Stripe → Gallery → Client → Payment
+
+### Files Touched
+- `src/lib/analytics/helpers.ts` (NEW)
+- `src/lib/analytics/client-helpers.ts` (NEW)
+- `src/app/api/analytics/track/route.ts` (NEW)
+- `src/contexts/AuthContext.tsx`
+- `src/app/photographers/onboarding/page.tsx`
+- `src/app/api/stripe/connect/callback/route.ts`
+- `src/app/photographer/galleries/create/page.tsx`
+- `src/app/api/v1/upload/process/route.ts`
+- `src/app/api/webhooks/stripe/route.ts`
+- `src/app/api/stripe/gallery-checkout/route.ts`
+- `src/app/gallery/[galleryId]/page.tsx`
+- `src/app/api/gallery/download/route.ts`
+
+---
+
+## Story 6.3: Friction & Warning Events
+**Size:** Small (1 session)
+**Files:** 4-6 files
+**Status:** 🔴 NOT STARTED
+**Phase:** 1c - **BLOCKING BETA**
+
+### Description
+Track friction points and warning signals for churn prevention and UX improvement.
+
+### Tasks
+- [ ] Implement abandonment events:
+  - `upload_abandoned`, `payment_abandoned`, `onboarding_abandoned`
+- [ ] Implement warning events:
+  - `error_encountered`, `support_request_submitted`
+- [ ] Implement churn events:
+  - `photographer_churned` (with tenure, revenue, client_count)
+  - `client_churned` (with tenure, photographer_id, gallery_count)
+- [ ] Add `usePageView` hook for page leave detection with timing
+- [ ] Test abandonment detection
+
+### Acceptance Criteria
+- [ ] Abandonment events fire when user leaves mid-flow
+- [ ] Error events capture error type and context
+- [ ] Churn events include tenure and lifetime value data
+
+### Files Likely Touched
+- `src/hooks/useAnalytics.ts`, `src/app/photographer/upload/*`
+- `src/app/checkout/*`, `src/components/ErrorBoundary.tsx`
+- `src/app/api/stripe/cancel-subscription/route.ts`
+
+---
+
+## Story 6.4: Feedback Database Schema
+**Size:** Small (1 session)
+**Files:** 1-2 files
+**Status:** 🔴 NOT STARTED
+**Phase:** 2a - POST-BETA
+
+### Description
+Create database tables for survey responses, micro-feedback, and churn exit interviews.
+
+### Tasks
+- [ ] Create `survey_responses` table
+- [ ] Create `micro_feedback` table
+- [ ] Create `churn_feedback` table
+- [ ] Create `daily_metrics` table (dashboard caching)
+- [ ] Add RLS policies (users insert own, admin reads all)
+- [ ] Run migration in Supabase
+
+### Acceptance Criteria
+- [ ] All four tables created with proper RLS
+- [ ] Migration documented in database/ folder
+
+### Files Likely Touched
+- `database/migrations/cis-feedback-schema.sql` (NEW)
+
+---
+
+## Story 6.5: Survey Components & Collection
+**Size:** Medium (1-2 sessions)
+**Files:** 6-8 files
+**Status:** 🔴 NOT STARTED
+**Phase:** 2b - POST-BETA
+
+### Description
+Build survey components for post-onboarding, post-first-payment, and churn exit surveys.
+
+### Tasks
+- [ ] Create `SurveyModal`, `PostOnboardingSurvey`, `PostFirstPaymentSurvey`, `ChurnExitSurvey`
+- [ ] Create `/api/surveys/submit` endpoint
+- [ ] Add trigger logic (24h after onboarding, 1h after payment, before cancel)
+- [ ] Track survey events, implement skip tracking
+
+### Acceptance Criteria
+- [ ] Surveys trigger at correct times
+- [ ] Responses stored in database
+- [ ] Don't show after completion or 2 skips
+
+### Files Likely Touched
+- `src/components/surveys/*` (NEW), `src/app/api/surveys/submit/route.ts` (NEW)
+- `src/hooks/useSurveyTrigger.ts` (NEW)
+
+---
+
+## Story 6.6: Micro-Feedback Widgets
+**Size:** Small (1 session)
+**Files:** 4-5 files
+**Status:** 🔴 NOT STARTED
+**Phase:** 2c - POST-BETA
+
+### Description
+Create lightweight micro-feedback widgets (thumbs up/down) at key moments.
+
+### Tasks
+- [ ] Create `MicroFeedback` component
+- [ ] Create `/api/feedback/micro` endpoint
+- [ ] Add to: upload complete, gallery first view, client invite sent
+- [ ] Implement 25% sampling
+
+### Acceptance Criteria
+- [ ] Widget displays, negative expands for comment
+- [ ] Feedback stored and tracked
+
+### Files Likely Touched
+- `src/components/feedback/MicroFeedback.tsx` (NEW)
+- `src/app/api/feedback/micro/route.ts` (NEW)
+
+---
+
+## Story 6.7: Intelligence Dashboard Foundation
+**Size:** Medium (1-2 sessions)
+**Files:** 4-6 files
+**Status:** 🔴 NOT STARTED
+**Phase:** 3a - POST-BETA (requires event data)
+
+### Description
+Build founder-facing intelligence dashboard with health metrics, funnels, and feedback.
+
+### Tasks
+- [ ] Create `/admin/intelligence` page
+- [ ] Create `CustomerIntelligenceService`
+- [ ] Implement health metrics (activation, time-to-value, conversion, churn) with RAG colors
+- [ ] Implement funnel visualization
+- [ ] Add recent feedback section
+
+### Acceptance Criteria
+- [ ] Dashboard at `/admin/intelligence`
+- [ ] Health metrics with color indicators
+- [ ] Funnel with conversion rates
+- [ ] Loads in <3 seconds
+
+### Files Likely Touched
+- `src/app/admin/intelligence/page.tsx` (NEW)
+- `src/lib/server/customer-intelligence-service.ts` (NEW)
+- `src/app/api/admin/intelligence/route.ts` (NEW)
+
+---
+
+## Story 6.8: Alerts & Health Monitoring
+**Size:** Small (1 session)
+**Files:** 3-4 files
+**Status:** 🔴 NOT STARTED
+**Phase:** 3b - POST-BETA
+
+### Description
+Implement automated alerts for critical events (inactive users, payment failures, churn, feedback spikes).
+
+### Tasks
+- [ ] Create alert system with thresholds
+- [ ] Add alerts section to dashboard
+- [ ] Create `/api/cron/health-check`
+- [ ] Email notifications for critical alerts
+
+### Acceptance Criteria
+- [ ] Alerts on dashboard and via email
+- [ ] Cron job runs reliably
+
+### Files Likely Touched
+- `src/lib/server/alert-service.ts` (NEW)
+- `src/app/api/cron/health-check/route.ts` (NEW)
+- `vercel.json`
+
+---
+
+## Story 6.9: Cohort Analysis & A/B Testing
+**Size:** Medium (1 session)
+**Status:** ⏸️ FUTURE
+**Phase:** 4a - 30+ days after beta
+
+### Description
+Cohort analysis and A/B testing via PostHog feature flags.
+
+*Details deferred until 30+ days of event data collected.*
+
+---
+
+## Story 6.10: Predictive Churn Model
+**Size:** Medium (1 session)
+**Status:** ⏸️ FUTURE
+**Phase:** 4b - 60+ days after beta
+
+### Description
+Churn risk scoring based on behavioral signals.
+
+*Details deferred until 60+ days of data and sufficient churn samples.*
+
+---
+
 # PHASE 2: POST-BETA EXPANSION
 # ================================
 # Reference: Stone Fence Brain → 1_VENTURES/PhotoVault/PHOTOVAULT_FUTURE_FEATURES_ARCHIVE.md
 
 ---
 
-# EPIC 6: Photographer Directory (PHASE 2 - FIRST PRIORITY)
+# EPIC 7: Photographer Directory (PHASE 2 - FIRST PRIORITY)
 
 **Priority:** 🟢 PHASE 2 - Build immediately after beta stabilizes
 **Dependencies:** Beta launch successful, 10+ active photographers
@@ -989,7 +1468,7 @@ Implement Directory Pro tier and gear review affiliate section.
 
 ---
 
-# EPIC 7: Phone Dump & Client Stickiness (PHASE 2)
+# EPIC 8: Phone Dump & Client Stickiness (PHASE 2)
 
 **Priority:** 🟢 PHASE 2 - After Directory
 **Dependencies:** Directory launched, storage infrastructure solid
@@ -1047,7 +1526,7 @@ Implement Directory Pro tier and gear review affiliate section.
 
 ---
 
-# EPIC 8: Print Ordering - Pwinty Integration (PHASE 2)
+# EPIC 9: Print Ordering - Pwinty Integration (PHASE 2)
 
 **Priority:** 🟢 PHASE 2 - High margin, low effort
 **Dependencies:** Gallery viewing stable
@@ -1107,7 +1586,7 @@ Implement Directory Pro tier and gear review affiliate section.
 
 ---
 
-# EPIC 9: AI Enhancement Suite (PHASE 3)
+# EPIC 10: AI Enhancement Suite (PHASE 3)
 
 **Priority:** 🟢 PHASE 3 - After Phase 2 revenue flowing
 **Dependencies:** Platform stable, print ordering working
@@ -1387,36 +1866,38 @@ Implement Directory Pro tier and gear review affiliate section.
 | Epic | Stories | Complete | Status |
 |------|---------|----------|--------|
 | Epic 1: Payments | 7 | 7 | ✅ COMPLETE (1.1 ✅, 1.2 ⚠️ Obsolete, 1.3 ✅, 1.4 ✅, 1.5 ✅, 1.6 ✅, 1.7 ✅) |
-| Epic 2: Dashboards | 4 | 3 | 🟡 In Progress (2.1 ✅, 2.2 ✅, 2.3 ✅, 2.4 🔴) |
+| Epic 2: Dashboards | 5 | 4.5 | 🟡 In Progress (2.1 ✅, 2.2 ✅, 2.3 ✅, 2.3b ✅, 2.4 🟢 50%) |
 | Epic 3: Emails | 3 | 3 | ✅ Complete (Nov 30) |
-| Epic 4: Onboarding | 3 | 0 | 🔴 Not Started |
+| Epic 4: Onboarding | 3 | 0 | ⏸️ NEEDS REVIEW (onboarding changes + beta PDF offer) |
 | Epic 5: Beta Prep | 3 | 0 | 🔴 Not Started |
-| **TOTAL** | **20** | **13** | **65%** |
+| Epic 6: CIS Phase 1 | 3 | 0 | 🔴 Not Started - **BLOCKS BETA** |
+| **TOTAL** | **24** | **14.5** | **60.4%** |
 
 ## Phase 2: Post-Beta Expansion (After Beta Stabilizes)
 
 | Epic | Stories | Complete | Status |
 |------|---------|----------|--------|
-| Epic 6: Directory | 6 | 0 | ⏸️ Phase 2 - FIRST PRIORITY |
-| Epic 7: Phone Dump | 3 | 0 | ⏸️ Phase 2 |
-| Epic 8: Print Ordering | 3 | 0 | ⏸️ Phase 2 |
-| **TOTAL** | **12** | **0** | **⏸️ Future** |
+| Epic 6: CIS Phase 2-4 | 7 | 0 | ⏸️ During/After Beta |
+| Epic 7: Directory | 6 | 0 | ⏸️ Phase 2 - FIRST PRIORITY |
+| Epic 8: Phone Dump | 3 | 0 | ⏸️ Phase 2 |
+| Epic 9: Print Ordering | 3 | 0 | ⏸️ Phase 2 |
+| **TOTAL** | **19** | **0** | **⏸️ Future** |
 
 ## Phase 3: Revenue Expansion
 
 | Epic | Stories | Complete | Status |
 |------|---------|----------|--------|
-| Epic 9: AI Enhancements | 5 | 0 | ⏸️ Phase 3 |
-| Epic 10: Premium Tiers | 2 | 0 | ⏸️ Phase 3 |
+| Epic 10: AI Enhancements | 5 | 0 | ⏸️ Phase 3 |
+| Epic 11: Premium Tiers | 2 | 0 | ⏸️ Phase 3 |
 | **TOTAL** | **7** | **0** | **⏸️ Future** |
 
 ## Phase 4: Platform Maturity
 
 | Epic | Stories | Complete | Status |
 |------|---------|----------|--------|
-| Epic 11: Mobile App | 8+ | 0 | ⏸️ Phase 4 |
-| Epic 12: Family Story Pages | 4 | 0 | ⏸️ Phase 4 |
-| Epic 13: Event Packages | 2 | 0 | ⏸️ Phase 4 |
+| Epic 12: Mobile App | 8+ | 0 | ⏸️ Phase 4 |
+| Epic 13: Family Story Pages | 4 | 0 | ⏸️ Phase 4 |
+| Epic 14: Event Packages | 2 | 0 | ⏸️ Phase 4 |
 | **TOTAL** | **14+** | **0** | **⏸️ Future** |
 
 ## Parked (Revisit Later)
@@ -1431,7 +1912,18 @@ Implement Directory Pro tier and gear review affiliate section.
 
 # NEXT STORY TO WORK ON
 
-**Next:** Story 2.2 - Fix Photographer Dashboard (OR) Story 2.1 - Dashboard Audit
+**Current:** Story 6.3 - Friction & Warning Events
+**Next:** Epic 5 - Beta Launch Prep
+
+**Execution Order to Beta:**
+```
+1. ✅ Story 2.4 (Admin Dashboard) - COMPLETE
+2. ✅ Story 6.1 (PostHog Foundation) - COMPLETE
+3. ✅ Story 6.2 (Core Event Tracking) - COMPLETE (Dec 14, 2025)
+4. Story 6.3 (Friction Events) ← YOU ARE HERE
+5. Epic 5 (Beta Prep)
+6. 🚀 BETA LAUNCH
+```
 
 **Completed:**
 - Story 1.1 ✅ (Dec 2, 2025) - Payment Flow Testing
@@ -1442,13 +1934,36 @@ Implement Directory Pro tier and gear review affiliate section.
 - Story 1.7 ✅ (Dec 4-5, 2025) - Family Accounts - All 8 Sprints Complete
 - Epic 1 ✅ (Dec 7, 2025) - Payment System Complete!
 - Epic 3 ✅ (Nov 30, 2025) - Email System Complete
+- Story 2.1-2.3b ✅ (Dec 12, 2025) - Dashboard fixes + Favorites toggle
+- Story 6.1 ✅ (Dec 14, 2025) - PostHog Foundation
+- Story 6.2 ✅ (Dec 14, 2025) - Core Event Tracking (15 events implemented)
+- Theme Fix ✅ (Dec 16, 2025) - Sitewide Light/Dark Mode (200 files, semantic tokens)
+
+---
+
+# KNOWN BUGS (To Be Fixed)
+
+## Bug: Client Messaging - 403 Permission Denied
+**Discovered:** Dec 16, 2025
+**Severity:** Medium
+**Location:** `/api/conversations/[conversationId]/messages` POST
+**Error:** `can_user_message` RPC returns false, blocking messages
+**Root Cause:** Supabase `can_user_message` function permissions issue
+**Fix Required:** Check/update `can_user_message` function in Supabase
+
+## Bug: Timeline API - Missing Column
+**Discovered:** Dec 16, 2025
+**Severity:** Medium
+**Location:** `/api/client/timeline`
+**Error:** `column photo_galleries.cover_photo_url does not exist`
+**Root Cause:** Schema mismatch - API expects column that doesn't exist
+**Fix Required:** Either add column to schema or update API to use existing column
 
 **Skipped:** Story 1.2 ⚠️ (Obsolete - replaced by destination charges)
+**Needs Review:** Epic 4 (Onboarding) - requires discussion on onboarding changes + beta PDF offer
 
 When ready to continue, tell Claude:
-> "Let's do Story 2.1: Dashboard Audit & Bug Discovery"
-> OR
-> "Let's do Story 2.2: Fix Photographer Dashboard"
+> "Let's start Story 6.3: Friction & Warning Events"
 
 ---
 
@@ -1459,4 +1974,4 @@ For detailed feature descriptions, revenue splits, and strategic context, see:
 
 ---
 
-**Last Updated:** December 7, 2025 (Epic 1 COMPLETE! Payment System QA passed - 50% of Beta MVP done)
+**Last Updated:** December 13, 2025 (Added Epic 6: Customer Intelligence System. CIS Phase 1 (Stories 6.1-6.3) blocks beta launch. Epic 4 needs review for onboarding changes. Phase 1 at 60.4% complete with 24 stories.)

@@ -85,7 +85,7 @@ export function LocationFiltersAndGrid({ locations, city }: LocationFiltersProps
             variant="outline"
             size="default"
             onClick={() => setShowFilters(!showFilters)}
-            className="border-slate-700 text-slate-300 hover:bg-slate-800"
+            className="border-border text-foreground hover:bg-card"
           >
             <Filter className="w-4 h-4 mr-2" />
             Filters
@@ -105,7 +105,7 @@ export function LocationFiltersAndGrid({ locations, city }: LocationFiltersProps
               variant="ghost"
               size="default"
               onClick={clearFilters}
-              className="text-slate-400 hover:text-white"
+              className="text-muted-foreground hover:text-foreground"
             >
               <X className="w-4 h-4 mr-1" />
               Clear
@@ -116,11 +116,11 @@ export function LocationFiltersAndGrid({ locations, city }: LocationFiltersProps
 
       {/* Filter Panel */}
       {showFilters && (
-        <div className="bg-slate-800/50 border border-slate-700 rounded-lg p-6 mb-8">
+        <div className="bg-card/50 border border-border rounded-lg p-6 mb-8">
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {/* Permit Status Filter */}
             <div>
-              <h3 className="text-white font-medium mb-3">Permit Status</h3>
+              <h3 className="text-foreground font-medium mb-3">Permit Status</h3>
               <div className="space-y-2">
                 {permitStatuses.map((status) => (
                   <div key={status} className="flex items-center space-x-2">
@@ -128,11 +128,11 @@ export function LocationFiltersAndGrid({ locations, city }: LocationFiltersProps
                       id={`permit-${status}`}
                       checked={permitFilter.includes(status)}
                       onCheckedChange={() => togglePermitFilter(status)}
-                      className="border-slate-600 data-[state=checked]:bg-amber-500 data-[state=checked]:border-amber-500"
+                      className="border-border data-[state=checked]:bg-amber-500 data-[state=checked]:border-amber-500"
                     />
                     <Label
                       htmlFor={`permit-${status}`}
-                      className="text-slate-300 text-sm cursor-pointer"
+                      className="text-foreground text-sm cursor-pointer"
                     >
                       {status === 'Yes' ? 'Permit Free' : status === 'No' ? 'Permit Required' : 'Permit Varies'}
                     </Label>
@@ -146,7 +146,7 @@ export function LocationFiltersAndGrid({ locations, city }: LocationFiltersProps
 
       {/* Results count */}
       <div className="flex items-center justify-between mb-6">
-        <p className="text-slate-400 text-sm">
+        <p className="text-muted-foreground text-sm">
           Showing {filteredLocations.length} of {locations.length} locations
         </p>
       </div>

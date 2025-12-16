@@ -75,6 +75,12 @@ export type PhotographersResponse = {
     total: number
     page: number
     pageSize: number
+    stats?: {
+      totalPhotographers: number
+      activeCount: number
+      totalGalleries: number
+      totalRevenueCents: number
+    }
   }
   error?: string
 }
@@ -101,6 +107,12 @@ export type ClientsResponse = {
     total: number
     page: number
     pageSize: number
+    stats?: {
+      totalClients: number
+      activeCount: number
+      totalSubscriptions: number
+      totalSpentCents: number
+    }
   }
   error?: string
 }

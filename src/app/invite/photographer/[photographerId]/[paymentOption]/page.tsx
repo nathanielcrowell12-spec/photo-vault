@@ -75,10 +75,10 @@ export default function InviteAcceptancePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600 mx-auto mb-4"></div>
-          <p className="text-slate-300">Loading invitation...</p>
+          <p className="text-foreground">Loading invitation...</p>
         </div>
       </div>
     )
@@ -86,12 +86,12 @@ export default function InviteAcceptancePage() {
 
   if (!photographerInfo || !paymentOption) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardContent className="p-8 text-center">
             <AlertTriangle className="h-16 w-16 text-orange-500 mx-auto mb-4" />
             <h2 className="text-2xl font-bold mb-2">Invalid Invitation</h2>
-            <p className="text-slate-600 dark:text-slate-300 mb-6">
+            <p className="text-muted-foreground dark:text-foreground mb-6">
               This invitation link is invalid or has expired. Please contact your photographer for a new invitation.
             </p>
             <Button asChild>
@@ -104,9 +104,9 @@ export default function InviteAcceptancePage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-neutral-900">
+      <header className="border-b bg-background">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Heart className="h-6 w-6 text-pink-600" />
@@ -129,8 +129,8 @@ export default function InviteAcceptancePage() {
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold">{photographerInfo.name}</h1>
-                  <p className="text-slate-600 dark:text-slate-300">{photographerInfo.business_name}</p>
-                  <p className="text-sm text-slate-500">{photographerInfo.email}</p>
+                  <p className="text-muted-foreground dark:text-foreground">{photographerInfo.business_name}</p>
+                  <p className="text-sm text-muted-foreground">{photographerInfo.email}</p>
                 </div>
               </div>
               
@@ -158,15 +158,15 @@ export default function InviteAcceptancePage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="border rounded-lg p-6 bg-neutral-800">
+              <div className="border rounded-lg p-6 bg-card">
                 <div className="flex items-start justify-between mb-4">
                   <div>
                     <h3 className="text-xl font-bold">{paymentOption.name}</h3>
-                    <p className="text-slate-600 dark:text-slate-300">{paymentOption.description}</p>
+                    <p className="text-muted-foreground dark:text-foreground">{paymentOption.description}</p>
                   </div>
                   <div className="text-right">
                     <div className="text-3xl font-bold text-green-600">${paymentOption.price}</div>
-                    <div className="text-sm text-slate-500">
+                    <div className="text-sm text-muted-foreground">
                       {paymentOption.duration === 12 ? 'per year' : 'for 6 months'}
                     </div>
                   </div>
@@ -186,7 +186,7 @@ export default function InviteAcceptancePage() {
 
                 <div className="space-y-2">
                   <h4 className="font-medium">What you get:</h4>
-                  <ul className="space-y-1 text-sm text-slate-600 dark:text-slate-300">
+                  <ul className="space-y-1 text-sm text-muted-foreground dark:text-foreground">
                     {paymentOption.terms.map((term: string, index: number) => (
                       <li key={index} className="flex items-start space-x-2">
                         <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
@@ -214,7 +214,7 @@ export default function InviteAcceptancePage() {
                     <Clock className="h-6 w-6 text-blue-600 mt-1" />
                     <div>
                       <h3 className="font-semibold">Never Expires</h3>
-                      <p className="text-sm text-slate-600 dark:text-slate-300">
+                      <p className="text-sm text-muted-foreground dark:text-foreground">
                         Your photos stay accessible forever, even after other gallery links expire
                       </p>
                     </div>
@@ -223,7 +223,7 @@ export default function InviteAcceptancePage() {
                     <Shield className="h-6 w-6 text-green-600 mt-1" />
                     <div>
                       <h3 className="font-semibold">Bank-Level Security</h3>
-                      <p className="text-sm text-slate-600 dark:text-slate-300">
+                      <p className="text-sm text-muted-foreground dark:text-foreground">
                         Your photos are encrypted and stored with enterprise-grade security
                       </p>
                     </div>
@@ -234,7 +234,7 @@ export default function InviteAcceptancePage() {
                     <Users className="h-6 w-6 text-purple-600 mt-1" />
                     <div>
                       <h3 className="font-semibold">Share with Family</h3>
-                      <p className="text-sm text-slate-600 dark:text-slate-300">
+                      <p className="text-sm text-muted-foreground dark:text-foreground">
                         Easily share your photos with family members and friends
                       </p>
                     </div>
@@ -243,7 +243,7 @@ export default function InviteAcceptancePage() {
                     <Camera className="h-6 w-6 text-orange-600 mt-1" />
                     <div>
                       <h3 className="font-semibold">All Your Photos</h3>
-                      <p className="text-sm text-slate-600 dark:text-slate-300">
+                      <p className="text-sm text-muted-foreground dark:text-foreground">
                         Connect galleries from multiple photographers in one place
                       </p>
                     </div>
@@ -280,7 +280,7 @@ export default function InviteAcceptancePage() {
               <CardTitle>Terms & Conditions</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4 text-sm text-slate-600 dark:text-slate-300">
+              <div className="space-y-4 text-sm text-muted-foreground dark:text-foreground">
                 <p>
                   By accepting this invitation, you agree to PhotoVault&apos;s terms of service and commission structure. 
                   Your photographer will receive commission on your subscription as long as you maintain active payments.
@@ -303,7 +303,7 @@ export default function InviteAcceptancePage() {
           <Card>
             <CardContent className="p-8 text-center">
               <h2 className="text-2xl font-bold mb-4">Ready to Access Your Photos?</h2>
-              <p className="text-slate-600 dark:text-slate-300 mb-6">
+              <p className="text-muted-foreground dark:text-foreground mb-6">
                 Accept this invitation to create your PhotoVault account and access your photos forever.
               </p>
               
@@ -311,7 +311,7 @@ export default function InviteAcceptancePage() {
                 onClick={handleAcceptInvitation}
                 disabled={accepting}
                 size="lg"
-                className="bg-pink-600 hover:bg-pink-700 text-white px-8"
+                className="bg-pink-600 hover:bg-pink-700 text-foreground px-8"
               >
                 {accepting ? (
                   <>
@@ -326,7 +326,7 @@ export default function InviteAcceptancePage() {
                 )}
               </Button>
               
-              <p className="text-xs text-slate-500 mt-4">
+              <p className="text-xs text-muted-foreground mt-4">
                 You&apos;ll be redirected to create your PhotoVault account
               </p>
             </CardContent>

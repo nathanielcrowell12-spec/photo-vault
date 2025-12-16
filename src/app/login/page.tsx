@@ -25,6 +25,7 @@ export default function LoginPage() {
       console.log('[Login] User type loaded:', userType)
       const dashboardRoute = userType === 'admin' ? '/admin/dashboard'
                            : userType === 'photographer' ? '/photographer/dashboard'
+                           : userType === 'secondary' ? '/family/galleries'
                            : userType === 'client' ? '/client/dashboard'
                            : '/dashboard'
       console.log('[Login] Redirecting to:', dashboardRoute)
@@ -55,7 +56,7 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Header */}
         <div className="text-center mb-10">
@@ -115,7 +116,7 @@ export default function LoginPage() {
                 </div>
               )}
 
-              <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-white font-semibold" disabled={loading}>
+              <Button type="submit" className="w-full bg-primary hover:bg-primary/90 text-foreground font-semibold" disabled={loading}>
                 {loading ? 'Signing In...' : 'Sign In'}
               </Button>
             </form>

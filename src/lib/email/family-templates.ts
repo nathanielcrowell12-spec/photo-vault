@@ -44,6 +44,14 @@ export interface PhotographerTakeoverNotificationData {
   reasonText?: string
 }
 
+export interface SecondaryWelcomeEmailData {
+  secondaryName: string
+  secondaryEmail: string
+  primaryName: string
+  relationship: string
+  setPasswordLink: string
+}
+
 // ============================================================================
 // 1. SECONDARY INVITATION EMAIL
 // ============================================================================
@@ -395,11 +403,11 @@ export function getPhotographerTakeoverNotificationHTML(data: PhotographerTakeov
 export function getPhotographerTakeoverNotificationText(data: PhotographerTakeoverNotificationData): string {
   const reasonDisplay = {
     'death': 'Death of account holder',
-    'financial': 'Financial hardship', 
+    'financial': 'Financial hardship',
     'health': 'Health issues',
     'other': data.reasonText || 'Other reason'
   }[data.reason] || 'Not specified'
-  
+
   return `
 Hi ${data.photographerName},
 
@@ -417,6 +425,105 @@ The photos you delivered are still protected, and your commission arrangement co
 
 ---
 PhotoVault | support@photovault.photo
+`
+}
+
+// ============================================================================
+// 5. SECONDARY WELCOME EMAIL (Account Created - Set Password)
+// ============================================================================
+
+export function getSecondaryWelcomeEmailHTML(data: SecondaryWelcomeEmailData): string {
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to PhotoVault - Set Your Password</title>
+</head>
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px; background-color: #f5f5f5;">
+    <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <!-- Header -->
+        <div style="background: linear-gradient(135deg, #10b981, #3b82f6); color: white; padding: 40px 30px; text-align: center;">
+            <div style="font-size: 64px; margin-bottom: 10px;">🎉</div>
+            <h1 style="margin: 0; font-size: 24px; font-weight: 700;">Welcome to PhotoVault!</h1>
+        </div>
+
+        <!-- Content -->
+        <div style="padding: 40px 30px;">
+            <p style="font-size: 18px; margin-bottom: 20px;">Hi ${data.secondaryName},</p>
+
+            <p>Your PhotoVault family account has been created! <strong>${data.primaryName}</strong> has added you as a family member (${data.relationship}).</p>
+
+            <!-- What You Can Do Box -->
+            <div style="background: #f0fdf4; border-radius: 8px; padding: 20px; margin: 25px 0;">
+                <h3 style="margin: 0 0 15px 0; color: #166534;">🎯 Next Step: Set Your Password</h3>
+                <p style="margin: 0; color: #15803d;">
+                    Click the button below to set your password and start viewing shared family photos.
+                </p>
+            </div>
+
+            <!-- CTA Button -->
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="${data.setPasswordLink}" style="display: inline-block; background: linear-gradient(135deg, #10b981, #3b82f6); color: white; padding: 16px 40px; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 18px;">
+                    Set Your Password
+                </a>
+            </div>
+
+            <!-- What You'll Have Access To -->
+            <div style="background: #fef3c7; border-radius: 8px; padding: 20px; margin: 25px 0;">
+                <h4 style="margin: 0 0 10px 0; color: #92400e;">📸 What you'll have access to:</h4>
+                <ul style="margin: 0; padding-left: 20px; color: #78350f;">
+                    <li>View galleries ${data.primaryName} shares with family</li>
+                    <li>Download photos for personal use</li>
+                    <li>Help protect these precious memories</li>
+                </ul>
+            </div>
+
+            <p style="color: #666; font-size: 14px;">
+                This link will expire in 24 hours. If it expires, you can request a new one from the login page.
+            </p>
+        </div>
+
+        <!-- Footer -->
+        <div style="background: #f9fafb; padding: 20px 30px; text-align: center; border-top: 1px solid #e5e7eb;">
+            <p style="margin: 0 0 10px 0; color: #6b7280; font-size: 14px;">
+                <strong>What is PhotoVault?</strong><br>
+                PhotoVault is where families preserve their most precious photo memories.
+            </p>
+            <p style="margin: 0; color: #9ca3af; font-size: 12px;">
+                Questions? Contact support@photovault.photo
+            </p>
+        </div>
+    </div>
+</body>
+</html>
+`
+}
+
+export function getSecondaryWelcomeEmailText(data: SecondaryWelcomeEmailData): string {
+  return `
+Hi ${data.secondaryName},
+
+Welcome to PhotoVault!
+
+Your family account has been created. ${data.primaryName} has added you as a family member (${data.relationship}).
+
+NEXT STEP: Set Your Password
+Click the link below to set your password and start viewing shared family photos:
+
+${data.setPasswordLink}
+
+What you'll have access to:
+- View galleries ${data.primaryName} shares with family
+- Download photos for personal use
+- Help protect these precious memories
+
+This link will expire in 24 hours. If it expires, you can request a new one from the login page.
+
+---
+PhotoVault - Where families preserve precious memories
+Questions? Contact support@photovault.photo
 `
 }
 

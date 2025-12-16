@@ -70,10 +70,10 @@ export default async function DirectoryPage() {
           <Sparkles className="w-4 h-4" />
           Wisconsin&apos;s Premier Photo Location Guide
         </div>
-        <h1 className="text-4xl md:text-5xl font-bold text-white mb-4">
+        <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
           Find Your Perfect <span className="text-amber-400">Shoot Location</span>
         </h1>
-        <p className="text-slate-400 text-lg max-w-2xl mx-auto">
+        <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
           Curated photography locations with insider tips, permit information, seasonal guides, and everything you need to plan the perfect shoot.
         </p>
       </div>
@@ -81,7 +81,7 @@ export default async function DirectoryPage() {
       {/* Cities Grid */}
       <section className="mb-16">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-semibold text-white">Browse by City</h2>
+          <h2 className="text-2xl font-semibold text-foreground">Browse by City</h2>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {cities.map((cityData) => (
@@ -89,15 +89,15 @@ export default async function DirectoryPage() {
               key={`${cityData.city}-${cityData.state}`}
               href={`/directory/${cityData.city.toLowerCase().replace(/ /g, '-')}`}
             >
-              <Card className="bg-slate-800/50 border-slate-700 hover:border-amber-500/50 transition-all cursor-pointer group">
+              <Card className="bg-slate-800/50 border-border hover:border-amber-500/50 transition-all cursor-pointer group">
                 <CardContent className="p-4 flex items-center justify-between">
                   <div>
-                    <h3 className="text-white font-medium group-hover:text-amber-400 transition-colors">
+                    <h3 className="text-foreground font-medium group-hover:text-amber-400 transition-colors">
                       {cityData.city}
                     </h3>
-                    <p className="text-slate-500 text-sm">{cityData.count} locations</p>
+                    <p className="text-muted-foreground text-sm">{cityData.count} locations</p>
                   </div>
-                  <ChevronRight className="w-5 h-5 text-slate-600 group-hover:text-amber-400 transition-colors" />
+                  <ChevronRight className="w-5 h-5 text-muted-foreground group-hover:text-amber-400 transition-colors" />
                 </CardContent>
               </Card>
             </Link>
@@ -108,9 +108,9 @@ export default async function DirectoryPage() {
       {/* Featured Locations */}
       <section>
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-semibold text-white">Featured Locations</h2>
+          <h2 className="text-2xl font-semibold text-foreground">Featured Locations</h2>
           <Link href="/directory/madison">
-            <Button variant="outline" size="sm" className="border-slate-700 text-slate-300 hover:bg-slate-800">
+            <Button variant="outline" size="sm" className="border-border text-foreground hover:bg-slate-800">
               View All
               <ChevronRight className="w-4 h-4 ml-1" />
             </Button>
@@ -124,8 +124,8 @@ export default async function DirectoryPage() {
         <Card className="bg-gradient-to-r from-amber-500/10 to-orange-500/10 border-amber-500/20">
           <CardContent className="py-12">
             <Camera className="w-12 h-12 text-amber-400 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-white mb-2">Are you a photographer?</h2>
-            <p className="text-slate-400 mb-6 max-w-md mx-auto">
+            <h2 className="text-2xl font-bold text-foreground mb-2">Are you a photographer?</h2>
+            <p className="text-muted-foreground mb-6 max-w-md mx-auto">
               Join PhotoVault to connect with clients and grow your business.
             </p>
             <Link href="/photographers/signup">

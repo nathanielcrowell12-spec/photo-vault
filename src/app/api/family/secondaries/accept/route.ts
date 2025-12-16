@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createServiceRoleClient } from '@/lib/supabase-server'
+import { EmailService } from '@/lib/email/email-service'
 
 export const dynamic = 'force-dynamic'
 
@@ -69,6 +70,7 @@ export async function POST(request: NextRequest) {
     const { data: { user } } = await supabase.auth.getUser()
 
     let secondaryUserId = invitation.secondary_user_id
+    let newAccountCreated = false // Track if we actually created a NEW auth user
 
     if (user) {
       // User is logged in - link their account
@@ -98,8 +100,124 @@ export async function POST(request: NextRequest) {
         })
       }
 
-      // No account exists - they can view without account (magic link access)
-      // But for full features, they should create an account
+      // No account exists in user_profiles - check if auth user exists
+      console.log(`[Accept] Checking for existing auth user: ${invitation.email}`)
+
+      // First check if auth user already exists (they might have another account type)
+      const { data: existingAuthUsers } = await serviceSupabase.auth.admin.listUsers()
+      const existingAuthUser = existingAuthUsers?.users?.find(
+        u => u.email?.toLowerCase() === invitation.email.toLowerCase()
+      )
+
+      if (existingAuthUser) {
+        // Auth user exists - link their existing account as secondary
+        console.log(`[Accept] Found existing auth user ${existingAuthUser.id} for ${invitation.email}, linking as secondary`)
+        secondaryUserId = existingAuthUser.id
+
+        // Check if they have a user_profile, create one if not
+        const { data: existingProfile } = await serviceSupabase
+          .from('user_profiles')
+          .select('id')
+          .eq('id', existingAuthUser.id)
+          .single()
+
+        if (!existingProfile) {
+          // Create user_profile for existing auth user (id is the user_id, references auth.users)
+          await serviceSupabase
+            .from('user_profiles')
+            .insert({
+              id: existingAuthUser.id,
+              full_name: invitation.name || existingAuthUser.user_metadata?.full_name,
+              user_type: 'secondary',
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
+            })
+        }
+      } else {
+        // No auth user exists - CREATE a new secondary user account
+        console.log(`[Accept] Creating secondary user account for ${invitation.email}`)
+
+        // Generate a temporary password
+        const tempPassword = `Welcome${Math.random().toString(36).slice(-8)}!`
+
+        // Create auth user
+        const { data: authUser, error: createUserError } = await serviceSupabase.auth.admin.createUser({
+          email: invitation.email,
+          password: tempPassword,
+          email_confirm: true, // Auto-confirm email since they clicked the invite link
+          user_metadata: {
+            full_name: invitation.name,
+            user_type: 'secondary',
+            invited_by: invitation.account_id
+          }
+        })
+
+        if (createUserError || !authUser.user) {
+          console.error('[Accept] Error creating user:', createUserError)
+          return NextResponse.json(
+            { error: 'Failed to create your account. Please try again.' },
+            { status: 500 }
+          )
+        }
+
+        secondaryUserId = authUser.user.id
+        newAccountCreated = true // We actually created a new auth user
+
+        // Create user_profile for the secondary (only id is required, it references auth.users)
+        const { error: profileError } = await serviceSupabase
+          .from('user_profiles')
+          .insert({
+            id: secondaryUserId,
+            full_name: invitation.name,
+            user_type: 'secondary',
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          })
+
+        if (profileError) {
+          console.error('[Accept] Error creating profile:', profileError)
+          // Don't fail - auth user was created, profile can be fixed later
+        }
+
+        // Generate password reset link using generateLink (doesn't send email)
+        // Then send via our Resend email service with proper PhotoVault branding
+        const { data: linkData, error: linkError } = await serviceSupabase.auth.admin.generateLink({
+          type: 'recovery',
+          email: invitation.email,
+          options: {
+            redirectTo: `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3002'}/reset-password`
+          }
+        })
+
+        if (linkError || !linkData?.properties?.action_link) {
+          console.error('[Accept] Could not generate password reset link:', linkError)
+          // Don't fail - they can use "Forgot Password" later
+        } else {
+          // Get primary's name for the email
+          const { data: primaryProfileForEmail } = await serviceSupabase
+            .from('user_profiles')
+            .select('full_name')
+            .eq('id', invitation.account_id)
+            .single()
+
+          // Send welcome email via Resend with the password setup link
+          const emailResult = await EmailService.sendSecondaryWelcomeEmail({
+            secondaryName: invitation.name || 'there',
+            secondaryEmail: invitation.email,
+            primaryName: primaryProfileForEmail?.full_name || 'Your family member',
+            relationship: invitation.relationship || 'family member',
+            setPasswordLink: linkData.properties.action_link
+          })
+
+          if (emailResult.success) {
+            console.log(`[Accept] Welcome email with password link sent to ${invitation.email} via Resend`)
+          } else {
+            console.warn(`[Accept] Failed to send welcome email via Resend: ${emailResult.error}`)
+          }
+        }
+
+        console.log(`[Accept] Created secondary user ${secondaryUserId} for ${invitation.email}`)
+      }
     }
 
     // 4. Accept the invitation
@@ -128,28 +246,35 @@ export async function POST(request: NextRequest) {
       .eq('id', invitation.account_id)
       .single()
 
-    // 6. Get shared galleries count
+    // 6. Get shared galleries count (check user_id for client self-uploads)
     const { count: sharedGalleryCount } = await serviceSupabase
       .from('photo_galleries')
       .select('*', { count: 'exact', head: true })
-      .eq('photographer_id', invitation.account_id)
+      .eq('user_id', invitation.account_id)
       .eq('is_family_shared', true)
 
-    console.log(`[Accept] Secondary ${invitation.email} accepted invitation for account ${invitation.account_id}`)
+    // Use the tracked flag for whether we created a new account (vs linked existing)
+    const accountCreated = newAccountCreated
+
+    console.log(`[Accept] Secondary ${invitation.email} accepted invitation for account ${invitation.account_id}${accountCreated ? ' (new account created)' : ' (existing account linked)'}`)
 
     return NextResponse.json({
       success: true,
-      message: 'Invitation accepted successfully',
+      message: accountCreated
+        ? 'Account created! Check your email to set your password.'
+        : 'Invitation accepted successfully',
+      accountCreated,
       invitation: {
         id: invitation.id,
+        email: invitation.email,
         primaryName: primaryProfile?.full_name || 'PhotoVault User',
         relationship: invitation.relationship,
         sharedGalleryCount: sharedGalleryCount || 0
       },
       isLinked: !!secondaryUserId,
-      redirectUrl: secondaryUserId 
-        ? '/family/galleries' 
-        : `/family/galleries?token=${token}` // Magic link access
+      redirectUrl: accountCreated
+        ? '/login' // New users need to log in after setting password
+        : '/family/galleries'
     })
 
   } catch (error) {

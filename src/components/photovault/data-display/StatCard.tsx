@@ -51,7 +51,7 @@ export default function StatCard({
       <CardContent className="p-6">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-sm font-medium text-slate-600 dark:text-slate-400">
+            <p className="text-sm font-medium text-muted-foreground dark:text-muted-foreground">
               {label}
             </p>
             <p className={`text-2xl font-bold ${colors.text}`}>
@@ -63,7 +63,7 @@ export default function StatCard({
           </div>
         </div>
         {subtitle && (
-          <p className="text-xs text-slate-500 mt-2">
+          <p className="text-xs text-muted-foreground mt-2">
             {subtitle}
           </p>
         )}

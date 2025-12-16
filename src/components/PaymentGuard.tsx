@@ -76,10 +76,10 @@ export default function PaymentGuard({
   if (userType === 'photographer') {
     if (checkingSubscription) {
       return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+        <div className="min-h-screen bg-background flex items-center justify-center">
           <div className="text-center">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-slate-600 dark:text-slate-300">Checking subscription...</p>
+            <p className="text-muted-foreground dark:text-foreground">Checking subscription...</p>
           </div>
         </div>
       )
@@ -88,7 +88,7 @@ export default function PaymentGuard({
     // Block access if subscription is cancelled or unpaid
     if (photographerSubscriptionStatus === 'cancelled' || photographerSubscriptionStatus === 'unpaid') {
       return (
-        <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center p-4">
+        <div className="min-h-screen bg-background flex items-center justify-center p-4">
           <Card className="w-full max-w-md">
             <CardHeader className="text-center">
               <div className="mx-auto mb-4 w-12 h-12 bg-red-100 dark:bg-red-900/20 rounded-full flex items-center justify-center">
@@ -148,10 +148,10 @@ export default function PaymentGuard({
   // Show loading while checking payment status
   if (loading) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-slate-600 dark:text-slate-300">Checking payment status...</p>
+          <p className="text-muted-foreground dark:text-foreground">Checking payment status...</p>
         </div>
       </div>
     )
@@ -160,7 +160,7 @@ export default function PaymentGuard({
   // If payment is required but not active, show payment page
   if (requireActivePayment && !isPaymentActive) {
     return (
-      <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
             <div className="mx-auto mb-4 w-12 h-12 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center">

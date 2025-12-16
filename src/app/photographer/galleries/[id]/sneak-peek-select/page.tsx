@@ -209,7 +209,7 @@ export default function SneakPeekSelectPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-amber-400" />
       </div>
     )
@@ -217,17 +217,17 @@ export default function SneakPeekSelectPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
-        <Card className="bg-slate-800/50 border-slate-700 max-w-md">
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Card className="bg-slate-800/50 border-border max-w-md">
           <CardContent className="pt-6 text-center">
             <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <Check className="h-8 w-8 text-green-400" />
             </div>
-            <h2 className="text-xl font-bold text-white mb-2">Gallery Ready!</h2>
-            <p className="text-slate-400 mb-4">
+            <h2 className="text-xl font-bold text-foreground mb-2">Gallery Ready!</h2>
+            <p className="text-muted-foreground mb-4">
               {gallery?.clients?.name || 'Your client'} has been notified that their gallery is ready.
             </p>
-            <p className="text-slate-500 text-sm">Redirecting to galleries...</p>
+            <p className="text-muted-foreground text-sm">Redirecting to galleries...</p>
           </CardContent>
         </Card>
       </div>
@@ -235,18 +235,18 @@ export default function SneakPeekSelectPage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center gap-4 mb-8">
           <Link href={`/photographer/galleries/${galleryId}/upload`}>
-            <Button variant="ghost" size="icon" className="text-slate-400 hover:text-white">
+            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
               <ArrowLeft className="h-5 w-5" />
             </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-white">Select Sneak Peek Photos</h1>
-            <p className="text-slate-400">
+            <h1 className="text-2xl font-bold text-foreground">Select Sneak Peek Photos</h1>
+            <p className="text-muted-foreground">
               Choose up to 5 photos to include in the notification email (optional)
             </p>
           </div>
@@ -260,15 +260,15 @@ export default function SneakPeekSelectPage() {
         )}
 
         {/* Gallery Info */}
-        <Card className="bg-slate-800/50 border-slate-700 mb-6">
+        <Card className="bg-slate-800/50 border-border mb-6">
           <CardHeader className="pb-3">
-            <CardTitle className="text-white text-lg">{gallery?.gallery_name}</CardTitle>
-            <CardDescription className="text-slate-400">
+            <CardTitle className="text-foreground text-lg">{gallery?.gallery_name}</CardTitle>
+            <CardDescription className="text-muted-foreground">
               For: {gallery?.clients?.name || 'Unknown client'} ({gallery?.clients?.email})
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex items-center gap-4 text-sm text-slate-400">
+            <div className="flex items-center gap-4 text-sm text-muted-foreground">
               <div className="flex items-center gap-1">
                 <ImageIcon className="h-4 w-4" />
                 <span>{photos.length} photos</span>
@@ -283,10 +283,10 @@ export default function SneakPeekSelectPage() {
 
         {/* Photo Grid */}
         {photos.length === 0 ? (
-          <Card className="bg-slate-800/50 border-slate-700">
+          <Card className="bg-slate-800/50 border-border">
             <CardContent className="py-12 text-center">
-              <ImageIcon className="h-12 w-12 text-slate-600 mx-auto mb-4" />
-              <p className="text-slate-400">No photos in this gallery</p>
+              <ImageIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+              <p className="text-muted-foreground">No photos in this gallery</p>
             </CardContent>
           </Card>
         ) : (
@@ -330,7 +330,7 @@ export default function SneakPeekSelectPage() {
             variant="outline"
             onClick={handleSkipSneakPeek}
             disabled={sending}
-            className="border-slate-600 text-slate-300 hover:text-white hover:bg-slate-700"
+            className="border-slate-600 text-foreground hover:text-foreground hover:bg-slate-700"
           >
             Skip Sneak Peek
           </Button>

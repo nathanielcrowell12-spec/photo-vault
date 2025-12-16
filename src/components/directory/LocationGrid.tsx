@@ -17,9 +17,9 @@ export function LocationGrid({ locations, loading, emptyMessage = 'No locations 
   if (!locations || locations.length === 0) {
     return (
       <div className="text-center py-16">
-        <MapPin className="w-12 h-12 text-slate-600 mx-auto mb-4" />
-        <p className="text-slate-400 text-lg">{emptyMessage}</p>
-        <p className="text-slate-500 text-sm mt-2">Try adjusting your filters or search</p>
+        <MapPin className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+        <p className="text-muted-foreground text-lg">{emptyMessage}</p>
+        <p className="text-muted-foreground text-sm mt-2">Try adjusting your filters or search</p>
       </div>
     )
   }

@@ -44,6 +44,12 @@ export default function ClientsPage() {
   const [searchInput, setSearchInput] = useState('')
   const [dataLoading, setDataLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [stats, setStats] = useState<{
+    totalClients: number
+    activeCount: number
+    totalSubscriptions: number
+    totalSpentCents: number
+  } | null>(null)
 
   // Auth guard
   useEffect(() => {
@@ -70,6 +76,9 @@ export default function ClientsPage() {
 
       setClients(payload.data?.clients || [])
       setTotal(payload.data?.total || 0)
+      if (payload.data?.stats) {
+        setStats(payload.data.stats)
+      }
     } catch (err) {
       console.error('[admin/clients] Failed to fetch data', err)
       setError(err instanceof Error ? err.message : 'Unknown error')
@@ -131,10 +140,10 @@ export default function ClientsPage() {
 
   const totalPages = Math.ceil(total / pageSize)
 
-  // Stats calculations
-  const activeCount = clients.filter(c => c.paymentStatus === 'active').length
-  const totalSpent = clients.reduce((sum, c) => sum + c.totalSpentCents, 0)
-  const totalSubscriptions = clients.reduce((sum, c) => sum + c.activeSubscriptions, 0)
+  // Platform-wide stats from API (not calculated from current page)
+  const activeCount = stats?.activeCount ?? 0
+  const totalSpent = stats?.totalSpentCents ?? 0
+  const totalSubscriptions = stats?.totalSubscriptions ?? 0
 
   if (loading) {
     return (
@@ -150,7 +159,7 @@ export default function ClientsPage() {
 
   return (
     <AccessGuard requiredAccess="canAccessAdminDashboard">
-      <div className="min-h-screen bg-neutral-900">
+      <div className="min-h-screen bg-background">
         {/* Header */}
         <header className="border-b bg-white/95 backdrop-blur-sm">
           <div className="container mx-auto px-4 py-6 flex items-center justify-between">

@@ -72,6 +72,7 @@ export default function MessagingPanel({ onClose, initialConversationId }: Messa
   const [reportReason, setReportReason] = useState('')
   const [photographers, setPhotographers] = useState<Photographer[]>([])
   const [userType, setUserType] = useState<string>('')
+  const [showPhotographerList, setShowPhotographerList] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const scrollToBottom = () => {
@@ -199,14 +200,20 @@ export default function MessagingPanel({ onClose, initialConversationId }: Messa
 
       const data = await response.json()
 
-      // Refresh conversations
+      // Refresh conversations list
       await fetchConversations()
 
-      // Find and select the new conversation
-      const newConv = conversations.find(c => c.id === data.conversation_id)
-      if (newConv) {
-        setSelectedConversation(newConv)
-      }
+      // Find and select the new/existing conversation after a brief delay
+      // to ensure state has updated from fetchConversations
+      setTimeout(() => {
+        setConversations(prev => {
+          const conv = prev.find(c => c.id === data.conversation_id)
+          if (conv) {
+            setSelectedConversation(conv)
+          }
+          return prev
+        })
+      }, 100)
     } catch (error) {
       console.error('Error starting conversation:', error)
       alert('Failed to start conversation with photographer')
@@ -364,14 +371,14 @@ export default function MessagingPanel({ onClose, initialConversationId }: Messa
 
   if (loading) {
     return (
-      <Card className="w-full h-[600px] flex items-center justify-center">
+      <Card className="w-full h-[85vh] max-h-[800px] min-h-[500px] flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
       </Card>
     )
   }
 
   return (
-    <Card className="w-full h-[600px] flex flex-col">
+    <Card className="w-full h-[85vh] max-h-[800px] min-h-[500px] flex flex-col overflow-hidden">
       <CardHeader className="border-b">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
@@ -389,15 +396,45 @@ export default function MessagingPanel({ onClose, initialConversationId }: Messa
       <CardContent className="flex-1 p-0 flex overflow-hidden">
         {/* Conversation List */}
         <div className={`w-full md:w-80 border-r overflow-y-auto ${selectedConversation ? 'hidden md:block' : ''}`}>
+          {/* Start New Chat Button - only show for clients with conversations */}
+          {userType === 'client' && photographers.length > 0 && conversations.length > 0 && !showPhotographerList && (
+            <div className="p-4 border-b bg-muted/50">
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full"
+                onClick={() => setShowPhotographerList(true)}
+              >
+                <User className="h-4 w-4 mr-2" />
+                Start New Chat
+              </Button>
+            </div>
+          )}
+
           {/* Show photographers for clients to message */}
-          {userType === 'client' && photographers.length > 0 && conversations.length === 0 && (
+          {userType === 'client' && photographers.length > 0 && (conversations.length === 0 || showPhotographerList) && (
             <div className="p-4 border-b bg-blue-50">
-              <h3 className="text-sm font-semibold mb-2 text-blue-900">Your Photographers</h3>
+              <div className="flex items-center justify-between mb-2">
+                <h3 className="text-sm font-semibold text-blue-900">
+                  {conversations.length === 0 ? 'Your Photographers' : 'Start New Chat'}
+                </h3>
+                {conversations.length > 0 && (
+                  <button
+                    onClick={() => setShowPhotographerList(false)}
+                    className="text-blue-600 hover:text-blue-800 text-xs"
+                  >
+                    Cancel
+                  </button>
+                )}
+              </div>
               <div className="space-y-2">
                 {photographers.map((photographer) => (
                   <button
                     key={photographer.id}
-                    onClick={() => startConversationWithPhotographer(photographer.id)}
+                    onClick={() => {
+                      startConversationWithPhotographer(photographer.id)
+                      setShowPhotographerList(false)
+                    }}
                     className="w-full p-3 bg-white rounded-lg hover:bg-blue-100 transition-colors text-left"
                   >
                     <div className="flex items-center gap-3">
@@ -505,7 +542,7 @@ export default function MessagingPanel({ onClose, initialConversationId }: Messa
                         <div
                           className={`rounded-lg p-3 ${
                             isSender
-                              ? 'bg-blue-600 text-white'
+                              ? 'bg-blue-600 text-foreground'
                               : 'bg-gray-100 text-gray-900'
                           }`}
                         >

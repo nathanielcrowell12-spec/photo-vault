@@ -225,7 +225,7 @@ export default function ManualPhotoUpload({ galleryId, onUploadComplete }: Manua
                     {/* Status Overlay */}
                     {file.status === 'uploading' && (
                       <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                        <Loader2 className="h-6 w-6 text-white animate-spin" />
+                        <Loader2 className="h-6 w-6 text-foreground animate-spin" />
                       </div>
                     )}
                     {file.status === 'success' && (
@@ -243,7 +243,7 @@ export default function ManualPhotoUpload({ galleryId, onUploadComplete }: Manua
                     {!isUploading && file.status === 'pending' && (
                       <button
                         onClick={() => removeFile(file.id)}
-                        className="absolute top-1 right-1 p-1 bg-black/70 rounded-full text-white opacity-0 group-hover:opacity-100 transition-opacity"
+                        className="absolute top-1 right-1 p-1 bg-black/70 rounded-full text-foreground opacity-0 group-hover:opacity-100 transition-opacity"
                       >
                         <X className="h-3 w-3" />
                       </button>

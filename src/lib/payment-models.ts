@@ -236,7 +236,7 @@ export interface AllInOnePricing {
   total_amount: number           // What client pays (shoot_fee + storage_fee)
   photographer_receives: number  // shoot_fee + storage_commission (calculated)
   photovault_receives: number    // storage_fee - storage_commission (calculated)
-  stripe_fees_estimate: number   // ~2.9% + $0.30 (paid by photographer)
+  stripe_fees_estimate: number   // ~2.9% + $0.30 (absorbed by PhotoVault via destination charges)
 }
 
 /**
@@ -265,7 +265,8 @@ export function calculateAllInOnePricing(
   // PhotoVault receives: storage fee - commission
   const photovaultReceives = storageFee - storageCommission
 
-  // Stripe fees: ~2.9% + $0.30 (paid from photographer's portion)
+  // Stripe fees: ~2.9% + $0.30 (absorbed by PhotoVault via destination charges)
+  // PhotoVault's actual revenue = photovaultReceives - stripeFees
   const stripeFees = (totalAmount * 0.029) + 0.30
 
   return {

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import WelcomeStep from './steps/WelcomeStep'
 import ProfileStep from './steps/ProfileStep'
@@ -10,6 +10,10 @@ import SuccessStep from './steps/SuccessStep'
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { ChevronLeft } from 'lucide-react'
+import { useTrackEvent } from '@/hooks/useAnalytics'
+import { EVENTS } from '@/types/analytics'
+import { useAuth } from '@/contexts/AuthContext'
+import { calculateTimeFromSignup } from '@/lib/analytics/client-helpers'
 
 export interface OnboardingData {
   // Profile data
@@ -34,6 +38,9 @@ export interface OnboardingData {
 
 export default function OnboardingPage() {
   const router = useRouter()
+  const { user } = useAuth()
+  const track = useTrackEvent()
+  const hasTrackedStartRef = useRef(false)
   const [currentStep, setCurrentStep] = useState(0)
   const [onboardingData, setOnboardingData] = useState<OnboardingData>({
     businessName: '',
@@ -57,6 +64,19 @@ export default function OnboardingPage() {
     { id: 4, title: 'Success', component: SuccessStep }
   ]
 
+  // Track onboarding started (once per page load)
+  useEffect(() => {
+    if (!user || hasTrackedStartRef.current) return
+
+    const timeFromSignup = calculateTimeFromSignup(user.created_at)
+
+    track(EVENTS.PHOTOGRAPHER_STARTED_ONBOARDING, {
+      time_from_signup_seconds: timeFromSignup ?? 0,
+    })
+
+    hasTrackedStartRef.current = true
+  }, [user, track])
+
   const handleNext = (stepData: Partial<OnboardingData>) => {
     const updatedData = {
       ...onboardingData,
@@ -77,6 +97,13 @@ export default function OnboardingPage() {
   }
 
   const handleComplete = () => {
+    // Track onboarding completion
+    const timeFromSignup = calculateTimeFromSignup(user?.created_at)
+    track(EVENTS.PHOTOGRAPHER_COMPLETED_ONBOARDING, {
+      time_from_signup_seconds: timeFromSignup ?? 0,
+      steps_completed: onboardingData.completedSteps.length,
+    })
+
     // In production, this would save to database
     console.log('Onboarding completed:', onboardingData)
     router.push('/photographers/dashboard')
@@ -85,7 +112,7 @@ export default function OnboardingPage() {
   const CurrentStepComponent = steps[currentStep].component
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         {/* Progress Bar */}
         <div className="max-w-3xl mx-auto mb-8">
@@ -98,10 +125,10 @@ export default function OnboardingPage() {
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-colors ${
                     index < currentStep
-                      ? 'bg-green-500 text-white'
+                      ? 'bg-green-500 text-foreground'
                       : index === currentStep
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-slate-200 text-slate-500 dark:bg-slate-700 dark:text-slate-400'
+                      ? 'bg-blue-600 text-foreground'
+                      : 'bg-slate-200 text-muted-foreground dark:bg-slate-700 dark:text-muted-foreground'
                   }`}
                 >
                   {index < currentStep ? '✓' : index + 1}
@@ -110,7 +137,7 @@ export default function OnboardingPage() {
                   className={`text-xs mt-2 ${
                     index === currentStep
                       ? 'text-blue-600 dark:text-blue-400 font-semibold'
-                      : 'text-slate-500 dark:text-slate-400'
+                      : 'text-muted-foreground dark:text-muted-foreground'
                   }`}
                 >
                   {step.title}
@@ -149,7 +176,7 @@ export default function OnboardingPage() {
 
         {/* Help Text */}
         {currentStep < steps.length - 1 && (
-          <p className="text-center text-sm text-slate-500 dark:text-slate-400 mt-6">
+          <p className="text-center text-sm text-muted-foreground dark:text-muted-foreground mt-6">
             Step {currentStep + 1} of {steps.length}
           </p>
         )}

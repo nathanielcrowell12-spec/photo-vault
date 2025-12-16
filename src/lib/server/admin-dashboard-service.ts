@@ -68,17 +68,22 @@ async function fetchMonthlyRevenue() {
     const startISO = startOfMonth.toISOString()
     const endISO = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 0, 23, 59, 59, 999)).toISOString()
 
+    // Query commissions table for PhotoVault's revenue this month
+    // photovault_commission_cents = what PhotoVault keeps (NOT photographer earnings)
     const { data, error } = await supabase
-      .from('client_payments')
-      .select('amount_paid')
-      .gte('payment_date', startISO)
-      .lte('payment_date', endISO)
-      .eq('status', 'active')
+      .from('commissions')
+      .select('photovault_commission_cents')
+      .gte('paid_at', startISO)
+      .lte('paid_at', endISO)
+      .eq('status', 'paid')
 
     if (error) throw error
 
-    const total = data?.reduce((sum, row) => sum + (row.amount_paid ?? 0), 0) ?? 0
-    return { value: total } satisfies FetchResult<number>
+    // Sum PhotoVault's commission and convert cents to dollars
+    const totalCents = data?.reduce((sum, row) => sum + (row.photovault_commission_cents ?? 0), 0) ?? 0
+    const totalDollars = totalCents / 100
+
+    return { value: totalDollars } satisfies FetchResult<number>
   } catch (error) {
     console.warn('[admin-dashboard-service] Monthly revenue unavailable', error)
     return { value: null, error: error instanceof Error ? error : new Error('Unknown error') } satisfies FetchResult<NullableNumber>

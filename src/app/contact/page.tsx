@@ -41,9 +41,9 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b border-white/10 bg-neutral-800/50">
+      <header className="border-b border-border bg-card/50">
         <div className="container mx-auto px-4 py-4">
           <Button asChild variant="ghost" size="sm">
             <Link href="/">
@@ -64,7 +64,7 @@ export default function ContactPage() {
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
               Get in Touch
             </h1>
-            <p className="text-xl text-slate-600 dark:text-slate-300">
+            <p className="text-xl text-muted-foreground dark:text-foreground">
               We&apos;re here to help! Reach out with any questions or concerns
             </p>
           </div>
@@ -205,7 +205,7 @@ export default function ContactPage() {
                       <a href="mailto:support@photovault.com" className="text-blue-600 hover:underline">
                         support@photovault.com
                       </a>
-                      <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                      <p className="text-sm text-muted-foreground dark:text-muted-foreground mt-1">
                         We respond within 24 hours
                       </p>
                     </div>
@@ -218,7 +218,7 @@ export default function ContactPage() {
                       <a href="tel:+15551234567" className="text-blue-600 hover:underline">
                         (555) 123-4567
                       </a>
-                      <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
+                      <p className="text-sm text-muted-foreground dark:text-muted-foreground mt-1">
                         Mon-Fri: 9am - 6pm EST
                       </p>
                     </div>
@@ -228,7 +228,7 @@ export default function ContactPage() {
                     <MapPin className="h-6 w-6 text-red-600 mt-1" />
                     <div>
                       <h3 className="font-semibold mb-1">Address</h3>
-                      <p className="text-slate-600 dark:text-slate-400">
+                      <p className="text-muted-foreground dark:text-muted-foreground">
                         123 Photo Lane<br />
                         Suite 100<br />
                         San Francisco, CA 94102
@@ -265,7 +265,7 @@ export default function ContactPage() {
               <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800">
                 <CardContent className="pt-6">
                   <h3 className="font-semibold mb-2">Business Hours</h3>
-                  <div className="space-y-1 text-sm text-slate-600 dark:text-slate-400">
+                  <div className="space-y-1 text-sm text-muted-foreground dark:text-muted-foreground">
                     <p>Monday - Friday: 9:00 AM - 6:00 PM EST</p>
                     <p>Saturday: 10:00 AM - 4:00 PM EST</p>
                     <p>Sunday: Closed</p>

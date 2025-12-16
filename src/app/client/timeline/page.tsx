@@ -9,42 +9,34 @@ import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { 
-  ArrowLeft, 
+import {
+  ArrowLeft,
   Calendar,
   Camera,
-  Users,
-  Heart,
-  Download,
-  Share2,
-  Filter,
-  Search,
-  Star,
   MapPin,
-  Clock,
-  ChevronLeft,
-  ChevronRight,
-  Grid,
-  List,
-  Play,
-  Pause
+  Loader2,
+  Image,
+  ExternalLink
 } from 'lucide-react'
 import Link from 'next/link'
 
-interface Photo {
+interface TimelineGallery {
   id: string
-  url: string
-  thumbnail: string
+  name: string
+  created_at: string
+  photo_count: number
+  cover_image_url: string | null
   photographer_name: string
-  photographer_business: string
-  session_name: string
-  session_date: string
-  session_type: 'wedding' | 'family' | 'portrait' | 'event' | 'other'
-  location?: string
-  tags: string[]
-  is_favorite: boolean
-  download_count: number
-  share_count: number
+  photographer_business: string | null
+  location: string | null
+  event_type: string | null
+}
+
+interface TimelineMonth {
+  month: number
+  month_name: string
+  galleries: TimelineGallery[]
+  total_photos: number
 }
 
 interface TimelineYear {
@@ -54,46 +46,24 @@ interface TimelineYear {
   sessions: number
 }
 
-interface TimelineMonth {
-  month: number
-  month_name: string
-  sessions: PhotoSession[]
-  total_photos: number
-}
-
-interface PhotoSession {
-  id: string
-  name: string
-  date: string
-  photographer_name: string
-  photographer_business: string
-  session_type: string
-  location?: string
-  photos: Photo[]
-  photo_count: number
-}
-
 export default function PhotoTimelinePage() {
-  const { user, userType } = useAuth()
+  const { user, userType, loading: authLoading } = useAuth()
   const router = useRouter()
+
   const [timelineData, setTimelineData] = useState<TimelineYear[]>([])
   const [filteredData, setFilteredData] = useState<TimelineYear[]>([])
-  const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear())
-  const [viewMode, setViewMode] = useState<'timeline' | 'grid'>('timeline')
+  const [loading, setLoading] = useState(true)
   const [filters, setFilters] = useState({
     search: '',
     photographer: 'all',
-    session_type: 'all',
-    favorites_only: false
+    event_type: 'all'
   })
-  const [selectedPhotos, setSelectedPhotos] = useState<string[]>([])
-  const [isPlaying, setIsPlaying] = useState(false)
 
   useEffect(() => {
-    if (userType !== 'client' && userType !== null) {
+    if (!authLoading && userType !== 'client' && userType !== null) {
       router.push('/dashboard')
     }
-  }, [userType, router])
+  }, [userType, authLoading, router])
 
   useEffect(() => {
     if (userType === 'client') {
@@ -102,163 +72,23 @@ export default function PhotoTimelinePage() {
   }, [userType])
 
   useEffect(() => {
-    if (userType === 'client') {
-      applyFilters()
-    }
-  }, [timelineData, filters, userType])
-
-
-  if (userType !== 'client') {
-    return null
-  }
+    applyFilters()
+  }, [timelineData, filters])
 
   const fetchTimelineData = async () => {
-    // Simulate API call - in real implementation, this would fetch from database
-    setTimeout(() => {
-      const mockData: TimelineYear[] = [
-        {
-          year: 2024,
-          total_photos: 1250,
-          sessions: 8,
-          months: [
-            {
-              month: 10,
-              month_name: 'October',
-              total_photos: 450,
-              sessions: [
-                {
-                  id: '1',
-                  name: 'Smith Wedding',
-                  date: '2024-10-15',
-                  photographer_name: 'Emma Rodriguez',
-                  photographer_business: 'Emma Rodriguez Photography',
-                  session_type: 'wedding',
-                  location: 'Garden Venue, Portland',
-                  photo_count: 450,
-                  photos: generateMockPhotos(450, 'Emma Rodriguez', 'Emma Rodriguez Photography', 'Smith Wedding', 'wedding', 'Garden Venue, Portland')
-                }
-              ]
-            },
-            {
-              month: 9,
-              month_name: 'September',
-              total_photos: 200,
-              sessions: [
-                {
-                  id: '2',
-                  name: 'Family Portrait Session',
-                  date: '2024-09-20',
-                  photographer_name: 'Mike Chen',
-                  photographer_business: 'Chen Studios',
-                  session_type: 'family',
-                  location: 'Portland Park',
-                  photo_count: 200,
-                  photos: generateMockPhotos(200, 'Mike Chen', 'Chen Studios', 'Family Portrait Session', 'family', 'Portland Park')
-                }
-              ]
-            },
-            {
-              month: 8,
-              month_name: 'August',
-              total_photos: 300,
-              sessions: [
-                {
-                  id: '3',
-                  name: 'Engagement Photos',
-                  date: '2024-08-10',
-                  photographer_name: 'Sarah Thompson',
-                  photographer_business: 'Thompson Photography',
-                  session_type: 'portrait',
-                  location: 'Columbia River Gorge',
-                  photo_count: 300,
-                  photos: generateMockPhotos(300, 'Sarah Thompson', 'Thompson Photography', 'Engagement Photos', 'portrait', 'Columbia River Gorge')
-                }
-              ]
-            },
-            {
-              month: 7,
-              month_name: 'July',
-              total_photos: 300,
-              sessions: [
-                {
-                  id: '4',
-                  name: 'Corporate Event',
-                  date: '2024-07-25',
-                  photographer_name: 'David Kim',
-                  photographer_business: 'Kim Event Photography',
-                  session_type: 'event',
-                  location: 'Convention Center',
-                  photo_count: 300,
-                  photos: generateMockPhotos(300, 'David Kim', 'Kim Event Photography', 'Corporate Event', 'event', 'Convention Center')
-                }
-              ]
-            }
-          ]
-        },
-        {
-          year: 2023,
-          total_photos: 800,
-          sessions: 5,
-          months: [
-            {
-              month: 12,
-              month_name: 'December',
-              total_photos: 150,
-              sessions: [
-                {
-                  id: '5',
-                  name: 'Holiday Family Photos',
-                  date: '2023-12-15',
-                  photographer_name: 'Lisa Wang',
-                  photographer_business: 'Wang Photography',
-                  session_type: 'family',
-                  location: 'Home Studio',
-                  photo_count: 150,
-                  photos: generateMockPhotos(150, 'Lisa Wang', 'Wang Photography', 'Holiday Family Photos', 'family', 'Home Studio')
-                }
-              ]
-            },
-            {
-              month: 6,
-              month_name: 'June',
-              total_photos: 650,
-              sessions: [
-                {
-                  id: '6',
-                  name: 'Graduation Ceremony',
-                  date: '2023-06-15',
-                  photographer_name: 'Alex Martinez',
-                  photographer_business: 'Martinez Studios',
-                  session_type: 'event',
-                  location: 'University Campus',
-                  photo_count: 650,
-                  photos: generateMockPhotos(650, 'Alex Martinez', 'Martinez Studios', 'Graduation Ceremony', 'event', 'University Campus')
-                }
-              ]
-            }
-          ]
+    try {
+      const response = await fetch('/api/client/timeline')
+      if (response.ok) {
+        const data = await response.json()
+        if (data.success) {
+          setTimelineData(data.timeline || [])
         }
-      ]
-      setTimelineData(mockData)
-    }, 1000)
-  }
-
-  const generateMockPhotos = (count: number, photographer: string, business: string, session: string, type: string, location: string): Photo[] => {
-    return Array.from({ length: Math.min(count, 50) }, (_, i) => ({
-      id: `${type}_${i}`,
-      url: `/api/placeholder/800/600`,
-      thumbnail: `/api/placeholder/300/200`,
-      photographer_name: photographer,
-      photographer_business: business,
-      session_name: session,
-      session_date: new Date().toISOString(),
-      session_type: type as 'wedding' | 'family' | 'portrait' | 'event' | 'other',
-      location,
-      tags: ['professional', type],
-      is_favorite: Math.random() > 0.8,
-      download_count: Math.floor(Math.random() * 10),
-      share_count: Math.floor(Math.random() * 5)
-    }))
+      }
+    } catch (error) {
+      console.error('Failed to fetch timeline data:', error)
+    } finally {
+      setLoading(false)
+    }
   }
 
   const applyFilters = () => {
@@ -266,16 +96,18 @@ export default function PhotoTimelinePage() {
 
     // Filter by search term
     if (filters.search) {
+      const searchLower = filters.search.toLowerCase()
       filtered = filtered.map(year => ({
         ...year,
         months: year.months.map(month => ({
           ...month,
-          sessions: month.sessions.filter(session =>
-            session.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-            session.photographer_name.toLowerCase().includes(filters.search.toLowerCase()) ||
-            session.location?.toLowerCase().includes(filters.search.toLowerCase())
+          galleries: month.galleries.filter(gallery =>
+            gallery.name.toLowerCase().includes(searchLower) ||
+            gallery.photographer_name.toLowerCase().includes(searchLower) ||
+            gallery.location?.toLowerCase().includes(searchLower) ||
+            gallery.event_type?.toLowerCase().includes(searchLower)
           )
-        })).filter(month => month.sessions.length > 0)
+        })).filter(month => month.galleries.length > 0)
       })).filter(year => year.months.length > 0)
     }
 
@@ -285,33 +117,22 @@ export default function PhotoTimelinePage() {
         ...year,
         months: year.months.map(month => ({
           ...month,
-          sessions: month.sessions.filter(session => session.photographer_business === filters.photographer)
-        })).filter(month => month.sessions.length > 0)
+          galleries: month.galleries.filter(gallery =>
+            gallery.photographer_name === filters.photographer ||
+            gallery.photographer_business === filters.photographer
+          )
+        })).filter(month => month.galleries.length > 0)
       })).filter(year => year.months.length > 0)
     }
 
-    // Filter by session type
-    if (filters.session_type !== 'all') {
+    // Filter by event type
+    if (filters.event_type !== 'all') {
       filtered = filtered.map(year => ({
         ...year,
         months: year.months.map(month => ({
           ...month,
-          sessions: month.sessions.filter(session => session.session_type === filters.session_type)
-        })).filter(month => month.sessions.length > 0)
-      })).filter(year => year.months.length > 0)
-    }
-
-    // Filter by favorites
-    if (filters.favorites_only) {
-      filtered = filtered.map(year => ({
-        ...year,
-        months: year.months.map(month => ({
-          ...month,
-          sessions: month.sessions.map(session => ({
-            ...session,
-            photos: session.photos.filter(photo => photo.is_favorite)
-          })).filter(session => session.photos.length > 0)
-        })).filter(month => month.sessions.length > 0)
+          galleries: month.galleries.filter(gallery => gallery.event_type === filters.event_type)
+        })).filter(month => month.galleries.length > 0)
       })).filter(year => year.months.length > 0)
     }
 
@@ -320,71 +141,75 @@ export default function PhotoTimelinePage() {
 
   const getPhotographers = () => {
     const photographers = new Set<string>()
-    timelineData.forEach(year => 
+    timelineData.forEach(year =>
       year.months.forEach(month =>
-        month.sessions.forEach(session =>
-          photographers.add(session.photographer_business)
-        )
+        month.galleries.forEach(gallery => {
+          photographers.add(gallery.photographer_name)
+          if (gallery.photographer_business) {
+            photographers.add(gallery.photographer_business)
+          }
+        })
       )
     )
     return Array.from(photographers)
   }
 
-  const getSessionTypes = () => {
+  const getEventTypes = () => {
     const types = new Set<string>()
-    timelineData.forEach(year => 
+    timelineData.forEach(year =>
       year.months.forEach(month =>
-        month.sessions.forEach(session =>
-          types.add(session.session_type)
-        )
+        month.galleries.forEach(gallery => {
+          if (gallery.event_type) {
+            types.add(gallery.event_type)
+          }
+        })
       )
     )
     return Array.from(types)
   }
 
-  const toggleFavorite = (photoId: string) => {
-    // In real implementation, this would update the database
-    console.log('Toggle favorite:', photoId)
+  const getEventTypeIcon = (type: string | null) => {
+    if (!type) return null
+    const typeLower = type.toLowerCase()
+    if (typeLower.includes('wedding')) return '💒'
+    if (typeLower.includes('family')) return '👨‍👩‍👧‍👦'
+    if (typeLower.includes('portrait')) return '📸'
+    if (typeLower.includes('event') || typeLower.includes('party')) return '🎉'
+    if (typeLower.includes('graduation')) return '🎓'
+    if (typeLower.includes('baby') || typeLower.includes('newborn')) return '👶'
+    return '📷'
   }
 
-  const downloadPhoto = (photoId: string) => {
-    // In real implementation, this would trigger download
-    console.log('Download photo:', photoId)
+  const getEventTypeColor = (type: string | null) => {
+    if (!type) return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
+    const typeLower = type.toLowerCase()
+    if (typeLower.includes('wedding')) return 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200'
+    if (typeLower.includes('family')) return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+    if (typeLower.includes('portrait')) return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
+    if (typeLower.includes('event') || typeLower.includes('party')) return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+    return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
   }
 
-  const sharePhoto = (photoId: string) => {
-    // In real implementation, this would open share dialog
-    console.log('Share photo:', photoId)
+  const getTotalPhotos = () => {
+    return timelineData.reduce((sum, year) => sum + year.total_photos, 0)
   }
 
-  const getSessionTypeIcon = (type: string) => {
-    switch (type) {
-      case 'wedding': return '💒'
-      case 'family': return '👨‍👩‍👧‍👦'
-      case 'portrait': return '📸'
-      case 'event': return '🎉'
-      default: return '📷'
-    }
-  }
-
-  const getSessionTypeColor = (type: string) => {
-    switch (type) {
-      case 'wedding': return 'bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200'
-      case 'family': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
-      case 'portrait': return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
-      case 'event': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-      default: return 'bg-gray-100 text-gray-800 dark:bg-gray-900 dark:text-gray-200'
-    }
+  if (authLoading || (userType !== 'client' && userType !== null)) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-neutral-800/50 border-white/10">
+      <header className="border-b bg-card/50 border-border">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Button asChild variant="ghost" size="sm">
-              <Link href="/dashboard">
+              <Link href="/client/dashboard">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Dashboard
               </Link>
@@ -392,12 +217,12 @@ export default function PhotoTimelinePage() {
             <Separator orientation="vertical" className="h-6" />
             <div className="flex items-center space-x-2">
               <Calendar className="h-6 w-6 text-purple-600" />
-              <span className="text-xl font-bold text-neutral-100">Photo Timeline</span>
+              <span className="text-xl font-bold text-foreground">Photo Timeline</span>
             </div>
           </div>
           <div className="flex items-center space-x-2">
             <Badge variant="outline" className="bg-purple-50 text-purple-700 dark:bg-purple-900 dark:text-purple-200">
-              {timelineData.reduce((sum, year) => sum + year.total_photos, 0)} Photos
+              {getTotalPhotos().toLocaleString()} Photos
             </Badge>
           </div>
         </div>
@@ -406,207 +231,187 @@ export default function PhotoTimelinePage() {
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-7xl mx-auto">
           {/* Filters */}
-          <Card className="mb-8 bg-neutral-800/50 border-white/10">
+          <Card className="mb-8 bg-card/50 border-border">
             <CardContent className="p-6">
               <div className="flex flex-col lg:flex-row gap-4 items-center">
-                <div className="flex-1">
+                <div className="flex-1 w-full">
                   <Input
-                    placeholder="Search photos, sessions, photographers..."
+                    placeholder="Search galleries, photographers, locations..."
                     value={filters.search}
                     onChange={(e) => setFilters({...filters, search: e.target.value})}
                     className="w-full"
                   />
                 </div>
-                <Select value={filters.photographer} onValueChange={(value) => setFilters({...filters, photographer: value})}>
-                  <SelectTrigger className="w-full lg:w-48">
-                    <SelectValue placeholder="All Photographers" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Photographers</SelectItem>
-                    {getPhotographers().map(photographer => (
-                      <SelectItem key={photographer} value={photographer}>{photographer}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Select value={filters.session_type} onValueChange={(value) => setFilters({...filters, session_type: value})}>
-                  <SelectTrigger className="w-full lg:w-48">
-                    <SelectValue placeholder="All Types" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Types</SelectItem>
-                    {getSessionTypes().map(type => (
-                      <SelectItem key={type} value={type} className="capitalize">{type}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <Button
-                  variant={filters.favorites_only ? "default" : "outline"}
-                  onClick={() => setFilters({...filters, favorites_only: !filters.favorites_only})}
-                  className="flex items-center space-x-2"
-                >
-                  <Heart className="h-4 w-4" />
-                  <span>Favorites</span>
-                </Button>
-                <div className="flex space-x-2">
-                  <Button
-                    variant={viewMode === 'timeline' ? "default" : "outline"}
-                    onClick={() => setViewMode('timeline')}
-                    size="sm"
-                  >
-                    <List className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant={viewMode === 'grid' ? "default" : "outline"}
-                    onClick={() => setViewMode('grid')}
-                    size="sm"
-                  >
-                    <Grid className="h-4 w-4" />
-                  </Button>
-                </div>
+                {getPhotographers().length > 1 && (
+                  <Select value={filters.photographer} onValueChange={(value) => setFilters({...filters, photographer: value})}>
+                    <SelectTrigger className="w-full lg:w-48">
+                      <SelectValue placeholder="All Photographers" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Photographers</SelectItem>
+                      {getPhotographers().map(photographer => (
+                        <SelectItem key={photographer} value={photographer}>{photographer}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+                {getEventTypes().length > 0 && (
+                  <Select value={filters.event_type} onValueChange={(value) => setFilters({...filters, event_type: value})}>
+                    <SelectTrigger className="w-full lg:w-48">
+                      <SelectValue placeholder="All Event Types" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Event Types</SelectItem>
+                      {getEventTypes().map(type => (
+                        <SelectItem key={type} value={type} className="capitalize">{type}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
               </div>
             </CardContent>
           </Card>
 
+          {/* Loading State */}
+          {loading && (
+            <Card className="text-center py-12 bg-card/50 border-border">
+              <CardContent>
+                <Loader2 className="h-12 w-12 text-purple-600 mx-auto mb-4 animate-spin" />
+                <h3 className="text-lg font-semibold mb-2 text-foreground">Loading your timeline...</h3>
+                <p className="text-muted-foreground">Fetching your photo galleries</p>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Timeline */}
-          <div className="space-y-8">
-            {filteredData.map((year) => (
-              <Card key={year.year} className="overflow-hidden bg-neutral-800/50 border-white/10">
-                <CardHeader className="bg-neutral-700/30">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle className="text-2xl text-neutral-100">{year.year}</CardTitle>
-                      <CardDescription className="text-neutral-400">
-                        {year.sessions} sessions • {year.total_photos} photos
-                      </CardDescription>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <Button variant="outline" size="sm">
-                        <Download className="h-4 w-4 mr-2" />
-                        Download All
-                      </Button>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent className="p-0">
-                  {year.months.map((month) => (
-                    <div key={month.month} className="border-b last:border-b-0 border-white/10">
-                      <div className="p-6 bg-neutral-800/30">
-                        <h3 className="text-lg font-semibold mb-2 text-neutral-100">
-                          {month.month_name} {year.year}
-                        </h3>
-                        <p className="text-sm text-neutral-400">
-                          {month.sessions.length} sessions • {month.total_photos} photos
-                        </p>
+          {!loading && filteredData.length > 0 && (
+            <div className="space-y-8">
+              {filteredData.map((year) => (
+                <Card key={year.year} className="overflow-hidden bg-card/50 border-border">
+                  <CardHeader className="bg-secondary/30">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle className="text-2xl text-foreground">{year.year}</CardTitle>
+                        <CardDescription className="text-muted-foreground">
+                          {year.sessions} {year.sessions === 1 ? 'gallery' : 'galleries'} • {year.total_photos.toLocaleString()} photos
+                        </CardDescription>
                       </div>
-                      <div className="p-6 space-y-6">
-                        {month.sessions.map((session) => (
-                          <div key={session.id} className="border border-white/10 rounded-lg p-6">
-                            <div className="flex items-start justify-between mb-4">
-                              <div>
-                                <h4 className="text-xl font-semibold mb-2 text-neutral-100">{session.name}</h4>
-                                <div className="flex items-center space-x-4 text-sm text-neutral-400">
-                                  <div className="flex items-center space-x-1">
-                                    <Calendar className="h-4 w-4" />
-                                    <span>{new Date(session.date).toLocaleDateString()}</span>
-                                  </div>
-                                  <div className="flex items-center space-x-1">
-                                    <Camera className="h-4 w-4" />
-                                    <span>{session.photographer_name}</span>
-                                  </div>
-                                  {session.location && (
-                                    <div className="flex items-center space-x-1">
-                                      <MapPin className="h-4 w-4" />
-                                      <span>{session.location}</span>
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                              <Badge className={`${getSessionTypeColor(session.session_type)} flex items-center space-x-1`}>
-                                <span>{getSessionTypeIcon(session.session_type)}</span>
-                                <span className="capitalize">{session.session_type}</span>
-                              </Badge>
-                            </div>
-                            
-                            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                              {session.photos.slice(0, 12).map((photo) => (
-                                <div key={photo.id} className="relative group">
-                                  <div className="aspect-square bg-slate-200 dark:bg-slate-700 rounded-lg overflow-hidden">
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-0">
+                    {year.months.map((month) => (
+                      <div key={month.month} className="border-b last:border-b-0 border-border">
+                        <div className="p-6 bg-card/30">
+                          <h3 className="text-lg font-semibold mb-2 text-foreground">
+                            {month.month_name} {year.year}
+                          </h3>
+                          <p className="text-sm text-muted-foreground">
+                            {month.galleries.length} {month.galleries.length === 1 ? 'gallery' : 'galleries'} • {month.total_photos.toLocaleString()} photos
+                          </p>
+                        </div>
+                        <div className="p-6 space-y-6">
+                          {month.galleries.map((gallery) => (
+                            <Link
+                              key={gallery.id}
+                              href={`/gallery/${gallery.id}`}
+                              className="block border border-border rounded-lg p-6 hover:bg-secondary/30 transition-colors"
+                            >
+                              <div className="flex items-start gap-6">
+                                {/* Cover Photo */}
+                                <div className="w-32 h-24 bg-secondary rounded-lg overflow-hidden flex-shrink-0">
+                                  {gallery.cover_image_url ? (
+                                    <img
+                                      src={gallery.cover_image_url}
+                                      alt={gallery.name}
+                                      className="w-full h-full object-cover"
+                                    />
+                                  ) : (
                                     <div className="w-full h-full flex items-center justify-center">
-                                      <Camera className="h-8 w-8 text-slate-400" />
-                                    </div>
-                                  </div>
-                                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-200 rounded-lg flex items-center justify-center opacity-0 group-hover:opacity-100">
-                                    <div className="flex space-x-2">
-                                      <Button
-                                        size="sm"
-                                        variant="secondary"
-                                        onClick={() => toggleFavorite(photo.id)}
-                                      >
-                                        <Heart className={`h-4 w-4 ${photo.is_favorite ? 'text-red-500 fill-current' : ''}`} />
-                                      </Button>
-                                      <Button
-                                        size="sm"
-                                        variant="secondary"
-                                        onClick={() => downloadPhoto(photo.id)}
-                                      >
-                                        <Download className="h-4 w-4" />
-                                      </Button>
-                                      <Button
-                                        size="sm"
-                                        variant="secondary"
-                                        onClick={() => sharePhoto(photo.id)}
-                                      >
-                                        <Share2 className="h-4 w-4" />
-                                      </Button>
-                                    </div>
-                                  </div>
-                                  {photo.is_favorite && (
-                                    <div className="absolute top-2 right-2">
-                                      <Heart className="h-4 w-4 text-red-500 fill-current" />
+                                      <Image className="w-8 h-8 text-muted-foreground" />
                                     </div>
                                   )}
                                 </div>
-                              ))}
-                              {session.photos.length > 12 && (
-                                <div className="aspect-square bg-slate-100 dark:bg-slate-800 rounded-lg flex items-center justify-center">
-                                  <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                                    +{session.photos.length - 12} more
-                                  </span>
+
+                                {/* Gallery Info */}
+                                <div className="flex-1">
+                                  <div className="flex items-start justify-between mb-2">
+                                    <div>
+                                      <h4 className="text-xl font-semibold text-foreground flex items-center gap-2">
+                                        {gallery.name}
+                                        <ExternalLink className="h-4 w-4 text-muted-foreground" />
+                                      </h4>
+                                      <div className="flex items-center flex-wrap gap-4 text-sm text-muted-foreground mt-1">
+                                        <div className="flex items-center space-x-1">
+                                          <Calendar className="h-4 w-4" />
+                                          <span>{new Date(gallery.created_at).toLocaleDateString()}</span>
+                                        </div>
+                                        <div className="flex items-center space-x-1">
+                                          <Camera className="h-4 w-4" />
+                                          <span>{gallery.photographer_name}</span>
+                                        </div>
+                                        {gallery.location && (
+                                          <div className="flex items-center space-x-1">
+                                            <MapPin className="h-4 w-4" />
+                                            <span>{gallery.location}</span>
+                                          </div>
+                                        )}
+                                      </div>
+                                    </div>
+                                    {gallery.event_type && (
+                                      <Badge className={`${getEventTypeColor(gallery.event_type)} flex items-center space-x-1`}>
+                                        <span>{getEventTypeIcon(gallery.event_type)}</span>
+                                        <span className="capitalize">{gallery.event_type}</span>
+                                      </Badge>
+                                    )}
+                                  </div>
+
+                                  <div className="flex items-center justify-between mt-4">
+                                    <span className="text-sm text-muted-foreground">
+                                      {gallery.photo_count.toLocaleString()} photos
+                                    </span>
+                                    <Button variant="outline" size="sm">
+                                      View Gallery
+                                    </Button>
+                                  </div>
                                 </div>
-                              )}
-                            </div>
-                            
-                            <div className="mt-4 flex items-center justify-between">
-                              <div className="flex items-center space-x-4 text-sm text-slate-600 dark:text-slate-400">
-                                <span>{session.photo_count} photos</span>
-                                <span>by {session.photographer_business}</span>
                               </div>
-                              <Button variant="outline" size="sm">
-                                View All Photos
-                              </Button>
-                            </div>
-                          </div>
-                        ))}
+                            </Link>
+                          ))}
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
 
           {/* Empty State */}
-          {filteredData.length === 0 && (
-            <Card className="text-center py-12 bg-neutral-800/50 border-white/10">
+          {!loading && filteredData.length === 0 && (
+            <Card className="text-center py-12 bg-card/50 border-border">
               <CardContent>
-                <Camera className="h-16 w-16 text-neutral-600 mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2 text-neutral-100">No photos found</h3>
-                <p className="text-neutral-400 mb-4">
-                  Try adjusting your filters or import photos from your photographers.
+                <Camera className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2 text-foreground">
+                  {timelineData.length === 0 ? 'No photos yet' : 'No matching galleries'}
+                </h3>
+                <p className="text-muted-foreground mb-4">
+                  {timelineData.length === 0
+                    ? 'Your photo galleries will appear here once they\'re created.'
+                    : 'Try adjusting your search or filters to find what you\'re looking for.'
+                  }
                 </p>
-                <Button asChild>
-                  <Link href="/client/upload">Upload Photos</Link>
-                </Button>
+                {filters.search || filters.photographer !== 'all' || filters.event_type !== 'all' ? (
+                  <Button
+                    variant="outline"
+                    onClick={() => setFilters({ search: '', photographer: 'all', event_type: 'all' })}
+                  >
+                    Clear Filters
+                  </Button>
+                ) : (
+                  <Button asChild>
+                    <Link href="/client/dashboard">Back to Dashboard</Link>
+                  </Button>
+                )}
               </CardContent>
             </Card>
           )}

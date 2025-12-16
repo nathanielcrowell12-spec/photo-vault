@@ -68,10 +68,10 @@ export default function PaymentStep({ data, onNext }: PaymentStepProps) {
             <DollarSign className="h-5 w-5 text-green-600 dark:text-green-300" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-foreground">
               Payment Information
             </h2>
-            <p className="text-slate-600 dark:text-slate-400">
+            <p className="text-muted-foreground dark:text-muted-foreground">
               Set up your bank account for payouts
             </p>
           </div>
@@ -82,7 +82,7 @@ export default function PaymentStep({ data, onNext }: PaymentStepProps) {
       <Card className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950 dark:to-emerald-950 border-green-200 dark:border-green-800 p-6">
         <div className="flex items-start space-x-4">
           <div className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0">
-            <DollarSign className="h-6 w-6 text-white" />
+            <DollarSign className="h-6 w-6 text-foreground" />
           </div>
           <div>
             <h3 className="font-semibold text-green-900 dark:text-green-100 mb-2">
@@ -150,7 +150,7 @@ export default function PaymentStep({ data, onNext }: PaymentStepProps) {
           {errors.accountNumber && (
             <p className="text-sm text-red-500">{errors.accountNumber}</p>
           )}
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-xs text-muted-foreground dark:text-muted-foreground">
             Your checking or savings account number
           </p>
         </div>
@@ -172,7 +172,7 @@ export default function PaymentStep({ data, onNext }: PaymentStepProps) {
           {errors.routingNumber && (
             <p className="text-sm text-red-500">{errors.routingNumber}</p>
           )}
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="text-xs text-muted-foreground dark:text-muted-foreground">
             9-digit number found on your checks
           </p>
         </div>
@@ -181,7 +181,7 @@ export default function PaymentStep({ data, onNext }: PaymentStepProps) {
         <Alert>
           <AlertCircle className="h-4 w-4" />
           <div className="ml-2">
-            <p className="text-sm text-slate-700 dark:text-slate-300">
+            <p className="text-sm text-slate-700 dark:text-foreground">
               You can update your payment information anytime from your account settings
             </p>
           </div>

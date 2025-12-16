@@ -116,7 +116,7 @@ export default function PhotographerFeedbackPage() {
         {[1, 2, 3, 4, 5].map((star) => (
           <Star
             key={star}
-            className={`${sizeClass} ${star <= rating ? 'text-yellow-400 fill-yellow-400' : 'text-neutral-600'}`}
+            className={`${sizeClass} ${star <= rating ? 'text-yellow-400 fill-yellow-400' : 'text-muted-foreground'}`}
           />
         ))}
       </div>
@@ -125,7 +125,7 @@ export default function PhotographerFeedbackPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-neutral-900">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500"></div>
       </div>
     )
@@ -133,20 +133,20 @@ export default function PhotographerFeedbackPage() {
 
   return (
     <AccessGuard requiredAccess="canAccessPhotographerDashboard">
-      <div className="min-h-screen bg-neutral-900 text-neutral-100">
+      <div className="min-h-screen bg-background text-foreground">
         <div className="max-w-6xl mx-auto p-6 lg:p-10 space-y-8">
           {/* Header */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Link
                 href="/photographer/dashboard"
-                className="p-2 rounded-lg bg-white/5 hover:bg-white/10 transition-colors"
+                className="p-2 rounded-lg bg-muted hover:bg-accent/50 transition-colors"
               >
                 <ArrowLeft size={20} />
               </Link>
               <div>
                 <h1 className="text-2xl lg:text-3xl font-bold">Client Feedback</h1>
-                <p className="text-neutral-400 mt-1">See what your clients are saying</p>
+                <p className="text-muted-foreground mt-1">See what your clients are saying</p>
               </div>
             </div>
           </div>
@@ -164,65 +164,65 @@ export default function PhotographerFeedbackPage() {
                     <span className="text-sm text-yellow-400 font-medium">Overall Rating</span>
                   </div>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-4xl font-bold text-white">
+                    <span className="text-4xl font-bold text-foreground">
                       {stats.averageRating.toFixed(1)}
                     </span>
-                    <span className="text-neutral-400">/ 5</span>
+                    <span className="text-muted-foreground">/ 5</span>
                   </div>
                   {renderStars(Math.round(stats.averageRating), 'md')}
                 </CardContent>
               </Card>
 
               {/* Communication */}
-              <Card className="bg-white/[0.03] border-white/5">
+              <Card className="bg-card border-border">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="p-2 rounded-lg bg-blue-500/20">
                       <MessageSquare className="w-5 h-5 text-blue-400" />
                     </div>
-                    <span className="text-sm text-neutral-400 font-medium">Communication</span>
+                    <span className="text-sm text-muted-foreground font-medium">Communication</span>
                   </div>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-3xl font-bold text-white">
+                    <span className="text-3xl font-bold text-foreground">
                       {stats.averageCommunication > 0 ? stats.averageCommunication.toFixed(1) : '-'}
                     </span>
-                    {stats.averageCommunication > 0 && <span className="text-neutral-400">/ 5</span>}
+                    {stats.averageCommunication > 0 && <span className="text-muted-foreground">/ 5</span>}
                   </div>
                 </CardContent>
               </Card>
 
               {/* Quality */}
-              <Card className="bg-white/[0.03] border-white/5">
+              <Card className="bg-card border-border">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="p-2 rounded-lg bg-purple-500/20">
                       <ThumbsUp className="w-5 h-5 text-purple-400" />
                     </div>
-                    <span className="text-sm text-neutral-400 font-medium">Photo Quality</span>
+                    <span className="text-sm text-muted-foreground font-medium">Photo Quality</span>
                   </div>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-3xl font-bold text-white">
+                    <span className="text-3xl font-bold text-foreground">
                       {stats.averageQuality > 0 ? stats.averageQuality.toFixed(1) : '-'}
                     </span>
-                    {stats.averageQuality > 0 && <span className="text-neutral-400">/ 5</span>}
+                    {stats.averageQuality > 0 && <span className="text-muted-foreground">/ 5</span>}
                   </div>
                 </CardContent>
               </Card>
 
               {/* Timeliness */}
-              <Card className="bg-white/[0.03] border-white/5">
+              <Card className="bg-card border-border">
                 <CardContent className="p-6">
                   <div className="flex items-center gap-3 mb-3">
                     <div className="p-2 rounded-lg bg-emerald-500/20">
                       <Zap className="w-5 h-5 text-emerald-400" />
                     </div>
-                    <span className="text-sm text-neutral-400 font-medium">Timeliness</span>
+                    <span className="text-sm text-muted-foreground font-medium">Timeliness</span>
                   </div>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-3xl font-bold text-white">
+                    <span className="text-3xl font-bold text-foreground">
                       {stats.averageTimeliness > 0 ? stats.averageTimeliness.toFixed(1) : '-'}
                     </span>
-                    {stats.averageTimeliness > 0 && <span className="text-neutral-400">/ 5</span>}
+                    {stats.averageTimeliness > 0 && <span className="text-muted-foreground">/ 5</span>}
                   </div>
                 </CardContent>
               </Card>
@@ -231,7 +231,7 @@ export default function PhotographerFeedbackPage() {
 
           {/* Rating Distribution */}
           {stats && stats.totalReviews > 0 && (
-            <Card className="bg-white/[0.03] border-white/5">
+            <Card className="bg-card border-border">
               <CardHeader>
                 <CardTitle className="text-lg font-medium flex items-center gap-2">
                   <TrendingUp className="w-5 h-5 text-amber-400" />
@@ -244,14 +244,14 @@ export default function PhotographerFeedbackPage() {
                   const percentage = stats.totalReviews > 0 ? (count / stats.totalReviews) * 100 : 0
                   return (
                     <div key={star} className="flex items-center gap-3">
-                      <span className="text-sm text-neutral-400 w-16">{star} stars</span>
-                      <div className="flex-1 h-2 bg-neutral-800 rounded-full overflow-hidden">
+                      <span className="text-sm text-muted-foreground w-16">{star} stars</span>
+                      <div className="flex-1 h-2 bg-card rounded-full overflow-hidden">
                         <div
                           className="h-full bg-yellow-400 rounded-full transition-all duration-500"
                           style={{ width: `${percentage}%` }}
                         />
                       </div>
-                      <span className="text-sm text-neutral-500 w-12 text-right">{count}</span>
+                      <span className="text-sm text-muted-foreground w-12 text-right">{count}</span>
                     </div>
                   )
                 })}
@@ -273,11 +273,11 @@ export default function PhotographerFeedbackPage() {
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-amber-500"></div>
               </div>
             ) : ratings.length === 0 ? (
-              <Card className="bg-white/[0.03] border-white/5">
+              <Card className="bg-card border-border">
                 <CardContent className="py-12 text-center">
-                  <Star className="w-12 h-12 text-neutral-600 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-neutral-300 mb-2">No reviews yet</h3>
-                  <p className="text-neutral-500 max-w-md mx-auto">
+                  <Star className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                  <h3 className="text-lg font-medium text-muted-foreground mb-2">No reviews yet</h3>
+                  <p className="text-muted-foreground max-w-md mx-auto">
                     When clients leave feedback after viewing their galleries, their reviews will appear here.
                   </p>
                 </CardContent>
@@ -285,18 +285,18 @@ export default function PhotographerFeedbackPage() {
             ) : (
               <div className="space-y-4">
                 {ratings.map((rating) => (
-                  <Card key={rating.id} className="bg-white/[0.03] border-white/5">
+                  <Card key={rating.id} className="bg-card border-border">
                     <CardContent className="p-6">
                       <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4">
                         <div className="flex-1">
                           {/* Header */}
                           <div className="flex items-center gap-3 mb-3">
-                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold">
+                            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-foreground font-bold">
                               {rating.clientEmail.charAt(0).toUpperCase()}
                             </div>
                             <div>
-                              <p className="font-medium text-white">{rating.clientEmail}</p>
-                              <p className="text-sm text-neutral-500">
+                              <p className="font-medium text-foreground">{rating.clientEmail}</p>
+                              <p className="text-sm text-muted-foreground">
                                 {rating.galleryTitle} • {new Date(rating.createdAt).toLocaleDateString()}
                               </p>
                             </div>
@@ -305,25 +305,25 @@ export default function PhotographerFeedbackPage() {
                           {/* Stars */}
                           <div className="flex items-center gap-2 mb-3">
                             {renderStars(rating.rating, 'md')}
-                            <span className="text-sm text-neutral-400">{rating.rating}.0</span>
+                            <span className="text-sm text-muted-foreground">{rating.rating}.0</span>
                           </div>
 
                           {/* Sub-ratings */}
                           {(rating.communicationRating || rating.qualityRating || rating.timelinessRating) && (
                             <div className="flex flex-wrap gap-4 mb-3 text-sm">
                               {rating.communicationRating && (
-                                <span className="text-neutral-400">
-                                  Communication: <span className="text-white">{rating.communicationRating}/5</span>
+                                <span className="text-muted-foreground">
+                                  Communication: <span className="text-foreground">{rating.communicationRating}/5</span>
                                 </span>
                               )}
                               {rating.qualityRating && (
-                                <span className="text-neutral-400">
-                                  Quality: <span className="text-white">{rating.qualityRating}/5</span>
+                                <span className="text-muted-foreground">
+                                  Quality: <span className="text-foreground">{rating.qualityRating}/5</span>
                                 </span>
                               )}
                               {rating.timelinessRating && (
-                                <span className="text-neutral-400">
-                                  Timeliness: <span className="text-white">{rating.timelinessRating}/5</span>
+                                <span className="text-muted-foreground">
+                                  Timeliness: <span className="text-foreground">{rating.timelinessRating}/5</span>
                                 </span>
                               )}
                             </div>
@@ -331,7 +331,7 @@ export default function PhotographerFeedbackPage() {
 
                           {/* Review text */}
                           {rating.reviewText && (
-                            <p className="text-neutral-300 mb-4">{rating.reviewText}</p>
+                            <p className="text-muted-foreground mb-4">{rating.reviewText}</p>
                           )}
 
                           {/* Photographer Response */}
@@ -340,11 +340,11 @@ export default function PhotographerFeedbackPage() {
                               <div className="flex items-center gap-2 mb-2">
                                 <MessageSquare className="w-4 h-4 text-amber-400" />
                                 <span className="text-sm font-medium text-amber-400">Your Response</span>
-                                <span className="text-xs text-neutral-500">
+                                <span className="text-xs text-muted-foreground">
                                   {rating.responseAt && new Date(rating.responseAt).toLocaleDateString()}
                                 </span>
                               </div>
-                              <p className="text-neutral-300 text-sm">{rating.photographerResponse}</p>
+                              <p className="text-muted-foreground text-sm">{rating.photographerResponse}</p>
                             </div>
                           ) : respondingTo === rating.id ? (
                             <div className="mt-4 space-y-3">
@@ -352,7 +352,7 @@ export default function PhotographerFeedbackPage() {
                                 value={responseText}
                                 onChange={(e) => setResponseText(e.target.value)}
                                 placeholder="Write a response to this review..."
-                                className="bg-neutral-800 border-neutral-700 text-white"
+                                className="bg-card border-border text-foreground"
                                 rows={3}
                               />
                               <div className="flex gap-2">
@@ -370,7 +370,7 @@ export default function PhotographerFeedbackPage() {
                                     setRespondingTo(null)
                                     setResponseText('')
                                   }}
-                                  className="border-neutral-600 text-neutral-300"
+                                  className="border-border text-muted-foreground"
                                 >
                                   Cancel
                                 </Button>
@@ -381,7 +381,7 @@ export default function PhotographerFeedbackPage() {
                               variant="outline"
                               size="sm"
                               onClick={() => setRespondingTo(rating.id)}
-                              className="mt-3 border-neutral-600 text-neutral-300 hover:bg-white/5"
+                              className="mt-3 border-border text-muted-foreground hover:bg-muted"
                             >
                               <MessageSquare className="w-4 h-4 mr-2" />
                               Respond

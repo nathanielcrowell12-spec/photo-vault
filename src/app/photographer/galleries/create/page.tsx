@@ -37,6 +37,9 @@ import {
   getPaymentOptionSummary,
   type PaymentOption
 } from '@/lib/payment-models'
+import { useTrackEvent } from '@/hooks/useAnalytics'
+import { EVENTS } from '@/types/analytics'
+import { calculateTimeFromSignup } from '@/lib/analytics/client-helpers'
 
 interface Client {
   id: string
@@ -50,6 +53,7 @@ type BillingMode = 'storage_only' | 'all_in_one'
 export default function CreateGalleryPage() {
   const { user, userType, loading: authLoading } = useAuth()
   const router = useRouter()
+  const track = useTrackEvent()
 
   // Client selection
   const [clients, setClients] = useState<Client[]>([])
@@ -261,6 +265,15 @@ export default function CreateGalleryPage() {
     setError('')
 
     try {
+      // Check if this is the photographer's first gallery BEFORE creating
+      // This ensures accurate isFirstGallery flag (QA critic fix)
+      const { count: existingGalleryCount } = await supabase
+        .from('photo_galleries')
+        .select('id', { count: 'exact', head: true })
+        .eq('photographer_id', user?.id)
+
+      const isFirstGallery = (existingGalleryCount || 0) === 0
+
       const shootFeeNum = parseFloat(shootFee) || 0
       const shootFeeCents = Math.round(shootFeeNum * 100)
       const storageFeeCents = Math.round((selectedPackage?.price || 0) * 100)
@@ -311,6 +324,15 @@ export default function CreateGalleryPage() {
 
       console.log('[CreateGallery] Gallery created:', gallery)
 
+      // Track gallery creation
+      const timeFromSignup = calculateTimeFromSignup(user?.created_at)
+      track(EVENTS.PHOTOGRAPHER_CREATED_GALLERY, {
+        gallery_id: gallery.id,
+        is_first_gallery: isFirstGallery,
+        photo_count: 0, // No photos yet - they're uploaded next
+        time_from_signup_seconds: timeFromSignup ?? 0,
+      })
+
       // Redirect to upload page for this gallery
       router.push(`/photographer/galleries/${gallery.id}/upload`)
 
@@ -327,10 +349,10 @@ export default function CreateGalleryPage() {
   // Loading states
   if (authLoading || loadingClients) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <Loader2 className="h-12 w-12 animate-spin text-amber-500 mx-auto mb-4" />
-          <p className="text-neutral-400">Loading...</p>
+          <p className="text-muted-foreground">Loading...</p>
         </div>
       </div>
     )
@@ -342,22 +364,22 @@ export default function CreateGalleryPage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b border-white/5 bg-neutral-800/50">
+      <header className="border-b border-border bg-card/50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" size="sm" asChild className="text-neutral-400 hover:text-white">
+            <Button variant="ghost" size="sm" asChild className="text-muted-foreground hover:text-foreground">
               <Link href="/photographer/dashboard">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back
               </Link>
             </Button>
             <div>
-              <h1 className="text-2xl font-bold text-neutral-100">
+              <h1 className="text-2xl font-bold text-foreground">
                 Create New Gallery
               </h1>
-              <p className="text-neutral-400">
+              <p className="text-muted-foreground">
                 Set up your client gallery with pricing
               </p>
             </div>
@@ -368,13 +390,13 @@ export default function CreateGalleryPage() {
       <main className="container mx-auto px-4 py-8 max-w-4xl">
         <div className="grid gap-8">
           {/* Client Selection */}
-          <Card className="bg-neutral-800/50 border-white/10">
+          <Card className="bg-card/50 border-border">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-neutral-100">
+              <CardTitle className="flex items-center gap-2 text-foreground">
                 <UserPlus className="h-5 w-5" />
                 Client Selection
               </CardTitle>
-              <CardDescription className="text-neutral-400">
+              <CardDescription className="text-muted-foreground">
                 Choose an existing client or add a new one
               </CardDescription>
             </CardHeader>
@@ -382,14 +404,14 @@ export default function CreateGalleryPage() {
               {!showAddClient ? (
                 <>
                   <div>
-                    <Label htmlFor="client" className="text-neutral-300">Select Client *</Label>
+                    <Label htmlFor="client" className="text-muted-foreground">Select Client *</Label>
                     <Select value={selectedClientId} onValueChange={setSelectedClientId}>
-                      <SelectTrigger className="bg-neutral-900 border-white/10 text-white">
+                      <SelectTrigger className="bg-background border-border text-foreground">
                         <SelectValue placeholder="Choose a client..." />
                       </SelectTrigger>
-                      <SelectContent className="bg-neutral-800 border-white/10">
+                      <SelectContent className="bg-card border-border">
                         {clients.map((client) => (
-                          <SelectItem key={client.id} value={client.id} className="text-white hover:bg-white/5">
+                          <SelectItem key={client.id} value={client.id} className="text-foreground hover:bg-muted">
                             {client.name} ({client.email})
                           </SelectItem>
                         ))}
@@ -400,55 +422,55 @@ export default function CreateGalleryPage() {
                     type="button"
                     variant="outline"
                     onClick={() => setShowAddClient(true)}
-                    className="border-white/10 text-neutral-300 hover:bg-white/5"
+                    className="border-border text-muted-foreground hover:bg-muted"
                   >
                     <Plus className="h-4 w-4 mr-2" />
                     Add New Client
                   </Button>
                 </>
               ) : (
-                <div className="border border-white/10 rounded-lg p-4 space-y-4 bg-neutral-900">
+                <div className="border border-border rounded-lg p-4 space-y-4 bg-background">
                   <div className="flex items-center justify-between">
-                    <h3 className="font-medium text-neutral-100">Add New Client</h3>
+                    <h3 className="font-medium text-foreground">Add New Client</h3>
                     <Button
                       variant="ghost"
                       size="sm"
                       onClick={() => setShowAddClient(false)}
-                      className="text-neutral-400 hover:text-white"
+                      className="text-muted-foreground hover:text-foreground"
                     >
                       Cancel
                     </Button>
                   </div>
                   <div className="grid gap-3">
                     <div>
-                      <Label htmlFor="newClientName" className="text-neutral-300">Name *</Label>
+                      <Label htmlFor="newClientName" className="text-muted-foreground">Name *</Label>
                       <Input
                         id="newClientName"
                         value={newClientForm.name}
                         onChange={(e) => setNewClientForm({ ...newClientForm, name: e.target.value })}
                         placeholder="Client name"
-                        className="bg-neutral-800 border-white/10 text-white placeholder:text-neutral-500"
+                        className="bg-card border-border text-foreground placeholder:text-muted-foreground"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="newClientEmail" className="text-neutral-300">Email *</Label>
+                      <Label htmlFor="newClientEmail" className="text-muted-foreground">Email *</Label>
                       <Input
                         id="newClientEmail"
                         type="email"
                         value={newClientForm.email}
                         onChange={(e) => setNewClientForm({ ...newClientForm, email: e.target.value })}
                         placeholder="client@example.com"
-                        className="bg-neutral-800 border-white/10 text-white placeholder:text-neutral-500"
+                        className="bg-card border-border text-foreground placeholder:text-muted-foreground"
                       />
                     </div>
                     <div>
-                      <Label htmlFor="newClientPhone" className="text-neutral-300">Phone</Label>
+                      <Label htmlFor="newClientPhone" className="text-muted-foreground">Phone</Label>
                       <Input
                         id="newClientPhone"
                         value={newClientForm.phone}
                         onChange={(e) => setNewClientForm({ ...newClientForm, phone: e.target.value })}
                         placeholder="(555) 123-4567"
-                        className="bg-neutral-800 border-white/10 text-white placeholder:text-neutral-500"
+                        className="bg-card border-border text-foreground placeholder:text-muted-foreground"
                       />
                     </div>
                     <Button onClick={handleAddClient} className="bg-amber-500 hover:bg-amber-600 text-black">
@@ -462,76 +484,76 @@ export default function CreateGalleryPage() {
           </Card>
 
           {/* Gallery Details */}
-          <Card className="bg-neutral-800/50 border-white/10">
+          <Card className="bg-card/50 border-border">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-neutral-100">
+              <CardTitle className="flex items-center gap-2 text-foreground">
                 <Camera className="h-5 w-5" />
                 Gallery Details
               </CardTitle>
-              <CardDescription className="text-neutral-400">
+              <CardDescription className="text-muted-foreground">
                 Basic information about this photo session
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label htmlFor="galleryName" className="text-neutral-300">Gallery Name *</Label>
+                <Label htmlFor="galleryName" className="text-muted-foreground">Gallery Name *</Label>
                 <Input
                   id="galleryName"
                   value={galleryName}
                   onChange={(e) => setGalleryName(e.target.value)}
                   placeholder="e.g., Smith Wedding, Family Session 2025"
-                  className="bg-neutral-900 border-white/10 text-white placeholder:text-neutral-500"
+                  className="bg-background border-border text-foreground placeholder:text-muted-foreground"
                 />
               </div>
               <div>
-                <Label htmlFor="galleryDescription" className="text-neutral-300">Description</Label>
+                <Label htmlFor="galleryDescription" className="text-muted-foreground">Description</Label>
                 <Textarea
                   id="galleryDescription"
                   value={galleryDescription}
                   onChange={(e) => setGalleryDescription(e.target.value)}
                   placeholder="Optional description for this gallery"
                   rows={3}
-                  className="bg-neutral-900 border-white/10 text-white placeholder:text-neutral-500"
+                  className="bg-background border-border text-foreground placeholder:text-muted-foreground"
                 />
               </div>
               <div>
-                <Label htmlFor="sessionDate" className="text-neutral-300">Session Date</Label>
+                <Label htmlFor="sessionDate" className="text-muted-foreground">Session Date</Label>
                 <Input
                   id="sessionDate"
                   type="date"
                   value={sessionDate}
                   onChange={(e) => setSessionDate(e.target.value)}
-                  className="bg-neutral-900 border-white/10 text-white"
+                  className="bg-background border-border text-foreground"
                 />
               </div>
             </CardContent>
           </Card>
 
           {/* Gallery Metadata */}
-          <Card className="bg-neutral-800/50 border-white/10">
+          <Card className="bg-card/50 border-border">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-neutral-100">
+              <CardTitle className="flex items-center gap-2 text-foreground">
                 <Tag className="h-5 w-5" />
                 Gallery Metadata
               </CardTitle>
-              <CardDescription className="text-neutral-400">
+              <CardDescription className="text-muted-foreground">
                 Add details to make this gallery easier to find later
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <Label htmlFor="eventDate" className="text-neutral-300">Event Date</Label>
+                <Label htmlFor="eventDate" className="text-muted-foreground">Event Date</Label>
                 <DatePicker
                   id="eventDate"
                   value={eventDate}
                   onChange={(date) => setEventDate(date || null)}
                   placeholder="When did this session take place?"
-                  className="w-full bg-neutral-900 border-white/10 text-white"
+                  className="w-full bg-background border-border text-foreground"
                 />
               </div>
 
               <div>
-                <Label htmlFor="location" className="text-neutral-300">Location</Label>
+                <Label htmlFor="location" className="text-muted-foreground">Location</Label>
                 <LocationAutocomplete
                   value={location}
                   onChange={setLocation}
@@ -540,57 +562,57 @@ export default function CreateGalleryPage() {
               </div>
 
               <div>
-                <Label htmlFor="people" className="text-neutral-300">People in Photos</Label>
+                <Label htmlFor="people" className="text-muted-foreground">People in Photos</Label>
                 <PeopleTagInput
                   value={people}
                   onChange={setPeople}
                   placeholder="Add names (press Enter)..."
                 />
-                <p className="text-xs text-neutral-500 mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   Add names of people featured in this gallery
                 </p>
               </div>
 
               <div>
-                <Label htmlFor="eventType" className="text-neutral-300">Event Type</Label>
+                <Label htmlFor="eventType" className="text-muted-foreground">Event Type</Label>
                 <Select value={eventType} onValueChange={setEventType}>
-                  <SelectTrigger className="bg-neutral-900 border-white/10 text-white">
+                  <SelectTrigger className="bg-background border-border text-foreground">
                     <SelectValue placeholder="Select event type..." />
                   </SelectTrigger>
-                  <SelectContent className="bg-neutral-800 border-white/10">
-                    <SelectItem value="wedding" className="text-white hover:bg-white/5">Wedding</SelectItem>
-                    <SelectItem value="birthday" className="text-white hover:bg-white/5">Birthday</SelectItem>
-                    <SelectItem value="family" className="text-white hover:bg-white/5">Family Session</SelectItem>
-                    <SelectItem value="portrait" className="text-white hover:bg-white/5">Portrait</SelectItem>
-                    <SelectItem value="graduation" className="text-white hover:bg-white/5">Graduation</SelectItem>
-                    <SelectItem value="corporate" className="text-white hover:bg-white/5">Corporate</SelectItem>
-                    <SelectItem value="other" className="text-white hover:bg-white/5">Other</SelectItem>
+                  <SelectContent className="bg-card border-border">
+                    <SelectItem value="wedding" className="text-foreground hover:bg-muted">Wedding</SelectItem>
+                    <SelectItem value="birthday" className="text-foreground hover:bg-muted">Birthday</SelectItem>
+                    <SelectItem value="family" className="text-foreground hover:bg-muted">Family Session</SelectItem>
+                    <SelectItem value="portrait" className="text-foreground hover:bg-muted">Portrait</SelectItem>
+                    <SelectItem value="graduation" className="text-foreground hover:bg-muted">Graduation</SelectItem>
+                    <SelectItem value="corporate" className="text-foreground hover:bg-muted">Corporate</SelectItem>
+                    <SelectItem value="other" className="text-foreground hover:bg-muted">Other</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
 
               <div>
-                <Label htmlFor="photographerName" className="text-neutral-300">Photographer Name</Label>
+                <Label htmlFor="photographerName" className="text-muted-foreground">Photographer Name</Label>
                 <Input
                   id="photographerName"
                   value={photographerName}
                   onChange={(e) => setPhotographerName(e.target.value)}
                   placeholder="Leave blank to use your profile name"
-                  className="bg-neutral-900 border-white/10 text-white placeholder:text-neutral-500"
+                  className="bg-background border-border text-foreground placeholder:text-muted-foreground"
                 />
               </div>
 
               <div>
-                <Label htmlFor="notes" className="text-neutral-300">Notes</Label>
+                <Label htmlFor="notes" className="text-muted-foreground">Notes</Label>
                 <Textarea
                   id="notes"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
                   placeholder="Any additional details about this session..."
                   rows={3}
-                  className="bg-neutral-900 border-white/10 text-white placeholder:text-neutral-500"
+                  className="bg-background border-border text-foreground placeholder:text-muted-foreground"
                 />
-                <p className="text-xs text-neutral-500 mt-1">
+                <p className="text-xs text-muted-foreground mt-1">
                   These notes are searchable
                 </p>
               </div>
@@ -598,13 +620,13 @@ export default function CreateGalleryPage() {
           </Card>
 
           {/* Billing Mode Selection */}
-          <Card className="bg-neutral-800/50 border-white/10">
+          <Card className="bg-card/50 border-border">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-neutral-100">
+              <CardTitle className="flex items-center gap-2 text-foreground">
                 <CreditCard className="h-5 w-5" />
                 Billing Mode
               </CardTitle>
-              <CardDescription className="text-neutral-400">
+              <CardDescription className="text-muted-foreground">
                 How would you like to bill this client?
               </CardDescription>
             </CardHeader>
@@ -614,25 +636,25 @@ export default function CreateGalleryPage() {
                 onValueChange={(value) => setBillingMode(value as BillingMode)}
                 className="grid gap-4"
               >
-                <div className="flex items-start space-x-3 p-4 border border-white/10 rounded-lg hover:bg-white/[0.03] cursor-pointer">
+                <div className="flex items-start space-x-3 p-4 border border-border rounded-lg hover:bg-card cursor-pointer">
                   <RadioGroupItem value="all_in_one" id="all_in_one" className="mt-1" />
                   <div className="flex-1">
-                    <Label htmlFor="all_in_one" className="font-medium cursor-pointer text-neutral-100">
+                    <Label htmlFor="all_in_one" className="font-medium cursor-pointer text-foreground">
                       All-In-One Invoice (Recommended)
                     </Label>
-                    <p className="text-sm text-neutral-400 mt-1">
+                    <p className="text-sm text-muted-foreground mt-1">
                       Client receives one invoice combining your shoot fee + storage.
                       They see a single total - clean and professional.
                     </p>
                   </div>
                 </div>
-                <div className="flex items-start space-x-3 p-4 border border-white/10 rounded-lg hover:bg-white/[0.03] cursor-pointer">
+                <div className="flex items-start space-x-3 p-4 border border-border rounded-lg hover:bg-card cursor-pointer">
                   <RadioGroupItem value="storage_only" id="storage_only" className="mt-1" />
                   <div className="flex-1">
-                    <Label htmlFor="storage_only" className="font-medium cursor-pointer text-neutral-100">
+                    <Label htmlFor="storage_only" className="font-medium cursor-pointer text-foreground">
                       Storage Only (I Bill Separately)
                     </Label>
-                    <p className="text-sm text-neutral-400 mt-1">
+                    <p className="text-sm text-muted-foreground mt-1">
                       PhotoVault only handles the storage subscription.
                       You invoice your shoot fee through your own system.
                     </p>
@@ -643,13 +665,13 @@ export default function CreateGalleryPage() {
           </Card>
 
           {/* Pricing */}
-          <Card className="bg-neutral-800/50 border-white/10">
+          <Card className="bg-card/50 border-border">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-neutral-100">
+              <CardTitle className="flex items-center gap-2 text-foreground">
                 <DollarSign className="h-5 w-5" />
                 Pricing
               </CardTitle>
-              <CardDescription className="text-neutral-400">
+              <CardDescription className="text-muted-foreground">
                 {billingMode === 'all_in_one'
                   ? 'Set your shoot fee and select a storage package'
                   : 'Select a storage package for your client'
@@ -660,9 +682,9 @@ export default function CreateGalleryPage() {
               {/* Shoot Fee - only show for all_in_one mode */}
               {billingMode === 'all_in_one' && (
                 <div>
-                  <Label htmlFor="shootFee" className="text-neutral-300">Your Shoot Fee *</Label>
+                  <Label htmlFor="shootFee" className="text-muted-foreground">Your Shoot Fee *</Label>
                   <div className="relative">
-                    <span className="absolute left-3 top-2.5 text-neutral-500">$</span>
+                    <span className="absolute left-3 top-2.5 text-muted-foreground">$</span>
                     <Input
                       id="shootFee"
                       type="number"
@@ -671,10 +693,10 @@ export default function CreateGalleryPage() {
                       value={shootFee}
                       onChange={(e) => setShootFee(e.target.value)}
                       placeholder="0.00"
-                      className="pl-7 bg-neutral-900 border-white/10 text-white placeholder:text-neutral-500"
+                      className="pl-7 bg-background border-border text-foreground placeholder:text-muted-foreground"
                     />
                   </div>
-                  <p className="text-xs text-neutral-400 mt-1">
+                  <p className="text-xs text-muted-foreground mt-1">
                     Your photography fee - you keep 100% (minus ~3% Stripe fees)
                   </p>
                 </div>
@@ -682,17 +704,17 @@ export default function CreateGalleryPage() {
 
               {/* Storage Package */}
               <div>
-                <Label htmlFor="package" className="text-neutral-300">Storage Package *</Label>
+                <Label htmlFor="package" className="text-muted-foreground">Storage Package *</Label>
                 <Select value={selectedPackageId} onValueChange={setSelectedPackageId}>
-                  <SelectTrigger className="bg-neutral-900 border-white/10 text-white">
+                  <SelectTrigger className="bg-background border-border text-foreground">
                     <SelectValue placeholder="Choose a package..." />
                   </SelectTrigger>
-                  <SelectContent className="bg-neutral-800 border-white/10">
+                  <SelectContent className="bg-card border-border">
                     {paymentOptions.map((option) => (
-                      <SelectItem key={option.id} value={option.id} className="text-white hover:bg-white/5">
+                      <SelectItem key={option.id} value={option.id} className="text-foreground hover:bg-muted">
                         <div className="flex flex-col py-1">
                           <span className="font-medium">{option.name}</span>
-                          <span className="text-xs text-neutral-400">
+                          <span className="text-xs text-muted-foreground">
                             {getPaymentOptionSummary(option.id)}
                           </span>
                         </div>
@@ -727,24 +749,24 @@ export default function CreateGalleryPage() {
               <CardContent className="space-y-3">
                 <div className="grid grid-cols-2 gap-4 text-sm">
                   <div>
-                    <p className="text-neutral-400">
+                    <p className="text-muted-foreground">
                       {billingMode === 'all_in_one' ? 'Client Will Pay:' : 'Storage Fee:'}
                     </p>
-                    <p className="text-2xl font-bold text-white">
+                    <p className="text-2xl font-bold text-foreground">
                       ${pricingSummary.totalAmount.toFixed(2)}
                     </p>
                     {billingMode === 'all_in_one' && pricingSummary.shootFee > 0 && (
-                      <p className="text-xs text-neutral-400">
+                      <p className="text-xs text-muted-foreground">
                         (${pricingSummary.shootFee.toFixed(2)} shoot + ${pricingSummary.storageFee.toFixed(2)} storage)
                       </p>
                     )}
                   </div>
                   <div>
-                    <p className="text-neutral-400">You Will Receive:</p>
+                    <p className="text-muted-foreground">You Will Receive:</p>
                     <p className="text-2xl font-bold text-green-400">
                       ~${(pricingSummary.photographerPayout - pricingSummary.stripeFees).toFixed(2)}
                     </p>
-                    <p className="text-xs text-neutral-400 mt-1">
+                    <p className="text-xs text-muted-foreground mt-1">
                       (after ~${pricingSummary.stripeFees.toFixed(2)} Stripe fees)
                     </p>
                   </div>
@@ -772,7 +794,7 @@ export default function CreateGalleryPage() {
                   </Alert>
                 )}
 
-                <div className="border-t border-white/10 pt-3 text-xs text-neutral-400 space-y-1">
+                <div className="border-t border-border pt-3 text-xs text-muted-foreground space-y-1">
                   <p>• Package: {selectedPackage?.name}</p>
                   <p>• PhotoVault revenue: ${pricingSummary.photovaultRevenue.toFixed(2)}</p>
                   {billingMode === 'all_in_one' && (
@@ -800,7 +822,7 @@ export default function CreateGalleryPage() {
               variant="outline"
               onClick={() => router.push('/photographer/dashboard')}
               disabled={creating}
-              className="border-white/10 text-neutral-300 hover:bg-white/5"
+              className="border-border text-muted-foreground hover:bg-muted"
             >
               Cancel
             </Button>

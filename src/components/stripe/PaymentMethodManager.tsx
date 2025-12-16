@@ -215,8 +215,8 @@ export function PaymentMethodManager({
         ) : paymentMethods.length === 0 && !isAddingNew ? (
           // No payment methods
           <div className="text-center py-8">
-            <div className="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-full flex items-center justify-center mx-auto mb-4">
-              <CreditCard className="h-8 w-8 text-slate-400" />
+            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+              <CreditCard className="h-8 w-8 text-muted-foreground" />
             </div>
             <h3 className="text-lg font-semibold mb-2">No Payment Methods</h3>
             <p className="text-sm text-muted-foreground mb-4">
@@ -233,11 +233,11 @@ export function PaymentMethodManager({
             {paymentMethods.map((pm) => (
               <div
                 key={pm.id}
-                className="flex items-center justify-between p-4 rounded-lg border bg-slate-50 dark:bg-slate-800/50"
+                className="flex items-center justify-between p-4 rounded-lg border bg-card/50"
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-white dark:bg-slate-700 rounded-lg flex items-center justify-center border">
-                    <CreditCard className="h-5 w-5 text-slate-600 dark:text-slate-300" />
+                  <div className="w-10 h-10 bg-white dark:bg-secondary rounded-lg flex items-center justify-center border">
+                    <CreditCard className="h-5 w-5 text-muted-foreground dark:text-foreground" />
                   </div>
                   <div>
                     <div className="flex items-center gap-2">

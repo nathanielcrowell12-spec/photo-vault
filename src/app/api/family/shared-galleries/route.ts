@@ -91,7 +91,8 @@ export async function GET(request: NextRequest) {
     )
 
     // Fetch all family-shared galleries for those accounts
-    const { data: galleries, error: galleriesError } = await serviceSupabase
+    // Need to check both client_id (photographer-assigned) AND user_id (self-uploads)
+    const { data: galleriesByClient, error: galleriesByClientError } = await serviceSupabase
       .from('photo_galleries')
       .select(`
         id,
@@ -103,11 +104,40 @@ export async function GET(request: NextRequest) {
         session_date,
         photo_count,
         created_at,
-        client_id
+        client_id,
+        user_id
       `)
       .in('client_id', accountIds)
       .eq('is_family_shared', true)
-      .order('created_at', { ascending: false })
+
+    const { data: galleriesByUser, error: galleriesByUserError } = await serviceSupabase
+      .from('photo_galleries')
+      .select(`
+        id,
+        gallery_name,
+        gallery_description,
+        cover_image_url,
+        platform,
+        photographer_name,
+        session_date,
+        photo_count,
+        created_at,
+        client_id,
+        user_id
+      `)
+      .in('user_id', accountIds)
+      .eq('is_family_shared', true)
+
+    const galleriesError = galleriesByClientError || galleriesByUserError
+
+    // Merge and dedupe galleries (some might match both client_id and user_id)
+    const galleryMap = new Map()
+    ;[...(galleriesByClient || []), ...(galleriesByUser || [])].forEach(g => {
+      galleryMap.set(g.id, g)
+    })
+    const galleries = Array.from(galleryMap.values()).sort(
+      (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    )
 
     if (galleriesError) {
       console.error('[Shared Galleries] Error fetching galleries:', galleriesError)
@@ -119,13 +149,15 @@ export async function GET(request: NextRequest) {
 
     // Enrich galleries with primary name, relationship, and account status
     const enrichedGalleries = (galleries || []).map(gallery => {
-      const secondaryRecord = secondaryRecords.find(s => s.account_id === gallery.client_id)
-      const accountStatus = accountStatuses.get(gallery.client_id)
+      // For self-uploads, user_id is the owner; for photographer-assigned, client_id is the owner
+      const ownerId = gallery.user_id || gallery.client_id
+      const secondaryRecord = secondaryRecords.find(s => s.account_id === ownerId)
+      const accountStatus = accountStatuses.get(ownerId)
       return {
         ...gallery,
-        primary_name: primaryNames.get(gallery.client_id) || 'Account Holder',
+        primary_name: primaryNames.get(ownerId) || 'Account Holder',
         relationship: secondaryRecord?.relationship || 'family',
-        shared_by_account_id: gallery.client_id,
+        shared_by_account_id: ownerId,
         account_status: accountStatus?.status || 'active',
         needs_attention: accountStatus?.needsAttention || false
       }

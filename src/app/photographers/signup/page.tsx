@@ -61,17 +61,17 @@ export default function PhotographerSignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b border-white/10 bg-neutral-900/95 backdrop-blur-sm">
+      <header className="border-b border-border bg-background/95 backdrop-blur-sm">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Link href="/photographers" className="flex items-center space-x-2">
               <Camera className="h-8 w-8 text-primary" />
-              <span className="text-2xl font-bold text-neutral-100">PhotoVault Pro</span>
+              <span className="text-2xl font-bold text-foreground">PhotoVault Pro</span>
             </Link>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-neutral-400">Already have an account?</span>
+              <span className="text-sm text-muted-foreground">Already have an account?</span>
               <Button asChild variant="outline" size="sm">
                 <Link href="/login">Sign In</Link>
               </Button>
@@ -89,16 +89,16 @@ export default function PhotographerSignupPage() {
                 <Badge className="mb-4 bg-blue-100 text-blue-800">
                   Become a Memory Guardian
                 </Badge>
-                <h1 className="text-4xl font-bold mb-4 text-neutral-100">Protect Your Clients&apos; Memories</h1>
-                <p className="text-lg text-neutral-400">
+                <h1 className="text-4xl font-bold mb-4 text-foreground">Protect Your Clients&apos; Memories</h1>
+                <p className="text-lg text-muted-foreground">
                   Give families Memory Insurance. Earn $4/month passive income forever.
                 </p>
               </div>
 
-              <Card className="bg-neutral-800/50 border-white/10">
+              <Card className="bg-card/50 border-border">
                 <CardHeader>
-                  <CardTitle className="text-neutral-100">Create Your Photographer Account</CardTitle>
-                  <CardDescription className="text-neutral-400">
+                  <CardTitle className="text-foreground">Create Your Photographer Account</CardTitle>
+                  <CardDescription className="text-muted-foreground">
                     Free during beta • $22/month after launch
                   </CardDescription>
                 </CardHeader>
@@ -213,7 +213,7 @@ export default function PhotographerSignupPage() {
                       )}
                     </Button>
 
-                    <p className="text-xs text-center text-neutral-500">
+                    <p className="text-xs text-center text-muted-foreground">
                       By signing up, you agree to our{' '}
                       <Link href="/terms" className="text-primary hover:underline">
                         Terms of Service
@@ -240,84 +240,84 @@ export default function PhotographerSignupPage() {
                   priority
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent" />
-                <p className="absolute bottom-3 right-3 text-xs text-white/70">
-                  Photo by <a href="https://unsplash.com" target="_blank" rel="noopener noreferrer" className="hover:text-white">Unsplash</a>
+                <p className="absolute bottom-3 right-3 text-xs text-foreground/70">
+                  Photo by <a href="https://unsplash.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">Unsplash</a>
                 </p>
               </div>
 
-              <Card className="border border-white/10 bg-neutral-800/50">
+              <Card className="border border-border bg-card/50">
                 <CardContent className="pt-6">
                   <Badge className="mb-4 bg-green-100 text-green-800">
                     Memory Guardian Benefits
                   </Badge>
-                  <h2 className="text-2xl font-bold mb-4 text-neutral-100">What You&apos;ll Deliver to Clients</h2>
+                  <h2 className="text-2xl font-bold mb-4 text-foreground">What You&apos;ll Deliver to Clients</h2>
                   <div className="space-y-3">
                     <div className="flex items-start space-x-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                       <div>
-                        <div className="font-semibold text-neutral-100">Memory Insurance for Every Family</div>
-                        <div className="text-sm text-neutral-400">Professional-grade protection for irreplaceable photos</div>
+                        <div className="font-semibold text-foreground">Memory Insurance for Every Family</div>
+                        <div className="text-sm text-muted-foreground">Professional-grade protection for irreplaceable photos</div>
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                       <div>
-                        <div className="font-semibold text-neutral-100">One-Tap Camera Roll Delivery</div>
-                        <div className="text-sm text-neutral-400">No more zip files. Full resolution, instant.</div>
+                        <div className="font-semibold text-foreground">One-Tap Camera Roll Delivery</div>
+                        <div className="text-sm text-muted-foreground">No more zip files. Full resolution, instant.</div>
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                       <div>
-                        <div className="font-semibold text-neutral-100">$4/Month Passive Income Forever</div>
-                        <div className="text-sm text-neutral-400">Earn while families sleep soundly</div>
+                        <div className="font-semibold text-foreground">$4/Month Passive Income Forever</div>
+                        <div className="text-sm text-muted-foreground">Earn while families sleep soundly</div>
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                       <div>
-                        <div className="font-semibold text-neutral-100">Digital Safety Deposit Box</div>
-                        <div className="text-sm text-neutral-400">Survives hard drive crashes, phone losses, house fires</div>
+                        <div className="font-semibold text-foreground">Digital Safety Deposit Box</div>
+                        <div className="text-sm text-muted-foreground">Survives hard drive crashes, phone losses, house fires</div>
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                       <div>
-                        <div className="font-semibold text-neutral-100">Your Branding, Their Peace of Mind</div>
-                        <div className="text-sm text-neutral-400">Every photo protected under your name</div>
+                        <div className="font-semibold text-foreground">Your Branding, Their Peace of Mind</div>
+                        <div className="text-sm text-muted-foreground">Every photo protected under your name</div>
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                       <div>
-                        <div className="font-semibold text-neutral-100">Replace Pixieset & ShootProof</div>
-                        <div className="text-sm text-neutral-400">Same features, plus you earn more</div>
+                        <div className="font-semibold text-foreground">Replace Pixieset & ShootProof</div>
+                        <div className="text-sm text-muted-foreground">Same features, plus you earn more</div>
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                       <div>
-                        <div className="font-semibold text-neutral-100">14-Day Free Trial</div>
-                        <div className="text-sm text-neutral-400">No credit card required to start</div>
+                        <div className="font-semibold text-foreground">14-Day Free Trial</div>
+                        <div className="text-sm text-muted-foreground">No credit card required to start</div>
                       </div>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
-              <Card className="bg-neutral-800/50 border-white/10">
+              <Card className="bg-card/50 border-border">
                 <CardContent className="pt-6">
-                  <h3 className="font-semibold mb-3 text-neutral-100">Platform Pricing</h3>
+                  <h3 className="font-semibold mb-3 text-foreground">Platform Pricing</h3>
                   <div className="text-3xl font-bold text-green-600 mb-2">$22/month</div>
-                  <div className="text-sm text-neutral-400 space-y-1">
+                  <div className="text-sm text-muted-foreground space-y-1">
                     <div>✓ Unlimited clients & galleries</div>
                     <div>✓ Full commission tracking</div>
                     <div>✓ Advanced analytics & reports</div>
                     <div>✓ Professional support</div>
                   </div>
-                  <div className="mt-4 p-3 bg-neutral-700/30 rounded-lg">
-                    <div className="text-xs text-neutral-500 mb-1">Break-even calculation:</div>
-                    <div className="text-sm text-neutral-300">
+                  <div className="mt-4 p-3 bg-secondary/30 rounded-lg">
+                    <div className="text-xs text-muted-foreground mb-1">Break-even calculation:</div>
+                    <div className="text-sm text-muted-foreground">
                       <strong>6 active clients</strong> × $4/mo = $24/mo
                     </div>
                     <div className="text-xs text-green-600 mt-1">
@@ -327,25 +327,25 @@ export default function PhotographerSignupPage() {
                 </CardContent>
               </Card>
 
-              <Card className="bg-neutral-800/50 border-white/10">
+              <Card className="bg-card/50 border-border">
                 <CardContent className="pt-6">
-                  <h3 className="font-semibold mb-3 text-neutral-100">Your Passive Income Potential</h3>
+                  <h3 className="font-semibold mb-3 text-foreground">Your Passive Income Potential</h3>
                   <div className="space-y-3 text-sm">
                     <div>
-                      <div className="font-semibold text-neutral-100">10 Families Protected:</div>
-                      <div className="text-neutral-400">
+                      <div className="font-semibold text-foreground">10 Families Protected:</div>
+                      <div className="text-muted-foreground">
                         $500 upfront + $40/month passive income
                       </div>
                     </div>
                     <div>
-                      <div className="font-semibold text-neutral-100">25 Families Protected:</div>
-                      <div className="text-neutral-400">
+                      <div className="font-semibold text-foreground">25 Families Protected:</div>
+                      <div className="text-muted-foreground">
                         $1,250 upfront + $100/month passive income
                       </div>
                     </div>
                     <div>
-                      <div className="font-semibold text-neutral-100">50 Families Protected:</div>
-                      <div className="text-neutral-400">
+                      <div className="font-semibold text-foreground">50 Families Protected:</div>
+                      <div className="text-muted-foreground">
                         $2,500 upfront + $200/month passive income
                       </div>
                     </div>

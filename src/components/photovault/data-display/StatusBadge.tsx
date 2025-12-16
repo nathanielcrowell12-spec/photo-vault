@@ -15,7 +15,7 @@ export default function StatusBadge({ status, label }: StatusBadgeProps) {
     },
     inactive: {
       label: 'Inactive',
-      className: 'bg-slate-50 text-slate-700 dark:bg-slate-800 dark:text-slate-300'
+      className: 'bg-muted text-foreground dark:bg-card dark:text-foreground'
     },
     pending: {
       label: 'Pending',

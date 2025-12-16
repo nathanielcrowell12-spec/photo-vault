@@ -130,7 +130,7 @@ export default function SystemSettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-neutral-900">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
       </div>
     )
@@ -142,15 +142,15 @@ export default function SystemSettingsPage() {
 
   return (
     <AccessGuard requiredAccess="canAccessAdminDashboard">
-      <div className="min-h-screen bg-neutral-900">
+      <div className="min-h-screen bg-background">
         {/* Header */}
-        <header className="border-b bg-neutral-800/50 border-white/10">
+        <header className="border-b bg-card/50 border-border">
           <div className="container mx-auto px-4 py-6 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Settings className="h-10 w-10 text-blue-600" />
               <div>
                 <h1 className="text-2xl font-bold">System Settings</h1>
-                <p className="text-sm text-slate-600">
+                <p className="text-sm text-muted-foreground">
                   Configure PhotoVault system-wide settings and integrations. All fields are read-only until backend settings storage is enabled.
                 </p>
               </div>
@@ -180,7 +180,7 @@ export default function SystemSettingsPage() {
                   <div className="space-y-2">
                     <Label htmlFor="adminEmail">Email Address</Label>
                     <div className="flex items-center gap-2">
-                      <Mail className="h-4 w-4 text-slate-400" />
+                      <Mail className="h-4 w-4 text-muted-foreground" />
                       <Input
                         id="adminEmail"
                         type="email"
@@ -189,7 +189,7 @@ export default function SystemSettingsPage() {
                         className="bg-slate-50"
                       />
                     </div>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-muted-foreground">
                       Contact support to change your email address
                     </p>
                   </div>
@@ -215,7 +215,7 @@ export default function SystemSettingsPage() {
                         <button
                           type="button"
                           onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground"
                         >
                           {showCurrentPassword ? (
                             <EyeOff className="h-4 w-4" />
@@ -240,7 +240,7 @@ export default function SystemSettingsPage() {
                         <button
                           type="button"
                           onClick={() => setShowNewPassword(!showNewPassword)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground"
                         >
                           {showNewPassword ? (
                             <EyeOff className="h-4 w-4" />
@@ -251,7 +251,7 @@ export default function SystemSettingsPage() {
                       </div>
                       {newPassword && (
                         <div className="space-y-1 text-xs">
-                          <div className={`flex items-center gap-2 ${passwordRequirements.minLength ? 'text-green-600' : 'text-slate-500'}`}>
+                          <div className={`flex items-center gap-2 ${passwordRequirements.minLength ? 'text-green-600' : 'text-muted-foreground'}`}>
                             {passwordRequirements.minLength ? (
                               <CheckCircle2 className="h-3 w-3" />
                             ) : (
@@ -259,7 +259,7 @@ export default function SystemSettingsPage() {
                             )}
                             At least 8 characters
                           </div>
-                          <div className={`flex items-center gap-2 ${passwordRequirements.hasUppercase ? 'text-green-600' : 'text-slate-500'}`}>
+                          <div className={`flex items-center gap-2 ${passwordRequirements.hasUppercase ? 'text-green-600' : 'text-muted-foreground'}`}>
                             {passwordRequirements.hasUppercase ? (
                               <CheckCircle2 className="h-3 w-3" />
                             ) : (
@@ -267,7 +267,7 @@ export default function SystemSettingsPage() {
                             )}
                             One uppercase letter
                           </div>
-                          <div className={`flex items-center gap-2 ${passwordRequirements.hasLowercase ? 'text-green-600' : 'text-slate-500'}`}>
+                          <div className={`flex items-center gap-2 ${passwordRequirements.hasLowercase ? 'text-green-600' : 'text-muted-foreground'}`}>
                             {passwordRequirements.hasLowercase ? (
                               <CheckCircle2 className="h-3 w-3" />
                             ) : (
@@ -275,7 +275,7 @@ export default function SystemSettingsPage() {
                             )}
                             One lowercase letter
                           </div>
-                          <div className={`flex items-center gap-2 ${passwordRequirements.hasNumber ? 'text-green-600' : 'text-slate-500'}`}>
+                          <div className={`flex items-center gap-2 ${passwordRequirements.hasNumber ? 'text-green-600' : 'text-muted-foreground'}`}>
                             {passwordRequirements.hasNumber ? (
                               <CheckCircle2 className="h-3 w-3" />
                             ) : (
@@ -301,7 +301,7 @@ export default function SystemSettingsPage() {
                         <button
                           type="button"
                           onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground"
                         >
                           {showConfirmPassword ? (
                             <EyeOff className="h-4 w-4" />
@@ -353,17 +353,17 @@ export default function SystemSettingsPage() {
                 <div className="space-y-2">
                   <Label htmlFor="siteName">Site Name</Label>
                   <Input id="siteName" value="PhotoVault" disabled />
-                  <p className="text-xs text-slate-500">Frontend brand name displayed to all users.</p>
+                  <p className="text-xs text-muted-foreground">Frontend brand name displayed to all users.</p>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="primaryDomain">Primary Domain</Label>
                   <Input id="primaryDomain" value="app.photovault.com" disabled />
-                  <p className="text-xs text-slate-500">Production domain for PhotoVault.</p>
+                  <p className="text-xs text-muted-foreground">Production domain for PhotoVault.</p>
                 </div>
                 <div className="space-y-2 md:col-span-2">
                   <Label htmlFor="supportEmail">Support Email</Label>
                   <Input id="supportEmail" value="support@photovault.com" disabled />
-                  <p className="text-xs text-slate-500">All automated support communications send from this address.</p>
+                  <p className="text-xs text-muted-foreground">All automated support communications send from this address.</p>
                 </div>
               </CardContent>
             </Card>
@@ -384,7 +384,7 @@ export default function SystemSettingsPage() {
                   <div key={toggle.label} className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3">
                     <div>
                       <p className="font-medium text-slate-800">{toggle.label}</p>
-                      <p className="text-xs text-slate-500">Available soon</p>
+                      <p className="text-xs text-muted-foreground">Available soon</p>
                     </div>
                     <Switch checked={toggle.value} disabled />
                   </div>
@@ -420,7 +420,7 @@ export default function SystemSettingsPage() {
                   <Label>Sender Email</Label>
                   <Input value="noreply@photovault.com" disabled />
                 </div>
-                <div className="md:col-span-2 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+                <div className="md:col-span-2 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-muted-foreground">
                   Email template editing will be available once transactional email service is connected.
                 </div>
               </CardContent>
@@ -450,7 +450,7 @@ export default function SystemSettingsPage() {
                   <Label>Business Tier Limit</Label>
                   <Input value="500 GB" disabled />
                 </div>
-                <div className="md:col-span-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+                <div className="md:col-span-3 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-muted-foreground">
                   Auto-cleanup jobs pending configuration. Connect Supabase storage policies to enable adjustments.
                 </div>
               </CardContent>
@@ -499,14 +499,14 @@ export default function SystemSettingsPage() {
                 <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3">
                   <div>
                     <p className="font-medium text-slate-800">Password requires uppercase & number</p>
-                    <p className="text-xs text-slate-500">Policy enforced by default</p>
+                    <p className="text-xs text-muted-foreground">Policy enforced by default</p>
                   </div>
                   <Switch checked disabled />
                 </div>
                 <div className="flex items-center justify-between rounded-lg border border-slate-200 bg-white px-4 py-3">
                   <div>
                     <p className="font-medium text-slate-800">Session timeout (minutes)</p>
-                    <p className="text-xs text-slate-500">Automatic logout after inactivity</p>
+                    <p className="text-xs text-muted-foreground">Automatic logout after inactivity</p>
                   </div>
                   <Input value="60" disabled className="w-20 text-right" />
                 </div>

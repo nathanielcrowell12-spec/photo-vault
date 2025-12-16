@@ -62,10 +62,13 @@ import {
   getTakeoverConfirmationEmailText,
   getPhotographerTakeoverNotificationHTML,
   getPhotographerTakeoverNotificationText,
+  getSecondaryWelcomeEmailHTML,
+  getSecondaryWelcomeEmailText,
   type SecondaryInvitationEmailData,
   type GracePeriodAlertEmailData,
   type TakeoverConfirmationEmailData,
   type PhotographerTakeoverNotificationData,
+  type SecondaryWelcomeEmailData,
 } from './family-templates'
 
 /**
@@ -521,6 +524,28 @@ Update payment method: ${process.env.NEXT_PUBLIC_APP_URL}/billing
       return { success: true }
     } catch (error: any) {
       console.error('[Email] Error sending photographer takeover notification:', error)
+      return { success: false, error: error.message }
+    }
+  }
+
+  /**
+   * Send secondary welcome email with password setup link
+   * Triggered when a new secondary user account is created
+   */
+  static async sendSecondaryWelcomeEmail(data: SecondaryWelcomeEmailData): Promise<{ success: boolean; error?: string }> {
+    try {
+      await (await getClient()).emails.send({
+        from: await getFromEmail(),
+        to: data.secondaryEmail,
+        subject: `🎉 Welcome to PhotoVault - Set Your Password`,
+        html: getSecondaryWelcomeEmailHTML(data),
+        text: getSecondaryWelcomeEmailText(data),
+      })
+
+      console.log(`[Email] Secondary welcome email sent to ${data.secondaryEmail}`)
+      return { success: true }
+    } catch (error: any) {
+      console.error('[Email] Error sending secondary welcome email:', error)
       return { success: false, error: error.message }
     }
   }

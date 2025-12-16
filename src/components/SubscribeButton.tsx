@@ -100,7 +100,7 @@ export function SubscribeButton({
       )}
 
       {!error && !loading && (
-        <div className="flex items-center gap-1 text-xs text-slate-500">
+        <div className="flex items-center gap-1 text-xs text-muted-foreground">
           <Lock className="h-3 w-3" />
           <span>Secure payment via Stripe</span>
         </div>
@@ -133,19 +133,19 @@ export function SubscribeCard({
         <div className="w-16 h-16 bg-green-100 dark:bg-green-800 rounded-full flex items-center justify-center mx-auto mb-4">
           <CreditCard className="h-8 w-8 text-green-600 dark:text-green-300" />
         </div>
-        <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-2">
+        <h3 className="text-xl font-bold text-foreground mb-2">
           Subscribe to Access Photos
         </h3>
-        <p className="text-slate-600 dark:text-slate-300 text-sm">
+        <p className="text-muted-foreground dark:text-foreground text-sm">
           {galleryName}
           {photographerName && ` by ${photographerName}`}
           {photoCount && ` • ${photoCount} photos`}
         </p>
       </div>
 
-      <div className="bg-white dark:bg-slate-800 rounded-lg p-4 mb-4">
+      <div className="bg-white dark:bg-card rounded-lg p-4 mb-4">
         <div className="text-3xl font-bold text-green-600 mb-1">$8<span className="text-lg">/month</span></div>
-        <p className="text-xs text-slate-500">After first year ($100 upfront)</p>
+        <p className="text-xs text-muted-foreground">After first year ($100 upfront)</p>
       </div>
 
       <ul className="text-left text-sm space-y-2 mb-6">
@@ -175,7 +175,7 @@ export function SubscribeCard({
         className="w-full"
       />
 
-      <p className="text-xs text-slate-500 mt-4">
+      <p className="text-xs text-muted-foreground mt-4">
         Cancel anytime. No questions asked.
       </p>
     </div>

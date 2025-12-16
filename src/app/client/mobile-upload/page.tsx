@@ -121,7 +121,7 @@ export default function MobileUploadPage() {
   // Show loading state during auth check
   if (loading) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <Cloud className="h-8 w-8 animate-pulse text-blue-600" />
       </div>
     )
@@ -265,9 +265,9 @@ export default function MobileUploadPage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       {/* Mobile Header */}
-      <header className="border-b bg-neutral-800/50 border-white/10 sticky top-0 z-50">
+      <header className="border-b bg-card/50 border-border sticky top-0 z-50 backdrop-blur-sm">
         <div className="px-4 py-3 flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <Button asChild variant="ghost" size="sm">
@@ -277,7 +277,7 @@ export default function MobileUploadPage() {
             </Button>
             <div className="flex items-center space-x-2">
               <Smartphone className="h-6 w-6 text-blue-600" />
-              <span className="text-lg font-bold text-neutral-100">Upload Photos</span>
+              <span className="text-lg font-bold text-foreground">Upload Photos</span>
             </div>
           </div>
           <div className="flex items-center space-x-2">
@@ -289,7 +289,7 @@ export default function MobileUploadPage() {
                 <WifiOff className="h-4 w-4 text-red-600" />
               )}
               <Battery className={`h-4 w-4 ${connectionStatus.battery < 20 ? 'text-red-600' : 'text-green-600'}`} />
-              <span className="text-xs text-slate-600">{connectionStatus.battery}%</span>
+              <span className="text-xs text-muted-foreground">{connectionStatus.battery}%</span>
             </div>
           </div>
         </div>
@@ -298,14 +298,14 @@ export default function MobileUploadPage() {
       <main className="px-4 py-6">
         <div className="max-w-md mx-auto">
           {/* Mobile Upload Hero */}
-          <Card className="mb-6 bg-neutral-800/50 border-white/10">
+          <Card className="mb-6 bg-card/50 border-border">
             <CardContent className="p-6 text-center">
               <div className="flex items-center justify-center space-x-3 mb-4">
                 <Smartphone className="h-8 w-8 text-blue-600" />
                 <Cloud className="h-8 w-8 text-green-600" />
               </div>
-              <h1 className="text-2xl font-bold mb-3 text-neutral-100">Upload from Phone</h1>
-              <p className="text-neutral-400 mb-4">
+              <h1 className="text-2xl font-bold mb-3 text-foreground">Upload from Phone</h1>
+              <p className="text-muted-foreground mb-4">
                 Dump all your phone photos to PhotoVault for safe keeping
               </p>
               <div className="grid grid-cols-2 gap-3 text-sm">
@@ -323,7 +323,7 @@ export default function MobileUploadPage() {
 
           {/* Mobile Upload Options */}
           {!uploadSession && (
-            <Card className="mb-6 bg-neutral-800/50 border-white/10">
+            <Card className="mb-6 bg-card/50 border-border">
               <CardContent className="p-6">
                 <div className="space-y-4">
                   <Button 
@@ -360,7 +360,7 @@ export default function MobileUploadPage() {
                   onChange={handleCameraCapture}
                   className="hidden"
                 />
-                <p className="text-xs text-neutral-400 text-center mt-4">
+                <p className="text-xs text-muted-foreground text-center mt-4">
                   Supports JPG, PNG, HEIC formats
                 </p>
               </CardContent>
@@ -371,7 +371,7 @@ export default function MobileUploadPage() {
           {uploadSession && (
             <>
               {/* Session Header */}
-              <Card className="mb-6 bg-neutral-800/50 border-white/10">
+              <Card className="mb-6 bg-card/50 border-border">
                 <CardHeader className="pb-3">
                   <div className="flex items-center justify-between">
                     <div>
@@ -395,7 +395,7 @@ export default function MobileUploadPage() {
                     <div className="mb-4">
                       <div className="flex items-center justify-between mb-2">
                         <span className="text-sm font-medium">Uploading...</span>
-                        <span className="text-sm text-slate-600 dark:text-slate-400">
+                        <span className="text-sm text-muted-foreground dark:text-muted-foreground">
                           {Math.round(uploadProgress)}%
                         </span>
                       </div>
@@ -458,7 +458,7 @@ export default function MobileUploadPage() {
               </Card>
 
               {/* Mobile Photo Grid */}
-              <Card className="mb-6 bg-neutral-800/50 border-white/10">
+              <Card className="mb-6 bg-card/50 border-border">
                 <CardContent className="p-4">
                   <div className={`${viewMode === 'grid' ? 'grid grid-cols-3 gap-3' : 'space-y-3'}`}>
                     {uploadSession.photos.map((photo) => (
@@ -472,13 +472,13 @@ export default function MobileUploadPage() {
                           // Mobile Grid View
                           <div className="aspect-square bg-slate-200 dark:bg-slate-700 relative">
                             <div className="w-full h-full flex items-center justify-center">
-                              <Image className="h-6 w-6 text-slate-400" />
+                              <Image className="h-6 w-6 text-muted-foreground" />
                             </div>
                             
                             {/* Upload Progress Overlay */}
                             {photo.upload_status === 'uploading' && (
                               <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-                                <div className="text-center text-white">
+                                <div className="text-center text-foreground">
                                   <div className="text-xs font-medium">{photo.upload_progress}%</div>
                                   <Progress value={photo.upload_progress} className="w-12 h-1 mt-1" />
                                 </div>
@@ -525,11 +525,11 @@ export default function MobileUploadPage() {
                           // Mobile List View
                           <div className="flex items-center space-x-3 p-3">
                             <div className="w-12 h-12 bg-slate-200 dark:bg-slate-700 rounded-lg flex items-center justify-center">
-                              <Image className="h-5 w-5 text-slate-400" />
+                              <Image className="h-5 w-5 text-muted-foreground" />
                             </div>
                             <div className="flex-1 min-w-0">
                               <h4 className="font-medium text-sm truncate">{photo.file.name}</h4>
-                              <p className="text-xs text-slate-600 dark:text-slate-400">
+                              <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                                 {formatFileSize(photo.size)} • {formatDate(photo.date_taken!)}
                               </p>
                             </div>
@@ -555,11 +555,11 @@ export default function MobileUploadPage() {
 
               {/* Upload Complete */}
               {uploadSession.upload_completed && (
-                <Card className="bg-neutral-800/50 border-white/10">
+                <Card className="bg-card/50 border-border">
                   <CardContent className="p-6 text-center">
                     <CheckCircle className="h-12 w-12 text-green-600 mx-auto mb-3" />
-                    <h3 className="text-xl font-bold mb-2 text-neutral-100">Upload Complete!</h3>
-                    <p className="text-neutral-400 mb-4">
+                    <h3 className="text-xl font-bold mb-2 text-foreground">Upload Complete!</h3>
+                    <p className="text-muted-foreground mb-4">
                       {uploadSession.photos.length} photos uploaded
                     </p>
                     <div className="space-y-3">

@@ -106,7 +106,7 @@ export function ThemeProvider({ children }: ThemeProviderProps) {
     <ColorThemeContext.Provider value={{ colorTheme, setColorTheme, availableThemes }}>
       <NextThemesProvider
         attribute="class"
-        defaultTheme="system"
+        defaultTheme="light"
         enableSystem
         disableTransitionOnChange
       >

@@ -9,9 +9,9 @@ import Image from 'next/image'
 
 export default function AboutPage() {
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b border-white/10 bg-neutral-800/50">
+      <header className="border-b border-border bg-card/50">
         <div className="container mx-auto px-4 py-4">
           <Button asChild variant="ghost" size="sm">
             <Link href="/">
@@ -34,8 +34,8 @@ export default function AboutPage() {
               priority
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-            <p className="absolute bottom-3 right-3 text-xs text-white/70">
-              Photo by <a href="https://unsplash.com" target="_blank" rel="noopener noreferrer" className="hover:text-white">Unsplash</a>
+            <p className="absolute bottom-3 right-3 text-xs text-foreground/70">
+              Photo by <a href="https://unsplash.com" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">Unsplash</a>
             </p>
           </div>
 
@@ -44,27 +44,27 @@ export default function AboutPage() {
             <Badge className="mb-4 bg-blue-900/50 text-blue-200 border-blue-500/30">
               About PhotoVault
             </Badge>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-neutral-100">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4 text-foreground">
               Memory Insurance for Families
             </h1>
-            <p className="text-xl text-neutral-300">
+            <p className="text-xl text-muted-foreground">
               Professional-grade protection for your most precious photos. Because hard drives fail, but memories shouldn&apos;t.
             </p>
           </div>
 
           {/* Mission */}
-          <Card className="mb-8 bg-white/[0.03] border-white/5">
+          <Card className="mb-8 bg-card border-border">
             <CardHeader>
-              <CardTitle className="flex items-center space-x-2 text-neutral-100">
+              <CardTitle className="flex items-center space-x-2 text-foreground">
                 <Heart className="h-6 w-6 text-pink-600" />
                 <span>Our Mission</span>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-lg text-neutral-300">
+              <p className="text-lg text-muted-foreground">
                 Hard drives have a 100% failure rate eventually. Professional data recovery costs $500-$5,000. The &quot;cloud&quot; is just someone else&apos;s computer. Your family&apos;s most precious memories deserve real protection.
               </p>
-              <p className="text-lg text-neutral-300">
+              <p className="text-lg text-muted-foreground">
                 PhotoVault is Memory Insurance—a digital safety deposit box for the photos that matter most. Wedding photos, baby&apos;s first steps, grandma&apos;s last Christmas. Protected. Accessible. Forever.
               </p>
             </CardContent>
@@ -72,15 +72,15 @@ export default function AboutPage() {
 
           {/* Value Propositions */}
           <div className="grid md:grid-cols-2 gap-6 mb-12">
-            <Card className="bg-white/[0.03] border-white/5">
+            <Card className="bg-card border-border">
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2 text-neutral-100">
+                <CardTitle className="flex items-center space-x-2 text-foreground">
                   <Users className="h-5 w-5 text-blue-600" />
                   <span>For Families</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2 text-neutral-300">
+                <ul className="space-y-2 text-muted-foreground">
                   <li>• Memory Insurance: Your photos survive any hard drive crash</li>
                   <li>• One tap to camera roll—no more zip files</li>
                   <li>• All your photographers, all your memories, one place</li>
@@ -90,15 +90,15 @@ export default function AboutPage() {
               </CardContent>
             </Card>
 
-            <Card className="bg-white/[0.03] border-white/5">
+            <Card className="bg-card border-border">
               <CardHeader>
-                <CardTitle className="flex items-center space-x-2 text-neutral-100">
+                <CardTitle className="flex items-center space-x-2 text-foreground">
                   <Camera className="h-5 w-5 text-purple-600" />
                   <span>For Photographers</span>
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <ul className="space-y-2 text-neutral-300">
+                <ul className="space-y-2 text-muted-foreground">
                   <li>• Become the guardian of your clients&apos; family history</li>
                   <li>• Earn $4/month passive income on every client—forever</li>
                   <li>• Replace Pixieset, ShootProof, SmugMug—and earn more</li>
@@ -110,31 +110,31 @@ export default function AboutPage() {
           </div>
 
           {/* Core Values */}
-          <Card className="mb-8 bg-white/[0.03] border-white/5">
+          <Card className="mb-8 bg-card border-border">
             <CardHeader>
-              <CardTitle className="text-neutral-100">Why Memory Insurance Matters</CardTitle>
-              <CardDescription className="text-neutral-400">The protection your photos deserve</CardDescription>
+              <CardTitle className="text-foreground">Why Memory Insurance Matters</CardTitle>
+              <CardDescription className="text-muted-foreground">The protection your photos deserve</CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid md:grid-cols-3 gap-6">
                 <div className="text-center">
                   <Shield className="h-12 w-12 mx-auto mb-4 text-green-600" />
-                  <h3 className="font-semibold mb-2 text-neutral-100">Digital Safety Deposit Box</h3>
-                  <p className="text-sm text-neutral-400">
+                  <h3 className="font-semibold mb-2 text-foreground">Digital Safety Deposit Box</h3>
+                  <p className="text-sm text-muted-foreground">
                     Professional-grade protection that survives hard drive crashes, phone losses, and house fires
                   </p>
                 </div>
                 <div className="text-center">
                   <Clock className="h-12 w-12 mx-auto mb-4 text-orange-600" />
-                  <h3 className="font-semibold mb-2 text-neutral-100">Lifetime Archival</h3>
-                  <p className="text-sm text-neutral-400">
+                  <h3 className="font-semibold mb-2 text-foreground">Lifetime Archival</h3>
+                  <p className="text-sm text-muted-foreground">
                     No expiring galleries. Your wedding photos, baby&apos;s first steps—safe forever
                   </p>
                 </div>
                 <div className="text-center">
                   <TrendingUp className="h-12 w-12 mx-auto mb-4 text-blue-600" />
-                  <h3 className="font-semibold mb-2 text-neutral-100">One Tap Access</h3>
-                  <p className="text-sm text-neutral-400">
+                  <h3 className="font-semibold mb-2 text-foreground">One Tap Access</h3>
+                  <p className="text-sm text-muted-foreground">
                     Full resolution photos delivered straight to your camera roll. No zip files.
                   </p>
                 </div>
@@ -143,30 +143,30 @@ export default function AboutPage() {
           </Card>
 
           {/* The Story */}
-          <Card className="mb-8 bg-white/[0.03] border-white/5">
+          <Card className="mb-8 bg-card border-border">
             <CardHeader>
-              <CardTitle className="text-neutral-100">Our Story</CardTitle>
+              <CardTitle className="text-foreground">Our Story</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <p className="text-neutral-300">
+              <p className="text-muted-foreground">
                 PhotoVault started when we watched families lose irreplaceable photos—wedding memories gone when a hard drive crashed, baby photos vanished when a phone was lost, grandma&apos;s last Christmas deleted by accident.
               </p>
-              <p className="text-neutral-300">
+              <p className="text-muted-foreground">
                 Data recovery costs $500-$5,000. Success isn&apos;t guaranteed. And the &quot;cloud&quot; is just someone else&apos;s computer—full of zip files nobody can open on their phone.
               </p>
-              <p className="text-neutral-300">
+              <p className="text-muted-foreground">
                 We built PhotoVault to be Memory Insurance: a digital safety deposit box where families protect what matters most, and photographers become the guardians of their clients&apos; family history.
               </p>
-              <p className="font-semibold text-lg text-neutral-100">
+              <p className="font-semibold text-lg text-foreground">
                 For the price of one coffee a month, never worry about losing your most precious photos again.
               </p>
             </CardContent>
           </Card>
 
           {/* CTA */}
-          <div className="text-center bg-gradient-to-r from-blue-900/20 to-purple-900/20 rounded-lg p-8 border border-white/5">
-            <h2 className="text-2xl font-bold mb-4 text-neutral-100">Your Memories Deserve Protection</h2>
-            <p className="text-lg text-neutral-300 mb-6">
+          <div className="text-center bg-gradient-to-r from-blue-900/20 to-purple-900/20 rounded-lg p-8 border border-border">
+            <h2 className="text-2xl font-bold mb-4 text-foreground">Your Memories Deserve Protection</h2>
+            <p className="text-lg text-muted-foreground mb-6">
               Whether you&apos;re a family protecting precious photos or a photographer becoming a Memory Guardian
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

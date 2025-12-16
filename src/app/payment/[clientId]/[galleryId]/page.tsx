@@ -146,10 +146,10 @@ export default function PaymentPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600 mx-auto mb-4"></div>
-          <p className="text-slate-600 dark:text-slate-300">Loading payment information...</p>
+          <p className="text-muted-foreground dark:text-foreground">Loading payment information...</p>
         </div>
       </div>
     )
@@ -157,12 +157,12 @@ export default function PaymentPage() {
 
   if (!paymentData) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardContent className="p-8 text-center">
             <AlertTriangle className="h-16 w-16 text-orange-500 mx-auto mb-4" />
             <h2 className="text-2xl font-bold mb-2">Payment Not Found</h2>
-            <p className="text-slate-600 dark:text-slate-300 mb-6">
+            <p className="text-muted-foreground dark:text-foreground mb-6">
               This payment link is invalid or has expired. Please contact your photographer for a new payment link.
             </p>
             <Button asChild>
@@ -176,12 +176,12 @@ export default function PaymentPage() {
 
   if (paymentSuccess) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardContent className="p-8 text-center">
             <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
             <h2 className="text-2xl font-bold mb-2">Payment Successful!</h2>
-            <p className="text-slate-600 dark:text-slate-300 mb-6">
+            <p className="text-muted-foreground dark:text-foreground mb-6">
               Your payment has been processed. You now have access to your gallery.
             </p>
             <div className="space-y-3">
@@ -191,7 +191,7 @@ export default function PaymentPage() {
                   View Your Photos
                 </a>
               </Button>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-muted-foreground">
                 Redirecting automatically in 3 seconds...
               </p>
             </div>
@@ -202,7 +202,7 @@ export default function PaymentPage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b bg-white dark:bg-slate-900">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -227,7 +227,7 @@ export default function PaymentPage() {
                 </div>
                 <div>
                   <h1 className="text-2xl font-bold">{paymentData.photographer.business_name}</h1>
-                  <p className="text-slate-600 dark:text-slate-300">{paymentData.photographer.name}</p>
+                  <p className="text-muted-foreground dark:text-foreground">{paymentData.photographer.name}</p>
                   {paymentData.photographer.website_url && (
                     <a href={paymentData.photographer.website_url} className="text-blue-600 hover:underline text-sm">
                       Visit Website
@@ -259,7 +259,7 @@ export default function PaymentPage() {
               <div className="space-y-4">
                 <div>
                   <h3 className="font-semibold text-lg">{paymentData.gallery.gallery_name}</h3>
-                  <p className="text-slate-600 dark:text-slate-300">
+                  <p className="text-muted-foreground dark:text-foreground">
                     Session Date: {new Date(paymentData.gallery.session_date).toLocaleDateString()}
                   </p>
                 </div>
@@ -295,11 +295,11 @@ export default function PaymentPage() {
                 <div className="flex items-start justify-between mb-4">
                   <div>
                     <h3 className="text-xl font-bold">{paymentData.paymentOption.name}</h3>
-                    <p className="text-slate-600 dark:text-slate-300">PhotoVault Access</p>
+                    <p className="text-muted-foreground dark:text-foreground">PhotoVault Access</p>
                   </div>
                   <div className="text-right">
                     <div className="text-3xl font-bold text-green-600">${paymentData.paymentOption.price}</div>
-                    <div className="text-sm text-slate-500">per month</div>
+                    <div className="text-sm text-muted-foreground">per month</div>
                   </div>
                 </div>
                 
@@ -317,7 +317,7 @@ export default function PaymentPage() {
 
                 <div className="space-y-2">
                   <h4 className="font-medium">What you get:</h4>
-                  <ul className="space-y-1 text-sm text-slate-600 dark:text-slate-300">
+                  <ul className="space-y-1 text-sm text-muted-foreground dark:text-foreground">
                     <li className="flex items-start space-x-2">
                       <CheckCircle className="h-4 w-4 text-green-500 mt-0.5 flex-shrink-0" />
                       <span>Access to all {paymentData.gallery.photo_count} photos from your session</span>
@@ -353,7 +353,7 @@ export default function PaymentPage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex items-center space-x-4 text-sm text-slate-600 dark:text-slate-300">
+              <div className="flex items-center space-x-4 text-sm text-muted-foreground dark:text-foreground">
                 <div className="flex items-center space-x-2">
                   <Lock className="h-4 w-4 text-green-500" />
                   <span>256-bit SSL encryption</span>
@@ -374,7 +374,7 @@ export default function PaymentPage() {
           <Card>
             <CardContent className="p-8 text-center">
               <h2 className="text-2xl font-bold mb-4">Ready to Access Your Photos?</h2>
-              <p className="text-slate-600 dark:text-slate-300 mb-6">
+              <p className="text-muted-foreground dark:text-foreground mb-6">
                 Complete your payment to unlock access to your professional photos.
               </p>
               
@@ -382,7 +382,7 @@ export default function PaymentPage() {
                 onClick={handlePayment}
                 disabled={processing}
                 size="lg"
-                className="bg-pink-600 hover:bg-pink-700 text-white px-8 mb-4"
+                className="bg-pink-600 hover:bg-pink-700 text-foreground px-8 mb-4"
               >
                 {processing ? (
                   <>
@@ -397,7 +397,7 @@ export default function PaymentPage() {
                 )}
               </Button>
               
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-muted-foreground">
                 Secure payment processed by PhotoVault
               </p>
             </CardContent>

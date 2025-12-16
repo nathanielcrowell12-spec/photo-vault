@@ -265,26 +265,26 @@ export default function GalleriesPage() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-amber-400" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
           <div className="flex items-center gap-4">
             <Link href="/photographer/dashboard">
-              <Button variant="ghost" size="icon" className="text-slate-400 hover:text-white">
+              <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
                 <ArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
             <div>
-              <h1 className="text-2xl font-bold text-white">Galleries</h1>
-              <p className="text-slate-400">Manage your photo galleries</p>
+              <h1 className="text-2xl font-bold text-foreground">Galleries</h1>
+              <p className="text-muted-foreground">Manage your photo galleries</p>
             </div>
           </div>
           <Link href="/photographer/galleries/create">
@@ -311,13 +311,13 @@ export default function GalleriesPage() {
 
         {/* Gallery Grid */}
         {galleries.length === 0 ? (
-          <Card className="bg-slate-800/50 border-slate-700">
+          <Card className="bg-slate-800/50 border-border">
             <CardContent className="flex flex-col items-center justify-center py-12">
-              <ImageIcon className="h-12 w-12 text-slate-600 mb-4" />
-              <h3 className="text-lg font-medium text-white mb-2">
+              <ImageIcon className="h-12 w-12 text-muted-foreground mb-4" />
+              <h3 className="text-lg font-medium text-foreground mb-2">
                 {searchQuery ? 'No galleries found' : 'No galleries yet'}
               </h3>
-              <p className="text-slate-400 text-center mb-4">
+              <p className="text-muted-foreground text-center mb-4">
                 {searchQuery
                   ? 'Try adjusting your search terms'
                   : 'Create your first gallery to get started'}
@@ -335,42 +335,42 @@ export default function GalleriesPage() {
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {galleries.map((gallery) => (
-              <Card key={gallery.id} className="bg-slate-800/50 border-slate-700 hover:border-slate-600 transition-colors">
+              <Card key={gallery.id} className="bg-slate-800/50 border-border hover:border-slate-600 transition-colors">
                 <CardHeader className="pb-3">
                   <div className="flex items-start justify-between">
                     <div className="flex-1 min-w-0">
-                      <CardTitle className="text-white text-lg truncate">
+                      <CardTitle className="text-foreground text-lg truncate">
                         {gallery.gallery_name}
                       </CardTitle>
                       {gallery.client && (
-                        <CardDescription className="text-slate-400 truncate">
+                        <CardDescription className="text-muted-foreground truncate">
                           {gallery.client.name}
                         </CardDescription>
                       )}
                     </div>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="text-slate-400 hover:text-white">
+                        <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="bg-slate-800 border-slate-700">
+                      <DropdownMenuContent align="end" className="bg-slate-800 border-border">
                         <DropdownMenuItem
-                          className="text-slate-300 hover:text-white focus:text-white cursor-pointer"
+                          className="text-foreground hover:text-foreground focus:text-foreground cursor-pointer"
                           onClick={() => router.push(`/gallery/${gallery.id}`)}
                         >
                           <Eye className="h-4 w-4 mr-2" />
                           View Gallery
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          className="text-slate-300 hover:text-white focus:text-white cursor-pointer"
+                          className="text-foreground hover:text-foreground focus:text-foreground cursor-pointer"
                           onClick={() => router.push(`/photographer/galleries/${gallery.id}/upload`)}
                         >
                           <Upload className="h-4 w-4 mr-2" />
                           Upload Photos
                         </DropdownMenuItem>
                         <DropdownMenuItem
-                          className="text-slate-300 hover:text-white focus:text-white cursor-pointer"
+                          className="text-foreground hover:text-foreground focus:text-foreground cursor-pointer"
                           onClick={() => router.push(`/photographer/galleries/${gallery.id}/edit`)}
                         >
                           <Edit className="h-4 w-4 mr-2" />
@@ -378,7 +378,7 @@ export default function GalleriesPage() {
                         </DropdownMenuItem>
                         {gallery.client?.email && (
                           <DropdownMenuItem
-                            className="text-slate-300 hover:text-white focus:text-white cursor-pointer"
+                            className="text-foreground hover:text-foreground focus:text-foreground cursor-pointer"
                             onClick={() => handleResendNotification(gallery.id, gallery.client?.email)}
                             disabled={sendingNotification === gallery.id}
                           >
@@ -397,18 +397,18 @@ export default function GalleriesPage() {
                 <CardContent className="space-y-3">
                   {/* Stats Row */}
                   <div className="flex items-center gap-4 text-sm flex-wrap">
-                    <div className="flex items-center gap-1 text-slate-400">
+                    <div className="flex items-center gap-1 text-muted-foreground">
                       <ImageIcon className="h-4 w-4" />
                       <span>{gallery.photo_count || 0} photos</span>
                     </div>
                     {(gallery.event_date || gallery.session_date) && (
-                      <div className="flex items-center gap-1 text-slate-400">
+                      <div className="flex items-center gap-1 text-muted-foreground">
                         <Calendar className="h-4 w-4" />
                         <span>{formatDate(gallery.event_date || gallery.session_date)}</span>
                       </div>
                     )}
                     {gallery.location && (
-                      <div className="flex items-center gap-1 text-slate-400">
+                      <div className="flex items-center gap-1 text-muted-foreground">
                         <MapPin className="h-4 w-4" />
                         <span className="truncate max-w-[100px]">{gallery.location}</span>
                       </div>
@@ -418,14 +418,14 @@ export default function GalleriesPage() {
                   {/* People Tags */}
                   {gallery.people && gallery.people.length > 0 && (
                     <div className="flex items-center gap-1 flex-wrap">
-                      <Users className="h-3 w-3 text-slate-500" />
+                      <Users className="h-3 w-3 text-muted-foreground" />
                       {gallery.people.slice(0, 3).map((person, idx) => (
-                        <Badge key={idx} variant="secondary" className="text-xs bg-slate-700/50 text-slate-300">
+                        <Badge key={idx} variant="secondary" className="text-xs bg-slate-700/50 text-foreground">
                           {person}
                         </Badge>
                       ))}
                       {gallery.people.length > 3 && (
-                        <span className="text-xs text-slate-500">+{gallery.people.length - 3} more</span>
+                        <span className="text-xs text-muted-foreground">+{gallery.people.length - 3} more</span>
                       )}
                     </div>
                   )}
@@ -450,7 +450,7 @@ export default function GalleriesPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      className="flex-1 border-slate-600 text-slate-300 hover:text-white hover:bg-slate-700"
+                      className="flex-1 border-slate-600 text-foreground hover:text-foreground hover:bg-slate-700"
                       onClick={() => router.push(`/gallery/${gallery.id}`)}
                     >
                       <ExternalLink className="h-3 w-3 mr-1" />

@@ -41,14 +41,43 @@ function DesktopAuthCallbackContent() {
           setAuthStatus('authenticated')
           setUserEmail(session.user.email || '')
 
-          // TODO: Send auth token to desktop app via custom protocol or IPC
-          // For now, just log it
           console.log('[Desktop Callback] ✅ User authenticated:', session.user.email)
-          console.log('[Desktop Callback] User ID:', session.user.id)
-          console.log('[Desktop Callback] Access Token:', session.access_token)
 
-          // In the future, this would send data to the desktop app:
-          // window.location.href = `photovault://auth?token=${session.access_token}&userId=${session.user.id}`
+          // Get client_id if user is a client (for desktop app context)
+          let clientId = ''
+          try {
+            const { data: profile } = await supabaseBrowser
+              .from('user_profiles')
+              .select('id, user_type')
+              .eq('id', session.user.id)
+              .single()
+
+            if (profile?.user_type === 'client') {
+              // Get client record
+              const { data: client } = await supabaseBrowser
+                .from('clients')
+                .select('id')
+                .eq('user_id', session.user.id)
+                .single()
+
+              if (client) {
+                clientId = client.id
+              }
+            }
+          } catch (e) {
+            console.log('[Desktop Callback] Could not fetch client_id (may not be a client)')
+          }
+
+          // Send auth token to desktop app via protocol handler
+          // Desktop app handles this in main.ts open-url and second-instance events
+          const protocolUrl = `photovault://auth?token=${encodeURIComponent(session.access_token)}&userId=${encodeURIComponent(session.user.id)}${clientId ? `&clientId=${encodeURIComponent(clientId)}` : ''}`
+
+          console.log('[Desktop Callback] Redirecting to desktop app...')
+
+          // Small delay to show success message, then redirect
+          setTimeout(() => {
+            window.location.href = protocolUrl
+          }, 1500)
         } else if (user) {
           // Fall back to context user
           clearTimeout(timeoutId)
@@ -83,7 +112,7 @@ function DesktopAuthCallbackContent() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4">
       <Card className="w-full max-w-md">
         <CardHeader className="text-center">
           <div className="flex justify-center mb-4">
@@ -111,31 +140,22 @@ function DesktopAuthCallbackContent() {
             <div className="text-center space-y-4">
               <div className="flex items-center justify-center space-x-2 text-green-600">
                 <CheckCircle className="h-5 w-5" />
-                <span className="font-medium">Successfully authenticated as {userEmail}</span>
+                <span className="font-medium">Signed in as {userEmail}</span>
               </div>
 
-              <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
-                <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">
-                  Next Steps:
-                </h4>
-                <ol className="text-sm text-blue-700 dark:text-blue-200 space-y-1 list-decimal list-inside text-left">
-                  <li>Return to the PhotoVault Desktop App</li>
-                  <li>The app should now show you&apos;re signed in</li>
-                  <li>You can now upload your photos</li>
-                </ol>
-              </div>
-
-              <div className="bg-yellow-50 dark:bg-yellow-900/20 p-4 rounded-lg text-left">
-                <h4 className="font-semibold text-yellow-900 dark:text-yellow-100 mb-2 text-sm">
-                  🚧 Note: Authentication handoff not yet implemented
-                </h4>
-                <p className="text-xs text-yellow-700 dark:text-yellow-200">
-                  The desktop app doesn&apos;t automatically receive your login yet.
-                  Check the browser console for your auth token (F12 → Console tab).
+              <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
+                <div className="flex items-center justify-center gap-2 mb-2">
+                  <Loader2 className="h-4 w-4 animate-spin text-green-600" />
+                  <span className="font-medium text-green-700 dark:text-green-300">
+                    Opening Desktop App...
+                  </span>
+                </div>
+                <p className="text-sm text-green-600 dark:text-green-400">
+                  The PhotoVault Desktop App will open automatically. You can close this tab.
                 </p>
               </div>
 
-              <Button onClick={handleRetry} className="w-full">
+              <Button onClick={handleRetry} variant="outline" className="w-full">
                 Back to Upload Options
               </Button>
             </div>
@@ -169,7 +189,7 @@ function DesktopAuthCallbackContent() {
 export default function DesktopAuthCallbackPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardContent className="flex items-center justify-center p-8">
             <Loader2 className="h-8 w-8 animate-spin" />

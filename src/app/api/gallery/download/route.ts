@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { headers } from 'next/headers'
+import { trackServerEvent } from '@/lib/analytics/server'
+import { EVENTS } from '@/types/analytics'
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic'
@@ -130,6 +132,18 @@ export async function POST(request: NextRequest) {
 
       if (updatedGallery?.all_photos_downloaded && !gallery.all_photos_downloaded) {
         console.log(`[Download] Gallery ${galleryId} - all photos downloaded!`)
+      }
+
+      // Track download event (server-side - engagement tracking)
+      try {
+        await trackServerEvent(user.id, EVENTS.CLIENT_DOWNLOADED_PHOTO, {
+          gallery_id: galleryId,
+          photographer_id: gallery.photographer_id || '',
+          download_type: downloadType,
+        })
+      } catch (trackError) {
+        console.error('[Download] Error tracking download:', trackError)
+        // Don't block download if tracking fails
       }
 
       return NextResponse.json({

@@ -275,8 +275,8 @@ export default function AdminDatabasePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-neutral-900">
-        <div className="flex items-center gap-3 text-slate-600">
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="flex items-center gap-3 text-muted-foreground">
           <Loader2 className="h-5 w-5 animate-spin" />
           <span>Authenticating…</span>
         </div>
@@ -290,15 +290,15 @@ export default function AdminDatabasePage() {
 
   return (
     <AccessGuard requiredAccess="canAccessAdminDashboard">
-      <div className="min-h-screen bg-neutral-900">
+      <div className="min-h-screen bg-background">
         {/* Header */}
-        <header className="border-b bg-neutral-800/50 border-white/10">
+        <header className="border-b bg-card/50 border-border">
           <div className="container mx-auto px-4 py-6 flex items-center justify-between">
             <div className="flex items-center gap-4">
               <Database className="h-10 w-10 text-blue-600" />
               <div>
                 <h1 className="text-2xl font-bold">Database Management</h1>
-                <p className="text-sm text-slate-600">
+                <p className="text-sm text-muted-foreground">
                   Monitor storage, backups, and RLS policies for PhotoVault
                 </p>
               </div>
@@ -323,7 +323,7 @@ export default function AdminDatabasePage() {
                     Key health indicators from Supabase, storage, and security layers
                   </CardDescription>
                 </div>
-                <div className="flex items-center gap-2 text-sm text-slate-500">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   {statusLoading ? (
                     <span className="flex items-center gap-2">
                       <Loader2 className="h-4 w-4 animate-spin" />
@@ -347,7 +347,7 @@ export default function AdminDatabasePage() {
                 <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
                   {metrics.map((metric) => (
                     <div key={metric.label} className="rounded-lg border border-slate-200 bg-white p-4">
-                      <p className="text-xs uppercase tracking-wide text-slate-500">{metric.label}</p>
+                      <p className="text-xs uppercase tracking-wide text-muted-foreground">{metric.label}</p>
                       <p className="mt-2 text-xl font-semibold text-slate-800">{metric.value}</p>
                     </div>
                   ))}
@@ -362,7 +362,7 @@ export default function AdminDatabasePage() {
                           <IconComponent className={`h-5 w-5 ${card.color}`} />
                           <span className="font-semibold text-slate-800">{card.title}</span>
                         </div>
-                        <p className="text-sm text-slate-500">{card.subtitle}</p>
+                        <p className="text-sm text-muted-foreground">{card.subtitle}</p>
                         <span className={`text-sm font-medium ${card.color}`}>{card.status}</span>
                       </div>
                     )
@@ -395,13 +395,13 @@ export default function AdminDatabasePage() {
                     const config = ACTION_CONFIG[key]
                     const isLoadingAction = actionLoading[key]
                     return (
-                      <Card key={key} className="border border-slate-200 bg-neutral-800">
+                      <Card key={key} className="border border-slate-200 bg-card">
                         <CardHeader>
                           <CardTitle className="text-base">{config.title}</CardTitle>
                           <CardDescription>{config.successDetail}</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                          <div className="flex items-center gap-3 text-sm text-slate-500">
+                          <div className="flex items-center gap-3 text-sm text-muted-foreground">
                             <IconComponent className="h-4 w-4 text-blue-500" />
                             {lastRun}
                           </div>
@@ -431,14 +431,14 @@ export default function AdminDatabasePage() {
                 </div>
 
                 <div>
-                  <h3 className="text-sm font-semibold text-slate-600 mb-3">Recent Operations</h3>
+                  <h3 className="text-sm font-semibold text-muted-foreground mb-3">Recent Operations</h3>
                   <div
                     className="bg-slate-900/90 text-slate-100 rounded-lg p-4 space-y-2 text-sm font-mono"
                     role="log"
                     aria-live="polite"
                   >
                     {operationLog.length === 0 ? (
-                      <p className="text-slate-400">No manual operations recorded this session.</p>
+                      <p className="text-muted-foreground">No manual operations recorded this session.</p>
                     ) : (
                       operationLog.map((log) => (
                         <div key={log.id} className="space-y-1">
@@ -466,7 +466,7 @@ export default function AdminDatabasePage() {
                               {log.level}
                             </span>
                           </div>
-                          <p className="text-slate-400">{log.detail}</p>
+                          <p className="text-muted-foreground">{log.detail}</p>
                         </div>
                       ))
                     )}
@@ -493,13 +493,13 @@ export default function AdminDatabasePage() {
                       <div className="flex items-center justify-between">
                         <div>
                           <h4 className="font-semibold text-slate-800">{policy.name}</h4>
-                          <p className="text-sm text-slate-500">{policy.description}</p>
+                          <p className="text-sm text-muted-foreground">{policy.description}</p>
                         </div>
                         <Badge className="bg-emerald-100 text-emerald-700 border-emerald-200">
                           {policy.status}
                         </Badge>
                       </div>
-                      <div className="mt-3 flex items-center gap-2 text-xs uppercase tracking-wide text-slate-400">
+                      <div className="mt-3 flex items-center gap-2 text-xs uppercase tracking-wide text-muted-foreground">
                         <Database className="h-3 w-3" />
                         Table: {policy.table}
                       </div>
@@ -527,13 +527,13 @@ export default function AdminDatabasePage() {
                     return (
                       <div
                         key={task.title}
-                        className="rounded-lg border border-slate-200 bg-neutral-800 p-4 flex items-start gap-3"
+                        className="rounded-lg border border-slate-200 bg-card p-4 flex items-start gap-3"
                       >
                         <IconComponent className="h-5 w-5 text-blue-500 mt-1" />
                         <div>
                           <h4 className="font-semibold text-slate-800">{task.title}</h4>
-                          <p className="text-sm text-slate-500">Runs: {task.schedule}</p>
-                          <p className="text-sm text-slate-500">{task.notes}</p>
+                          <p className="text-sm text-muted-foreground">Runs: {task.schedule}</p>
+                          <p className="text-sm text-muted-foreground">{task.notes}</p>
                         </div>
                       </div>
                     )

@@ -114,9 +114,12 @@ export async function POST(request: NextRequest) {
     const shootFeeCents = gallery.shoot_fee || 0
     const storageFeeCents = gallery.storage_fee || totalAmountCents // Default to total if no breakdown
 
-    // PhotoVault gets 50% of storage fee (application_fee_amount)
-    // Photographer gets: shoot_fee + 50% of storage_fee (via destination charge)
-    // Stripe fees are deducted from photographer's share automatically
+    // DESTINATION CHARGE FEE MODEL:
+    // - PhotoVault sets application_fee_amount = 50% of storage fee
+    // - Photographer receives: shoot_fee + 50% of storage_fee (full amount, no deductions)
+    // - PhotoVault receives: application_fee_amount MINUS Stripe fees (~2.9% + $0.30)
+    // - PhotoVault absorbs ALL Stripe processing fees to protect photographer earnings
+    // - Example: $100 storage → Photographer gets $50, PhotoVault gets ~$47 after Stripe fees
     const photovaultFeeCents = Math.round(storageFeeCents * 0.5)
 
     console.log('[PublicCheckout] Fee breakdown:', {

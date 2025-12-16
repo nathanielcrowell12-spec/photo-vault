@@ -33,7 +33,7 @@ export default function SharePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-amber-500" />
       </div>
     )
@@ -53,12 +53,12 @@ export default function SharePage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b border-white/5 bg-neutral-800/50">
+      <header className="border-b border-border bg-card/50">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <Button asChild variant="ghost" size="sm" className="text-neutral-400 hover:text-white">
+            <Button asChild variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
               <Link href="/photographer/dashboard">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Dashboard
@@ -67,7 +67,7 @@ export default function SharePage() {
             <Separator orientation="vertical" className="h-6 bg-white/10" />
             <div className="flex items-center space-x-2">
               <Share2 className="h-6 w-6 text-purple-400" />
-              <span className="text-xl font-bold text-neutral-100">Share Galleries</span>
+              <span className="text-xl font-bold text-foreground">Share Galleries</span>
             </div>
           </div>
           <Badge variant="outline" className="bg-purple-500/10 text-purple-400 border-purple-500/20">
@@ -78,16 +78,16 @@ export default function SharePage() {
 
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-2xl mx-auto">
-          <Card className="bg-neutral-800/50 border-white/10">
+          <Card className="bg-card/50 border-border">
             <CardHeader>
-              <CardTitle className="text-neutral-100">Share a Gallery</CardTitle>
-              <CardDescription className="text-neutral-400">
+              <CardTitle className="text-foreground">Share a Gallery</CardTitle>
+              <CardDescription className="text-muted-foreground">
                 Select a gallery and share it with your clients.
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <label htmlFor="gallery-select" className="block text-sm font-medium text-neutral-300">
+                <label htmlFor="gallery-select" className="block text-sm font-medium text-muted-foreground">
                   Select Gallery
                 </label>
                 {/* This would be a dropdown with the photographer's galleries */}
@@ -95,23 +95,23 @@ export default function SharePage() {
                   id="gallery-select"
                   value={selectedGallery}
                   onChange={(e) => setSelectedGallery(e.target.value)}
-                  className="bg-neutral-900 border-white/10 text-white placeholder:text-neutral-500"
+                  className="bg-background border-border text-foreground placeholder:text-muted-foreground"
                 />
               </div>
               <div className="flex space-x-2">
                 <Input
                   readOnly
                   value={`http://localhost:3000/gallery/${selectedGallery}`}
-                  className="bg-neutral-900 border-white/10 text-white"
+                  className="bg-background border-border text-foreground"
                 />
-                <Button onClick={copyToClipboard} variant="outline" className="border-white/10 text-neutral-300 hover:bg-white/5">
+                <Button onClick={copyToClipboard} variant="outline" className="border-border text-muted-foreground hover:bg-muted">
                   <Copy className="h-4 w-4 mr-2" />
                   Copy Link
                 </Button>
               </div>
               <Separator className="bg-white/10" />
               <div className="flex justify-around">
-                <Button variant="ghost" className="text-neutral-400 hover:text-white hover:bg-white/5">
+                <Button variant="ghost" className="text-muted-foreground hover:text-foreground hover:bg-muted">
                   <Mail className="h-4 w-4 mr-2" />
                   Email
                 </Button>

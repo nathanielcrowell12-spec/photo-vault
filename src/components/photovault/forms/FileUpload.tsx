@@ -82,18 +82,18 @@ export default function FileUpload({
           className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
             dragActive
               ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-              : 'border-slate-300 dark:border-slate-700'
+              : 'border-border'
           }`}
           onDragEnter={handleDrag}
           onDragLeave={handleDrag}
           onDragOver={handleDrag}
           onDrop={handleDrop}
         >
-          <Upload className="h-12 w-12 text-slate-400 mx-auto mb-4" />
-          <p className="text-lg font-medium text-slate-900 dark:text-slate-100 mb-2">
+          <Upload className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+          <p className="text-lg font-medium text-foreground mb-2">
             {label}
           </p>
-          <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
+          <p className="text-sm text-muted-foreground dark:text-muted-foreground mb-4">
             Drag and drop files here, or click to select
           </p>
           <input
@@ -111,28 +111,28 @@ export default function FileUpload({
           >
             Select Files
           </Button>
-          <p className="text-xs text-slate-500 mt-4">
+          <p className="text-xs text-muted-foreground mt-4">
             Maximum file size: {maxSize / 1048576}MB
           </p>
         </div>
 
         {selectedFiles.length > 0 && (
           <div className="mt-4 space-y-2">
-            <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+            <p className="text-sm font-medium text-foreground">
               Selected Files ({selectedFiles.length})
             </p>
             {selectedFiles.map((file, index) => (
               <div
                 key={index}
-                className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg"
+                className="flex items-center justify-between p-3 bg-card rounded-lg"
               >
                 <div className="flex items-center space-x-3">
                   <File className="h-5 w-5 text-blue-500" />
                   <div>
-                    <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                    <p className="text-sm font-medium text-foreground">
                       {file.name}
                     </p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-muted-foreground">
                       {formatFileSize(file.size)}
                     </p>
                   </div>

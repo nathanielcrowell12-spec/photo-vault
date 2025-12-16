@@ -98,16 +98,16 @@ export default async function LocationPage({ params }: LocationPageProps) {
     <div className="container mx-auto px-4 py-8">
       {/* Breadcrumb */}
       <div className="mb-8">
-        <div className="flex items-center gap-2 text-sm text-slate-400">
-          <Link href="/directory" className="hover:text-white transition-colors">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <Link href="/directory" className="hover:text-foreground transition-colors">
             Directory
           </Link>
           <span>/</span>
-          <Link href={`/directory/${city}`} className="hover:text-white transition-colors">
+          <Link href={`/directory/${city}`} className="hover:text-foreground transition-colors">
             {cityName}
           </Link>
           <span>/</span>
-          <span className="text-white">{location.name}</span>
+          <span className="text-foreground">{location.name}</span>
         </div>
       </div>
 
@@ -115,10 +115,10 @@ export default async function LocationPage({ params }: LocationPageProps) {
       <div className="mb-10">
         <div className="flex items-start justify-between gap-4 mb-4">
           <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+            <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
               {location.name}
             </h1>
-            <p className="text-slate-400 flex items-center gap-2">
+            <p className="text-muted-foreground flex items-center gap-2">
               <MapPin className="w-4 h-4" />
               {location.city}, {location.state}
             </p>
@@ -129,7 +129,7 @@ export default async function LocationPage({ params }: LocationPageProps) {
         </div>
 
         {location.description && (
-          <p className="text-slate-300 text-lg leading-relaxed max-w-3xl">
+          <p className="text-foreground text-lg leading-relaxed max-w-3xl">
             {location.description}
           </p>
         )}
@@ -158,19 +158,19 @@ export default async function LocationPage({ params }: LocationPageProps) {
       {intel && (
         <div className="grid md:grid-cols-2 gap-6 mb-10">
           {/* Permit Information */}
-          <Card className="bg-slate-800/50 border-slate-700">
+          <Card className="bg-slate-800/50 border-border">
             <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
+              <CardTitle className="text-foreground flex items-center gap-2">
                 <FileText className="w-5 h-5 text-amber-400" />
                 Permit Information
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <div>
-                <div className="flex items-center gap-2 text-slate-400 text-sm mb-1">
+                <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
                   <Badge variant="outline" className="text-xs">Status</Badge>
                 </div>
-                <p className="text-white">
+                <p className="text-foreground">
                   {intel.permit_status === 'Yes' && 'No permit required for small sessions'}
                   {intel.permit_status === 'No' && 'Permit required'}
                   {intel.permit_status === 'Varies' && 'Permit requirements vary - see details'}
@@ -179,21 +179,21 @@ export default async function LocationPage({ params }: LocationPageProps) {
 
               {intel.permit_cost && (
                 <div>
-                  <div className="flex items-center gap-2 text-slate-400 text-sm mb-1">
+                  <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
                     <DollarSign className="w-4 h-4" />
                     Cost
                   </div>
-                  <p className="text-white">{intel.permit_cost}</p>
+                  <p className="text-foreground">{intel.permit_cost}</p>
                 </div>
               )}
 
               {intel.permit_details && (
                 <div>
-                  <div className="flex items-center gap-2 text-slate-400 text-sm mb-1">
+                  <div className="flex items-center gap-2 text-muted-foreground text-sm mb-1">
                     <FileText className="w-4 h-4" />
                     Details
                   </div>
-                  <p className="text-slate-300 text-sm leading-relaxed">{intel.permit_details}</p>
+                  <p className="text-foreground text-sm leading-relaxed">{intel.permit_details}</p>
                 </div>
               )}
             </CardContent>
@@ -201,30 +201,30 @@ export default async function LocationPage({ params }: LocationPageProps) {
 
           {/* Rules & Restrictions */}
           {intel.rules_and_restrictions && (
-            <Card className="bg-slate-800/50 border-slate-700">
+            <Card className="bg-slate-800/50 border-border">
               <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
+                <CardTitle className="text-foreground flex items-center gap-2">
                   <AlertTriangle className="w-5 h-5 text-red-400" />
                   Rules & Restrictions
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-slate-300 leading-relaxed">{intel.rules_and_restrictions}</p>
+                <p className="text-foreground leading-relaxed">{intel.rules_and_restrictions}</p>
               </CardContent>
             </Card>
           )}
 
           {/* Seasonal Availability */}
           {intel.seasonal_availability && (
-            <Card className="bg-slate-800/50 border-slate-700">
+            <Card className="bg-slate-800/50 border-border">
               <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
+                <CardTitle className="text-foreground flex items-center gap-2">
                   <Calendar className="w-5 h-5 text-blue-400" />
                   Best Times to Shoot
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-slate-300 leading-relaxed">{intel.seasonal_availability}</p>
+                <p className="text-foreground leading-relaxed">{intel.seasonal_availability}</p>
               </CardContent>
             </Card>
           )}
@@ -233,7 +233,7 @@ export default async function LocationPage({ params }: LocationPageProps) {
           {intel.insider_tips && (
             <Card className="bg-gradient-to-br from-amber-500/10 to-orange-500/10 border-amber-500/30">
               <CardHeader>
-                <CardTitle className="text-white flex items-center gap-2">
+                <CardTitle className="text-foreground flex items-center gap-2">
                   <Lightbulb className="w-5 h-5 text-amber-400" />
                   Insider Tips
                 </CardTitle>
@@ -249,7 +249,7 @@ export default async function LocationPage({ params }: LocationPageProps) {
       {/* Back Button */}
       <div className="mt-10">
         <Link href={`/directory/${city}`}>
-          <Button variant="outline" className="border-slate-700 text-slate-300 hover:bg-slate-800">
+          <Button variant="outline" className="border-border text-foreground hover:bg-slate-800">
             <ChevronLeft className="w-4 h-4 mr-2" />
             Back to {cityName} Locations
           </Button>

@@ -17,15 +17,12 @@ import {
   Mail,
   Phone,
   MessageCircle,
-  FileText,
   Search,
-  CheckCircle,
   Clock,
   AlertCircle,
   Users,
   CreditCard,
   Camera,
-  Download,
   Loader2
 } from 'lucide-react'
 import Link from 'next/link'
@@ -110,7 +107,7 @@ export default function ClientSupportPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
@@ -166,9 +163,9 @@ export default function ClientSupportPage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-neutral-800/50 border-white/10">
+      <header className="border-b bg-card/50 border-border">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Button asChild variant="ghost" size="sm">
@@ -180,7 +177,7 @@ export default function ClientSupportPage() {
             <Separator orientation="vertical" className="h-6" />
             <div className="flex items-center space-x-2">
               <HelpCircle className="h-6 w-6 text-blue-600" />
-              <span className="text-xl font-bold text-neutral-100">Support & Help</span>
+              <span className="text-xl font-bold text-foreground">Support & Help</span>
             </div>
           </div>
           <div className="flex items-center space-x-2">
@@ -194,7 +191,7 @@ export default function ClientSupportPage() {
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
           {/* Quick Help */}
-          <Card className="mb-8 bg-neutral-800/50 border-white/10">
+          <Card className="mb-8 bg-card/50 border-border">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Search className="h-6 w-6 text-green-600" />
@@ -229,9 +226,9 @@ export default function ClientSupportPage() {
 
               <div className="space-y-4">
                 {filteredFAQs.map((item, index) => (
-                  <div key={index} className="border border-white/10 rounded-lg p-4">
+                  <div key={index} className="border border-border rounded-lg p-4">
                     <div className="flex items-start justify-between mb-2">
-                      <h3 className="font-medium text-neutral-100">
+                      <h3 className="font-medium text-foreground">
                         {item.question}
                       </h3>
                       <Badge className={`${getCategoryColor(item.category)} flex items-center space-x-1`}>
@@ -239,7 +236,7 @@ export default function ClientSupportPage() {
                         <span className="capitalize">{item.category}</span>
                       </Badge>
                     </div>
-                    <p className="text-sm text-neutral-400">
+                    <p className="text-sm text-muted-foreground">
                       {item.answer}
                     </p>
                   </div>
@@ -249,7 +246,7 @@ export default function ClientSupportPage() {
           </Card>
 
           {/* Contact Support */}
-          <Card className="mb-8 bg-neutral-800/50 border-white/10">
+          <Card className="mb-8 bg-card/50 border-border">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <MessageCircle className="h-6 w-6 text-purple-600" />
@@ -344,11 +341,11 @@ export default function ClientSupportPage() {
 
           {/* Contact Methods */}
           <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <Card className="bg-neutral-800/50 border-white/10">
+            <Card className="bg-card/50 border-border">
               <CardContent className="p-6 text-center">
                 <Mail className="h-8 w-8 text-blue-600 mx-auto mb-3" />
-                <h3 className="font-semibold mb-2 text-neutral-100">Email Support</h3>
-                <p className="text-sm text-neutral-400 mb-4">
+                <h3 className="font-semibold mb-2 text-foreground">Email Support</h3>
+                <p className="text-sm text-muted-foreground mb-4">
                   Get help via email within 24 hours
                 </p>
                 <Button variant="outline" size="sm">
@@ -358,73 +355,21 @@ export default function ClientSupportPage() {
               </CardContent>
             </Card>
 
-            <Card className="bg-neutral-800/50 border-white/10">
+            <Card className="bg-card/50 border-border">
               <CardContent className="p-6 text-center">
                 <Phone className="h-8 w-8 text-green-600 mx-auto mb-3" />
-                <h3 className="font-semibold mb-2 text-neutral-100">Phone Support</h3>
-                <p className="text-sm text-neutral-400 mb-4">
+                <h3 className="font-semibold mb-2 text-foreground">Phone Support</h3>
+                <p className="text-sm text-muted-foreground mb-4">
                   Call us for immediate assistance
                 </p>
                 <Button variant="outline" size="sm">
                   <Phone className="h-4 w-4 mr-2" />
-                  (555) 123-4567
+                  (608) 571-7532
                 </Button>
               </CardContent>
             </Card>
 
-            <Card className="bg-neutral-800/50 border-white/10">
-              <CardContent className="p-6 text-center">
-                <MessageCircle className="h-8 w-8 text-purple-600 mx-auto mb-3" />
-                <h3 className="font-semibold mb-2 text-neutral-100">Live Chat</h3>
-                <p className="text-sm text-neutral-400 mb-4">
-                  Chat with our support team
-                </p>
-                <Button variant="outline" size="sm">
-                  <MessageCircle className="h-4 w-4 mr-2" />
-                  Start Chat
-                </Button>
-              </CardContent>
-            </Card>
           </div>
-
-          {/* Support Hours */}
-          <Card className="bg-neutral-800/50 border-white/10">
-            <CardContent className="p-6">
-              <div className="text-center">
-                <h3 className="text-lg font-semibold mb-4 text-neutral-100">Support Hours</h3>
-                <div className="grid md:grid-cols-2 gap-6">
-                  <div>
-                    <div className="flex items-center justify-center space-x-2 mb-2">
-                      <Clock className="h-5 w-5 text-blue-600" />
-                      <span className="font-medium">Email & Chat Support</span>
-                    </div>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
-                      Monday - Friday: 9 AM - 6 PM EST<br />
-                      Saturday: 10 AM - 4 PM EST<br />
-                      Sunday: Closed
-                    </p>
-                  </div>
-                  <div>
-                    <div className="flex items-center justify-center space-x-2 mb-2">
-                      <Phone className="h-5 w-5 text-green-600" />
-                      <span className="font-medium">Phone Support</span>
-                    </div>
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
-                      Monday - Friday: 10 AM - 5 PM EST<br />
-                      Saturday: 11 AM - 3 PM EST<br />
-                      Sunday: Closed
-                    </p>
-                  </div>
-                </div>
-                <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                  <p className="text-sm text-blue-800 dark:text-blue-200">
-                    <strong>Emergency Support:</strong> For urgent issues outside business hours, 
-                    please email support@photovault.com and we&apos;ll respond as soon as possible.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </main>
     </div>

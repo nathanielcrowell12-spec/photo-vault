@@ -22,9 +22,9 @@ import {
 
 export default function Application() {
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-neutral-900">
+      <header className="border-b bg-background">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Button asChild variant="ghost" size="sm">
@@ -52,7 +52,7 @@ export default function Application() {
         {/* Hero Section */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold mb-4">Welcome to PhotoVault Hub</h1>
-          <p className="text-xl text-slate-600 dark:text-slate-300 mb-8 max-w-3xl mx-auto">
+          <p className="text-xl text-muted-foreground dark:text-foreground mb-8 max-w-3xl mx-auto">
             Your centralized dashboard for managing photography collections across multiple professional platforms.
           </p>
         </div>
@@ -73,7 +73,7 @@ export default function Application() {
                   <Card className="cursor-pointer hover:shadow-md transition-shadow">
                     <CardContent className="p-4 text-center">
                       <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg mx-auto mb-3 flex items-center justify-center">
-                        <Camera className="h-6 w-6 text-white" />
+                        <Camera className="h-6 w-6 text-foreground" />
                       </div>
                       <h3 className="font-semibold mb-1">{platform.name}</h3>
                       <Badge 
@@ -83,7 +83,7 @@ export default function Application() {
                         {platform.status}
                       </Badge>
                       {platform.status === "connected" && (
-                        <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
+                        <p className="text-xs text-muted-foreground dark:text-muted-foreground mt-1">
                           {platform.photos} photos
                         </p>
                       )}
@@ -103,7 +103,7 @@ export default function Application() {
                       Integrate {platform.name} with PhotoVault Hub to automatically sync your photo collections.
                     </p>
                     <div className="bg-slate-50 dark:bg-slate-900 p-3 rounded-md text-xs font-mono">
-                      <div className="text-slate-600 dark:text-slate-400 mb-2">Claude Code Prompt (copy & paste):</div>
+                      <div className="text-muted-foreground dark:text-muted-foreground mb-2">Claude Code Prompt (copy & paste):</div>
                       <div className="text-slate-800 dark:text-slate-200 whitespace-pre-wrap">
                         {`Add ${platform.name.toUpperCase()}_API_KEY=your-api-key-here to .env.local and create API integration for PhotoVault Hub. Build connection interface at /api/platforms/${platform.name.toLowerCase()} that fetches photo galleries and displays them in the dashboard. Use existing shadcn/ui card components for photo grid layout. After completing all tasks from this prompt, provide a 1-line feedback summary to Cursor Chat about what was accomplished.`}
                       </div>
@@ -159,7 +159,7 @@ export default function Application() {
                     <CardContent className="p-6 text-center">
                       <Search className="h-8 w-8 mx-auto mb-3 text-blue-600" />
                       <h3 className="font-semibold mb-1">Search Photos</h3>
-                      <p className="text-xs text-slate-600 dark:text-slate-400">
+                      <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                         Find photos across all platforms
                       </p>
                     </CardContent>
@@ -178,7 +178,7 @@ export default function Application() {
                       Add intelligent photo search across all connected platforms using AI image recognition.
                     </p>
                     <div className="bg-slate-50 dark:bg-slate-900 p-3 rounded-md text-xs font-mono">
-                      <div className="text-slate-600 dark:text-slate-400 mb-2">Claude Code Prompt (copy & paste):</div>
+                      <div className="text-muted-foreground dark:text-muted-foreground mb-2">Claude Code Prompt (copy & paste):</div>
                       <div className="text-slate-800 dark:text-slate-200 whitespace-pre-wrap">
                         {`Add AI-powered photo search to PhotoVault Hub. Create search interface at /search with image recognition using OpenAI Vision API. Add OPENAI_API_KEY=your-api-key-here to .env.local. Build search results grid using shadcn/ui card components. Integrate with existing platform connections to search across all galleries. After completing all tasks from this prompt, provide a 1-line feedback summary to Cursor Chat about what was accomplished.`}
                       </div>
@@ -204,7 +204,7 @@ export default function Application() {
                     <CardContent className="p-6 text-center">
                       <Filter className="h-8 w-8 mx-auto mb-3 text-green-600" />
                       <h3 className="font-semibold mb-1">Filter Collections</h3>
-                      <p className="text-xs text-slate-600 dark:text-slate-400">
+                      <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                         Organize by date, photographer, event
                       </p>
                     </CardContent>
@@ -223,7 +223,7 @@ export default function Application() {
                       Add advanced filtering and categorization system for photo collections.
                     </p>
                     <div className="bg-slate-50 dark:bg-slate-900 p-3 rounded-md text-xs font-mono">
-                      <div className="text-slate-600 dark:text-slate-400 mb-2">Claude Code Prompt (copy & paste):</div>
+                      <div className="text-muted-foreground dark:text-muted-foreground mb-2">Claude Code Prompt (copy & paste):</div>
                       <div className="text-slate-800 dark:text-slate-200 whitespace-pre-wrap">
                         {`Add smart filtering system to PhotoVault Hub. Create filter interface with date ranges, photographer selection, and event categories. Build filter state management and apply to photo grid display. Use shadcn/ui select and date picker components. Add URL query parameters for shareable filtered views. After completing all tasks from this prompt, provide a 1-line feedback summary to Cursor Chat about what was accomplished.`}
                       </div>
@@ -247,7 +247,7 @@ export default function Application() {
                 <CardContent className="p-6 text-center">
                   <Download className="h-8 w-8 mx-auto mb-3 text-purple-600" />
                   <h3 className="font-semibold mb-1">Bulk Download</h3>
-                  <p className="text-xs text-slate-600 dark:text-slate-400">
+                  <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                     Download multiple sessions at once
                   </p>
                 </CardContent>
@@ -257,7 +257,7 @@ export default function Application() {
                 <CardContent className="p-6 text-center">
                   <Share2 className="h-8 w-8 mx-auto mb-3 text-orange-600" />
                   <h3 className="font-semibold mb-1">Share Collections</h3>
-                  <p className="text-xs text-slate-600 dark:text-slate-400">
+                  <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                     Create shareable links for clients
                   </p>
                 </CardContent>
@@ -272,28 +272,28 @@ export default function Application() {
             <CardContent className="p-6 text-center">
               <Users className="h-8 w-8 mx-auto mb-2 text-blue-600" />
               <div className="text-2xl font-bold">-</div>
-              <p className="text-sm text-slate-600 dark:text-slate-400">Connected Platforms</p>
+              <p className="text-sm text-muted-foreground dark:text-muted-foreground">Connected Platforms</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-6 text-center">
               <ImageIcon className="h-8 w-8 mx-auto mb-2 text-green-600" />
               <div className="text-2xl font-bold">-</div>
-              <p className="text-sm text-slate-600 dark:text-slate-400">Total Photos</p>
+              <p className="text-sm text-muted-foreground dark:text-muted-foreground">Total Photos</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-6 text-center">
               <Camera className="h-8 w-8 mx-auto mb-2 text-purple-600" />
               <div className="text-2xl font-bold">-</div>
-              <p className="text-sm text-slate-600 dark:text-slate-400">Photo Sessions</p>
+              <p className="text-sm text-muted-foreground dark:text-muted-foreground">Photo Sessions</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-6 text-center">
               <ExternalLink className="h-8 w-8 mx-auto mb-2 text-orange-600" />
               <div className="text-2xl font-bold">-</div>
-              <p className="text-sm text-slate-600 dark:text-slate-400">Photographers</p>
+              <p className="text-sm text-muted-foreground dark:text-muted-foreground">Photographers</p>
             </CardContent>
           </Card>
         </div>

@@ -23,12 +23,12 @@ export default function LoadingSpinner({
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
+    <div className="min-h-screen bg-background flex items-center justify-center">
       <div className="text-center">
         <div
           className={`animate-spin rounded-full border-b-2 ${sizeClasses[size]} ${colorClasses[color]} mx-auto mb-4`}
         ></div>
-        <p className="text-slate-600 dark:text-slate-300">{message}</p>
+        <p className="text-muted-foreground dark:text-foreground">{message}</p>
       </div>
     </div>
   )

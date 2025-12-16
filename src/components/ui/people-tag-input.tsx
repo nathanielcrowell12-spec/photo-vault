@@ -47,8 +47,8 @@ export function PeopleTagInput({
   return (
     <div
       className={cn(
-        'flex min-h-[42px] w-full flex-wrap gap-2 rounded-md border border-white/10 bg-neutral-900 px-3 py-2 text-sm',
-        'focus-within:ring-2 focus-within:ring-amber-500/50 focus-within:ring-offset-2 focus-within:ring-offset-neutral-900',
+        'flex min-h-[42px] w-full flex-wrap gap-2 rounded-md border border-border bg-background px-3 py-2 text-sm',
+        'focus-within:ring-2 focus-within:ring-amber-500/50 focus-within:ring-offset-2 focus-within:ring-offset-background',
         className
       )}
     >
@@ -77,7 +77,7 @@ export function PeopleTagInput({
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={value.length === 0 ? placeholder : ''}
-          className="flex-1 min-w-[120px] border-0 bg-transparent p-0 text-white placeholder:text-neutral-500 focus:outline-none focus:ring-0"
+          className="flex-1 min-w-[120px] border-0 bg-transparent p-0 text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-0"
         />
       )}
     </div>

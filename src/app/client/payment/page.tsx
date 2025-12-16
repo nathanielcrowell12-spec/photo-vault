@@ -98,7 +98,7 @@ function ClientPaymentContent() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
@@ -107,14 +107,14 @@ function ClientPaymentContent() {
   // Payment Success View
   if (paymentSuccess) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-4">
-        <Card className="max-w-md w-full bg-neutral-800/50 border-white/10">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+        <Card className="max-w-md w-full bg-card/50 border-border">
           <CardContent className="pt-8 pb-6 text-center">
             <div className="w-20 h-20 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-6">
               <PartyPopper className="h-10 w-10 text-green-600" />
             </div>
-            <h1 className="text-2xl font-bold mb-2 text-neutral-100">Payment Successful!</h1>
-            <p className="text-neutral-400 mb-6">
+            <h1 className="text-2xl font-bold mb-2 text-foreground">Payment Successful!</h1>
+            <p className="text-muted-foreground mb-6">
               Your subscription is now active. You have full access to your photo gallery.
             </p>
             <div className="space-y-3">
@@ -139,8 +139,8 @@ function ClientPaymentContent() {
   // No Gallery Selected
   if (!gallery) {
     return (
-      <div className="min-h-screen bg-neutral-900">
-        <header className="border-b bg-neutral-800/50 border-white/10">
+      <div className="min-h-screen bg-background">
+        <header className="border-b bg-card/50 border-border">
           <div className="container mx-auto px-4 py-4">
             <Button asChild variant="ghost" size="sm">
               <Link href="/client/dashboard">
@@ -153,11 +153,11 @@ function ClientPaymentContent() {
 
         <main className="container mx-auto px-4 py-8">
           <div className="max-w-2xl mx-auto">
-            <Card className="bg-neutral-800/50 border-white/10">
+            <Card className="bg-card/50 border-border">
               <CardContent className="pt-8 pb-6 text-center">
-                <AlertCircle className="h-12 w-12 text-neutral-600 mx-auto mb-4" />
-                <h2 className="text-xl font-bold mb-2 text-neutral-100">No Gallery Selected</h2>
-                <p className="text-neutral-400 mb-6">
+                <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+                <h2 className="text-xl font-bold mb-2 text-foreground">No Gallery Selected</h2>
+                <p className="text-muted-foreground mb-6">
                   Please select a gallery from your dashboard to subscribe.
                 </p>
                 <Button asChild>
@@ -174,9 +174,9 @@ function ClientPaymentContent() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-neutral-800/50 border-white/10">
+      <header className="border-b bg-card/50 border-border">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Button asChild variant="ghost" size="sm">
@@ -188,7 +188,7 @@ function ClientPaymentContent() {
             <Separator orientation="vertical" className="h-6" />
             <div className="flex items-center space-x-2">
               <CreditCard className="h-6 w-6 text-green-600" />
-              <span className="text-xl font-bold text-neutral-100">Subscribe to Gallery</span>
+              <span className="text-xl font-bold text-foreground">Subscribe to Gallery</span>
             </div>
           </div>
           <Badge variant="outline" className="bg-green-50 text-green-700">
@@ -203,7 +203,7 @@ function ClientPaymentContent() {
           <div className="grid md:grid-cols-2 gap-8">
             {/* Left: Gallery Info */}
             <div className="space-y-6">
-              <Card className="bg-neutral-800/50 border-white/10">
+              <Card className="bg-card/50 border-border">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Camera className="h-5 w-5 text-purple-600" />
@@ -212,10 +212,10 @@ function ClientPaymentContent() {
                 </CardHeader>
                 <CardContent>
                   <div className="aspect-video bg-slate-200 dark:bg-slate-700 rounded-lg flex items-center justify-center mb-4">
-                    <Camera className="h-16 w-16 text-slate-400" />
+                    <Camera className="h-16 w-16 text-muted-foreground" />
                   </div>
-                  <h3 className="text-lg font-semibold mb-1 text-neutral-100">{gallery.gallery_name}</h3>
-                  <p className="text-sm text-neutral-400 mb-2">
+                  <h3 className="text-lg font-semibold mb-1 text-foreground">{gallery.gallery_name}</h3>
+                  <p className="text-sm text-muted-foreground mb-2">
                     by {gallery.photographer_name}
                   </p>
                   <Badge variant="secondary">
@@ -225,7 +225,7 @@ function ClientPaymentContent() {
               </Card>
 
               {/* Pricing Breakdown */}
-              <Card className="bg-neutral-800/50 border-white/10">
+              <Card className="bg-card/50 border-border">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <DollarSign className="h-5 w-5 text-green-600" />
@@ -253,7 +253,7 @@ function ClientPaymentContent() {
               </Card>
 
               {/* Security Notice */}
-              <Card className="bg-neutral-800/50 border-white/10">
+              <Card className="bg-card/50 border-border">
                 <CardContent className="p-4">
                   <div className="flex items-start gap-3">
                     <Shield className="h-5 w-5 text-blue-600 mt-0.5" />
@@ -282,7 +282,7 @@ function ClientPaymentContent() {
               />
 
               {/* What's Included */}
-              <Card className="mt-6 bg-neutral-800/50 border-white/10">
+              <Card className="mt-6 bg-card/50 border-border">
                 <CardHeader>
                   <CardTitle className="text-lg">What&apos;s Included</CardTitle>
                 </CardHeader>
@@ -316,7 +316,7 @@ function ClientPaymentContent() {
 export default function ClientPaymentPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     }>

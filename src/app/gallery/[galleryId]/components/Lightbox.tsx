@@ -60,9 +60,9 @@ export default function Lightbox({
     <div className="fixed inset-0 z-50 bg-black/95 flex items-center justify-center">
       {/* Top Bar */}
       <div className="absolute top-0 left-0 right-0 p-4 flex items-center justify-between bg-gradient-to-b from-black/80 to-transparent">
-        <div className="text-white">
+        <div className="text-foreground">
           <h3 className="font-medium">{currentPhoto.title}</h3>
-          <p className="text-sm text-slate-300">
+          <p className="text-sm text-foreground">
             {currentIndex + 1} of {photos.length}
           </p>
         </div>
@@ -71,7 +71,7 @@ export default function Lightbox({
           <Button
             variant="ghost"
             size="icon"
-            className="text-white hover:bg-white/20"
+            className="text-foreground hover:bg-white/20"
             onClick={() => onToggleFavorite(currentPhoto.id)}
           >
             <Heart
@@ -84,7 +84,7 @@ export default function Lightbox({
           <Button
             variant="ghost"
             size="icon"
-            className="text-white hover:bg-white/20"
+            className="text-foreground hover:bg-white/20"
             onClick={handleDownload}
           >
             <Download className="h-5 w-5" />
@@ -93,7 +93,7 @@ export default function Lightbox({
           <Button
             variant="ghost"
             size="icon"
-            className="text-white hover:bg-white/20"
+            className="text-foreground hover:bg-white/20"
             onClick={onClose}
           >
             <X className="h-6 w-6" />
@@ -106,7 +106,7 @@ export default function Lightbox({
         <Button
           variant="ghost"
           size="icon"
-          className="absolute left-4 text-white hover:bg-white/20 h-12 w-12"
+          className="absolute left-4 text-foreground hover:bg-white/20 h-12 w-12"
           onClick={() => onNavigate(currentIndex - 1)}
         >
           <ChevronLeft className="h-8 w-8" />
@@ -127,7 +127,7 @@ export default function Lightbox({
         <Button
           variant="ghost"
           size="icon"
-          className="absolute right-4 text-white hover:bg-white/20 h-12 w-12"
+          className="absolute right-4 text-foreground hover:bg-white/20 h-12 w-12"
           onClick={() => onNavigate(currentIndex + 1)}
         >
           <ChevronRight className="h-8 w-8" />

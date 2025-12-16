@@ -45,7 +45,7 @@ export function DatePicker({
           {value ? format(value, 'PPP') : <span>{placeholder}</span>}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-auto p-0 bg-neutral-800 border-white/10">
+      <PopoverContent className="w-auto p-0 bg-card border-border">
         <Calendar
           mode="single"
           selected={value || undefined}
@@ -54,7 +54,7 @@ export function DatePicker({
             setOpen(false)
           }}
           initialFocus
-          className="text-neutral-100"
+          className="text-foreground"
         />
       </PopoverContent>
     </Popover>

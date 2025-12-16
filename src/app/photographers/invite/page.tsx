@@ -47,7 +47,7 @@ export default function InvitePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
@@ -85,12 +85,12 @@ export default function InvitePage() {
 
   if (sent) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center p-4">
+      <div className="min-h-screen bg-background flex items-center justify-center p-4">
         <Card className="w-full max-w-md">
           <CardContent className="p-8 text-center">
             <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
             <h2 className="text-2xl font-bold mb-2">Invitation Sent!</h2>
-            <p className="text-slate-600 dark:text-slate-300 mb-6">
+            <p className="text-muted-foreground dark:text-foreground mb-6">
               Your client invitation has been sent to {clientEmail}. They&apos;ll receive an email with access to their gallery.
             </p>
             <div className="space-y-3">
@@ -112,7 +112,7 @@ export default function InvitePage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b bg-white dark:bg-slate-900">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -140,7 +140,7 @@ export default function InvitePage() {
           {/* Introduction */}
           <div className="mb-8">
             <h1 className="text-3xl font-bold mb-4">Invite Clients to PhotoVault</h1>
-            <p className="text-lg text-slate-600 dark:text-slate-300">
+            <p className="text-lg text-muted-foreground dark:text-foreground">
               Send branded invitations to your clients with PhotoVault access. Choose how they&apos;ll pay for their permanent gallery access.
             </p>
           </div>
@@ -225,13 +225,13 @@ export default function InvitePage() {
                           <div className="flex items-start justify-between mb-3">
                             <div>
                               <h3 className="font-semibold">{option.name}</h3>
-                              <p className="text-sm text-slate-600 dark:text-slate-300">
+                              <p className="text-sm text-muted-foreground dark:text-foreground">
                                 {option.description}
                               </p>
                             </div>
                             <div className="text-right">
                               <div className="text-xl font-bold text-green-600">${option.price}</div>
-                              <div className="text-sm text-slate-500">
+                              <div className="text-sm text-muted-foreground">
                                 {option.id === 'photographer_billed' ? 'upfront + $8/month' : 
                                  option.duration === 999 ? 'per month' : 
                                  option.duration === 6 ? 'for 6 months' : 'per month'}
@@ -250,7 +250,7 @@ export default function InvitePage() {
                           </div>
                           <div className="space-y-1">
                             {option.terms.map((term, index) => (
-                              <p key={index} className="text-xs text-slate-600 dark:text-slate-400">
+                              <p key={index} className="text-xs text-muted-foreground dark:text-muted-foreground">
                                 • {term}
                               </p>
                             ))}
@@ -309,24 +309,24 @@ export default function InvitePage() {
               <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-6 space-y-4">
                 <div className="flex items-center space-x-3">
                   <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center">
-                    <Camera className="h-5 w-5 text-white" />
+                    <Camera className="h-5 w-5 text-foreground" />
                   </div>
                   <div>
                     <h3 className="font-semibold">PhotoVault Invitation</h3>
-                    <p className="text-sm text-slate-600 dark:text-slate-300">from {user?.email}</p>
+                    <p className="text-sm text-muted-foreground dark:text-foreground">from {user?.email}</p>
                   </div>
                 </div>
                 
                 <div>
                   <h4 className="font-medium mb-2">Hi {clientName || 'Client'}!</h4>
-                  <p className="text-sm text-slate-600 dark:text-slate-300 mb-3">
+                  <p className="text-sm text-muted-foreground dark:text-foreground mb-3">
                     {customMessage || `Your photos from ${sessionName || 'your recent session'} are ready! I've set up permanent access through PhotoVault so you can view, download, and share your photos forever.`}
                   </p>
                   
                   {selectedOption && (
                     <div className="bg-white dark:bg-slate-700 rounded-lg p-4 border">
                       <h5 className="font-medium mb-2">PhotoVault Access Details:</h5>
-                      <ul className="space-y-1 text-sm text-slate-600 dark:text-slate-300">
+                      <ul className="space-y-1 text-sm text-muted-foreground dark:text-foreground">
                         <li>• {selectedOption.description}</li>
                         <li>• ${selectedOption.price} {selectedOption.duration === 12 ? 'per year' : 'for 6 months'}</li>
                         <li>• Your photos stay accessible forever</li>

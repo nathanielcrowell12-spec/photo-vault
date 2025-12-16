@@ -313,6 +313,83 @@ PhotoVault uses a **two-layer intelligence system**:
 
 ---
 
+## ⛔ PROTECTED SECTION: Discipline Skills System ⛔
+
+### What Are Discipline Skills?
+
+Discipline skills enforce **process rigor** during implementation. They are loaded ALONGSIDE technical skills, not instead of them.
+
+| Discipline | Purpose | Location |
+|------------|---------|----------|
+| TDD Discipline | Enforces RED-GREEN-REFACTOR cycle | `INFRASTRUCTURE/claude-skills/tdd-discipline-skill.md` |
+| Systematic Debugging | Enforces 4-phase debugging with HALT at 3 failures | `INFRASTRUCTURE/claude-skills/systematic-debugging-discipline-skill.md` |
+| Verification | Enforces evidence before any completion claim | `INFRASTRUCTURE/claude-skills/verification-discipline-skill.md` |
+
+### When to Load Discipline Skills
+
+| Activity | Load These (in addition to technical skill) |
+|----------|---------------------------------------------|
+| **Implementing new code** | TDD Discipline |
+| **Fixing a bug** | Systematic Debugging + TDD Discipline |
+| **Claiming task complete** | Verification Discipline |
+| **Refactoring** | TDD Discipline |
+
+### Combined Loading Examples
+
+**Example 1: "Build the Stripe webhook handler"**
+```
+Load:
+1. stripe-skill.md (technical knowledge)
+2. tdd-discipline-skill.md (process enforcement)
+→ Spawn Stripe Expert with both loaded
+→ Before claiming done: load verification-discipline-skill.md
+```
+
+**Example 2: "Fix this Supabase RLS bug"**
+```
+Load:
+1. systematic-debugging-discipline-skill.md (FIRST - process)
+2. supabase-skill.md (technical knowledge)
+3. tdd-discipline-skill.md (for regression test)
+→ Spawn Supabase Expert with all three loaded
+→ Before claiming done: load verification-discipline-skill.md
+```
+
+**Example 3: "Add email notification for failed payments"**
+```
+Load:
+1. stripe-skill.md (payment context)
+2. resend-skill.md (email implementation)
+3. tdd-discipline-skill.md (process enforcement)
+→ Spawn experts as needed
+→ Before claiming done: load verification-discipline-skill.md
+```
+
+### HALT Escalation
+
+When discipline skills trigger HALT:
+
+1. **Stop immediately** - Do not attempt workarounds
+2. **Report to user** - "HALTING: [reason]"
+3. **Wait for guidance** - User decides next step
+
+**HALT triggers:**
+- TDD: Cannot write failing test, or test won't fail for right reason
+- Debugging: 3 fix attempts failed without success
+- Verification: Cannot gather evidence to support completion claim
+
+### The Three Iron Laws
+
+```
+1. NO CODE WITHOUT A FAILING TEST FIRST (TDD)
+2. NO FIX WITHOUT ROOT CAUSE IDENTIFIED (Debugging)
+3. NO "IT'S DONE" WITHOUT EVIDENCE (Verification)
+```
+
+These are NOT suggestions. They are mandatory process requirements.
+
+---
+
 ## ⛔ PROTECTED SECTION: File Inventory ⛔
 
 ### Skills (10 files)
@@ -349,6 +426,19 @@ C:\Users\natha\Stone-Fence-Brain\VENTURES\PhotoVault\claude\experts\
 ### Special Case: UI/UX Design Skill (in DEPARTMENTS)
 ```
 C:\Users\natha\Stone-Fence-Brain\DEPARTMENTS\Product\skills\ui-ux-design.md
+```
+
+### Discipline Skills (3 files) - INFRASTRUCTURE
+```
+C:\Users\natha\Stone-Fence-Brain\INFRASTRUCTURE\claude-skills\
+├── tdd-discipline-skill.md              # RED-GREEN-REFACTOR enforcement
+├── systematic-debugging-discipline-skill.md  # 4-phase debugging with HALT
+└── verification-discipline-skill.md     # Evidence before assertions
+```
+
+### Integration Guide
+```
+C:\Users\natha\Stone-Fence-Brain\INFRASTRUCTURE\claude-skills\DISCIPLINE-SKILLS-GUIDE.md
 ```
 
 ### Plan Output Location
@@ -514,57 +604,63 @@ Next: [What to do next session]
 
 ---
 
-## SESSION STATE (Dec 9, 2025)
+## Discipline Quick Reference
 
-### Story 2.3 - IMPLEMENTED (UNTESTED)
+| When You're... | Load This Discipline | Key Rule |
+|----------------|---------------------|----------|
+| Writing new code | TDD | Write failing test FIRST |
+| Fixing a bug | Systematic Debugging | Find root cause BEFORE fixing |
+| About to say "done" | Verification | Show evidence, not claims |
+| Refactoring | TDD | Tests must pass before AND after |
 
-**Date:** December 9, 2025
-**Status:** Code written, needs manual testing
+**HALT Triggers:**
+- Can't write failing test → HALT, ask for help
+- 3 fix attempts failed → HALT, question architecture
+- Can't show evidence → HALT, don't claim completion
+
+---
+
+## SESSION STATE (Dec 14, 2025)
+
+### Story 6.1: PostHog Foundation - COMPLETE
+
+**Date:** December 14, 2025
+**Status:** Implemented, tested, committed
+**Commit:** `0ca798c feat(analytics): Add PostHog analytics foundation (Story 6.1)`
 
 ### What Was Built This Session
 
-1. **MessagingPanel Modal Sizing** - Changed `h-[600px]` to `h-[85vh] max-h-[800px] min-h-[500px]`
-2. **Start New Chat Button** - Added `showPhotographerList` state, button at top of conversation list
-3. **Client Upload Web Form** - Full form with all metadata fields (Event Date, Location, People, Event Type, Photographer Name, Notes)
-4. **Fixed Upload Buttons** - Desktop App uses protocol handler + fallback modal, Online Upload scrolls to form
+**New Files Created (6):**
+- `src/lib/analytics/client.ts` - Client-side PostHog
+- `src/lib/analytics/server.ts` - Server-side PostHog (ad-blocker proof)
+- `src/lib/analytics/index.ts` - Exports
+- `src/types/analytics.ts` - TypeScript event schemas (30+ events)
+- `src/hooks/useAnalytics.ts` - React hooks (usePageView, useTrackEvent)
+- `src/app/providers/PostHogProvider.tsx` - Provider component
 
-### Files Modified
-- `src/components/MessagingPanel.tsx` - Responsive sizing, Start New Chat
-- `src/app/client/upload/page.tsx` - Complete rebuild with web upload form
+**Files Modified (4):**
+- `src/app/layout.tsx` - Added PostHogProvider
+- `src/contexts/AuthContext.tsx` - Added identifyUser, resetAnalytics
+- `VERCEL-ENV-SETUP.md` - Added PostHog variables
+- `CLAUDE.md` (parent) - Added PostHog trigger pattern
 
-### Testing Required (Next Session)
-```
-npm run dev -- -p 3002
-```
-1. MessagingPanel - Open messages, verify fits screen
-2. Start New Chat - With conversations, click button, verify photographer list
-3. Client Upload - Navigate to `/client/upload`, test form creates gallery
+### Also This Session
+- Created `posthog-skill.md` via Claude Desktop
+- Created `posthog-expert.md` via Claude Desktop
+- Incorporated `CLAUDE-MD-ADDITIONS.md` into parent CLAUDE.md
 
-### Story 2.3b Created - Support/Timeline/Favorites
-
-**Issues found during user testing:**
-
-| Page | Issue | Fix |
-|------|-------|-----|
-| `/client/support` | Fake phone `(555) 123-4567` | Change to `(608) 571-7532` |
-| `/client/support` | Live Chat card | REMOVE - no feature |
-| `/client/support` | Support Hours card | REMOVE - no set hours |
-| `/client/timeline` | 100% mock data | Pull from real galleries |
-| `/client/dashboard` | "Downloaded" stat | REMOVE - useless |
-| `/client/dashboard` | "Favorites" stat | Link to timeline with filter |
-
-**Favorites Feature (discussed):**
-- Mark favorites in lightbox (heart icon)
-- `gallery_photos.is_favorite` column exists
-- Dashboard stat links to `/client/timeline?favorites=true`
+### Verified Working
+- PostHog events appearing in Live Events dashboard
+- User identification after login
+- Privacy defaults active
 
 ### Beta MVP Progress
-**60% complete (12/20 stories)** - Story 2.3 needs testing, 2.3b not started
+**~70% complete** - Story 6.1 done, 6.2-6.3 remaining before beta
 
 ### Next Steps
-1. Test Story 2.3 changes
-2. Story 2.3b - Support cleanup, timeline real data, favorites
-3. Story 2.4 - Admin Dashboard
+1. Story 6.2 - Core Event Tracking (add funnel events)
+2. Story 6.3 - Friction & Warning Events
+3. Epic 5 - Beta Prep
 
 ---
 

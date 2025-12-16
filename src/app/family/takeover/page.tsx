@@ -172,7 +172,7 @@ function TakeoverPageContent() {
   // Loading state
   if (authLoading || step === 'loading') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-neutral-900">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
           <Loader2 className="h-12 w-12 animate-spin text-pink-500 mx-auto" />
           <p className="mt-4 text-gray-600">Checking eligibility...</p>
@@ -186,7 +186,7 @@ function TakeoverPageContent() {
   // Success state
   if (step === 'success') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-neutral-900 p-4">
+      <div className="min-h-screen flex items-center justify-center bg-background p-4">
         <Card className="max-w-lg w-full">
           <CardHeader className="text-center">
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -260,24 +260,24 @@ function TakeoverPageContent() {
 
   // Main wizard
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-neutral-800/50 border-white/10">
+      <header className="border-b bg-card/50 border-border">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center gap-4">
             <Link
               href="/family/galleries"
               className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
             >
-              <ArrowLeft className="h-5 w-5 text-slate-600" />
+              <ArrowLeft className="h-5 w-5 text-muted-foreground" />
             </Link>
             <div className="flex items-center gap-3">
               <div className="p-2 bg-gradient-to-br from-pink-500 to-orange-400 rounded-xl">
-                <HandHeart className="h-6 w-6 text-white" />
+                <HandHeart className="h-6 w-6 text-foreground" />
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-slate-900">Help Pay</h1>
-                <p className="text-sm text-slate-600">
+                <p className="text-sm text-muted-foreground">
                   Take over billing for {eligibility?.primaryName || 'this account'}
                 </p>
               </div>
@@ -299,7 +299,7 @@ function TakeoverPageContent() {
                 <div key={label} className="flex items-center">
                   <div className={`
                     w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold
-                    ${isComplete ? 'bg-green-500 text-white' : isActive ? 'bg-pink-500 text-white' : 'bg-gray-200 text-gray-500'}
+                    ${isComplete ? 'bg-green-500 text-foreground' : isActive ? 'bg-pink-500 text-foreground' : 'bg-gray-200 text-gray-500'}
                   `}>
                     {isComplete ? <CheckCircle2 className="h-5 w-5" /> : index + 1}
                   </div>
@@ -321,7 +321,7 @@ function TakeoverPageContent() {
         <div className="max-w-2xl mx-auto">
           {/* Account Info Banner */}
           <div className="bg-white border border-pink-200 rounded-lg p-4 mb-6 flex items-center gap-4">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-orange-400 flex items-center justify-center text-white font-bold text-lg">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-orange-400 flex items-center justify-center text-foreground font-bold text-lg">
               {eligibility?.primaryName?.charAt(0).toUpperCase() || '?'}
             </div>
             <div className="flex-1">
@@ -494,7 +494,7 @@ function TakeoverPageContent() {
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="bg-neutral-800 rounded-lg p-4">
+                <div className="bg-card rounded-lg p-4">
                   <h4 className="font-semibold mb-2">Order Summary</h4>
                   <div className="flex justify-between items-center">
                     <span>PhotoVault Monthly Subscription</span>
@@ -553,7 +553,7 @@ function TakeoverPageContent() {
 // Loading component for Suspense
 function TakeoverPageLoading() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-neutral-900">
+    <div className="min-h-screen flex items-center justify-center bg-background">
       <div className="text-center">
         <Loader2 className="h-12 w-12 animate-spin text-pink-500 mx-auto" />
         <p className="mt-4 text-gray-600">Loading...</p>

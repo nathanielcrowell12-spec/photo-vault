@@ -60,7 +60,7 @@ export async function GET(
 
     // Fetch photos (just thumbnails for preview)
     const { data: photos, error: photosError } = await supabaseAdmin
-      .from('photos')
+      .from('gallery_photos')
       .select('id, thumbnail_url, original_url')
       .eq('gallery_id', galleryId)
       .order('created_at', { ascending: true })

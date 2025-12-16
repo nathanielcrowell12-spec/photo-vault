@@ -70,9 +70,9 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b border-white/10 bg-neutral-800/50">
+      <header className="border-b border-border bg-card/50">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <Link href="/" className="flex items-center space-x-2">
@@ -80,7 +80,7 @@ export default function SignupPage() {
               <span className="text-2xl font-bold">PhotoVault</span>
             </Link>
             <div className="flex items-center space-x-4">
-              <span className="text-sm text-slate-600 dark:text-slate-300">Already have an account?</span>
+              <span className="text-sm text-muted-foreground dark:text-foreground">Already have an account?</span>
               <Button asChild variant="outline" size="sm">
                 <Link href="/login">Sign In</Link>
               </Button>
@@ -99,7 +99,7 @@ export default function SignupPage() {
                   Memory Insurance for Families
                 </Badge>
                 <h1 className="text-4xl font-bold mb-4">Protect Your Memories</h1>
-                <p className="text-lg text-slate-600 dark:text-slate-300">
+                <p className="text-lg text-muted-foreground dark:text-foreground">
                   Your photos deserve better than a failing hard drive. Create your account and start protecting your irreplaceable memories.
                 </p>
               </div>
@@ -209,7 +209,7 @@ export default function SignupPage() {
                       )}
                     </Button>
 
-                    <p className="text-xs text-center text-slate-500 dark:text-slate-400">
+                    <p className="text-xs text-center text-muted-foreground dark:text-muted-foreground">
                       By signing up, you agree to our{' '}
                       <Link href="/terms" className="text-blue-600 hover:underline">
                         Terms of Service
@@ -237,35 +237,35 @@ export default function SignupPage() {
                       <CheckCircle className="h-5 w-5 text-primary mt-0.5" />
                       <div>
                         <div className="font-semibold">Digital Safety Deposit Box</div>
-                        <div className="text-sm text-slate-600 dark:text-slate-400">Protected from hard drive failures—which have a 100% failure rate eventually</div>
+                        <div className="text-sm text-muted-foreground dark:text-muted-foreground">Protected from hard drive failures—which have a 100% failure rate eventually</div>
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
                       <CheckCircle className="h-5 w-5 text-primary mt-0.5" />
                       <div>
                         <div className="font-semibold">One Tap to Camera Roll</div>
-                        <div className="text-sm text-slate-600 dark:text-slate-400">Full resolution downloads. No zip files to wrestle with on your phone.</div>
+                        <div className="text-sm text-muted-foreground dark:text-muted-foreground">Full resolution downloads. No zip files to wrestle with on your phone.</div>
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
                       <CheckCircle className="h-5 w-5 text-primary mt-0.5" />
                       <div>
                         <div className="font-semibold">Family Sharing</div>
-                        <div className="text-sm text-slate-600 dark:text-slate-400">Share with family members you authorize</div>
+                        <div className="text-sm text-muted-foreground dark:text-muted-foreground">Share with family members you authorize</div>
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
                       <CheckCircle className="h-5 w-5 text-primary mt-0.5" />
                       <div>
                         <div className="font-semibold">Lifetime Archival</div>
-                        <div className="text-sm text-slate-600 dark:text-slate-400">No expiring download links or lost USB drives</div>
+                        <div className="text-sm text-muted-foreground dark:text-muted-foreground">No expiring download links or lost USB drives</div>
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
                       <CheckCircle className="h-5 w-5 text-primary mt-0.5" />
                       <div>
                         <div className="font-semibold">All Photographers, One Vault</div>
-                        <div className="text-sm text-slate-600 dark:text-slate-400">Collect memories from every photographer in one protected place</div>
+                        <div className="text-sm text-muted-foreground dark:text-muted-foreground">Collect memories from every photographer in one protected place</div>
                       </div>
                     </div>
                   </div>
@@ -275,7 +275,7 @@ export default function SignupPage() {
               <Card className="bg-pink-50 dark:bg-pink-900/20 border-pink-200 dark:border-pink-800">
                 <CardContent className="pt-6">
                   <h3 className="font-semibold mb-3">Memory Insurance Pricing</h3>
-                  <div className="text-sm space-y-2 text-slate-600 dark:text-slate-400">
+                  <div className="text-sm space-y-2 text-muted-foreground dark:text-muted-foreground">
                     <div>• First year included with photographer session</div>
                     <div>• $8/month after first year—the price of one coffee</div>
                     <div>• One family account, unlimited memories</div>
@@ -287,7 +287,7 @@ export default function SignupPage() {
               <Card>
                 <CardContent className="pt-6">
                   <h3 className="font-semibold mb-3">How Memory Insurance Works</h3>
-                  <div className="text-sm space-y-2 text-slate-600 dark:text-slate-400">
+                  <div className="text-sm space-y-2 text-muted-foreground dark:text-muted-foreground">
                     <div>1. Create your account—your digital safety deposit box</div>
                     <div>2. Your photographer delivers protected memories</div>
                     <div>3. One tap to download full resolution to your camera roll</div>

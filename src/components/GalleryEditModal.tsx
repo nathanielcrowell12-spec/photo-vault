@@ -211,15 +211,15 @@ export default function GalleryEditModal({ gallery, isOpen, onClose, onSave }: G
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="sm:max-w-lg">
-        <DialogHeader>
+      <DialogContent className="sm:max-w-lg max-h-[90vh] flex flex-col">
+        <DialogHeader className="flex-shrink-0">
           <DialogTitle>Edit Gallery Information</DialogTitle>
           <DialogDescription>
             Update the gallery name, date, and other details. These can be edited at any time.
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-4 py-4">
+        <div className="space-y-4 py-4 overflow-y-auto flex-1 pr-2">
           {/* Gallery Name */}
           <div className="space-y-2">
             <Label htmlFor="gallery_name">
@@ -387,7 +387,7 @@ export default function GalleryEditModal({ gallery, isOpen, onClose, onSave }: G
           )}
         </div>
 
-        <DialogFooter>
+        <DialogFooter className="flex-shrink-0 border-t pt-4 mt-2">
           <Button
             type="button"
             variant="outline"

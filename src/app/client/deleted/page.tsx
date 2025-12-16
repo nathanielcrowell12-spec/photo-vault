@@ -82,11 +82,11 @@ export default function RecentlyDeletedPage() {
   };
 
   if (loading || isLoading) {
-    return <div className="min-h-screen bg-neutral-900 flex items-center justify-center"><div className="text-neutral-400">Loading...</div></div>;
+    return <div className="min-h-screen bg-background flex items-center justify-center"><div className="text-muted-foreground">Loading...</div></div>;
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
     <div className="container mx-auto py-12">
       {/* Success Message */}
       {restoreSuccess && (
@@ -103,13 +103,13 @@ export default function RecentlyDeletedPage() {
         </div>
       )}
 
-      <Card className="bg-neutral-800/50 border-white/10">
+      <Card className="bg-card/50 border-border">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2 text-neutral-100">
+          <CardTitle className="flex items-center gap-2 text-foreground">
             <Trash2 className="h-6 w-6" />
             Recently Deleted
           </CardTitle>
-          <p className="text-sm text-neutral-400 mt-2">
+          <p className="text-sm text-muted-foreground mt-2">
             Deleted galleries are kept here for 30 days before being permanently removed.
             You can restore them at any time during this period.
           </p>

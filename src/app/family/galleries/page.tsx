@@ -215,7 +215,7 @@ export default function FamilyGalleriesPage() {
   // Loading state
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-neutral-900">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
           <Loader2 className="h-12 w-12 animate-spin text-pink-500 mx-auto" />
           <p className="mt-4 text-gray-600">Loading shared galleries...</p>
@@ -245,24 +245,24 @@ export default function FamilyGalleriesPage() {
   }, {} as Record<string, { primary_name: string; relationship: string; account_status: string; needs_attention: boolean; galleries: SharedGallery[] }>)
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-neutral-800/50 border-white/10">
+      <header className="border-b bg-card/50 border-border">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center gap-4">
             <Link
               href="/client/dashboard"
               className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
             >
-              <ArrowLeft className="h-5 w-5 text-slate-600" />
+              <ArrowLeft className="h-5 w-5 text-muted-foreground" />
             </Link>
             <div className="flex items-center gap-3">
               <div className="p-2 bg-gradient-to-br from-pink-500 to-orange-400 rounded-xl">
-                <Heart className="h-6 w-6 text-white" />
+                <Heart className="h-6 w-6 text-foreground" />
               </div>
               <div>
                 <h1 className="text-2xl font-bold text-slate-900">Family Galleries</h1>
-                <p className="text-sm text-slate-600">
+                <p className="text-sm text-muted-foreground">
                   Photo galleries shared with you by family
                 </p>
               </div>
@@ -358,7 +358,7 @@ export default function FamilyGalleriesPage() {
 
                 {/* Account Header */}
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-orange-400 flex items-center justify-center text-white font-semibold">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-orange-400 flex items-center justify-center text-foreground font-semibold">
                     {primary_name.charAt(0).toUpperCase()}
                   </div>
                   <div className="flex-1">
@@ -410,18 +410,18 @@ export default function FamilyGalleriesPage() {
                           )}
 
                           {/* Photo Count */}
-                          <div className="absolute top-3 right-3 bg-black/70 text-white px-2 py-1 rounded text-xs">
+                          <div className="absolute top-3 right-3 bg-black/70 text-foreground px-2 py-1 rounded text-xs">
                             {gallery.photo_count} photos
                           </div>
 
                           {/* Family shared badge */}
                           <div className="absolute top-3 left-3 flex flex-col gap-1">
-                            <Badge className="bg-pink-500 text-white text-xs">
+                            <Badge className="bg-pink-500 text-foreground text-xs">
                               <Heart className="h-3 w-3 mr-1" />
                               Family
                             </Badge>
                             {gallery.already_incorporated && (
-                              <Badge className="bg-blue-500 text-white text-xs">
+                              <Badge className="bg-blue-500 text-foreground text-xs">
                                 <CheckCircle2 className="h-3 w-3 mr-1" />
                                 Copied
                               </Badge>

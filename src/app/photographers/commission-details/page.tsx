@@ -21,9 +21,9 @@ import Link from 'next/link'
 
 export default function CommissionDetailsPage() {
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-neutral-900">
+      <header className="border-b bg-background">
         <div className="container mx-auto px-4 py-4">
           <Button asChild variant="ghost" size="sm">
             <Link href="/photographers">
@@ -44,7 +44,7 @@ export default function CommissionDetailsPage() {
             <h1 className="text-4xl md:text-5xl font-bold mb-4">
               Earn While You Protect Family Memories
             </h1>
-            <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
+            <p className="text-xl text-muted-foreground dark:text-foreground max-w-3xl mx-auto">
               You're not just a photographer—you're the guardian of your clients' family history. Here's how you earn passive income while delivering Memory Insurance.
             </p>
           </div>
@@ -61,18 +61,18 @@ export default function CommissionDetailsPage() {
               <div className="grid md:grid-cols-3 gap-6">
                 <div className="text-center p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
                   <div className="text-3xl font-bold text-green-600 mb-2">$50</div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Upfront Earnings</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">When family activates Memory Insurance ($100)</p>
+                  <p className="text-sm text-muted-foreground dark:text-muted-foreground">Upfront Earnings</p>
+                  <p className="text-xs text-muted-foreground dark:text-muted-foreground mt-1">When family activates Memory Insurance ($100)</p>
                 </div>
                 <div className="text-center p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                   <div className="text-3xl font-bold text-blue-600 mb-2">$4/mo</div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Passive Income</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">For every family you protect (Year 2+)</p>
+                  <p className="text-sm text-muted-foreground dark:text-muted-foreground">Passive Income</p>
+                  <p className="text-xs text-muted-foreground dark:text-muted-foreground mt-1">For every family you protect (Year 2+)</p>
                 </div>
                 <div className="text-center p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg">
                   <div className="text-3xl font-bold text-purple-600 mb-2">$22/mo</div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Guardian Platform Fee</p>
-                  <p className="text-xs text-slate-500 dark:text-slate-500 mt-1">Unlimited families, unlimited protection</p>
+                  <p className="text-sm text-muted-foreground dark:text-muted-foreground">Guardian Platform Fee</p>
+                  <p className="text-xs text-muted-foreground dark:text-muted-foreground mt-1">Unlimited families, unlimited protection</p>
                 </div>
               </div>
             </CardContent>
@@ -100,7 +100,7 @@ export default function CommissionDetailsPage() {
                       <div className="flex-shrink-0 w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center text-green-600 font-bold">1</div>
                       <div>
                         <h3 className="font-semibold mb-1">You Capture Their Family History</h3>
-                        <p className="text-sm text-slate-600 dark:text-slate-400">Wedding, newborn, family portrait—you're creating irreplaceable memories. These photos can never be retaken.</p>
+                        <p className="text-sm text-muted-foreground dark:text-muted-foreground">Wedding, newborn, family portrait—you're creating irreplaceable memories. These photos can never be retaken.</p>
                       </div>
                     </div>
 
@@ -108,7 +108,7 @@ export default function CommissionDetailsPage() {
                       <div className="flex-shrink-0 w-8 h-8 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center text-green-600 font-bold">2</div>
                       <div>
                         <h3 className="font-semibold mb-1">Family Activates Memory Insurance ($100)</h3>
-                        <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">You deliver their photos to PhotoVault—a digital safety deposit box. First year of protection is built into your package.</p>
+                        <p className="text-sm text-muted-foreground dark:text-muted-foreground mb-2">You deliver their photos to PhotoVault—a digital safety deposit box. First year of protection is built into your package.</p>
                         <div className="bg-green-50 dark:bg-green-900/20 p-3 rounded-lg text-sm">
                           <strong>You Earn: $50 upfront</strong>
                           <br />You're now their guardian—they trust you with their family history
@@ -120,7 +120,7 @@ export default function CommissionDetailsPage() {
                       <div className="flex-shrink-0 w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 font-bold">3</div>
                       <div>
                         <h3 className="font-semibold mb-1">Family Continues Protection (Year 2+)</h3>
-                        <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">For $8/month—the price of one coffee—their memories stay protected from hard drive failures.</p>
+                        <p className="text-sm text-muted-foreground dark:text-muted-foreground mb-2">For $8/month—the price of one coffee—their memories stay protected from hard drive failures.</p>
                         <div className="bg-blue-50 dark:bg-blue-900/20 p-3 rounded-lg text-sm">
                           <strong>You Earn: $4/month passive income</strong>
                           <br />For every family you protect, forever
@@ -132,7 +132,7 @@ export default function CommissionDetailsPage() {
                       <div className="flex-shrink-0 w-8 h-8 bg-purple-100 dark:bg-purple-900/30 rounded-full flex items-center justify-center text-purple-600 font-bold">4</div>
                       <div>
                         <h3 className="font-semibold mb-1">Your Guardian Platform Fee</h3>
-                        <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">Unlimited families, unlimited memories, unlimited protection.</p>
+                        <p className="text-sm text-muted-foreground dark:text-muted-foreground mb-2">Unlimited families, unlimited memories, unlimited protection.</p>
                         <div className="bg-purple-50 dark:bg-purple-900/20 p-3 rounded-lg text-sm">
                           <strong>Your Cost: $22/month</strong>
                           <br />Covered by just 6 protected families
@@ -184,7 +184,7 @@ export default function CommissionDetailsPage() {
                       Scenario 1: New Client, Active for 2 Years
                     </h3>
                     <div className="space-y-3 text-sm">
-                      <p className="text-slate-600 dark:text-slate-400">Sarah books a wedding, stays active with PhotoVault for 2 years.</p>
+                      <p className="text-muted-foreground dark:text-muted-foreground">Sarah books a wedding, stays active with PhotoVault for 2 years.</p>
                       
                       <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg space-y-2">
                         <div><strong>Year 1:</strong></div>
@@ -204,11 +204,11 @@ export default function CommissionDetailsPage() {
                           <span>Total earnings over 2 years:</span>
                           <span className="text-green-600">$98</span>
                         </div>
-                        <div className="flex justify-between text-sm text-slate-600">
+                        <div className="flex justify-between text-sm text-muted-foreground">
                           <span>Minus platform fees (24 months × $22):</span>
                           <span className="text-purple-600">-$528</span>
                         </div>
-                        <div className="text-xs text-slate-500 mt-2">
+                        <div className="text-xs text-muted-foreground mt-2">
                           *Platform fee covers ALL clients, this is just one client&apos;s contribution
                         </div>
                       </div>
@@ -222,7 +222,7 @@ export default function CommissionDetailsPage() {
                       Scenario 2: Client Goes Inactive, Then Returns
                     </h3>
                     <div className="space-y-3 text-sm">
-                      <p className="text-slate-600 dark:text-slate-400">Mike&apos;s family stops paying after year 1, then books another session 6 months later with you (same photographer).</p>
+                      <p className="text-muted-foreground dark:text-muted-foreground">Mike&apos;s family stops paying after year 1, then books another session 6 months later with you (same photographer).</p>
                       
                       <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg space-y-2">
                         <div><strong>Initial Session (Year 1):</strong></div>
@@ -261,7 +261,7 @@ export default function CommissionDetailsPage() {
                       Scenario 3: Client Switches to Different Photographer
                     </h3>
                     <div className="space-y-3 text-sm">
-                      <p className="text-slate-600 dark:text-slate-400">Jennifer was your client, goes inactive, then books with a different PhotoVault photographer.</p>
+                      <p className="text-muted-foreground dark:text-muted-foreground">Jennifer was your client, goes inactive, then books with a different PhotoVault photographer.</p>
                       
                       <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg space-y-2">
                         <div><strong>You (Original Photographer):</strong></div>
@@ -298,7 +298,7 @@ export default function CommissionDetailsPage() {
                       Scenario 4: Building a Client Base (25 Clients)
                     </h3>
                     <div className="space-y-3 text-sm">
-                      <p className="text-slate-600 dark:text-slate-400">You build up 25 active clients over your first year.</p>
+                      <p className="text-muted-foreground dark:text-muted-foreground">You build up 25 active clients over your first year.</p>
                       
                       <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-lg space-y-2">
                         <div><strong>Year 1 Revenue:</strong></div>
@@ -322,7 +322,7 @@ export default function CommissionDetailsPage() {
                           <span>Year 2 Net Profit:</span>
                           <span className="text-green-600">$936</span>
                         </div>
-                        <div className="text-xs text-slate-500 mt-2">
+                        <div className="text-xs text-muted-foreground mt-2">
                           Plus you continue booking new clients for more upfront commissions!
                         </div>
                       </div>
@@ -351,14 +351,14 @@ export default function CommissionDetailsPage() {
                         <div className="font-semibold mb-2">10 Clients Scenario:</div>
                         <div className="grid grid-cols-2 gap-4 text-sm">
                           <div>
-                            <div className="text-slate-600 dark:text-slate-400">Year 1 Upfront:</div>
+                            <div className="text-muted-foreground dark:text-muted-foreground">Year 1 Upfront:</div>
                             <div className="text-xl font-bold text-green-600">$500</div>
-                            <div className="text-xs text-slate-500">10 × $50</div>
+                            <div className="text-xs text-muted-foreground">10 × $50</div>
                           </div>
                           <div>
-                            <div className="text-slate-600 dark:text-slate-400">Year 2 Monthly:</div>
+                            <div className="text-muted-foreground dark:text-muted-foreground">Year 2 Monthly:</div>
                             <div className="text-xl font-bold text-blue-600">$40/mo</div>
-                            <div className="text-xs text-slate-500">10 × $4/mo</div>
+                            <div className="text-xs text-muted-foreground">10 × $4/mo</div>
                           </div>
                         </div>
                       </div>
@@ -369,14 +369,14 @@ export default function CommissionDetailsPage() {
                         <div className="font-semibold mb-2">25 Clients Scenario:</div>
                         <div className="grid grid-cols-2 gap-4 text-sm">
                           <div>
-                            <div className="text-slate-600 dark:text-slate-400">Year 1 Upfront:</div>
+                            <div className="text-muted-foreground dark:text-muted-foreground">Year 1 Upfront:</div>
                             <div className="text-xl font-bold text-green-600">$1,250</div>
-                            <div className="text-xs text-slate-500">25 × $50</div>
+                            <div className="text-xs text-muted-foreground">25 × $50</div>
                           </div>
                           <div>
-                            <div className="text-slate-600 dark:text-slate-400">Year 2 Monthly:</div>
+                            <div className="text-muted-foreground dark:text-muted-foreground">Year 2 Monthly:</div>
                             <div className="text-xl font-bold text-blue-600">$100/mo</div>
-                            <div className="text-xs text-slate-500">25 × $4/mo</div>
+                            <div className="text-xs text-muted-foreground">25 × $4/mo</div>
                           </div>
                         </div>
                       </div>
@@ -387,14 +387,14 @@ export default function CommissionDetailsPage() {
                         <div className="font-semibold mb-2">50 Clients Scenario:</div>
                         <div className="grid grid-cols-2 gap-4 text-sm">
                           <div>
-                            <div className="text-slate-600 dark:text-slate-400">Year 1 Upfront:</div>
+                            <div className="text-muted-foreground dark:text-muted-foreground">Year 1 Upfront:</div>
                             <div className="text-xl font-bold text-green-600">$2,500</div>
-                            <div className="text-xs text-slate-500">50 × $50</div>
+                            <div className="text-xs text-muted-foreground">50 × $50</div>
                           </div>
                           <div>
-                            <div className="text-slate-600 dark:text-slate-400">Year 2 Monthly:</div>
+                            <div className="text-muted-foreground dark:text-muted-foreground">Year 2 Monthly:</div>
                             <div className="text-xl font-bold text-blue-600">$200/mo</div>
-                            <div className="text-xs text-slate-500">50 × $4/mo</div>
+                            <div className="text-xs text-muted-foreground">50 × $4/mo</div>
                           </div>
                         </div>
                       </div>
@@ -420,7 +420,7 @@ export default function CommissionDetailsPage() {
                         </div>
                       </div>
                       <div className="bg-white dark:bg-slate-800 p-3 rounded mt-4">
-                        <div className="text-xs text-slate-500 mb-2">Example: 10 active clients</div>
+                        <div className="text-xs text-muted-foreground mb-2">Example: 10 active clients</div>
                         <div>Revenue: 10 × $4 = $40/month</div>
                         <div>Cost: $22/month</div>
                         <div className="font-bold text-green-600 mt-1">Profit: $18/month passive</div>
@@ -445,7 +445,7 @@ export default function CommissionDetailsPage() {
                         <CheckCircle className="h-5 w-5 text-green-500 mr-2" />
                         Standard Commission Structure
                       </h3>
-                      <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400 ml-7">
+                      <ul className="space-y-2 text-sm text-muted-foreground dark:text-muted-foreground ml-7">
                         <li>• <strong>First Year:</strong> Client pays $100 to PhotoVault. Photographer receives $50 upfront commission, PhotoVault keeps $50.</li>
                         <li>• <strong>Year 2+:</strong> Client pays $8/month. Photographer receives $4/month, PhotoVault keeps $4/month.</li>
                         <li>• <strong>Platform Fee:</strong> Photographer pays $22/month for unlimited clients and galleries.</li>
@@ -459,7 +459,7 @@ export default function CommissionDetailsPage() {
                         <RefreshCw className="h-5 w-5 text-orange-500 mr-2" />
                         Reactivation Rules
                       </h3>
-                      <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400 ml-7">
+                      <ul className="space-y-2 text-sm text-muted-foreground dark:text-muted-foreground ml-7">
                         <li>• <strong>Reactivation with New Session:</strong> If client becomes inactive and then books a new session with the <strong>same photographer</strong>, the commission cycle restarts completely.</li>
                         <li className="ml-4">→ Photographer receives another $50 upfront commission when client pays $100 again.</li>
                         <li className="ml-4">→ This encourages re-booking previous clients.</li>
@@ -479,7 +479,7 @@ export default function CommissionDetailsPage() {
                         <Users className="h-5 w-5 text-blue-500 mr-2" />
                         Cross-Photographer Rules
                       </h3>
-                      <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400 ml-7">
+                      <ul className="space-y-2 text-sm text-muted-foreground dark:text-muted-foreground ml-7">
                         <li>• If client becomes inactive and books with a <strong>different PhotoVault photographer</strong>:</li>
                         <li className="ml-4">→ New photographer gets $50 upfront commission from the $100 payment</li>
                         <li className="ml-4">→ PhotoVault keeps $50</li>
@@ -495,7 +495,7 @@ export default function CommissionDetailsPage() {
                         <AlertCircle className="h-5 w-5 text-yellow-500 mr-2" />
                         Special Cases
                       </h3>
-                      <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400 ml-7">
+                      <ul className="space-y-2 text-sm text-muted-foreground dark:text-muted-foreground ml-7">
                         <li>• <strong>Family Accounts:</strong> One login per family, unlimited galleries. If no photographer, family pays $8/month directly to PhotoVault with no commission.</li>
                         <li className="ml-4 bg-blue-50 dark:bg-blue-900/20 p-2 rounded">→ <strong>Family-to-Photographer Conversion:</strong> If a family without a photographer later books a session with a PhotoVault photographer, PhotoVault&apos;s $8/month stops. The standard commission rules apply - photographer gets $50 upfront when client pays $100, then $4/month recurring. The family is now associated with the photographer.</li>
                         <li>• <strong>Multi-Gallery Customers:</strong> This is the core feature - customers collect photos from multiple photographers in one account. Each photographer gets their commission structure independently.</li>
@@ -511,7 +511,7 @@ export default function CommissionDetailsPage() {
                         <DollarSign className="h-5 w-5 text-green-500 mr-2" />
                         Payment Processing
                       </h3>
-                      <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-400 ml-7">
+                      <ul className="space-y-2 text-sm text-muted-foreground dark:text-muted-foreground ml-7">
                         <li>• PhotoVault handles <strong>all billing</strong> - you never process client payments</li>
                         <li>• Automated payment reminders sent to clients</li>
                         <li>• Commissions paid out to your account monthly</li>
@@ -527,13 +527,13 @@ export default function CommissionDetailsPage() {
                         Undefined Scenarios & Dispute Resolution
                       </h3>
                       <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
-                        <p className="text-sm text-slate-600 dark:text-slate-400">
+                        <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                           Any scenarios not explicitly defined in these rules will be worked through collaboratively by all involved parties (client, photographer, and PhotoVault). 
                         </p>
-                        <p className="text-sm text-slate-600 dark:text-slate-400 mt-2">
+                        <p className="text-sm text-muted-foreground dark:text-muted-foreground mt-2">
                           <strong>PhotoVault has final decision-making authority</strong> in disputes or unclear situations. Once resolved, a new rule will be added to these terms to account for similar situations in the future.
                         </p>
-                        <p className="text-sm text-slate-600 dark:text-slate-400 mt-2">
+                        <p className="text-sm text-muted-foreground dark:text-muted-foreground mt-2">
                           This ensures the system evolves fairly and transparently based on real-world use cases.
                         </p>
                       </div>
@@ -546,7 +546,7 @@ export default function CommissionDetailsPage() {
                 <CardContent className="pt-6">
                   <div className="text-center">
                     <h3 className="font-semibold text-xl mb-3">The Guardian Bottom Line</h3>
-                    <p className="text-slate-600 dark:text-slate-400 mb-6 max-w-2xl mx-auto">
+                    <p className="text-muted-foreground dark:text-muted-foreground mb-6 max-w-2xl mx-auto">
                       You earn $50 upfront per family, then $4/month passive income for every family you protect.
                       With just 6 protected families, your platform fee is covered—everything else is profit while you safeguard their irreplaceable memories.
                     </p>
@@ -567,7 +567,7 @@ export default function CommissionDetailsPage() {
             <CardContent className="pt-8 pb-8">
               <div className="text-center">
                 <h2 className="text-2xl font-bold mb-4">Ready to Become a Guardian?</h2>
-                <p className="text-slate-600 dark:text-slate-400 mb-6 max-w-2xl mx-auto">
+                <p className="text-muted-foreground dark:text-muted-foreground mb-6 max-w-2xl mx-auto">
                   You're not just delivering photos—you're protecting irreplaceable memories while building passive income. That's what being a Guardian means.
                 </p>
                 <div className="flex justify-center">

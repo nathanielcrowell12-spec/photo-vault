@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import JSZip from 'jszip'
 import { generateRandomId } from '@/lib/api-constants'
+import { trackServerEvent } from '@/lib/analytics/server'
+import { EVENTS } from '@/types/analytics'
+import { isFirstTime, calculateTimeFromSignup, getPhotographerSignupDate } from '@/lib/analytics/helpers'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -70,11 +73,49 @@ export async function POST(request: NextRequest) {
           return
         }
 
-        send({ 
-          message: `Found ${imageFiles.length} photos. Processing...`, 
+        send({
+          message: `Found ${imageFiles.length} photos. Processing...`,
           progress: 40,
-          totalPhotos: imageFiles.length 
+          totalPhotos: imageFiles.length
         })
+
+        // Get gallery info for photographer tracking
+        const { data: galleryInfo } = await supabase
+          .from('photo_galleries')
+          .select('photographer_id')
+          .eq('id', galleryId)
+          .single()
+
+        // Check if this is the photographer's first photo BEFORE uploading
+        // This uses a service role query across all their galleries
+        let isFirstUpload = false
+        if (galleryInfo?.photographer_id) {
+          // Check if photographer has any existing photos in any gallery
+          const { count: existingPhotoCount } = await supabase
+            .from('gallery_photos')
+            .select('id', { count: 'exact', head: true })
+            .eq('gallery_id', galleryId) // This query needs to check ALL their galleries
+
+          // Actually, we need to join through galleries to get all photos for this photographer
+          // For simplicity, let's query the galleries first
+          const { data: photographerGalleries } = await supabase
+            .from('photo_galleries')
+            .select('id')
+            .eq('photographer_id', galleryInfo.photographer_id)
+
+          if (photographerGalleries && photographerGalleries.length > 0) {
+            const galleryIds = photographerGalleries.map(g => g.id)
+            const { count: totalPhotos } = await supabase
+              .from('gallery_photos')
+              .select('id', { count: 'exact', head: true })
+              .in('gallery_id', galleryIds)
+
+            isFirstUpload = (totalPhotos || 0) === 0
+          }
+        }
+
+        // Flag to track only once per upload batch
+        let hasTrackedFirstUpload = false
 
         // Process and upload each photo
         let uploadedCount = 0
@@ -141,6 +182,23 @@ export async function POST(request: NextRequest) {
                   })
 
                 uploadedCount++
+
+                // Track first photo upload (only once per batch, and only if first ever)
+                if (isFirstUpload && !hasTrackedFirstUpload && galleryInfo?.photographer_id) {
+                  hasTrackedFirstUpload = true
+                  try {
+                    const signupDate = await getPhotographerSignupDate(galleryInfo.photographer_id)
+                    const timeFromSignup = calculateTimeFromSignup(signupDate)
+
+                    await trackServerEvent(galleryInfo.photographer_id, EVENTS.PHOTOGRAPHER_UPLOADED_FIRST_PHOTO, {
+                      time_from_signup_seconds: timeFromSignup ?? 0,
+                      file_size_bytes: photoBlob.size,
+                    })
+                  } catch (trackError) {
+                    console.error('[Upload Process] Error tracking first upload:', trackError)
+                    // Don't block upload if tracking fails
+                  }
+                }
                 
                 // Update progress
                 const progressPercent = 40 + Math.floor((uploadedCount / imageFiles.length) * 50)

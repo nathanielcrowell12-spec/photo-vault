@@ -11,16 +11,16 @@ export type RevenueStats = {
 
 export type RecentPayment = {
   id: string
-  customer: string
-  amount: number
+  customer: string  // Client email (commissions table stores email, not name)
+  amount: number    // PhotoVault's commission in dollars
   status: string
   date: string
 }
 
 export type TopPhotographer = {
   name: string
-  revenue: number
-  sessions: number
+  revenue: number   // Photographer's total earnings (not PhotoVault's cut)
+  sessions: number  // Gallery count (photo_sessions table is empty)
 }
 
 export type FailedPayment = {
@@ -42,98 +42,124 @@ export async function fetchAdminRevenueData(): Promise<AdminRevenueData> {
   const supabase = createServiceRoleClient()
 
   try {
-    // Fetch total revenue
-    const { data: allPayments, error: allPaymentsError } = await supabase
-      .from('client_payments')
-      .select('amount_paid')
-      .eq('status', 'active')
+    // Fetch total revenue (PhotoVault's commission only, not total client paid)
+    // photovault_commission_cents = what PhotoVault keeps after photographer cut
+    const { data: allCommissions, error: allCommissionsError } = await supabase
+      .from('commissions')
+      .select('photovault_commission_cents')
+      .eq('status', 'paid')
 
-    if (allPaymentsError) throw allPaymentsError
+    if (allCommissionsError) throw allCommissionsError
 
-    const totalRevenue = allPayments?.reduce((sum, p) => sum + (p.amount_paid || 0), 0) || 0
+    const totalRevenueCents = allCommissions?.reduce((sum, c) => sum + (c.photovault_commission_cents || 0), 0) || 0
+    const totalRevenue = totalRevenueCents / 100  // Convert to dollars
 
     // Fetch this month's revenue
     const now = new Date()
     const startOfMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0, 0))
     const endOfMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 0, 23, 59, 59, 999))
 
-    const { data: monthPayments, error: monthError } = await supabase
-      .from('client_payments')
-      .select('amount_paid')
-      .gte('payment_date', startOfMonth.toISOString())
-      .lte('payment_date', endOfMonth.toISOString())
-      .eq('status', 'active')
+    const { data: monthCommissions, error: monthError } = await supabase
+      .from('commissions')
+      .select('photovault_commission_cents')
+      .gte('paid_at', startOfMonth.toISOString())
+      .lte('paid_at', endOfMonth.toISOString())
+      .eq('status', 'paid')
 
     if (monthError) throw monthError
 
-    const thisMonth = monthPayments?.reduce((sum, p) => sum + (p.amount_paid || 0), 0) || 0
+    const thisMonthCents = monthCommissions?.reduce((sum, c) => sum + (c.photovault_commission_cents || 0), 0) || 0
+    const thisMonth = thisMonthCents / 100  // Convert to dollars
 
     // Fetch this year's revenue
     const startOfYear = new Date(Date.UTC(now.getUTCFullYear(), 0, 1, 0, 0, 0, 0))
     const endOfYear = new Date(Date.UTC(now.getUTCFullYear(), 11, 31, 23, 59, 59, 999))
 
-    const { data: yearPayments, error: yearError } = await supabase
-      .from('client_payments')
-      .select('amount_paid')
-      .gte('payment_date', startOfYear.toISOString())
-      .lte('payment_date', endOfYear.toISOString())
-      .eq('status', 'active')
+    const { data: yearCommissions, error: yearError } = await supabase
+      .from('commissions')
+      .select('photovault_commission_cents')
+      .gte('paid_at', startOfYear.toISOString())
+      .lte('paid_at', endOfYear.toISOString())
+      .eq('status', 'paid')
 
     if (yearError) throw yearError
 
-    const thisYear = yearPayments?.reduce((sum, p) => sum + (p.amount_paid || 0), 0) || 0
+    const thisYearCents = yearCommissions?.reduce((sum, c) => sum + (c.photovault_commission_cents || 0), 0) || 0
+    const thisYear = thisYearCents / 100  // Convert to dollars
 
-    // Calculate average order
-    const averageOrder = allPayments && allPayments.length > 0 ? totalRevenue / allPayments.length : 0
+    // Calculate average order (PhotoVault's cut per transaction)
+    const averageOrder = allCommissions && allCommissions.length > 0 ? totalRevenue / allCommissions.length : 0
 
-    // Fetch recent payments with client info
+    // Fetch THIS MONTH's payments (matches the monthly revenue header)
     const { data: recentPaymentsData, error: recentError } = await supabase
-      .from('client_payments')
+      .from('commissions')
       .select(`
         id,
-        amount_paid,
-        payment_date,
+        photovault_commission_cents,
+        total_paid_cents,
+        paid_at,
         status,
-        clients!inner(name)
+        client_email,
+        payment_type
       `)
-      .order('payment_date', { ascending: false })
-      .limit(10)
+      .eq('status', 'paid')
+      .gte('paid_at', startOfMonth.toISOString())
+      .lte('paid_at', endOfMonth.toISOString())
+      .order('paid_at', { ascending: false })
 
     if (recentError) throw recentError
 
-    const recentPayments: RecentPayment[] = (recentPaymentsData || []).map((p: any) => ({
-      id: p.id.substring(0, 8).toUpperCase(),
-      customer: p.clients?.name || 'Unknown',
-      amount: p.amount_paid || 0,
-      status: p.status === 'active' ? 'Active' : p.status === 'inactive' ? 'Inactive' : 'Expired',
-      date: p.payment_date ? new Date(p.payment_date).toLocaleDateString() : '—',
+    const recentPayments: RecentPayment[] = (recentPaymentsData || []).map((c: any) => ({
+      id: c.id.substring(0, 8).toUpperCase(),
+      customer: c.client_email || 'Unknown',
+      amount: (c.photovault_commission_cents || 0) / 100,
+      status: c.status === 'paid' ? 'Paid' : c.status === 'refunded' ? 'Refunded' : 'Pending',
+      date: c.paid_at ? new Date(c.paid_at).toLocaleDateString() : '—',
     }))
 
-    // Fetch top photographers by revenue
-    const { data: photographersData, error: photographersError } = await supabase
-      .from('photographers')
-      .select(`
-        id,
-        total_commission_earned,
-        user_profiles!inner(business_name, full_name)
-      `)
-      .order('total_commission_earned', { ascending: false })
-      .limit(3)
+    // Fetch top photographers by commission revenue
+    // First, aggregate commissions by photographer
+    const { data: allCommissionsData, error: commissionsError } = await supabase
+      .from('commissions')
+      .select('photographer_id, amount_cents')  // Photographer's earnings (not PhotoVault's)
+      .eq('status', 'paid')
 
-    if (photographersError) throw photographersError
+    if (commissionsError) throw commissionsError
 
-    // Get session counts for each photographer
+    // Aggregate by photographer
+    const photographerRevenue = new Map<string, number>()
+    for (const comm of allCommissionsData || []) {
+      if (comm.photographer_id) {
+        const current = photographerRevenue.get(comm.photographer_id) || 0
+        photographerRevenue.set(comm.photographer_id, current + comm.amount_cents)
+      }
+    }
+
+    // Sort and take top 3
+    const topPhotographerIds = Array.from(photographerRevenue.entries())
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3)
+
+    // Fetch photographer details
     const topPhotographers: TopPhotographer[] = await Promise.all(
-      (photographersData || []).map(async (p: any) => {
-        const { count } = await supabase
-          .from('photo_sessions')
+      topPhotographerIds.map(async ([photographerId, revenueCents]) => {
+        // Get photographer name
+        const { data: profile } = await supabase
+          .from('user_profiles')
+          .select('business_name, full_name')
+          .eq('id', photographerId)
+          .single()
+
+        // Count galleries instead of sessions (photo_sessions table is empty)
+        const { count: galleriesCount } = await supabase
+          .from('photo_galleries')
           .select('id', { count: 'exact', head: true })
-          .eq('photographer_id', p.id)
+          .eq('photographer_id', photographerId)
 
         return {
-          name: p.user_profiles?.business_name || p.user_profiles?.full_name || 'Unknown',
-          revenue: p.total_commission_earned || 0,
-          sessions: count || 0,
+          name: profile?.business_name || profile?.full_name || 'Unknown',
+          revenue: revenueCents / 100,  // Convert to dollars
+          sessions: galleriesCount || 0,  // Use galleries count instead of sessions
         }
       })
     )
@@ -149,7 +175,7 @@ export async function fetchAdminRevenueData(): Promise<AdminRevenueData> {
         thisYear,
         averageOrder,
       },
-      recentPayments: recentPayments.slice(0, 3), // Show only top 3
+      recentPayments, // Show all this month's transactions
       topPhotographers,
       failedPayments,
     }

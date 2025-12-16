@@ -84,7 +84,7 @@ export function PricingComparison() {
     <div className="w-full">
       <div className="text-center mb-8">
         <h2 className="text-3xl font-bold mb-4">How PhotoVault Compares</h2>
-        <p className="text-xl text-slate-600 dark:text-slate-300">
+        <p className="text-xl text-muted-foreground dark:text-foreground">
           Get more features and earn money with every client
         </p>
       </div>
@@ -97,7 +97,7 @@ export function PricingComparison() {
           >
             {plan.isPhotoVault && (
               <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                <Badge className="bg-green-600 text-white px-4 py-1">
+                <Badge className="bg-green-600 text-foreground px-4 py-1">
                   <Crown className="h-3 w-3 mr-1" />
                   Best Value
                 </Badge>
@@ -108,7 +108,7 @@ export function PricingComparison() {
               <CardTitle className="text-xl">{plan.name}</CardTitle>
               <div className="mt-4">
                 <span className="text-4xl font-bold">{plan.price}</span>
-                <span className="text-slate-600 dark:text-slate-400">{plan.period}</span>
+                <span className="text-muted-foreground dark:text-muted-foreground">{plan.period}</span>
               </div>
             </CardHeader>
 
@@ -147,7 +147,7 @@ export function PricingComparison() {
                   className={`w-full mt-6 ${
                     plan.isPhotoVault 
                       ? 'bg-green-600 hover:bg-green-700' 
-                      : 'bg-slate-600 hover:bg-slate-700'
+                      : 'bg-secondary hover:bg-secondary'
                   }`}
                 >
                   <Link href={plan.ctaLink}>
@@ -181,22 +181,22 @@ export function PricingComparison() {
       <div className="mt-8 text-center">
         <div className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-xl p-6">
           <h3 className="text-xl font-bold mb-2">Why Choose PhotoVault?</h3>
-          <p className="text-slate-600 dark:text-slate-300 mb-4">
+          <p className="text-muted-foreground dark:text-foreground mb-4">
             While competitors charge $20-30/month with no earning potential, PhotoVault charges $22/month 
             but you earn $50 + $4/month on every client. With just 6 clients, you&apos;re making more than you pay!
           </p>
           <div className="grid md:grid-cols-3 gap-4 text-sm">
             <div className="text-center">
               <div className="font-bold text-green-600">$22/month</div>
-              <div className="text-slate-600 dark:text-slate-400">Platform cost</div>
+              <div className="text-muted-foreground dark:text-muted-foreground">Platform cost</div>
             </div>
             <div className="text-center">
               <div className="font-bold text-blue-600">$50 + $4/month</div>
-              <div className="text-slate-600 dark:text-slate-400">Per client earned</div>
+              <div className="text-muted-foreground dark:text-muted-foreground">Per client earned</div>
             </div>
             <div className="text-center">
               <div className="font-bold text-purple-600">6 clients</div>
-              <div className="text-slate-600 dark:text-slate-400">Break-even point</div>
+              <div className="text-muted-foreground dark:text-muted-foreground">Break-even point</div>
             </div>
           </div>
         </div>

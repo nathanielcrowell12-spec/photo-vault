@@ -18,11 +18,12 @@ interface Gallery {
   cover_image_url?: string
   platform: string
   photographer_name?: string
+  photographer_id?: string
   session_date?: string
   photo_count: number
   gallery_url?: string
   created_at: string
-  user_id?: string
+  user_id?: string  // Owner for self-uploaded galleries
   client_id?: string
 }
 
@@ -86,8 +87,9 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
         // Fetch galleries created by this photographer
         query = query.eq('photographer_id', userId)
       } else {
-        // Fetch galleries for this client
-        query = query.eq('client_id', userId)
+        // For clients: show only self-uploaded galleries (photographer_id is null)
+        // This filters out old test data and photographer-assigned galleries
+        query = query.eq('user_id', userId).is('photographer_id', null)
       }
       
       const { data: galleriesData, error } = await query.order('created_at', { ascending: false })
@@ -124,10 +126,13 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
         cover_image_url: g.cover_image_url || '/images/placeholder-family.svg',
         platform: g.platform,
         photographer_name: g.photographer_name,
+        photographer_id: g.photographer_id,
         session_date: g.session_date,
         photo_count: g.photo_count || 0,
         gallery_url: g.gallery_url,
-        created_at: g.created_at
+        created_at: g.created_at,
+        user_id: g.user_id,
+        client_id: g.client_id
       }))
       
       console.log('GalleryGrid: Mapped galleries:', mappedGalleries)
@@ -388,7 +393,7 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
                     {/* Lock Overlay for expired accounts */}
                     {isLocked && (
                       <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                        <div className="text-center text-white">
+                        <div className="text-center text-foreground">
                           <Lock className="h-8 w-8 mx-auto mb-2" />
                           <p className="text-sm font-medium">Gallery Locked</p>
                           <p className="text-xs opacity-90">Account inactive</p>
@@ -414,7 +419,7 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
                     </div>
 
                     {/* Photo Count */}
-                    <div className="absolute top-3 right-3 bg-black/70 text-white px-2 py-1 rounded text-xs">
+                    <div className="absolute top-3 right-3 bg-black/70 text-foreground px-2 py-1 rounded text-xs">
                       {gallery.photo_count} photos
                     </div>
 

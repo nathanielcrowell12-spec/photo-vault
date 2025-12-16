@@ -61,9 +61,9 @@ export default function PhotographerPortalLayout({
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+    <div className="min-h-screen bg-background">
       {/* Mobile Header */}
-      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white dark:bg-slate-900 border-b">
+      <div className="lg:hidden fixed top-0 left-0 right-0 z-50 bg-background border-b">
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center space-x-2">
             <BarChart3 className="h-6 w-6 text-blue-600" />
@@ -81,7 +81,7 @@ export default function PhotographerPortalLayout({
 
       {/* Sidebar */}
       <aside
-        className={`fixed inset-y-0 left-0 z-40 w-64 bg-white dark:bg-slate-900 border-r transform transition-transform duration-200 ease-in-out lg:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-40 w-64 bg-background border-r transform transition-transform duration-200 ease-in-out lg:translate-x-0 ${
           sidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -104,7 +104,7 @@ export default function PhotographerPortalLayout({
                   className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
                     active
                       ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/20'
-                      : 'text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'
+                      : 'text-foreground hover:bg-accent'
                   }`}
                   onClick={() => setSidebarOpen(false)}
                 >
@@ -119,16 +119,16 @@ export default function PhotographerPortalLayout({
           <div className="border-t px-4 py-4">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex items-center space-x-3 w-full px-3 py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+                <button className="flex items-center space-x-3 w-full px-3 py-2 rounded-lg hover:bg-accent transition-colors">
                   <Avatar className="h-8 w-8">
                     <AvatarImage src={photographerImage} alt={photographerName} />
                     <AvatarFallback>{getInitials(photographerName)}</AvatarFallback>
                   </Avatar>
                   <div className="flex-1 text-left">
-                    <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                    <p className="text-sm font-medium text-foreground">
                       {photographerName}
                     </p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                    <p className="text-xs text-muted-foreground dark:text-muted-foreground">
                       {photographerEmail}
                     </p>
                   </div>

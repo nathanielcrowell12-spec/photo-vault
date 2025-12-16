@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import { MessageSquare, HelpCircle } from 'lucide-react'
+import { MessageSquare } from 'lucide-react'
 import MessagingPanel from './MessagingPanel'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabaseBrowser } from '@/lib/supabase-browser'
@@ -81,7 +81,7 @@ export default function MessagesButton({ variant = 'icon', showLabel = false }: 
           onClick={() => setShowMessages(true)}
           title="Messages"
         >
-          <HelpCircle className="h-5 w-5" />
+          <MessageSquare className="h-5 w-5" />
           {unreadCount > 0 && (
             <Badge
               variant="destructive"

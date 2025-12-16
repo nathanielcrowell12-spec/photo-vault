@@ -16,7 +16,7 @@ export function LocationCard({ location }: LocationCardProps) {
 
   return (
     <Link href={`/directory/${citySlug}/${location.slug}`}>
-      <Card className="bg-slate-800/50 border-slate-700 hover:border-slate-600 transition-all duration-300 overflow-hidden group cursor-pointer h-full">
+      <Card className="bg-card/50 border-border hover:border-border transition-all duration-300 overflow-hidden group cursor-pointer h-full">
         <div className="relative h-48 overflow-hidden">
           {location.cover_image_url ? (
             <Image
@@ -27,8 +27,8 @@ export function LocationCard({ location }: LocationCardProps) {
               className="object-cover group-hover:scale-105 transition-transform duration-300"
             />
           ) : (
-            <div className="w-full h-full bg-gradient-to-br from-slate-700 to-slate-800 flex items-center justify-center">
-              <MapPin className="w-12 h-12 text-slate-600" />
+            <div className="w-full h-full bg-gradient-to-br from-secondary to-card flex items-center justify-center">
+              <MapPin className="w-12 h-12 text-muted-foreground" />
             </div>
           )}
           {permitStatus && (
@@ -38,15 +38,15 @@ export function LocationCard({ location }: LocationCardProps) {
           )}
         </div>
         <CardContent className="p-4">
-          <h3 className="text-lg font-semibold text-white group-hover:text-amber-400 transition-colors line-clamp-1">
+          <h3 className="text-lg font-semibold text-foreground group-hover:text-amber-400 transition-colors line-clamp-1">
             {location.name}
           </h3>
-          <p className="text-slate-400 text-sm flex items-center gap-1 mt-1">
+          <p className="text-muted-foreground text-sm flex items-center gap-1 mt-1">
             <MapPin className="w-3 h-3" />
             {location.city}, {location.state}
           </p>
           {location.description && (
-            <p className="text-slate-500 text-sm mt-2 line-clamp-2">
+            <p className="text-muted-foreground text-sm mt-2 line-clamp-2">
               {location.description}
             </p>
           )}

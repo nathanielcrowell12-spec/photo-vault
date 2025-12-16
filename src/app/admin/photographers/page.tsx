@@ -43,6 +43,12 @@ export default function PhotographersPage() {
   const [searchInput, setSearchInput] = useState('')
   const [dataLoading, setDataLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [stats, setStats] = useState<{
+    totalPhotographers: number
+    activeCount: number
+    totalGalleries: number
+    totalRevenueCents: number
+  } | null>(null)
 
   // Auth guard
   useEffect(() => {
@@ -69,6 +75,9 @@ export default function PhotographersPage() {
 
       setPhotographers(payload.data?.photographers || [])
       setTotal(payload.data?.total || 0)
+      if (payload.data?.stats) {
+        setStats(payload.data.stats)
+      }
     } catch (err) {
       console.error('[admin/photographers] Failed to fetch data', err)
       setError(err instanceof Error ? err.message : 'Unknown error')
@@ -130,10 +139,10 @@ export default function PhotographersPage() {
 
   const totalPages = Math.ceil(total / pageSize)
 
-  // Stats calculations
-  const activeCount = photographers.filter(p => p.paymentStatus === 'active').length
-  const totalRevenue = photographers.reduce((sum, p) => sum + p.totalRevenueCents, 0)
-  const totalGalleries = photographers.reduce((sum, p) => sum + p.galleryCount, 0)
+  // Platform-wide stats from API (not calculated from current page)
+  const activeCount = stats?.activeCount ?? 0
+  const totalRevenue = stats?.totalRevenueCents ?? 0
+  const totalGalleries = stats?.totalGalleries ?? 0
 
   if (loading) {
     return (
@@ -149,7 +158,7 @@ export default function PhotographersPage() {
 
   return (
     <AccessGuard requiredAccess="canAccessAdminDashboard">
-      <div className="min-h-screen bg-neutral-900">
+      <div className="min-h-screen bg-background">
         {/* Header */}
         <header className="border-b bg-white/95 backdrop-blur-sm">
           <div className="container mx-auto px-4 py-6 flex items-center justify-between">

@@ -254,7 +254,7 @@ export default function UnifiedPlatformModal({ platform, isOpen, onClose }: Unif
             <div className="flex flex-col gap-2">
               <Button 
                 onClick={() => setShowTusUpload(true)}
-                className="w-full bg-green-600 hover:bg-green-700 text-white"
+                className="w-full bg-green-600 hover:bg-green-700 text-foreground"
                 size="lg"
               >
                 <Upload className="h-4 w-4 mr-2" />
@@ -263,14 +263,14 @@ export default function UnifiedPlatformModal({ platform, isOpen, onClose }: Unif
               <div className="flex gap-2">
                 <Button 
                   onClick={() => setShowZipUpload(true)}
-                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+                  className="flex-1 bg-blue-600 hover:bg-blue-700 text-foreground"
                   size="sm"
                 >
                   Standard Upload
                 </Button>
                 <Button 
                   onClick={() => setShowChunkedUpload(true)}
-                  className="flex-1 bg-gray-600 hover:bg-gray-700 text-white"
+                  className="flex-1 bg-gray-600 hover:bg-gray-700 text-foreground"
                   size="sm"
                 >
                   Experimental

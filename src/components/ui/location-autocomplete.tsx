@@ -90,7 +90,7 @@ export function LocationAutocomplete({
   return (
     <div ref={containerRef} className="relative">
       <div className="relative">
-        <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-neutral-500" />
+        <MapPin className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
         <Input
           ref={inputRef}
           type="text"
@@ -102,12 +102,12 @@ export function LocationAutocomplete({
           onFocus={() => setShowSuggestions(true)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className={cn('pl-9 bg-neutral-900 border-white/10 text-white placeholder:text-neutral-500', className)}
+          className={cn('pl-9 bg-background border-border text-foreground placeholder:text-muted-foreground', className)}
         />
       </div>
 
       {showSuggestions && suggestions.length > 0 && (
-        <div className="absolute z-50 w-full mt-1 bg-neutral-800 border border-white/10 rounded-md shadow-lg max-h-60 overflow-auto">
+        <div className="absolute z-50 w-full mt-1 bg-card border border-border rounded-md shadow-lg max-h-60 overflow-auto">
           {suggestions.map((location, index) => (
             <button
               key={index}
@@ -115,12 +115,12 @@ export function LocationAutocomplete({
               onClick={() => selectSuggestion(location)}
               className={cn(
                 'w-full text-left px-4 py-2 text-sm transition-colors',
-                'hover:bg-white/5 text-neutral-100',
+                'hover:bg-accent/50 text-foreground',
                 focusedIndex === index && 'bg-white/10'
               )}
             >
               <div className="flex items-center gap-2">
-                <MapPin className="h-3 w-3 text-neutral-400" />
+                <MapPin className="h-3 w-3 text-muted-foreground" />
                 {location}
               </div>
             </button>

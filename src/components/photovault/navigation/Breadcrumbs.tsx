@@ -18,11 +18,11 @@ export default function Breadcrumbs({ items, showHome = true }: BreadcrumbsProps
         <>
           <Link
             href="/dashboard"
-            className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
+            className="text-muted-foreground dark:text-muted-foreground hover:text-foreground transition-colors"
           >
             <Home className="h-4 w-4" />
           </Link>
-          <ChevronRight className="h-4 w-4 text-slate-400" />
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
         </>
       )}
 
@@ -34,7 +34,7 @@ export default function Breadcrumbs({ items, showHome = true }: BreadcrumbsProps
             {item.href && !isLast ? (
               <Link
                 href={item.href}
-                className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors"
+                className="text-muted-foreground dark:text-muted-foreground hover:text-foreground transition-colors"
               >
                 {item.label}
               </Link>
@@ -42,15 +42,15 @@ export default function Breadcrumbs({ items, showHome = true }: BreadcrumbsProps
               <span
                 className={
                   isLast
-                    ? 'text-slate-900 dark:text-slate-100 font-medium'
-                    : 'text-slate-600 dark:text-slate-400'
+                    ? 'text-foreground font-medium'
+                    : 'text-muted-foreground dark:text-muted-foreground'
                 }
               >
                 {item.label}
               </span>
             )}
 
-            {!isLast && <ChevronRight className="h-4 w-4 text-slate-400" />}
+            {!isLast && <ChevronRight className="h-4 w-4 text-muted-foreground" />}
           </div>
         )
       })}

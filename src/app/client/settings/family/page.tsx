@@ -281,10 +281,10 @@ export default function FamilySettingsPage() {
   // Loading state
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-neutral-900">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="text-center">
           <Loader2 className="h-12 w-12 animate-spin text-pink-500 mx-auto" />
-          <p className="mt-4 text-neutral-400">Loading family settings...</p>
+          <p className="mt-4 text-muted-foreground">Loading family settings...</p>
         </div>
       </div>
     )
@@ -299,24 +299,24 @@ export default function FamilySettingsPage() {
 
   return (
     <AccessGuard requiredAccess="canAccessClientDashboard">
-      <div className="min-h-screen bg-neutral-900">
+      <div className="min-h-screen bg-background">
         {/* Header */}
-        <header className="border-b bg-neutral-800/50 border-white/10">
+        <header className="border-b bg-card/50 border-border">
           <div className="container mx-auto px-4 py-6">
             <div className="flex items-center gap-4">
               <Link
                 href="/client/settings"
                 className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
               >
-                <ArrowLeft className="h-5 w-5 text-slate-600" />
+                <ArrowLeft className="h-5 w-5 text-muted-foreground" />
               </Link>
               <div className="flex items-center gap-3">
                 <div className="p-2 bg-gradient-to-br from-pink-500 to-orange-400 rounded-xl">
-                  <Users className="h-6 w-6 text-white" />
+                  <Users className="h-6 w-6 text-foreground" />
                 </div>
                 <div>
-                  <h1 className="text-2xl font-bold text-neutral-100">Family Sharing</h1>
-                  <p className="text-sm text-neutral-400">
+                  <h1 className="text-2xl font-bold text-foreground">Family Sharing</h1>
+                  <p className="text-sm text-muted-foreground">
                     Share your photo galleries with trusted family members
                   </p>
                 </div>
@@ -344,14 +344,14 @@ export default function FamilySettingsPage() {
             )}
 
             {/* Enable/Disable Card */}
-            <Card className="bg-neutral-800/50 border-white/10 shadow-sm overflow-hidden">
-              <div className="bg-neutral-700/30 px-6 py-4">
+            <Card className="bg-card/50 border-border shadow-sm overflow-hidden">
+              <div className="bg-secondary/30 px-6 py-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Heart className="h-5 w-5 text-pink-500" />
                     <div>
-                      <h3 className="font-semibold text-neutral-100">Enable Family Sharing</h3>
-                      <p className="text-sm text-neutral-400">
+                      <h3 className="font-semibold text-foreground">Enable Family Sharing</h3>
+                      <p className="text-sm text-muted-foreground">
                         Allow trusted family members to view your shared galleries
                       </p>
                     </div>
@@ -364,14 +364,14 @@ export default function FamilySettingsPage() {
                 </div>
               </div>
               <CardContent className="pt-4">
-                <div className="flex items-center gap-2 text-sm text-neutral-400">
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
                   <Users className="h-4 w-4" />
                   <span>
                     <strong>{familyStatus?.current_secondary_count || 0}</strong> of{' '}
                     <strong>{familyStatus?.max_secondaries || 5}</strong> family slots used
                   </span>
                 </div>
-                <p className="mt-2 text-xs text-neutral-400">
+                <p className="mt-2 text-xs text-muted-foreground">
                   Family members can view shared galleries and take over billing if needed.
                   They&apos;ll be notified if your account ever needs attention.
                 </p>
@@ -382,7 +382,7 @@ export default function FamilySettingsPage() {
             {familyStatus?.family_sharing_enabled && (
               <>
                 {/* Secondaries List */}
-                <Card className="bg-neutral-800/50 border-white/10 shadow-sm">
+                <Card className="bg-card/50 border-border shadow-sm">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Users className="h-5 w-5 text-pink-600" />
@@ -396,8 +396,8 @@ export default function FamilySettingsPage() {
                   </CardHeader>
                   <CardContent>
                     {secondaries.length === 0 ? (
-                      <div className="text-center py-8 text-neutral-400">
-                        <Users className="h-12 w-12 mx-auto mb-3 text-neutral-600" />
+                      <div className="text-center py-8 text-muted-foreground">
+                        <Users className="h-12 w-12 mx-auto mb-3 text-muted-foreground" />
                         <p>No family members yet</p>
                         <p className="text-sm">Invite someone below to share your galleries</p>
                       </div>
@@ -409,7 +409,7 @@ export default function FamilySettingsPage() {
                             className="flex items-center justify-between p-4 bg-slate-50 rounded-xl border border-slate-100"
                           >
                             <div className="flex items-center gap-4">
-                              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-orange-400 flex items-center justify-center text-white font-semibold">
+                              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-orange-400 flex items-center justify-center text-foreground font-semibold">
                                 {secondary.name.charAt(0).toUpperCase()}
                               </div>
                               <div>
@@ -435,13 +435,13 @@ export default function FamilySettingsPage() {
                                     </span>
                                   )}
                                 </div>
-                                <div className="flex items-center gap-2 text-sm text-slate-500 mt-1">
+                                <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
                                   <Mail className="h-3 w-3" />
                                   <span>{secondary.email}</span>
-                                  <span className="text-slate-300">•</span>
+                                  <span className="text-foreground">•</span>
                                   <span>{formatRelationship(secondary.relationship)}</span>
                                 </div>
-                                <p className="text-xs text-slate-400 mt-1">
+                                <p className="text-xs text-muted-foreground mt-1">
                                   Invited {formatDate(secondary.invited_at)}
                                   {secondary.accepted_at && ` • Joined ${formatDate(secondary.accepted_at)}`}
                                 </p>
@@ -452,7 +452,7 @@ export default function FamilySettingsPage() {
                               size="sm"
                               onClick={() => setRemoveDialog({ open: true, secondary })}
                               disabled={removing === secondary.id}
-                              className="text-slate-400 hover:text-red-600 hover:bg-red-50"
+                              className="text-muted-foreground hover:text-red-600 hover:bg-red-50"
                             >
                               {removing === secondary.id ? (
                                 <Loader2 className="h-4 w-4 animate-spin" />
@@ -468,7 +468,7 @@ export default function FamilySettingsPage() {
                 </Card>
 
                 {/* Invite Form */}
-                <Card className="bg-neutral-800/50 border-white/10 shadow-sm">
+                <Card className="bg-card/50 border-border shadow-sm">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <UserPlus className="h-5 w-5 text-pink-600" />
@@ -544,8 +544,8 @@ export default function FamilySettingsPage() {
                         </Button>
                       </form>
                     ) : (
-                      <div className="text-center py-6 text-slate-500">
-                        <Users className="h-10 w-10 mx-auto mb-2 text-slate-300" />
+                      <div className="text-center py-6 text-muted-foreground">
+                        <Users className="h-10 w-10 mx-auto mb-2 text-foreground" />
                         <p>All family slots are filled</p>
                         <p className="text-sm mt-1">Remove a family member to add someone new</p>
                       </div>

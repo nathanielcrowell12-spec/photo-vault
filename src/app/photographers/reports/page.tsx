@@ -65,10 +65,10 @@ export default function ReportsPage() {
   // Show loading or redirect if not photographer
   if (userType !== 'photographer') {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-slate-600 dark:text-slate-300">Redirecting...</p>
+          <p className="text-muted-foreground dark:text-foreground">Redirecting...</p>
         </div>
       </div>
     )
@@ -206,9 +206,9 @@ export default function ReportsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-neutral-900">
+      <header className="border-b bg-background">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Button asChild variant="ghost" size="sm">
@@ -339,7 +339,7 @@ export default function ReportsPage() {
                         <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                         <div>
                           <h4 className="font-medium">Executive Summary</h4>
-                          <p className="text-sm text-slate-600 dark:text-slate-400">
+                          <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                             Total revenue, active clients, and key metrics
                           </p>
                         </div>
@@ -349,7 +349,7 @@ export default function ReportsPage() {
                         <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                         <div>
                           <h4 className="font-medium">Revenue Breakdown</h4>
-                          <p className="text-sm text-slate-600 dark:text-slate-400">
+                          <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                             Upfront vs recurring commission analysis
                           </p>
                         </div>
@@ -359,7 +359,7 @@ export default function ReportsPage() {
                         <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                         <div>
                           <h4 className="font-medium">Transaction Details</h4>
-                          <p className="text-sm text-slate-600 dark:text-slate-400">
+                          <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                             Recent commission payments and client activity
                           </p>
                         </div>
@@ -369,7 +369,7 @@ export default function ReportsPage() {
                         <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                         <div>
                           <h4 className="font-medium">Top Earning Clients</h4>
-                          <p className="text-sm text-slate-600 dark:text-slate-400">
+                          <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                             Your highest revenue generating clients
                           </p>
                         </div>
@@ -380,7 +380,7 @@ export default function ReportsPage() {
                           <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                           <div>
                             <h4 className="font-medium">Growth Analytics</h4>
-                            <p className="text-sm text-slate-600 dark:text-slate-400">
+                            <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                               Growth metrics and trend analysis
                             </p>
                           </div>
@@ -414,7 +414,7 @@ export default function ReportsPage() {
                       value={emailAddress}
                       onChange={(e) => setEmailAddress(e.target.value)}
                     />
-                    <p className="text-sm text-slate-600 dark:text-slate-400">
+                    <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                       Leave empty to use your account email: {user?.email}
                     </p>
                   </div>
@@ -504,10 +504,10 @@ export default function ReportsPage() {
                           </div>
                           <div>
                             <h3 className="font-medium capitalize">{report.type} Report</h3>
-                            <p className="text-sm text-slate-600 dark:text-slate-400">
+                            <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                               {formatPeriod(report.period_start, report.period_end)}
                             </p>
-                            <p className="text-xs text-slate-500">
+                            <p className="text-xs text-muted-foreground">
                               Generated {formatDate(report.created_at)}
                             </p>
                           </div>

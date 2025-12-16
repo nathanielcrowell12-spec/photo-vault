@@ -56,30 +56,46 @@ export async function GET() {
       .from('photo_galleries')
       .select(`
         id,
-        name,
+        gallery_name,
         created_at,
-        cover_photo_url,
+        cover_image_url,
         photo_count
       `)
       .eq('client_id', user.id)
       .order('created_at', { ascending: false })
       .limit(3)
 
-    // Downloads and favorites are not tracked yet - return null to indicate not implemented
-    const downloaded = null
-    const favorites = null
+    // Get favorites count from gallery_photos
+    let favoritesCount = 0
+    if (clientGalleries && clientGalleries.length > 0) {
+      const galleryIds = clientGalleries.map(g => g.id)
+
+      const { count: favCount } = await supabase
+        .from('gallery_photos')
+        .select('*', { count: 'exact', head: true })
+        .in('gallery_id', galleryIds)
+        .eq('is_favorite', true)
+
+      favoritesCount = favCount || 0
+    }
+
+    // Map gallery_name to name for frontend compatibility
+    const mappedGalleries = (recentGalleries || []).map(g => ({
+      id: g.id,
+      name: g.gallery_name || 'Untitled Gallery',
+      created_at: g.created_at,
+      cover_image_url: g.cover_image_url,
+      photo_count: g.photo_count
+    }))
 
     return NextResponse.json({
       success: true,
       stats: {
         totalPhotos: photosCount,
         photoSessions: galleriesCount || 0,
-        downloaded: downloaded,
-        favorites: favorites,
-        // Flag to indicate which features aren't implemented yet
-        notImplemented: ['downloaded', 'favorites']
+        favorites: favoritesCount
       },
-      recentGalleries: recentGalleries || []
+      recentGalleries: mappedGalleries
     })
   } catch (error) {
     console.error('[API] Error fetching client stats:', error)

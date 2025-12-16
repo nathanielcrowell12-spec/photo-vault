@@ -161,7 +161,7 @@ export default function BusinessAnalyticsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b bg-white dark:bg-slate-900">
         <div className="container mx-auto px-4 py-4">
@@ -185,7 +185,7 @@ export default function BusinessAnalyticsPage() {
           {/* Hero */}
           <div className="mb-8">
             <h1 className="text-4xl font-bold mb-4">Business Analytics & Projections</h1>
-            <p className="text-lg text-slate-600 dark:text-slate-300">
+            <p className="text-lg text-muted-foreground dark:text-foreground">
               Live profitability calculator, operating expenses, and business valuation metrics
             </p>
           </div>
@@ -213,7 +213,7 @@ export default function BusinessAnalyticsPage() {
                     min="1"
                     max="100"
                   />
-                  <p className="text-xs text-slate-500">Average: 10-20</p>
+                  <p className="text-xs text-muted-foreground">Average: 10-20</p>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="storagePerCustomer">Avg Storage per Customer (GB)</Label>
@@ -225,7 +225,7 @@ export default function BusinessAnalyticsPage() {
                     min="5"
                     max="100"
                   />
-                  <p className="text-xs text-slate-500">Typical: 15-30 GB</p>
+                  <p className="text-xs text-muted-foreground">Typical: 15-30 GB</p>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="churnRate">Monthly Churn Rate (%)</Label>
@@ -238,7 +238,7 @@ export default function BusinessAnalyticsPage() {
                     max="20"
                     step="0.1"
                   />
-                  <p className="text-xs text-slate-500">Good: 3-5%</p>
+                  <p className="text-xs text-muted-foreground">Good: 3-5%</p>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="cac">CAC per Photographer ($)</Label>
@@ -250,7 +250,7 @@ export default function BusinessAnalyticsPage() {
                     min="0"
                     max="500"
                   />
-                  <p className="text-xs text-slate-500">Your goal: $0-10</p>
+                  <p className="text-xs text-muted-foreground">Your goal: $0-10</p>
                 </div>
               </div>
             </CardContent>
@@ -286,7 +286,7 @@ export default function BusinessAnalyticsPage() {
                         min="0"
                         step="1"
                       />
-                      <p className="text-xs text-slate-500">Current: Pro ($25)</p>
+                      <p className="text-xs text-muted-foreground">Current: Pro ($25)</p>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="vercel-cost">Vercel Plan ($/month)</Label>
@@ -298,7 +298,7 @@ export default function BusinessAnalyticsPage() {
                         min="0"
                         step="1"
                       />
-                      <p className="text-xs text-slate-500">Current: Pro ($20)</p>
+                      <p className="text-xs text-muted-foreground">Current: Pro ($20)</p>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="email-service-cost">Email Service ($/month)</Label>
@@ -310,7 +310,7 @@ export default function BusinessAnalyticsPage() {
                         min="0"
                         step="1"
                       />
-                      <p className="text-xs text-slate-500">SendGrid/Postmark</p>
+                      <p className="text-xs text-muted-foreground">SendGrid/Postmark</p>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="marketing-cost">Marketing Budget ($/month)</Label>
@@ -322,7 +322,7 @@ export default function BusinessAnalyticsPage() {
                         min="0"
                         step="10"
                       />
-                      <p className="text-xs text-slate-500">Your ad spend</p>
+                      <p className="text-xs text-muted-foreground">Your ad spend</p>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="domain-cost">Domain & DNS ($/month)</Label>
@@ -334,7 +334,7 @@ export default function BusinessAnalyticsPage() {
                         min="0"
                         step="0.5"
                       />
-                      <p className="text-xs text-slate-500">Annual cost ÷ 12</p>
+                      <p className="text-xs text-muted-foreground">Annual cost ÷ 12</p>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="misc-cost">Miscellaneous ($/month)</Label>
@@ -346,7 +346,7 @@ export default function BusinessAnalyticsPage() {
                         min="0"
                         step="5"
                       />
-                      <p className="text-xs text-slate-500">Buffer for unexpected</p>
+                      <p className="text-xs text-muted-foreground">Buffer for unexpected</p>
                     </div>
                   </div>
                 </TabsContent>
@@ -363,7 +363,7 @@ export default function BusinessAnalyticsPage() {
                         min="0"
                         step="0.001"
                       />
-                      <p className="text-xs text-slate-500">AWS S3: $0.023</p>
+                      <p className="text-xs text-muted-foreground">AWS S3: $0.023</p>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="bandwidth-per-customer">Bandwidth ($/customer/month)</Label>
@@ -375,7 +375,7 @@ export default function BusinessAnalyticsPage() {
                         min="0"
                         step="0.01"
                       />
-                      <p className="text-xs text-slate-500">CDN costs</p>
+                      <p className="text-xs text-muted-foreground">CDN costs</p>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="payment-rate">Payment Processing Rate (%)</Label>
@@ -388,7 +388,7 @@ export default function BusinessAnalyticsPage() {
                         max="10"
                         step="0.1"
                       />
-                      <p className="text-xs text-slate-500">Stripe: 2.9%</p>
+                      <p className="text-xs text-muted-foreground">Stripe: 2.9%</p>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="payment-fixed">Payment Fixed Fee ($)</Label>
@@ -400,7 +400,7 @@ export default function BusinessAnalyticsPage() {
                         min="0"
                         step="0.01"
                       />
-                      <p className="text-xs text-slate-500">Stripe: $0.30</p>
+                      <p className="text-xs text-muted-foreground">Stripe: $0.30</p>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="email-per-customer">Email ($/customer/month)</Label>
@@ -412,7 +412,7 @@ export default function BusinessAnalyticsPage() {
                         min="0"
                         step="0.01"
                       />
-                      <p className="text-xs text-slate-500">Notifications</p>
+                      <p className="text-xs text-muted-foreground">Notifications</p>
                     </div>
                     <div className="space-y-2">
                       <Label htmlFor="support-per-customer">Support ($/customer/month)</Label>
@@ -424,7 +424,7 @@ export default function BusinessAnalyticsPage() {
                         min="0"
                         step="0.01"
                       />
-                      <p className="text-xs text-slate-500">AI support</p>
+                      <p className="text-xs text-muted-foreground">AI support</p>
                     </div>
                   </div>
                 </TabsContent>
@@ -447,23 +447,23 @@ export default function BusinessAnalyticsPage() {
               <div className="grid md:grid-cols-3 gap-6">
                 <Card>
                   <CardContent className="pt-6">
-                    <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">Fixed Costs</div>
+                    <div className="text-sm text-muted-foreground dark:text-muted-foreground mb-1">Fixed Costs</div>
                     <div className="text-3xl font-bold text-red-600">{formatCurrency(TOTAL_FIXED_MONTHLY)}/mo</div>
-                    <div className="text-sm text-slate-500 mt-1">{formatCurrency(TOTAL_FIXED_MONTHLY * 12)}/year</div>
+                    <div className="text-sm text-muted-foreground mt-1">{formatCurrency(TOTAL_FIXED_MONTHLY * 12)}/year</div>
                   </CardContent>
                 </Card>
                 <Card>
                   <CardContent className="pt-6">
-                    <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">Variable Cost per Customer</div>
+                    <div className="text-sm text-muted-foreground dark:text-muted-foreground mb-1">Variable Cost per Customer</div>
                     <div className="text-3xl font-bold text-orange-600">{formatCurrency(TOTAL_VARIABLE_COST_PER_CUSTOMER)}/mo</div>
-                    <div className="text-sm text-slate-500 mt-1">Storage + Processing + Support</div>
+                    <div className="text-sm text-muted-foreground mt-1">Storage + Processing + Support</div>
                   </CardContent>
                 </Card>
                 <Card>
                   <CardContent className="pt-6">
-                    <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">Profit per Customer</div>
+                    <div className="text-sm text-muted-foreground dark:text-muted-foreground mb-1">Profit per Customer</div>
                     <div className="text-3xl font-bold text-green-600">{formatCurrency(PHOTOVAULT_SHARE - TOTAL_VARIABLE_COST_PER_CUSTOMER)}/mo</div>
-                    <div className="text-sm text-slate-500 mt-1">{formatPercent(((PHOTOVAULT_SHARE - TOTAL_VARIABLE_COST_PER_CUSTOMER) / PHOTOVAULT_SHARE) * 100)} margin</div>
+                    <div className="text-sm text-muted-foreground mt-1">{formatPercent(((PHOTOVAULT_SHARE - TOTAL_VARIABLE_COST_PER_CUSTOMER) / PHOTOVAULT_SHARE) * 100)} margin</div>
                   </CardContent>
                 </Card>
               </div>
@@ -536,7 +536,7 @@ export default function BusinessAnalyticsPage() {
                             <span className="font-semibold">{formatCurrency(metrics.photographerSubscriptionRevenue)}/mo</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-xs text-slate-500">({metrics.photographerCount} × $22)</span>
+                            <span className="text-xs text-muted-foreground">({metrics.photographerCount} × $22)</span>
                             <span></span>
                           </div>
                           <div className="flex justify-between mt-2">
@@ -544,7 +544,7 @@ export default function BusinessAnalyticsPage() {
                             <span className="font-semibold">{formatCurrency(metrics.customerPaymentRevenue)}/mo</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-xs text-slate-500">({metrics.totalCustomers.toLocaleString()} × $4)</span>
+                            <span className="text-xs text-muted-foreground">({metrics.totalCustomers.toLocaleString()} × $4)</span>
                             <span></span>
                           </div>
                           <Separator />
@@ -575,7 +575,7 @@ export default function BusinessAnalyticsPage() {
                             <span className="font-semibold text-red-600">-{formatCurrency(metrics.variableCosts)}/mo</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-xs text-slate-500">({metrics.totalCustomers.toLocaleString()} customers × ${TOTAL_VARIABLE_COST_PER_CUSTOMER.toFixed(2)} per customer)</span>
+                            <span className="text-xs text-muted-foreground">({metrics.totalCustomers.toLocaleString()} customers × ${TOTAL_VARIABLE_COST_PER_CUSTOMER.toFixed(2)} per customer)</span>
                             <span></span>
                           </div>
                           <Separator />
@@ -608,15 +608,15 @@ export default function BusinessAnalyticsPage() {
                     <Separator className="my-4" />
                     <div className="grid md:grid-cols-3 gap-4 text-sm">
                       <div className="bg-slate-50 dark:bg-slate-800 p-3 rounded">
-                        <div className="text-xs text-slate-500 mb-1">MRR (Monthly Recurring Revenue)</div>
+                        <div className="text-xs text-muted-foreground mb-1">MRR (Monthly Recurring Revenue)</div>
                         <div className="font-bold">{formatCurrency(metrics.totalMonthlyRevenue)}</div>
                       </div>
                       <div className="bg-slate-50 dark:bg-slate-800 p-3 rounded">
-                        <div className="text-xs text-slate-500 mb-1">ARR (Annual Recurring Revenue)</div>
+                        <div className="text-xs text-muted-foreground mb-1">ARR (Annual Recurring Revenue)</div>
                         <div className="font-bold">{formatCurrency(metrics.totalAnnualRevenue)}</div>
                       </div>
                       <div className="bg-slate-50 dark:bg-slate-800 p-3 rounded">
-                        <div className="text-xs text-slate-500 mb-1">Business Valuation (Mid)</div>
+                        <div className="text-xs text-muted-foreground mb-1">Business Valuation (Mid)</div>
                         <div className="font-bold text-purple-600">{formatCurrency(metrics.valuationMid)}</div>
                       </div>
                     </div>
@@ -641,14 +641,14 @@ export default function BusinessAnalyticsPage() {
                       <div className="space-y-3">
                         <h3 className="font-semibold">Revenue per Customer</h3>
                         <div className="text-3xl font-bold text-green-600">{formatCurrency(PHOTOVAULT_SHARE)}/mo</div>
-                        <div className="text-sm text-slate-600 dark:text-slate-400">
+                        <div className="text-sm text-muted-foreground dark:text-muted-foreground">
                           Customer pays $8/mo, you keep 50%
                         </div>
                       </div>
                       <div className="space-y-3">
                         <h3 className="font-semibold">Cost per Customer</h3>
                         <div className="text-3xl font-bold text-red-600">{formatCurrency(TOTAL_VARIABLE_COST_PER_CUSTOMER)}/mo</div>
-                        <div className="text-xs space-y-1 text-slate-600 dark:text-slate-400">
+                        <div className="text-xs space-y-1 text-muted-foreground dark:text-muted-foreground">
                           <div>• Storage: ${storageCostPerCustomer.toFixed(2)}</div>
                           <div>• Bandwidth: ${bandwidthCostPerCustomer.toFixed(2)}</div>
                           <div>• Payment processing: ${paymentProcessingPerCustomer.toFixed(2)}</div>
@@ -663,23 +663,23 @@ export default function BusinessAnalyticsPage() {
                     <div className="bg-green-50 dark:bg-green-900/20 p-6 rounded-lg">
                       <div className="grid md:grid-cols-3 gap-6">
                         <div>
-                          <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">Profit per Customer</div>
+                          <div className="text-sm text-muted-foreground dark:text-muted-foreground mb-1">Profit per Customer</div>
                           <div className="text-2xl font-bold text-green-600">
                             {formatCurrency(PHOTOVAULT_SHARE - TOTAL_VARIABLE_COST_PER_CUSTOMER)}/mo
                           </div>
                         </div>
                         <div>
-                          <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">Customer LTV (3-year avg)</div>
+                          <div className="text-sm text-muted-foreground dark:text-muted-foreground mb-1">Customer LTV (3-year avg)</div>
                           <div className="text-2xl font-bold text-blue-600">
                             {formatCurrency((PHOTOVAULT_SHARE - TOTAL_VARIABLE_COST_PER_CUSTOMER) * 12 * 3)}
                           </div>
                         </div>
                         <div>
-                          <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">LTV:CAC Ratio</div>
+                          <div className="text-sm text-muted-foreground dark:text-muted-foreground mb-1">LTV:CAC Ratio</div>
                           <div className="text-2xl font-bold text-purple-600">
                             {(((PHOTOVAULT_SHARE - TOTAL_VARIABLE_COST_PER_CUSTOMER) * 12 * 3) / cacPerPhotographer).toFixed(1)}:1
                           </div>
-                          <div className="text-xs text-slate-500 mt-1">
+                          <div className="text-xs text-muted-foreground mt-1">
                             {(((PHOTOVAULT_SHARE - TOTAL_VARIABLE_COST_PER_CUSTOMER) * 12 * 3) / cacPerPhotographer) > 3 ? '✓ Excellent (>3:1)' : '⚠ Needs improvement'}
                           </div>
                         </div>
@@ -726,7 +726,7 @@ export default function BusinessAnalyticsPage() {
                       </div>
                     </div>
 
-                    <div className="text-sm text-slate-600 dark:text-slate-400">
+                    <div className="text-sm text-muted-foreground dark:text-muted-foreground">
                       <strong>Break-even for photographer:</strong> {Math.ceil(PHOTOGRAPHER_SUBSCRIPTION / PHOTOGRAPHER_SHARE)} active customers
                       <div className="text-xs mt-1">
                         (${PHOTOGRAPHER_SUBSCRIPTION} platform fee ÷ ${PHOTOGRAPHER_SHARE} commission per customer)
@@ -750,19 +750,19 @@ export default function BusinessAnalyticsPage() {
                       {/* Key Metrics */}
                       <div className="grid md:grid-cols-4 gap-4">
                         <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg text-center">
-                          <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">MRR</div>
+                          <div className="text-xs text-muted-foreground dark:text-muted-foreground mb-1">MRR</div>
                           <div className="text-xl font-bold">{formatCurrency(metrics.totalMonthlyRevenue)}</div>
                         </div>
                         <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg text-center">
-                          <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">ARR</div>
+                          <div className="text-xs text-muted-foreground dark:text-muted-foreground mb-1">ARR</div>
                           <div className="text-xl font-bold">{formatCurrency(metrics.totalAnnualRevenue)}</div>
                         </div>
                         <div className="bg-purple-50 dark:bg-purple-900/20 p-4 rounded-lg text-center">
-                          <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">LTV:CAC</div>
+                          <div className="text-xs text-muted-foreground dark:text-muted-foreground mb-1">LTV:CAC</div>
                           <div className="text-xl font-bold">{metrics.ltv_cac_ratio.toFixed(1)}:1</div>
                         </div>
                         <div className="bg-orange-50 dark:bg-orange-900/20 p-4 rounded-lg text-center">
-                          <div className="text-xs text-slate-600 dark:text-slate-400 mb-1">Margin</div>
+                          <div className="text-xs text-muted-foreground dark:text-muted-foreground mb-1">Margin</div>
                           <div className="text-xl font-bold">{formatPercent(metrics.profitMargin)}</div>
                         </div>
                       </div>
@@ -784,7 +784,7 @@ export default function BusinessAnalyticsPage() {
                             <span className="text-2xl font-bold text-purple-600">{formatCurrency(metrics.valuationHigh)}</span>
                           </div>
                         </div>
-                        <div className="mt-4 text-xs text-slate-600 dark:text-slate-400">
+                        <div className="mt-4 text-xs text-muted-foreground dark:text-muted-foreground">
                           *SaaS businesses typically valued at 3-7x ARR depending on growth rate, margins, and retention
                         </div>
                       </div>
@@ -825,7 +825,7 @@ export default function BusinessAnalyticsPage() {
                                 {formatCurrency(metrics.photographerAnnualProfit)}/year
                               </span>
                             </div>
-                            <div className="text-xs text-slate-500 mt-2">
+                            <div className="text-xs text-muted-foreground mt-2">
                               With {customersPerPhotographer} active clients
                             </div>
                           </div>
@@ -849,7 +849,7 @@ export default function BusinessAnalyticsPage() {
                     <div className="flex justify-between items-center py-2">
                       <div>
                         <div className="font-semibold">Supabase Plan</div>
-                        <div className="text-xs text-slate-500">Database + Storage + Auth</div>
+                        <div className="text-xs text-muted-foreground">Database + Storage + Auth</div>
                       </div>
                       <div className="text-lg font-bold">{formatCurrency(monthlyCosts.supabase)}</div>
                     </div>
@@ -857,7 +857,7 @@ export default function BusinessAnalyticsPage() {
                     <div className="flex justify-between items-center py-2">
                       <div>
                         <div className="font-semibold">Vercel Plan</div>
-                        <div className="text-xs text-slate-500">Hosting + CDN + Deployment</div>
+                        <div className="text-xs text-muted-foreground">Hosting + CDN + Deployment</div>
                       </div>
                       <div className="text-lg font-bold">{formatCurrency(monthlyCosts.vercel)}</div>
                     </div>
@@ -865,7 +865,7 @@ export default function BusinessAnalyticsPage() {
                     <div className="flex justify-between items-center py-2">
                       <div>
                         <div className="font-semibold">Email Service</div>
-                        <div className="text-xs text-slate-500">SendGrid/Postmark for notifications</div>
+                        <div className="text-xs text-muted-foreground">SendGrid/Postmark for notifications</div>
                       </div>
                       <div className="text-lg font-bold">{formatCurrency(monthlyCosts.emailService)}</div>
                     </div>
@@ -873,7 +873,7 @@ export default function BusinessAnalyticsPage() {
                     <div className="flex justify-between items-center py-2">
                       <div>
                         <div className="font-semibold">Marketing Budget</div>
-                        <div className="text-xs text-slate-500">Your monthly ad spend</div>
+                        <div className="text-xs text-muted-foreground">Your monthly ad spend</div>
                       </div>
                       <div className="text-lg font-bold">{formatCurrency(monthlyCosts.marketing)}</div>
                     </div>
@@ -881,7 +881,7 @@ export default function BusinessAnalyticsPage() {
                     <div className="flex justify-between items-center py-2">
                       <div>
                         <div className="font-semibold">Domain & DNS</div>
-                        <div className="text-xs text-slate-500">Domain registration</div>
+                        <div className="text-xs text-muted-foreground">Domain registration</div>
                       </div>
                       <div className="text-lg font-bold">{formatCurrency(monthlyCosts.domain)}</div>
                     </div>
@@ -889,7 +889,7 @@ export default function BusinessAnalyticsPage() {
                     <div className="flex justify-between items-center py-2">
                       <div>
                         <div className="font-semibold">Miscellaneous</div>
-                        <div className="text-xs text-slate-500">Buffer for unexpected costs</div>
+                        <div className="text-xs text-muted-foreground">Buffer for unexpected costs</div>
                       </div>
                       <div className="text-lg font-bold">{formatCurrency(monthlyCosts.misc)}</div>
                     </div>
@@ -906,7 +906,7 @@ export default function BusinessAnalyticsPage() {
 
                   <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
                     <h3 className="font-semibold mb-2">Cost Management & Future Planning</h3>
-                    <ul className="text-sm space-y-1 text-slate-600 dark:text-slate-400">
+                    <ul className="text-sm space-y-1 text-muted-foreground dark:text-muted-foreground">
                       <li>• <strong>No staff costs</strong> - Automated with AI (you + Claude)</li>
                       <li>• <strong>No office</strong> - Remote/home office</li>
                       <li>• <strong>No legal fees</strong> - Bootstrapped approach</li>
@@ -928,7 +928,7 @@ export default function BusinessAnalyticsPage() {
                     <div className="flex justify-between items-center py-2">
                       <div>
                         <div className="font-semibold">Storage ({averageStoragePerCustomer} GB)</div>
-                        <div className="text-xs text-slate-500">@ ${variableCosts.storagePerGB}/GB</div>
+                        <div className="text-xs text-muted-foreground">@ ${variableCosts.storagePerGB}/GB</div>
                       </div>
                       <div className="text-lg font-bold">{formatCurrency(storageCostPerCustomer)}</div>
                     </div>
@@ -936,7 +936,7 @@ export default function BusinessAnalyticsPage() {
                     <div className="flex justify-between items-center py-2">
                       <div>
                         <div className="font-semibold">Bandwidth/CDN</div>
-                        <div className="text-xs text-slate-500">Photo downloads, viewing</div>
+                        <div className="text-xs text-muted-foreground">Photo downloads, viewing</div>
                       </div>
                       <div className="text-lg font-bold">{formatCurrency(bandwidthCostPerCustomer)}</div>
                     </div>
@@ -944,7 +944,7 @@ export default function BusinessAnalyticsPage() {
                     <div className="flex justify-between items-center py-2">
                       <div>
                         <div className="font-semibold">Payment Processing</div>
-                        <div className="text-xs text-slate-500">{(variableCosts.paymentProcessingRate * 100)}% + ${variableCosts.paymentProcessingFixed} on $8</div>
+                        <div className="text-xs text-muted-foreground">{(variableCosts.paymentProcessingRate * 100)}% + ${variableCosts.paymentProcessingFixed} on $8</div>
                       </div>
                       <div className="text-lg font-bold">{formatCurrency(paymentProcessingPerCustomer)}</div>
                     </div>
@@ -952,7 +952,7 @@ export default function BusinessAnalyticsPage() {
                     <div className="flex justify-between items-center py-2">
                       <div>
                         <div className="font-semibold">Email Notifications</div>
-                        <div className="text-xs text-slate-500">Payment reminders, updates</div>
+                        <div className="text-xs text-muted-foreground">Payment reminders, updates</div>
                       </div>
                       <div className="text-lg font-bold">{formatCurrency(emailCostPerCustomer)}</div>
                     </div>
@@ -960,7 +960,7 @@ export default function BusinessAnalyticsPage() {
                     <div className="flex justify-between items-center py-2">
                       <div>
                         <div className="font-semibold">Support/Operations</div>
-                        <div className="text-xs text-slate-500">AI-assisted customer support</div>
+                        <div className="text-xs text-muted-foreground">AI-assisted customer support</div>
                       </div>
                       <div className="text-lg font-bold">{formatCurrency(supportCostPerCustomer)}</div>
                     </div>
@@ -989,7 +989,7 @@ export default function BusinessAnalyticsPage() {
                   <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
                   <div>
                     <div className="font-semibold">Ultra-Low CAC is Your Superpower</div>
-                    <div className="text-sm text-slate-600 dark:text-slate-400">
+                    <div className="text-sm text-muted-foreground dark:text-muted-foreground">
                       At $0-10 CAC, you have a {(((PHOTOVAULT_SHARE - TOTAL_VARIABLE_COST_PER_CUSTOMER) * 12 * 3) / 10).toFixed(0)}:1 LTV:CAC ratio. This is exceptional (typical SaaS target is 3:1).
                     </div>
                   </div>
@@ -998,7 +998,7 @@ export default function BusinessAnalyticsPage() {
                   <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
                   <div>
                     <div className="font-semibold">Profitable at Small Scale</div>
-                    <div className="text-sm text-slate-600 dark:text-slate-400">
+                    <div className="text-sm text-muted-foreground dark:text-muted-foreground">
                       Break-even at just {Math.ceil(TOTAL_FIXED_MONTHLY / (PHOTOVAULT_SHARE - TOTAL_VARIABLE_COST_PER_CUSTOMER))} customers (~{Math.ceil(Math.ceil(TOTAL_FIXED_MONTHLY / (PHOTOVAULT_SHARE - TOTAL_VARIABLE_COST_PER_CUSTOMER)) / customersPerPhotographer)} photographers). Profitable quickly.
                     </div>
                   </div>
@@ -1007,7 +1007,7 @@ export default function BusinessAnalyticsPage() {
                   <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
                   <div>
                     <div className="font-semibold">Strong Unit Economics</div>
-                    <div className="text-sm text-slate-600 dark:text-slate-400">
+                    <div className="text-sm text-muted-foreground dark:text-muted-foreground">
                       {formatCurrency(PHOTOVAULT_SHARE - TOTAL_VARIABLE_COST_PER_CUSTOMER)}/month profit per customer = {formatPercent(((PHOTOVAULT_SHARE - TOTAL_VARIABLE_COST_PER_CUSTOMER) / PHOTOVAULT_SHARE) * 100)} margin. Storage is cheap!
                     </div>
                   </div>
@@ -1016,7 +1016,7 @@ export default function BusinessAnalyticsPage() {
                   <AlertCircle className="h-5 w-5 text-orange-600 mt-0.5 flex-shrink-0" />
                   <div>
                     <div className="font-semibold">Focus on Volume</div>
-                    <div className="text-sm text-slate-600 dark:text-slate-400">
+                    <div className="text-sm text-muted-foreground dark:text-muted-foreground">
                       With lean operations and no staff, your biggest opportunity is scaling photographer count. Each photographer brings {customersPerPhotographer} customers = {formatCurrency((customersPerPhotographer * PHOTOVAULT_SHARE - customersPerPhotographer * TOTAL_VARIABLE_COST_PER_CUSTOMER))}/mo profit.
                     </div>
                   </div>
@@ -1025,7 +1025,7 @@ export default function BusinessAnalyticsPage() {
                   <Target className="h-5 w-5 text-blue-600 mt-0.5 flex-shrink-0" />
                   <div>
                     <div className="font-semibold">First Milestone: 100 Photographers</div>
-                    <div className="text-sm text-slate-600 dark:text-slate-400">
+                    <div className="text-sm text-muted-foreground dark:text-muted-foreground">
                       At 100 photographers × {customersPerPhotographer} customers = 1,500 customers = {formatCurrency(calculateMetrics(100).monthlyProfit)}/month profit ({formatCurrency(calculateMetrics(100).annualProfit)}/year). Business valued at ~{formatCurrency(calculateMetrics(100).valuationMid)}.
                     </div>
                   </div>

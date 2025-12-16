@@ -42,7 +42,7 @@ export default function ImportPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
@@ -94,7 +94,7 @@ export default function ImportPage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b bg-white dark:bg-slate-900">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -121,7 +121,7 @@ export default function ImportPage() {
         {/* Introduction */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-4">Import Your Existing Galleries</h1>
-          <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl">
+          <p className="text-lg text-muted-foreground dark:text-foreground max-w-3xl">
             Connect your photography platforms to automatically import all your client galleries into PhotoVault. 
             Your clients will get permanent access while you earn referral revenue.
           </p>
@@ -133,7 +133,7 @@ export default function ImportPage() {
             <CardContent className="p-6 text-center">
               <Users className="h-12 w-12 mx-auto mb-4 text-blue-600" />
               <h3 className="text-lg font-semibold mb-2">Client Retention</h3>
-              <p className="text-sm text-slate-600 dark:text-slate-300">
+              <p className="text-sm text-muted-foreground dark:text-foreground">
                 Keep clients engaged with permanent gallery access
               </p>
             </CardContent>
@@ -142,7 +142,7 @@ export default function ImportPage() {
             <CardContent className="p-6 text-center">
               <ImageIcon className="h-12 w-12 mx-auto mb-4 text-green-600" />
               <h3 className="text-lg font-semibold mb-2">Automatic Import</h3>
-              <p className="text-sm text-slate-600 dark:text-slate-300">
+              <p className="text-sm text-muted-foreground dark:text-foreground">
                 Import all existing galleries with one click
               </p>
             </CardContent>
@@ -151,7 +151,7 @@ export default function ImportPage() {
             <CardContent className="p-6 text-center">
               <Shield className="h-12 w-12 mx-auto mb-4 text-purple-600" />
               <h3 className="text-lg font-semibold mb-2">Secure & Branded</h3>
-              <p className="text-sm text-slate-600 dark:text-slate-300">
+              <p className="text-sm text-muted-foreground dark:text-foreground">
                 Your branding stays with your clients forever
               </p>
             </CardContent>
@@ -166,7 +166,7 @@ export default function ImportPage() {
               <Card key={key} className="relative">
                 <CardHeader>
                   <div className="flex items-center space-x-3">
-                    <div className={`w-12 h-12 ${platform.color} rounded-lg flex items-center justify-center text-white text-2xl`}>
+                    <div className={`w-12 h-12 ${platform.color} rounded-lg flex items-center justify-center text-foreground text-2xl`}>
                       {platform.logo}
                     </div>
                     <div>
@@ -178,7 +178,7 @@ export default function ImportPage() {
                 <CardContent>
                   <div className="space-y-2 mb-4">
                     {platform.features.map((feature, index) => (
-                      <div key={index} className="flex items-center space-x-2 text-sm text-slate-600 dark:text-slate-400">
+                      <div key={index} className="flex items-center space-x-2 text-sm text-muted-foreground dark:text-muted-foreground">
                         <CheckCircle className="h-4 w-4 text-green-500" />
                         <span>{feature}</span>
                       </div>
@@ -231,14 +231,14 @@ export default function ImportPage() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-4">
                       <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                        <Camera className="h-6 w-6 text-white" />
+                        <Camera className="h-6 w-6 text-foreground" />
                       </div>
                       <Badge variant="outline">
                         {gallery.platform}
                       </Badge>
                     </div>
                     <h3 className="font-semibold mb-2">{gallery.name}</h3>
-                    <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                    <p className="text-sm text-muted-foreground dark:text-muted-foreground mb-4">
                       {gallery.photo_count} photos imported
                     </p>
                     <div className="flex items-center justify-between">
@@ -267,29 +267,29 @@ export default function ImportPage() {
           <CardContent>
             <div className="grid md:grid-cols-3 gap-6">
               <div className="text-center">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 text-foreground rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
                   1
                 </div>
                 <h3 className="font-semibold mb-2">Import Complete</h3>
-                <p className="text-sm text-slate-600 dark:text-slate-300">
+                <p className="text-sm text-muted-foreground dark:text-foreground">
                   All your galleries are automatically imported and organized
                 </p>
               </div>
               <div className="text-center">
-                <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-blue-500 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-blue-500 text-foreground rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
                   2
                 </div>
                 <h3 className="font-semibold mb-2">Invite Clients</h3>
-                <p className="text-sm text-slate-600 dark:text-slate-300">
+                <p className="text-sm text-muted-foreground dark:text-foreground">
                   Send branded invitations to your existing clients
                 </p>
               </div>
               <div className="text-center">
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 text-foreground rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
                   3
                 </div>
                 <h3 className="font-semibold mb-2">Earn Revenue</h3>
-                <p className="text-sm text-slate-600 dark:text-slate-300">
+                <p className="text-sm text-muted-foreground dark:text-foreground">
                   Get $2-5/month for every client who renews storage
                 </p>
               </div>

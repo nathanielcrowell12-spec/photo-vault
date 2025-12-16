@@ -191,21 +191,21 @@ export default function DevDashboard() {
   ]
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-neutral-900">
+      <header className="border-b bg-background">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
               <Wrench className="h-8 w-8 text-orange-600" />
               <div>
                 <h1 className="text-2xl font-bold">Dev Dashboard</h1>
-                <p className="text-sm text-slate-600 dark:text-slate-400">
+                <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                   Quick access to all PhotoVault features
                 </p>
               </div>
             </div>
-            <Button asChild className="bg-green-600 hover:bg-green-700 text-white">
+            <Button asChild className="bg-green-600 hover:bg-green-700 text-foreground">
               <Link href="/test-dashboard">
                 <CheckCircle className="h-4 w-4 mr-2" />
                 Start Testing
@@ -226,19 +226,19 @@ export default function DevDashboard() {
               <div className="grid md:grid-cols-4 gap-6">
                 <div className="text-center">
                   <div className="text-3xl font-bold text-blue-600">7</div>
-                  <div className="text-sm text-slate-600 dark:text-slate-400">Client Features</div>
+                  <div className="text-sm text-muted-foreground dark:text-muted-foreground">Client Features</div>
                 </div>
                 <div className="text-center">
                   <div className="text-3xl font-bold text-purple-600">8</div>
-                  <div className="text-sm text-slate-600 dark:text-slate-400">Photographer Features</div>
+                  <div className="text-sm text-muted-foreground dark:text-muted-foreground">Photographer Features</div>
                 </div>
                 <div className="text-center">
                   <div className="text-3xl font-bold text-green-600">4</div>
-                  <div className="text-sm text-slate-600 dark:text-slate-400">Public Pages</div>
+                  <div className="text-sm text-muted-foreground dark:text-muted-foreground">Public Pages</div>
                 </div>
                 <div className="text-center">
                   <div className="text-3xl font-bold text-orange-600">100%</div>
-                  <div className="text-sm text-slate-600 dark:text-slate-400">Features Built</div>
+                  <div className="text-sm text-muted-foreground dark:text-muted-foreground">Features Built</div>
                 </div>
               </div>
             </CardContent>
@@ -343,7 +343,7 @@ export default function DevDashboard() {
               <div className="space-y-4">
                 <div>
                   <h3 className="font-semibold mb-2">🎯 Current Status:</h3>
-                  <ul className="space-y-1 text-sm text-slate-600 dark:text-slate-400">
+                  <ul className="space-y-1 text-sm text-muted-foreground dark:text-muted-foreground">
                     <li>✅ All features built and UI complete</li>
                     <li>✅ Navigation system implemented</li>
                     <li>✅ Dev dashboard for easy access</li>
@@ -354,7 +354,7 @@ export default function DevDashboard() {
 
                 <div>
                   <h3 className="font-semibold mb-2">📊 Business Model:</h3>
-                  <ul className="space-y-1 text-sm text-slate-600 dark:text-slate-400">
+                  <ul className="space-y-1 text-sm text-muted-foreground dark:text-muted-foreground">
                     <li>• Photographers: $22/month subscription</li>
                     <li>• Clients: $100 upfront + $8/month ongoing</li>
                     <li>• Commission: 50% split ($50 + $4/month)</li>
@@ -365,7 +365,7 @@ export default function DevDashboard() {
 
                 <div>
                   <h3 className="font-semibold mb-2">🚀 Next Steps:</h3>
-                  <ul className="space-y-1 text-sm text-slate-600 dark:text-slate-400">
+                  <ul className="space-y-1 text-sm text-muted-foreground dark:text-muted-foreground">
                     <li>1. Connect to Supabase backend</li>
                     <li>2. Implement authentication</li>
                     <li>3. Test all features end-to-end</li>

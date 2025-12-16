@@ -47,7 +47,7 @@ export default function ConnectPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
@@ -90,9 +90,9 @@ export default function ConnectPage() {
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-neutral-900">
+      <header className="border-b bg-background">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Button asChild variant="ghost" size="sm">
@@ -117,7 +117,7 @@ export default function ConnectPage() {
         {/* Introduction */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold mb-4">Connect Your Photo Galleries</h1>
-          <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl">
+          <p className="text-lg text-muted-foreground dark:text-foreground max-w-3xl">
             Link your photographer galleries to start building your PhotoVault. 
             Never lose access to your precious family memories again.
           </p>
@@ -129,7 +129,7 @@ export default function ConnectPage() {
             <CardContent className="p-6 text-center">
               <Clock className="h-12 w-12 mx-auto mb-4 text-pink-600" />
               <h3 className="text-lg font-semibold mb-2">Never Expires</h3>
-              <p className="text-sm text-slate-600 dark:text-slate-300">
+              <p className="text-sm text-muted-foreground dark:text-foreground">
                 Your photos stay accessible forever, even after gallery links expire
               </p>
             </CardContent>
@@ -138,7 +138,7 @@ export default function ConnectPage() {
             <CardContent className="p-6 text-center">
               <ImageIcon className="h-12 w-12 mx-auto mb-4 text-blue-600" />
               <h3 className="text-lg font-semibold mb-2">All in One Place</h3>
-              <p className="text-sm text-slate-600 dark:text-slate-300">
+              <p className="text-sm text-muted-foreground dark:text-foreground">
                 View all your professional photos from different photographers together
               </p>
             </CardContent>
@@ -147,7 +147,7 @@ export default function ConnectPage() {
             <CardContent className="p-6 text-center">
               <Shield className="h-12 w-12 mx-auto mb-4 text-green-600" />
               <h3 className="text-lg font-semibold mb-2">Secure & Private</h3>
-              <p className="text-sm text-slate-600 dark:text-slate-300">
+              <p className="text-sm text-muted-foreground dark:text-foreground">
                 Bank-level security keeps your family photos safe and private
               </p>
             </CardContent>
@@ -253,17 +253,17 @@ export default function ConnectPage() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between mb-4">
                       <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-blue-600 rounded-lg flex items-center justify-center">
-                        <Camera className="h-6 w-6 text-white" />
+                        <Camera className="h-6 w-6 text-foreground" />
                       </div>
                       <Badge variant="outline">
                         {gallery.platform}
                       </Badge>
                     </div>
                     <h3 className="font-semibold mb-2">{gallery.name}</h3>
-                    <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
+                    <p className="text-sm text-muted-foreground dark:text-muted-foreground mb-2">
                       Connected via {gallery.platform}
                     </p>
-                    <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                    <p className="text-sm text-muted-foreground dark:text-muted-foreground mb-4">
                       Gallery URL: {gallery.url}
                     </p>
                     <div className="flex items-center justify-between">
@@ -300,7 +300,7 @@ export default function ConnectPage() {
                 { name: 'CloudSpot', color: 'bg-cyan-500', logo: '☁️' }
               ].map((platform, index) => (
                 <div key={index} className="text-center">
-                  <div className={`w-16 h-16 ${platform.color} rounded-lg mx-auto mb-3 flex items-center justify-center text-white text-2xl`}>
+                  <div className={`w-16 h-16 ${platform.color} rounded-lg mx-auto mb-3 flex items-center justify-center text-foreground text-2xl`}>
                     {platform.logo}
                   </div>
                   <p className="text-sm font-medium">{platform.name}</p>
@@ -321,29 +321,29 @@ export default function ConnectPage() {
           <CardContent>
             <div className="grid md:grid-cols-3 gap-6">
               <div className="text-center">
-                <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-blue-500 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-pink-500 to-blue-500 text-foreground rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
                   1
                 </div>
                 <h3 className="font-semibold mb-2">Find Your Gallery</h3>
-                <p className="text-sm text-slate-600 dark:text-slate-300">
+                <p className="text-sm text-muted-foreground dark:text-foreground">
                   Look for gallery links in your email or photographer&apos;s website
                 </p>
               </div>
               <div className="text-center">
-                <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-blue-500 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-blue-500 text-foreground rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
                   2
                 </div>
                 <h3 className="font-semibold mb-2">Connect to PhotoVault</h3>
-                <p className="text-sm text-slate-600 dark:text-slate-300">
+                <p className="text-sm text-muted-foreground dark:text-foreground">
                   Paste the gallery link and we&apos;ll import all your photos
                 </p>
               </div>
               <div className="text-center">
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 text-white rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 text-foreground rounded-full flex items-center justify-center text-xl font-bold mx-auto mb-4">
                   3
                 </div>
                 <h3 className="font-semibold mb-2">Enjoy Forever Access</h3>
-                <p className="text-sm text-slate-600 dark:text-slate-300">
+                <p className="text-sm text-muted-foreground dark:text-foreground">
                   Your photos are now safe and accessible forever
                 </p>
               </div>

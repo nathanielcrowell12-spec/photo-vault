@@ -97,7 +97,7 @@ export function Navigation({ hideOnPaths = [] }: NavigationProps) {
   return (
     <>
       {/* Main Navigation Bar */}
-      <nav className="border-b border-white/10 bg-neutral-900 sticky top-0 z-50">
+      <nav className="border-b border-border bg-background sticky top-0 z-50">
         <div className="container-pixieset">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
@@ -295,7 +295,7 @@ export function Navigation({ hideOnPaths = [] }: NavigationProps) {
 
       {/* Client Dashboard Navigation */}
       {userType === 'client' && pathname.startsWith('/client/') && (
-        <div className="border-b border-white/10 bg-neutral-800/50">
+        <div className="border-b border-border bg-card/50">
           <div className="container mx-auto px-4">
             <div className="flex items-center space-x-1 overflow-x-auto py-2">
               {clientLinks.map((link) => (
@@ -318,7 +318,7 @@ export function Navigation({ hideOnPaths = [] }: NavigationProps) {
 
       {/* Photographer Dashboard Navigation */}
       {userType === 'photographer' && pathname.startsWith('/photographer/') && (
-        <div className="border-b border-white/10 bg-neutral-800/50">
+        <div className="border-b border-border bg-card/50">
           <div className="container mx-auto px-4">
             <div className="flex items-center space-x-1 overflow-x-auto py-2">
               {photographerLinks.map((link) => (
@@ -341,7 +341,7 @@ export function Navigation({ hideOnPaths = [] }: NavigationProps) {
 
       {/* Admin Dashboard Navigation */}
       {!loading && user && isActuallyAdmin && pathname.startsWith('/admin/') && (
-        <div className="border-b border-white/10 bg-neutral-800/50">
+        <div className="border-b border-border bg-card/50">
           <div className="container mx-auto px-4">
             <div className="flex items-center space-x-1 overflow-x-auto py-2">
               {adminLinks.map((link) => (
@@ -379,7 +379,7 @@ export function Footer({ hideOnPaths = [] }: NavigationProps) {
   if (isCustomerSite) {
     // Customer footer - clean and focused
     return (
-      <footer className="border-t border-white/10 bg-neutral-900 mt-auto">
+      <footer className="border-t border-border bg-background mt-auto">
         <div className="container-pixieset py-12">
           <div className="grid md:grid-cols-2 gap-10">
             <div>
@@ -419,7 +419,7 @@ export function Footer({ hideOnPaths = [] }: NavigationProps) {
             </div>
           </div>
 
-          <div className="mt-8 pt-8 border-t text-center text-sm text-slate-600 dark:text-slate-400">
+          <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground dark:text-muted-foreground">
             <p>&copy; {new Date().getFullYear()} PhotoVault. Your memories, safe forever.</p>
           </div>
         </div>
@@ -429,7 +429,7 @@ export function Footer({ hideOnPaths = [] }: NavigationProps) {
 
   // Photographer footer - full feature set
   return (
-    <footer className="border-t border-white/10 bg-neutral-900 mt-auto">
+    <footer className="border-t border-border bg-background mt-auto">
       <div className="container mx-auto px-4 py-8">
         <div className="grid md:grid-cols-4 gap-8">
           <div>
@@ -437,7 +437,7 @@ export function Footer({ hideOnPaths = [] }: NavigationProps) {
               <Camera className="h-6 w-6 text-primary" />
               <span className="text-lg font-bold">PhotoVault Pro</span>
             </div>
-            <p className="text-sm text-slate-600 dark:text-slate-400">
+            <p className="text-sm text-muted-foreground dark:text-muted-foreground">
               Your local photo network. Access all your memories from every photographer in one place.
             </p>
           </div>
@@ -516,7 +516,7 @@ export function Footer({ hideOnPaths = [] }: NavigationProps) {
           </div>
         </div>
 
-        <div className="mt-8 pt-8 border-t text-center text-sm text-slate-600 dark:text-slate-400">
+        <div className="mt-8 pt-8 border-t text-center text-sm text-muted-foreground dark:text-muted-foreground">
           <p>&copy; {new Date().getFullYear()} PhotoVault. All rights reserved.</p>
         </div>
       </div>

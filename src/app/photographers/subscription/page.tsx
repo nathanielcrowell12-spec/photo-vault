@@ -57,10 +57,10 @@ export default function SubscriptionPage() {
   // Show loading or redirect if not photographer
   if (userType !== 'photographer') {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-slate-600 dark:text-slate-300">Redirecting...</p>
+          <p className="text-muted-foreground dark:text-foreground">Redirecting...</p>
         </div>
       </div>
     )
@@ -149,17 +149,17 @@ export default function SubscriptionPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-green-600 mx-auto mb-4"></div>
-          <p className="text-slate-600 dark:text-slate-300">Loading subscription...</p>
+          <p className="text-muted-foreground dark:text-foreground">Loading subscription...</p>
         </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b bg-white dark:bg-slate-900">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -235,7 +235,7 @@ export default function SubscriptionPage() {
                       <div className="text-3xl font-bold text-green-600 mb-2">
                         ${subscription.price}/month
                       </div>
-                      <p className="text-slate-600 dark:text-slate-300 mb-4">
+                      <p className="text-muted-foreground dark:text-foreground mb-4">
                         Professional photo sharing platform with commission program
                       </p>
                       
@@ -280,22 +280,22 @@ export default function SubscriptionPage() {
                       <h4 className="font-semibold mb-4">Billing Information</h4>
                       <div className="space-y-3 text-sm">
                         <div>
-                          <span className="text-slate-600 dark:text-slate-400">Status:</span>
+                          <span className="text-muted-foreground dark:text-muted-foreground">Status:</span>
                           <span className="ml-2">{getStatusBadge(subscription.status)}</span>
                         </div>
                         <div>
-                          <span className="text-slate-600 dark:text-slate-400">Current Period:</span>
+                          <span className="text-muted-foreground dark:text-muted-foreground">Current Period:</span>
                           <span className="ml-2">
                             {formatDate(subscription.current_period_start)} - {formatDate(subscription.current_period_end)}
                           </span>
                         </div>
                         <div>
-                          <span className="text-slate-600 dark:text-slate-400">Next Billing:</span>
+                          <span className="text-muted-foreground dark:text-muted-foreground">Next Billing:</span>
                           <span className="ml-2">{formatDate(subscription.next_billing_date)}</span>
                         </div>
                         {subscription.payment_method && (
                           <div>
-                            <span className="text-slate-600 dark:text-slate-400">Payment Method:</span>
+                            <span className="text-muted-foreground dark:text-muted-foreground">Payment Method:</span>
                             <span className="ml-2">
                               {subscription.payment_method.brand} •••• {subscription.payment_method.last4}
                             </span>
@@ -340,7 +340,7 @@ export default function SubscriptionPage() {
                     </div>
                   </div>
                   <div className="mt-6 text-center">
-                    <div className="text-sm text-slate-600 dark:text-slate-400">
+                    <div className="text-sm text-muted-foreground dark:text-muted-foreground">
                       <strong>Example:</strong> 25 clients (1-year packages) = $1,250 upfront + $100/month passive income
                     </div>
                   </div>
@@ -363,7 +363,7 @@ export default function SubscriptionPage() {
                     {PHOTOGRAPHER_SUBSCRIPTION.features.map((feature, index) => (
                       <div key={index} className="flex items-center space-x-3">
                         <CheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
-                        <span className="text-slate-700 dark:text-slate-300">{feature}</span>
+                        <span className="text-slate-700 dark:text-foreground">{feature}</span>
                       </div>
                     ))}
                   </div>
@@ -407,7 +407,7 @@ export default function SubscriptionPage() {
                 <CardContent className="p-6">
                   <div className="text-center">
                     <h3 className="text-lg font-semibold mb-2">Need Help?</h3>
-                    <p className="text-slate-600 dark:text-slate-300 mb-4">
+                    <p className="text-muted-foreground dark:text-foreground mb-4">
                       Our support team is here to help with any questions about your subscription or commission program.
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">

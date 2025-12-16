@@ -269,7 +269,7 @@ function PhotographerSettingsContent() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-neutral-900">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600" />
       </div>
     )
@@ -281,15 +281,15 @@ function PhotographerSettingsContent() {
 
   return (
     <AccessGuard requiredAccess="canAccessPhotographerDashboard">
-      <div className="min-h-screen bg-neutral-900">
+      <div className="min-h-screen bg-background">
         {/* Header */}
-        <header className="border-b bg-neutral-800/50 border-white/10">
+        <header className="border-b bg-card/50 border-border">
           <div className="container mx-auto px-4 py-6">
             <div className="flex items-center gap-4">
               <Camera className="h-10 w-10 text-blue-600" />
               <div>
                 <h1 className="text-2xl font-bold">Account Settings</h1>
-                <p className="text-sm text-slate-600">
+                <p className="text-sm text-muted-foreground">
                   Manage your photographer account preferences and security settings
                 </p>
               </div>
@@ -324,7 +324,7 @@ function PhotographerSettingsContent() {
               <CardContent className="space-y-4">
                 {stripeLoading ? (
                   <div className="flex items-center justify-center py-8">
-                    <Loader2 className="h-6 w-6 animate-spin text-slate-400" />
+                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                   </div>
                 ) : stripeStatus?.isConnected ? (
                   // Connected State
@@ -347,15 +347,15 @@ function PhotographerSettingsContent() {
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
-                      <div className="bg-neutral-800 rounded-lg p-4">
-                        <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">Commission Rate</div>
+                      <div className="bg-card rounded-lg p-4">
+                        <div className="text-sm text-muted-foreground dark:text-muted-foreground mb-1">Commission Rate</div>
                         <div className="text-2xl font-bold text-green-600">50%</div>
-                        <div className="text-xs text-slate-500">of client payments</div>
+                        <div className="text-xs text-muted-foreground">of client payments</div>
                       </div>
-                      <div className="bg-neutral-800 rounded-lg p-4">
-                        <div className="text-sm text-slate-600 dark:text-slate-400 mb-1">Payout Schedule</div>
+                      <div className="bg-card rounded-lg p-4">
+                        <div className="text-sm text-muted-foreground dark:text-muted-foreground mb-1">Payout Schedule</div>
                         <div className="text-2xl font-bold text-blue-600">T+2</div>
-                        <div className="text-xs text-slate-500">Stripe Express automatic</div>
+                        <div className="text-xs text-muted-foreground">Stripe Express automatic</div>
                       </div>
                     </div>
 
@@ -414,12 +414,12 @@ function PhotographerSettingsContent() {
                 ) : (
                   // Not Connected State
                   <div className="space-y-4">
-                    <div className="bg-neutral-800 rounded-lg p-6 text-center">
+                    <div className="bg-card rounded-lg p-6 text-center">
                       <div className="w-16 h-16 bg-green-100 dark:bg-green-800 rounded-full flex items-center justify-center mx-auto mb-4">
                         <DollarSign className="h-8 w-8 text-green-600" />
                       </div>
                       <h3 className="text-lg font-semibold mb-2">Start Earning Commissions</h3>
-                      <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                      <p className="text-sm text-muted-foreground dark:text-muted-foreground mb-4">
                         Connect your Stripe account to receive 50% commission on every client subscription.
                       </p>
 
@@ -469,7 +469,7 @@ function PhotographerSettingsContent() {
                       )}
                     </Button>
 
-                    <p className="text-xs text-center text-slate-500">
+                    <p className="text-xs text-center text-muted-foreground">
                       You&apos;ll be redirected to Stripe to complete secure account setup.
                       Takes about 5 minutes.
                     </p>
@@ -498,14 +498,14 @@ function PhotographerSettingsContent() {
               <CardContent>
                 {subscriptionLoading ? (
                   <div className="flex items-center justify-center py-6">
-                    <Loader2 className="h-6 w-6 animate-spin text-slate-400" />
+                    <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
                   </div>
                 ) : subscription ? (
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <div>
                         <div className="font-semibold">Professional Plan</div>
-                        <div className="text-sm text-slate-600">${subscription.price}/month</div>
+                        <div className="text-sm text-muted-foreground">${subscription.price}/month</div>
                       </div>
                       <Badge className={
                         subscription.status === 'active' ? 'bg-green-100 text-green-800' :
@@ -520,7 +520,7 @@ function PhotographerSettingsContent() {
                       </Badge>
                     </div>
                     {subscription.nextBillingDate && (
-                      <div className="text-sm text-slate-600">
+                      <div className="text-sm text-muted-foreground">
                         Next billing: {new Date(subscription.nextBillingDate).toLocaleDateString('en-US', {
                           year: 'numeric',
                           month: 'long',
@@ -537,13 +537,13 @@ function PhotographerSettingsContent() {
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    <div className="bg-neutral-800 rounded-lg p-4 text-center">
+                    <div className="bg-card rounded-lg p-4 text-center">
                       <div className="text-lg font-semibold mb-2">No Active Subscription</div>
-                      <p className="text-sm text-slate-600 mb-4">
+                      <p className="text-sm text-muted-foreground mb-4">
                         Subscribe to access the full PhotoVault platform and commission program.
                       </p>
                       <div className="text-2xl font-bold text-purple-600 mb-2">$22/month</div>
-                      <ul className="text-sm text-slate-600 space-y-1 mb-4">
+                      <ul className="text-sm text-muted-foreground space-y-1 mb-4">
                         <li className="flex items-center gap-2 justify-center">
                           <CheckCircle2 className="h-4 w-4 text-green-500" />
                           Unlimited client galleries
@@ -595,7 +595,7 @@ function PhotographerSettingsContent() {
                 <div className="space-y-2">
                   <Label htmlFor="email">Email Address</Label>
                   <div className="flex items-center gap-2">
-                    <Mail className="h-4 w-4 text-slate-400" />
+                    <Mail className="h-4 w-4 text-muted-foreground" />
                     <Input
                       id="email"
                       type="email"
@@ -604,7 +604,7 @@ function PhotographerSettingsContent() {
                       className="bg-slate-50"
                     />
                   </div>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-muted-foreground">
                     Contact support to change your email address
                   </p>
                 </div>
@@ -638,7 +638,7 @@ function PhotographerSettingsContent() {
                       <button
                         type="button"
                         onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground"
                       >
                         {showCurrentPassword ? (
                           <EyeOff className="h-4 w-4" />
@@ -663,7 +663,7 @@ function PhotographerSettingsContent() {
                       <button
                         type="button"
                         onClick={() => setShowNewPassword(!showNewPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground"
                       >
                         {showNewPassword ? (
                           <EyeOff className="h-4 w-4" />
@@ -674,7 +674,7 @@ function PhotographerSettingsContent() {
                     </div>
                     {newPassword && (
                       <div className="space-y-1 text-xs">
-                        <div className={`flex items-center gap-2 ${passwordRequirements.minLength ? 'text-green-600' : 'text-slate-500'}`}>
+                        <div className={`flex items-center gap-2 ${passwordRequirements.minLength ? 'text-green-600' : 'text-muted-foreground'}`}>
                           {passwordRequirements.minLength ? (
                             <CheckCircle2 className="h-3 w-3" />
                           ) : (
@@ -682,7 +682,7 @@ function PhotographerSettingsContent() {
                           )}
                           At least 8 characters
                         </div>
-                        <div className={`flex items-center gap-2 ${passwordRequirements.hasUppercase ? 'text-green-600' : 'text-slate-500'}`}>
+                        <div className={`flex items-center gap-2 ${passwordRequirements.hasUppercase ? 'text-green-600' : 'text-muted-foreground'}`}>
                           {passwordRequirements.hasUppercase ? (
                             <CheckCircle2 className="h-3 w-3" />
                           ) : (
@@ -690,7 +690,7 @@ function PhotographerSettingsContent() {
                           )}
                           One uppercase letter
                         </div>
-                        <div className={`flex items-center gap-2 ${passwordRequirements.hasLowercase ? 'text-green-600' : 'text-slate-500'}`}>
+                        <div className={`flex items-center gap-2 ${passwordRequirements.hasLowercase ? 'text-green-600' : 'text-muted-foreground'}`}>
                           {passwordRequirements.hasLowercase ? (
                             <CheckCircle2 className="h-3 w-3" />
                           ) : (
@@ -698,7 +698,7 @@ function PhotographerSettingsContent() {
                           )}
                           One lowercase letter
                         </div>
-                        <div className={`flex items-center gap-2 ${passwordRequirements.hasNumber ? 'text-green-600' : 'text-slate-500'}`}>
+                        <div className={`flex items-center gap-2 ${passwordRequirements.hasNumber ? 'text-green-600' : 'text-muted-foreground'}`}>
                           {passwordRequirements.hasNumber ? (
                             <CheckCircle2 className="h-3 w-3" />
                           ) : (
@@ -724,7 +724,7 @@ function PhotographerSettingsContent() {
                       <button
                         type="button"
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground"
                       >
                         {showConfirmPassword ? (
                           <EyeOff className="h-4 w-4" />
@@ -770,7 +770,7 @@ function PhotographerSettingsContent() {
 export default function PhotographerSettingsPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen flex items-center justify-center bg-neutral-900">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     }>

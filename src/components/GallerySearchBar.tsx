@@ -36,23 +36,23 @@ export function GallerySearchBar({
 
   return (
     <div className={cn('relative', className)}>
-      <Search className="absolute left-3 top-2.5 h-5 w-5 text-neutral-400" />
+      <Search className="absolute left-3 top-2.5 h-5 w-5 text-muted-foreground" />
       <Input
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder={placeholder}
-        className="pl-10 pr-10 bg-neutral-900 border-white/10 text-white placeholder:text-neutral-500"
+        className="pl-10 pr-10 bg-background border-border text-foreground placeholder:text-muted-foreground"
       />
       {query && (
         <Button
           variant="ghost"
           size="sm"
           onClick={clearSearch}
-          className="absolute right-1 top-1 h-7 w-7 p-0 hover:bg-white/5"
+          className="absolute right-1 top-1 h-7 w-7 p-0 hover:bg-accent/50"
           aria-label="Clear search"
         >
-          <X className="h-4 w-4 text-neutral-400" />
+          <X className="h-4 w-4 text-muted-foreground" />
         </Button>
       )}
     </div>

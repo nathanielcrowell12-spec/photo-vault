@@ -375,7 +375,7 @@ export default function Messages({ limit = 5, showFullInterface = false }: Messa
                     <div
                       className={`max-w-[70%] rounded-lg p-3 ${
                         isSender
-                          ? 'bg-blue-600 text-white'
+                          ? 'bg-blue-600 text-foreground'
                           : 'bg-gray-100 text-gray-900'
                       }`}
                     >

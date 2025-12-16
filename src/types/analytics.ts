@@ -182,6 +182,11 @@ export interface FamilyMemberAcceptedEvent extends AuthenticatedEventProperties 
   relationship: string
 }
 
+export interface ThemeToggleClickedEvent extends BaseEventProperties {
+  from_mode: 'light' | 'dark'
+  to_mode: 'light' | 'dark'
+}
+
 // ==========================================
 // ABANDONMENT EVENTS
 // Client-side with cleanup on unmount
@@ -271,6 +276,7 @@ export const EVENTS = {
   PHOTO_FAVORITED: 'photo_favorited',
   FAMILY_MEMBER_INVITED: 'family_member_invited',
   FAMILY_MEMBER_ACCEPTED: 'family_member_accepted',
+  THEME_TOGGLE_CLICKED: 'theme_toggle_clicked',
 
   // Abandonment (CLIENT-SIDE)
   UPLOAD_ABANDONED: 'upload_abandoned',
@@ -312,6 +318,7 @@ export type EventPropertiesMap = {
   [EVENTS.PHOTO_FAVORITED]: PhotoFavoritedEvent
   [EVENTS.FAMILY_MEMBER_INVITED]: FamilyMemberInvitedEvent
   [EVENTS.FAMILY_MEMBER_ACCEPTED]: FamilyMemberAcceptedEvent
+  [EVENTS.THEME_TOGGLE_CLICKED]: ThemeToggleClickedEvent
   [EVENTS.UPLOAD_ABANDONED]: UploadAbandonedEvent
   [EVENTS.PAYMENT_ABANDONED]: PaymentAbandonedEvent
   [EVENTS.ONBOARDING_ABANDONED]: OnboardingAbandonedEvent

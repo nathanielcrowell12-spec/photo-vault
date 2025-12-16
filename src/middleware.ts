@@ -50,6 +50,8 @@ export async function middleware(req: NextRequest) {
     '/auth/desktop-callback',
     '/connect',
     '/logout',
+    '/login',
+    '/reset-password',
   ]
 
   // Gallery pages are public (paywall handles access control)
@@ -168,7 +170,8 @@ export async function middleware(req: NextRequest) {
   if (pathname.startsWith('/photographer') || pathname.startsWith('/photographers')) {
     if (userType !== 'photographer' && userType !== 'admin') {
       const redirectUrl = req.nextUrl.clone()
-      redirectUrl.pathname = '/client/dashboard'
+      // Secondary users go to family galleries, clients go to client dashboard
+      redirectUrl.pathname = userType === 'secondary' ? '/family/galleries' : '/client/dashboard'
       return NextResponse.redirect(redirectUrl)
     }
   }
@@ -178,8 +181,35 @@ export async function middleware(req: NextRequest) {
     // Allow photographers to preview client galleries
     const isGalleryPreview = pathname.startsWith('/client/gallery/')
     if (userType !== 'client' && userType !== 'admin' && !(userType === 'photographer' && isGalleryPreview)) {
+      // Secondary users should go to family galleries
+      if (userType === 'secondary') {
+        const redirectUrl = req.nextUrl.clone()
+        redirectUrl.pathname = '/family/galleries'
+        return NextResponse.redirect(redirectUrl)
+      }
       const redirectUrl = req.nextUrl.clone()
       redirectUrl.pathname = '/photographer/dashboard'
+      return NextResponse.redirect(redirectUrl)
+    }
+  }
+
+  // Secondary users - restricted to family pages only
+  if (userType === 'secondary') {
+    const allowedSecondaryPaths = [
+      '/family/galleries',
+      '/family/takeover',
+      '/gallery/', // Viewing individual galleries
+      '/api/family/', // Family API endpoints
+      '/logout',
+      '/reset-password',
+    ]
+
+    const isAllowedPath = allowedSecondaryPaths.some(path => pathname.startsWith(path))
+
+    if (!isAllowedPath && !pathname.startsWith('/api/')) {
+      console.log('[Middleware] Secondary user restricted from:', pathname)
+      const redirectUrl = req.nextUrl.clone()
+      redirectUrl.pathname = '/family/galleries'
       return NextResponse.redirect(redirectUrl)
     }
   }

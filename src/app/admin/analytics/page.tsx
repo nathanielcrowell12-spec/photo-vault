@@ -115,7 +115,7 @@ export default function AnalyticsPage() {
 
   return (
     <AccessGuard requiredAccess="canAccessAdminDashboard">
-      <div className="min-h-screen bg-neutral-900">
+      <div className="min-h-screen bg-background">
         {/* Header */}
         <header className="border-b bg-white/95 backdrop-blur-sm">
           <div className="container mx-auto px-4 py-6 flex items-center justify-between">
@@ -123,7 +123,7 @@ export default function AnalyticsPage() {
               <BarChart3 className="h-10 w-10 text-blue-600" />
               <div>
                 <h1 className="text-2xl font-bold">Analytics &amp; Reports</h1>
-                <p className="text-sm text-slate-600">
+                <p className="text-sm text-muted-foreground">
                   View PhotoVault user, photo, and system performance analytics. Live data will display once tracking is connected.
                 </p>
               </div>
@@ -152,9 +152,9 @@ export default function AnalyticsPage() {
                 <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                   {analyticsMetrics.map((metric) => (
                     <div key={metric.label} className="rounded-lg border border-blue-100 bg-white p-4">
-                      <p className="text-sm text-slate-500">{metric.label}</p>
+                      <p className="text-sm text-muted-foreground">{metric.label}</p>
                       <p className="mt-2 text-2xl font-semibold text-slate-900">{metric.value}</p>
-                      <p className="text-xs text-slate-400">{metric.subtext}</p>
+                      <p className="text-xs text-muted-foreground">{metric.subtext}</p>
                     </div>
                   ))}
                 </div>
@@ -174,7 +174,7 @@ export default function AnalyticsPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex h-48 items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 text-sm text-slate-500">
+                  <div className="flex h-48 items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 text-sm text-muted-foreground">
                     Line chart coming soon
                   </div>
                 </CardContent>
@@ -191,7 +191,7 @@ export default function AnalyticsPage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex h-48 items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 text-sm text-slate-500">
+                  <div className="flex h-48 items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 text-sm text-muted-foreground">
                     Pie chart coming soon
                   </div>
                 </CardContent>
@@ -216,7 +216,7 @@ export default function AnalyticsPage() {
               </CardHeader>
               <CardContent className="space-y-4">
                 {recentEvents.length === 0 ? (
-                  <div className="text-center py-8 text-slate-500">
+                  <div className="text-center py-8 text-muted-foreground">
                     {dataLoading ? 'Loading...' : 'No recent activity'}
                   </div>
                 ) : (
@@ -225,9 +225,9 @@ export default function AnalyticsPage() {
                       <div className="flex items-center justify-between">
                         <div>
                           <p className="font-semibold text-slate-800">{event.type}</p>
-                          <p className="text-sm text-slate-500">{event.description}</p>
+                          <p className="text-sm text-muted-foreground">{event.description}</p>
                         </div>
-                        <span className="text-xs text-slate-400">{event.timestamp}</span>
+                        <span className="text-xs text-muted-foreground">{event.timestamp}</span>
                       </div>
                     </div>
                   ))
@@ -249,15 +249,15 @@ export default function AnalyticsPage() {
               <CardContent>
                 <div className="grid gap-4 md:grid-cols-3">
                   <div className="rounded-lg border border-slate-200 bg-white p-4">
-                    <p className="text-sm text-slate-500">Average API Response</p>
+                    <p className="text-sm text-muted-foreground">Average API Response</p>
                     <p className="mt-2 text-xl font-semibold text-slate-900">—</p>
                   </div>
                   <div className="rounded-lg border border-slate-200 bg-white p-4">
-                    <p className="text-sm text-slate-500">Error Rate</p>
+                    <p className="text-sm text-muted-foreground">Error Rate</p>
                     <p className="mt-2 text-xl font-semibold text-slate-900">—</p>
                   </div>
                   <div className="rounded-lg border border-slate-200 bg-white p-4">
-                    <p className="text-sm text-slate-500">Uptime (30 days)</p>
+                    <p className="text-sm text-muted-foreground">Uptime (30 days)</p>
                     <p className="mt-2 text-xl font-semibold text-slate-900">—</p>
                   </div>
                 </div>

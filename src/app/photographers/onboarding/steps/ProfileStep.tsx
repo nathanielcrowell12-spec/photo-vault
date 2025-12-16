@@ -78,10 +78,10 @@ export default function ProfileStep({ data, onNext }: ProfileStepProps) {
             <User className="h-5 w-5 text-blue-600 dark:text-blue-300" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-foreground">
               Create Your Profile
             </h2>
-            <p className="text-slate-600 dark:text-slate-400">
+            <p className="text-muted-foreground dark:text-muted-foreground">
               Tell us about your photography business
             </p>
           </div>
@@ -132,7 +132,7 @@ export default function ProfileStep({ data, onNext }: ProfileStepProps) {
             {errors.bio ? (
               <p className="text-sm text-red-500">{errors.bio}</p>
             ) : (
-              <p className="text-sm text-slate-500 dark:text-slate-400">
+              <p className="text-sm text-muted-foreground dark:text-muted-foreground">
                 {formData.bio.length} / 50 minimum characters
               </p>
             )}

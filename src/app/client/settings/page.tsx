@@ -112,7 +112,7 @@ export default function ClientSettingsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-neutral-900">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-600" />
       </div>
     )
@@ -124,15 +124,15 @@ export default function ClientSettingsPage() {
 
   return (
     <AccessGuard requiredAccess="canAccessClientDashboard">
-      <div className="min-h-screen bg-neutral-900">
+      <div className="min-h-screen bg-background">
         {/* Header */}
-        <header className="border-b bg-neutral-800/50 border-white/10">
+        <header className="border-b bg-card/50 border-border">
           <div className="container mx-auto px-4 py-6">
             <div className="flex items-center gap-4">
               <User className="h-10 w-10 text-pink-600" />
               <div>
-                <h1 className="text-2xl font-bold text-neutral-100">Account Settings</h1>
-                <p className="text-sm text-neutral-400">
+                <h1 className="text-2xl font-bold text-foreground">Account Settings</h1>
+                <p className="text-sm text-muted-foreground">
                   Manage your account preferences and security settings
                 </p>
               </div>
@@ -144,7 +144,7 @@ export default function ClientSettingsPage() {
         <main className="container mx-auto px-4 py-8">
           <div className="max-w-2xl mx-auto space-y-6">
             {/* Account Information */}
-            <Card className="bg-neutral-800/50 border-white/10 shadow-sm">
+            <Card className="bg-card/50 border-border shadow-sm">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <User className="h-5 w-5 text-pink-600" />
@@ -158,7 +158,7 @@ export default function ClientSettingsPage() {
                 <div className="space-y-2">
                   <Label htmlFor="email">Email Address</Label>
                   <div className="flex items-center gap-2">
-                    <Mail className="h-4 w-4 text-slate-400" />
+                    <Mail className="h-4 w-4 text-muted-foreground" />
                     <Input
                       id="email"
                       type="email"
@@ -167,7 +167,7 @@ export default function ClientSettingsPage() {
                       className="bg-slate-50"
                     />
                   </div>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-muted-foreground">
                     Contact support to change your email address
                   </p>
                 </div>
@@ -176,12 +176,12 @@ export default function ClientSettingsPage() {
 
             {/* Family Sharing */}
             <Link href="/client/settings/family">
-              <Card className="bg-neutral-800/50 border-white/10 shadow-sm hover:border-white/20 hover:shadow-md transition-all cursor-pointer group">
+              <Card className="bg-card/50 border-border shadow-sm hover:border-border hover:shadow-md transition-all cursor-pointer group">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
                       <div className="p-2 bg-gradient-to-br from-pink-500 to-orange-400 rounded-xl">
-                        <Users className="h-5 w-5 text-white" />
+                        <Users className="h-5 w-5 text-foreground" />
                       </div>
                       <div>
                         <CardTitle className="flex items-center gap-2">
@@ -192,14 +192,14 @@ export default function ClientSettingsPage() {
                         </CardDescription>
                       </div>
                     </div>
-                    <ChevronRight className="h-5 w-5 text-slate-400 group-hover:text-pink-500 transition-colors" />
+                    <ChevronRight className="h-5 w-5 text-muted-foreground group-hover:text-pink-500 transition-colors" />
                   </div>
                 </CardHeader>
               </Card>
             </Link>
 
             {/* Change Password */}
-            <Card className="bg-neutral-800/50 border-white/10 shadow-sm">
+            <Card className="bg-card/50 border-border shadow-sm">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Lock className="h-5 w-5 text-pink-600" />
@@ -225,7 +225,7 @@ export default function ClientSettingsPage() {
                       <button
                         type="button"
                         onClick={() => setShowCurrentPassword(!showCurrentPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground"
                       >
                         {showCurrentPassword ? (
                           <EyeOff className="h-4 w-4" />
@@ -250,7 +250,7 @@ export default function ClientSettingsPage() {
                       <button
                         type="button"
                         onClick={() => setShowNewPassword(!showNewPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground"
                       >
                         {showNewPassword ? (
                           <EyeOff className="h-4 w-4" />
@@ -261,7 +261,7 @@ export default function ClientSettingsPage() {
                     </div>
                     {newPassword && (
                       <div className="space-y-1 text-xs">
-                        <div className={`flex items-center gap-2 ${passwordRequirements.minLength ? 'text-green-600' : 'text-slate-500'}`}>
+                        <div className={`flex items-center gap-2 ${passwordRequirements.minLength ? 'text-green-600' : 'text-muted-foreground'}`}>
                           {passwordRequirements.minLength ? (
                             <CheckCircle2 className="h-3 w-3" />
                           ) : (
@@ -269,7 +269,7 @@ export default function ClientSettingsPage() {
                           )}
                           At least 8 characters
                         </div>
-                        <div className={`flex items-center gap-2 ${passwordRequirements.hasUppercase ? 'text-green-600' : 'text-slate-500'}`}>
+                        <div className={`flex items-center gap-2 ${passwordRequirements.hasUppercase ? 'text-green-600' : 'text-muted-foreground'}`}>
                           {passwordRequirements.hasUppercase ? (
                             <CheckCircle2 className="h-3 w-3" />
                           ) : (
@@ -277,7 +277,7 @@ export default function ClientSettingsPage() {
                           )}
                           One uppercase letter
                         </div>
-                        <div className={`flex items-center gap-2 ${passwordRequirements.hasLowercase ? 'text-green-600' : 'text-slate-500'}`}>
+                        <div className={`flex items-center gap-2 ${passwordRequirements.hasLowercase ? 'text-green-600' : 'text-muted-foreground'}`}>
                           {passwordRequirements.hasLowercase ? (
                             <CheckCircle2 className="h-3 w-3" />
                           ) : (
@@ -285,7 +285,7 @@ export default function ClientSettingsPage() {
                           )}
                           One lowercase letter
                         </div>
-                        <div className={`flex items-center gap-2 ${passwordRequirements.hasNumber ? 'text-green-600' : 'text-slate-500'}`}>
+                        <div className={`flex items-center gap-2 ${passwordRequirements.hasNumber ? 'text-green-600' : 'text-muted-foreground'}`}>
                           {passwordRequirements.hasNumber ? (
                             <CheckCircle2 className="h-3 w-3" />
                           ) : (
@@ -311,7 +311,7 @@ export default function ClientSettingsPage() {
                       <button
                         type="button"
                         onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground"
                       >
                         {showConfirmPassword ? (
                           <EyeOff className="h-4 w-4" />

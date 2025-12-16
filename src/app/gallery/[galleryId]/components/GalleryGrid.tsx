@@ -50,7 +50,7 @@ export default function GalleryGrid({
 
               {/* Hover Overlay */}
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-colors flex items-center justify-center">
-                <Maximize2 className="h-8 w-8 text-white opacity-0 group-hover:opacity-100 transition-opacity" />
+                <Maximize2 className="h-8 w-8 text-foreground opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
 
               {/* Favorite Button */}
@@ -67,7 +67,7 @@ export default function GalleryGrid({
               >
                 <Heart
                   className={`h-5 w-5 ${
-                    isFavorite ? 'fill-red-500 text-red-500' : 'text-white'
+                    isFavorite ? 'fill-red-500 text-red-500' : 'text-foreground'
                   }`}
                 />
               </Button>

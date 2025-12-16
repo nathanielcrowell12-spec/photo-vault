@@ -60,7 +60,7 @@ export default async function CityPage({ params }: CityPageProps) {
       {/* Breadcrumb */}
       <div className="mb-8">
         <Link href="/directory">
-          <Button variant="ghost" size="sm" className="text-slate-400 hover:text-white -ml-2">
+          <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground -ml-2">
             <ChevronLeft className="w-4 h-4 mr-1" />
             Back to Directory
           </Button>
@@ -69,10 +69,10 @@ export default async function CityPage({ params }: CityPageProps) {
 
       {/* Header */}
       <div className="mb-10">
-        <h1 className="text-3xl md:text-4xl font-bold text-white mb-2">
+        <h1 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
           Photography Locations in <span className="text-amber-400">{cityName}</span>
         </h1>
-        <p className="text-slate-400 text-lg">
+        <p className="text-muted-foreground text-lg">
           {locations.length} curated locations with insider tips and permit information
         </p>
       </div>

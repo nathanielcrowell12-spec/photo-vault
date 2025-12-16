@@ -22,9 +22,9 @@ import {
 
 export default function PhotographersPage() {
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b border-white/10 bg-neutral-900/95 backdrop-blur-sm sticky top-0 z-50">
+      <header className="border-b border-border bg-background/95 backdrop-blur-sm sticky top-0 z-50">
         <div className="container-pixieset py-5 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <div className="flex items-center space-x-2">
@@ -33,7 +33,7 @@ export default function PhotographersPage() {
                 alt="PhotoVault Pro" 
                 className="h-8 w-auto"
               />
-              <span className="text-xl font-semibold text-neutral-100 tracking-tight ml-2">Pro</span>
+              <span className="text-xl font-semibold text-foreground tracking-tight ml-2">Pro</span>
             </div>
           </div>
           <div className="flex items-center space-x-3">
@@ -42,7 +42,7 @@ export default function PhotographersPage() {
                 Log In
               </Link>
             </Button>
-            <Button asChild className="bg-primary hover:bg-primary/90 text-white text-sm font-semibold rounded-lg">
+            <Button asChild className="bg-primary hover:bg-primary/90 text-foreground text-sm font-semibold rounded-lg">
               <Link href="/photographers/signup">
                 Start Protecting Memories
               </Link>
@@ -54,27 +54,27 @@ export default function PhotographersPage() {
       <main className="container-pixieset section-spacing">
         {/* Hero Section */}
         <div className="text-center mb-24 fade-in-up">
-          <h1 className="text-5xl md:text-6xl lg:text-7xl font-semibold mb-6 text-neutral-100 leading-[1.1] tracking-tight">
+          <h1 className="text-5xl md:text-6xl lg:text-7xl font-semibold mb-6 text-foreground leading-[1.1] tracking-tight">
             You&apos;re not just a photographer.<br />You&apos;re the guardian of their family history.
           </h1>
-          <p className="text-lg md:text-xl text-neutral-400 mb-10 max-w-3xl mx-auto leading-relaxed font-light">
+          <p className="text-lg md:text-xl text-muted-foreground mb-10 max-w-3xl mx-auto leading-relaxed font-light">
             Hard drives fail. The Cloud is someone else&apos;s computer. Your clients&apos; memories need real protection. PhotoVault is Memory Insurance—turn every photoshoot into passive income while giving families a digital safety deposit box for their most precious moments.
           </p>
           
           {/* Pricing Highlight */}
-          <div className="bg-neutral-800/50 border border-white/10 rounded-2xl p-10 md:p-12 mb-12 max-w-4xl mx-auto card-shadow">
+          <div className="bg-card/50 border border-border rounded-2xl p-10 md:p-12 mb-12 max-w-4xl mx-auto card-shadow">
             <div className="grid md:grid-cols-2 gap-10 items-center">
               <div className="text-center md:text-left">
                 <div className="text-4xl md:text-5xl font-semibold text-primary mb-3">$22/month</div>
-                <div className="text-lg text-neutral-100 mb-4 font-medium">Professional Photo Sharing Platform</div>
-                <div className="text-sm text-neutral-400">
+                <div className="text-lg text-foreground mb-4 font-medium">Professional Photo Sharing Platform</div>
+                <div className="text-sm text-muted-foreground">
                   Unlimited galleries • Advanced analytics • Commission tracking
                 </div>
               </div>
               <div className="text-center md:text-left">
                 <div className="text-2xl md:text-3xl font-semibold text-primary mb-3">Earn $25-$50 + $4/month</div>
-                <div className="text-lg text-neutral-100 mb-2 font-medium">Commission Program</div>
-                <div className="text-sm text-neutral-400">
+                <div className="text-lg text-foreground mb-2 font-medium">Commission Program</div>
+                <div className="text-sm text-muted-foreground">
                   $25 (6mo) or $50 (1yr) upfront + $4/month passive income per client
                 </div>
               </div>
@@ -126,49 +126,49 @@ export default function PhotographersPage() {
         </div>
 
         {/* Problem Section */}
-        <section className="section-spacing-sm bg-neutral-800/30 -mx-4 md:-mx-6 lg:-mx-8 px-4 md:px-6 lg:px-8">
+        <section className="section-spacing-sm bg-card/30 -mx-4 md:-mx-6 lg:-mx-8 px-4 md:px-6 lg:px-8">
           <div className="container-pixieset">
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-5 text-neutral-100 tracking-tight">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-5 text-foreground tracking-tight">
                 Your Clients&apos; Memories Are at Risk
               </h2>
-              <p className="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto font-light">
+              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto font-light">
                 It&apos;s not <em>if</em> your clients&apos; hard drive will fail. It&apos;s <em>when</em>. Professional data recovery costs $500-$5,000. PhotoVault costs $8/month.
               </p>
             </div>
 
             <div className="grid md:grid-cols-3 gap-6 lg:gap-8">
-              <Card className="border border-white/10 card-shadow-hover bg-neutral-800/50">
+              <Card className="border border-border card-shadow-hover bg-card/50">
                 <CardContent className="p-8 text-center">
-                  <div className="w-14 h-14 bg-neutral-700/50 rounded-full mx-auto mb-5 flex items-center justify-center">
-                    <Clock className="h-7 w-7 text-neutral-300" />
+                  <div className="w-14 h-14 bg-secondary/50 rounded-full mx-auto mb-5 flex items-center justify-center">
+                    <Clock className="h-7 w-7 text-muted-foreground" />
                   </div>
-                  <h3 className="text-lg font-semibold mb-3 text-neutral-100">Hard Drives Have a 100% Failure Rate</h3>
-                  <p className="text-neutral-400 text-sm leading-relaxed">
+                  <h3 className="text-lg font-semibold mb-3 text-foreground">Hard Drives Have a 100% Failure Rate</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
                     Eventually. Your clients&apos; wedding photos, baby&apos;s first steps, grandma&apos;s last Christmas—sitting on hardware that will someday fail.
                   </p>
                 </CardContent>
               </Card>
 
-              <Card className="border border-white/10 card-shadow-hover bg-neutral-800/50">
+              <Card className="border border-border card-shadow-hover bg-card/50">
                 <CardContent className="p-8 text-center">
-                  <div className="w-14 h-14 bg-neutral-700/50 rounded-full mx-auto mb-5 flex items-center justify-center">
-                    <Users className="h-7 w-7 text-neutral-300" />
+                  <div className="w-14 h-14 bg-secondary/50 rounded-full mx-auto mb-5 flex items-center justify-center">
+                    <Users className="h-7 w-7 text-muted-foreground" />
                   </div>
-                  <h3 className="text-lg font-semibold mb-3 text-neutral-100">Zip Files Are a Nightmare</h3>
-                  <p className="text-neutral-400 text-sm leading-relaxed">
+                  <h3 className="text-lg font-semibold mb-3 text-foreground">Zip Files Are a Nightmare</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
                     Remember sending clients a 4GB zip file? Remember them asking how to open it on their phone? We fixed that.
                   </p>
                 </CardContent>
               </Card>
 
-              <Card className="border border-white/10 card-shadow-hover bg-neutral-800/50">
+              <Card className="border border-border card-shadow-hover bg-card/50">
                 <CardContent className="p-8 text-center">
-                  <div className="w-14 h-14 bg-neutral-700/50 rounded-full mx-auto mb-5 flex items-center justify-center">
-                    <TrendingUp className="h-7 w-7 text-neutral-300" />
+                  <div className="w-14 h-14 bg-secondary/50 rounded-full mx-auto mb-5 flex items-center justify-center">
+                    <TrendingUp className="h-7 w-7 text-muted-foreground" />
                   </div>
-                  <h3 className="text-lg font-semibold mb-3 text-neutral-100">Expired Galleries = Lost Revenue</h3>
-                  <p className="text-neutral-400 text-sm leading-relaxed">
+                  <h3 className="text-lg font-semibold mb-3 text-foreground">Expired Galleries = Lost Revenue</h3>
+                  <p className="text-muted-foreground text-sm leading-relaxed">
                     Your clients can&apos;t share memories they can&apos;t access. No anniversary re-orders, no referrals, no passive income.
                   </p>
                 </CardContent>
@@ -180,15 +180,15 @@ export default function PhotographersPage() {
         {/* Solution Section */}
         <section className="section-spacing-sm">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-5 text-neutral-100 tracking-tight">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-5 text-foreground tracking-tight">
               Memory Insurance for Your Clients&apos; Most Precious Moments
             </h2>
-            <p className="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto font-light">
+            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto font-light">
               PhotoVault is a digital safety deposit box for family memories. One tap downloads to camera roll. Professional-grade protection. And you earn $4/month forever on every client.
             </p>
           </div>
 
-          <div className="bg-neutral-800/50 border border-white/10 rounded-2xl p-10 md:p-12 card-shadow">
+          <div className="bg-card/50 border border-border rounded-2xl p-10 md:p-12 card-shadow">
             <div className="grid md:grid-cols-2 gap-12">
               <div>
                 <h3 className="text-2xl font-semibold mb-6 text-primary">Why Photographers Love PhotoVault</h3>
@@ -203,7 +203,7 @@ export default function PhotographersPage() {
                   ].map((benefit, index) => (
                     <div key={index} className="flex items-center gap-3">
                       <CheckCircle className="h-5 w-5 text-primary flex-shrink-0" />
-                      <span className="text-neutral-300 text-sm">{benefit}</span>
+                      <span className="text-muted-foreground text-sm">{benefit}</span>
                     </div>
                   ))}
                 </div>
@@ -221,7 +221,7 @@ export default function PhotographersPage() {
                   ].map((benefit, index) => (
                     <div key={index} className="flex items-center gap-3">
                       <Heart className="h-5 w-5 text-primary flex-shrink-0" />
-                      <span className="text-neutral-300 text-sm">{benefit}</span>
+                      <span className="text-muted-foreground text-sm">{benefit}</span>
                     </div>
                   ))}
                 </div>
@@ -231,13 +231,13 @@ export default function PhotographersPage() {
         </section>
 
         {/* How It Works */}
-        <section id="how-it-works" className="section-spacing-sm bg-neutral-800/30 -mx-4 md:-mx-6 lg:-mx-8 px-4 md:px-6 lg:px-8">
+        <section id="how-it-works" className="section-spacing-sm bg-card/30 -mx-4 md:-mx-6 lg:-mx-8 px-4 md:px-6 lg:px-8">
           <div className="container-pixieset">
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-5 text-neutral-100 tracking-tight">
+              <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-5 text-foreground tracking-tight">
                 Simple Integration — Lasting Results
               </h2>
-              <p className="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto font-light">
+              <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto font-light">
                 Connect your existing workflow in minutes. No learning curve, no disruption to your current process.
               </p>
             </div>
@@ -266,7 +266,7 @@ export default function PhotographersPage() {
                   image: "https://images.unsplash.com/photo-1553877522-43269d4ea984?w=400&h=300&fit=crop&crop=center"
                 }
               ].map((item, index) => (
-                <Card key={index} className="overflow-hidden border border-white/10 card-shadow-hover bg-neutral-800/50 group">
+                <Card key={index} className="overflow-hidden border border-border card-shadow-hover bg-card/50 group">
                   <div className="image-card h-48">
                     <img 
                       src={item.image} 
@@ -275,12 +275,12 @@ export default function PhotographersPage() {
                       className="w-full h-full object-cover"
                     />
                     <div className="image-card-content">
-                      <h3 className="text-lg font-semibold mb-2 text-white">{item.title}</h3>
-                      <p className="text-white/90 text-sm leading-relaxed">{item.description}</p>
+                      <h3 className="text-lg font-semibold mb-2 text-foreground">{item.title}</h3>
+                      <p className="text-foreground/90 text-sm leading-relaxed">{item.description}</p>
                     </div>
                   </div>
                   <CardContent className="p-6 text-center">
-                    <div className="w-12 h-12 bg-primary text-white rounded-full flex items-center justify-center text-lg font-semibold mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <div className="w-12 h-12 bg-primary text-foreground rounded-full flex items-center justify-center text-lg font-semibold mx-auto mb-4 group-hover:scale-110 transition-transform">
                       {item.step}
                     </div>
                     <div className="w-12 h-12 bg-primary/10 rounded-full mx-auto mb-4 flex items-center justify-center">
@@ -298,32 +298,32 @@ export default function PhotographersPage() {
         {/* Revenue Section */}
         <section className="section-spacing-sm">
           <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-5 text-neutral-100 tracking-tight">
+            <h2 className="text-3xl md:text-4xl lg:text-5xl font-semibold mb-5 text-foreground tracking-tight">
               Every Photoshoot Becomes Passive Income
             </h2>
-            <p className="text-lg md:text-xl text-neutral-400 max-w-2xl mx-auto font-light">
+            <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto font-light">
               Your clients pay $8/month for Memory Insurance—you earn $4/month forever. No extra work. Just protecting the moments you already captured.
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
-            <Card className="border border-white/10 card-shadow-hover bg-neutral-800/50">
+            <Card className="border border-border card-shadow-hover bg-card/50">
               <CardHeader>
                 <div className="flex items-center gap-3">
                   <div className="p-2 bg-primary/10 rounded-lg">
                     <DollarSign className="h-6 w-6 text-primary" />
                   </div>
-                  <CardTitle className="text-neutral-100">Referral Revenue</CardTitle>
+                  <CardTitle className="text-foreground">Referral Revenue</CardTitle>
                 </div>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
                   <div className="text-3xl font-semibold text-primary">$25-$50 + $4/month</div>
-                  <p className="text-neutral-400 text-sm leading-relaxed">
+                  <p className="text-muted-foreground text-sm leading-relaxed">
                     Earn $25 (6-month) or $50 (1-year) upfront commission + $4/month passive income for every client through PhotoVault.
                   </p>
-                  <div className="bg-neutral-700/30 p-4 rounded-lg">
-                    <p className="text-sm text-neutral-300">
+                  <div className="bg-secondary/30 p-4 rounded-lg">
+                    <p className="text-sm text-muted-foreground">
                       <strong>Example:</strong> 25 clients × $50 upfront (1-year) = $1,250 + 25 clients × $4/month = $100/month passive income
                     </p>
                   </div>
@@ -351,7 +351,7 @@ export default function PhotographersPage() {
               <CardContent>
                 <div className="space-y-4">
                   <div className="text-3xl font-bold text-blue-600">2-3x More</div>
-                  <p className="text-slate-600 dark:text-slate-300">
+                  <p className="text-muted-foreground dark:text-foreground">
                     Clients with permanent photo access are 2-3x more likely to book anniversary sessions and refer friends.
                   </p>
                   <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
@@ -373,7 +373,7 @@ export default function PhotographersPage() {
         {/* Testimonials */}
         <section className="mb-16">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-6 text-neutral-100">
+            <h2 className="text-4xl font-bold mb-6 text-foreground">
               Photographers Who Became Memory Guardians
             </h2>
           </div>
@@ -399,20 +399,20 @@ export default function PhotographersPage() {
                 location: "Event Specialist"
               }
             ].map((testimonial, index) => (
-              <Card key={index} className="border border-white/10 bg-neutral-800/50">
+              <Card key={index} className="border border-border bg-card/50">
                 <CardContent className="p-6">
                   <div className="flex mb-4">
                     {[...Array(5)].map((_, i) => (
                       <Star key={i} className="h-5 w-5 text-yellow-400 fill-current" />
                     ))}
                   </div>
-                  <p className="text-neutral-300 mb-4 italic">
+                  <p className="text-muted-foreground mb-4 italic">
                     &quot;{testimonial.quote}&quot;
                   </p>
                   <div>
-                    <p className="font-semibold text-neutral-100">{testimonial.author}</p>
-                    <p className="text-sm text-neutral-400">{testimonial.business}</p>
-                    <p className="text-xs text-neutral-500">{testimonial.location}</p>
+                    <p className="font-semibold text-foreground">{testimonial.author}</p>
+                    <p className="text-sm text-muted-foreground">{testimonial.business}</p>
+                    <p className="text-xs text-muted-foreground">{testimonial.location}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -423,7 +423,7 @@ export default function PhotographersPage() {
         {/* FAQ Section */}
         <section className="mb-16">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold mb-6 text-neutral-100">
+            <h2 className="text-4xl font-bold mb-6 text-foreground">
               Questions We Hear Every Day
             </h2>
           </div>
@@ -451,10 +451,10 @@ export default function PhotographersPage() {
                 answer: "Unlimited galleries, advanced analytics, commission tracking, PDF reports, client invitations, and professional CMS integration."
               }
             ].map((faq, index) => (
-              <Card key={index} className="border border-white/10 bg-neutral-800/50">
+              <Card key={index} className="border border-border bg-card/50">
                 <CardContent className="p-6">
-                  <h3 className="text-lg font-semibold mb-3 text-neutral-100">{faq.question}</h3>
-                  <p className="text-neutral-400">{faq.answer}</p>
+                  <h3 className="text-lg font-semibold mb-3 text-foreground">{faq.question}</h3>
+                  <p className="text-muted-foreground">{faq.answer}</p>
                 </CardContent>
               </Card>
             ))}
@@ -462,7 +462,7 @@ export default function PhotographersPage() {
         </section>
 
         {/* CTA Section */}
-        <section className="text-center bg-gradient-to-r from-green-600 to-blue-600 rounded-2xl p-12 text-white shadow-xl">
+        <section className="text-center bg-gradient-to-r from-green-600 to-blue-600 rounded-2xl p-12 text-foreground shadow-xl">
           <h2 className="text-4xl font-bold mb-6">
             Become a Memory Guardian Today
           </h2>
@@ -484,21 +484,21 @@ export default function PhotographersPage() {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-white/10 bg-neutral-900 mt-16">
+      <footer className="border-t border-border bg-background mt-16">
         <div className="container mx-auto px-4 py-12">
           <div className="grid md:grid-cols-4 gap-8">
             <div>
               <div className="flex items-center space-x-2 mb-4">
                 <Camera className="h-6 w-6 text-blue-600" />
-                <span className="text-xl font-bold text-neutral-100">PhotoVault</span>
+                <span className="text-xl font-bold text-foreground">PhotoVault</span>
               </div>
-              <p className="text-neutral-400">
+              <p className="text-muted-foreground">
                 Memory Insurance for families. Passive income for photographers.
               </p>
             </div>
             <div>
-              <h3 className="font-semibold mb-4 text-neutral-100">For Photographers</h3>
-              <ul className="space-y-2 text-sm text-neutral-400">
+              <h3 className="font-semibold mb-4 text-foreground">For Photographers</h3>
+              <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><Link href="/photographers/benefits" className="hover:text-blue-600">Benefits</Link></li>
                 <li><Link href="/photographers/pricing" className="hover:text-blue-600">Pricing</Link></li>
                 <li><Link href="/photographers/integration" className="hover:text-blue-600">Integration</Link></li>
@@ -506,8 +506,8 @@ export default function PhotographersPage() {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-4 text-neutral-100">Resources</h3>
-              <ul className="space-y-2 text-sm text-neutral-400">
+              <h3 className="font-semibold mb-4 text-foreground">Resources</h3>
+              <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><Link href="/photographers/case-studies" className="hover:text-blue-600">Case Studies</Link></li>
                 <li><Link href="/photographers/blog" className="hover:text-blue-600">Blog</Link></li>
                 <li><Link href="/photographers/webinars" className="hover:text-blue-600">Webinars</Link></li>
@@ -515,8 +515,8 @@ export default function PhotographersPage() {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold mb-4 text-neutral-100">Company</h3>
-              <ul className="space-y-2 text-sm text-neutral-400">
+              <h3 className="font-semibold mb-4 text-foreground">Company</h3>
+              <ul className="space-y-2 text-sm text-muted-foreground">
                 <li><Link href="/about" className="hover:text-blue-600">About</Link></li>
                 <li><Link href="/privacy" className="hover:text-blue-600">Privacy</Link></li>
                 <li><Link href="/terms" className="hover:text-blue-600">Terms</Link></li>
@@ -525,7 +525,7 @@ export default function PhotographersPage() {
             </div>
           </div>
           <Separator className="my-8 bg-white/10" />
-          <div className="text-center text-sm text-neutral-500">
+          <div className="text-center text-sm text-muted-foreground">
             © 2024 PhotoVault. Grow your photography business with lifetime client access.
           </div>
         </div>

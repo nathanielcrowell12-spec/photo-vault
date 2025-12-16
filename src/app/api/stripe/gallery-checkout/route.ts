@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { getStripeClient, PHOTOGRAPHER_COMMISSION_RATE } from '@/lib/stripe'
 import { getPaymentOptionById } from '@/lib/payment-models'
+import { trackServerEvent } from '@/lib/analytics/server'
+import { EVENTS } from '@/types/analytics'
+import { mapPaymentOptionToPlanType } from '@/lib/analytics/helpers'
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic'
@@ -311,6 +314,21 @@ export async function POST(request: NextRequest) {
         photovaultRevenue: photovaultRevenueCents,
       }
     )
+
+    // Track client started payment (server-side - funnel tracking)
+    try {
+      const planType = mapPaymentOptionToPlanType(gallery.payment_option_id || undefined)
+
+      await trackServerEvent(user.id, EVENTS.CLIENT_STARTED_PAYMENT, {
+        gallery_id: galleryId,
+        photographer_id: photographer.id,
+        plan_type: planType || 'annual',
+        amount_cents: totalAmountCents,
+      })
+    } catch (trackError) {
+      console.error('[GalleryCheckout] Error tracking payment start:', trackError)
+      // Don't block checkout if tracking fails
+    }
 
     return NextResponse.json({
       sessionId: session.id,

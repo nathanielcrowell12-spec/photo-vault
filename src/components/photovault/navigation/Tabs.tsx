@@ -27,7 +27,7 @@ export default function Tabs({ tabs, defaultTab, onChange }: TabsProps) {
   return (
     <div>
       {/* Tab Headers */}
-      <div className="border-b border-slate-200 dark:border-slate-700">
+      <div className="border-b border-border">
         <nav className="flex space-x-8" aria-label="Tabs">
           {tabs.map((tab) => {
             const isActive = activeTab === tab.id
@@ -38,7 +38,7 @@ export default function Tabs({ tabs, defaultTab, onChange }: TabsProps) {
                 className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                   isActive
                     ? 'border-blue-600 text-blue-600'
-                    : 'border-transparent text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:border-slate-300'
+                    : 'border-transparent text-muted-foreground dark:text-muted-foreground hover:text-foreground hover:border-border'
                 }`}
               >
                 {tab.label}

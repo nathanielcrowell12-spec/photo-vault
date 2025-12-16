@@ -323,16 +323,16 @@ function ClientBillingContent() {
 
   if (authLoading || loading) {
     return (
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-neutral-900">
+    <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-neutral-800/50 border-white/10">
+      <header className="border-b bg-card/50 border-border">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Button asChild variant="ghost" size="sm">
@@ -344,7 +344,7 @@ function ClientBillingContent() {
             <Separator orientation="vertical" className="h-6" />
             <div className="flex items-center space-x-2">
               <CreditCard className="h-6 w-6 text-green-600" />
-              <span className="text-xl font-bold text-neutral-100">Billing & Subscriptions</span>
+              <span className="text-xl font-bold text-foreground">Billing & Subscriptions</span>
             </div>
           </div>
           <Button variant="outline" size="sm" onClick={fetchBillingData}>
@@ -358,24 +358,24 @@ function ClientBillingContent() {
         <div className="max-w-4xl mx-auto space-y-8">
           {/* Active Subscriptions */}
           <section>
-            <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-neutral-100">
+            <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-foreground">
               <Camera className="h-5 w-5 text-purple-600" />
               Your Subscriptions
             </h2>
 
             {/* Subscription Success Message */}
             {subscriptionSuccess && (
-              <Card className="bg-neutral-800/50 border-white/10 mb-6">
+              <Card className="bg-card/50 border-border mb-6">
                 <CardContent className="py-6">
                   <div className="flex items-center gap-4">
                     <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
                       <PartyPopper className="h-6 w-6 text-green-600" />
                     </div>
                     <div>
-                      <h3 className="font-semibold text-neutral-100">
+                      <h3 className="font-semibold text-foreground">
                         Welcome to PhotoVault!
                       </h3>
-                      <p className="text-sm text-neutral-400">
+                      <p className="text-sm text-muted-foreground">
                         Your subscription is now active. You can start uploading and organizing your photos.
                       </p>
                     </div>
@@ -387,7 +387,7 @@ function ClientBillingContent() {
             {subscriptions.length === 0 ? (
               <div className="space-y-6">
                 {/* Direct Monthly Subscription Card */}
-                <Card className="bg-neutral-800/50 border-white/10">
+                <Card className="bg-card/50 border-border">
                   <CardHeader className="pb-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
@@ -438,13 +438,13 @@ function ClientBillingContent() {
                           </>
                         )}
                       </Button>
-                      <p className="text-xs text-slate-500 text-center sm:text-left">
+                      <p className="text-xs text-muted-foreground text-center sm:text-left">
                         Cancel anytime. No hidden fees.
                       </p>
                     </div>
 
                     {/* Security Note */}
-                    <div className="flex items-center gap-2 text-xs text-slate-500 bg-neutral-800 p-3 rounded-lg">
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground bg-card p-3 rounded-lg">
                       <Shield className="h-4 w-4" />
                       <span>Secure payment powered by Stripe. Your card details are never stored on our servers.</span>
                     </div>
@@ -452,10 +452,10 @@ function ClientBillingContent() {
                 </Card>
 
                 {/* Alternative: Already have a photographer? */}
-                <Card className="bg-neutral-800/50 border-white/10">
+                <Card className="bg-card/50 border-border">
                   <CardContent className="py-6">
                     <div className="text-center">
-                      <p className="text-sm text-neutral-400 mb-3">
+                      <p className="text-sm text-muted-foreground mb-3">
                         Working with a photographer? They may have already set up a gallery for you.
                       </p>
                       <Button asChild variant="outline" size="sm">
@@ -471,18 +471,18 @@ function ClientBillingContent() {
             ) : (
               <div className="space-y-4">
                 {subscriptions.map((sub) => (
-                  <Card key={sub.id} className="bg-neutral-800/50 border-white/10">
+                  <Card key={sub.id} className="bg-card/50 border-border">
                     <CardContent className="p-6">
                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
-                            <h3 className="text-lg font-semibold text-neutral-100">{sub.gallery_name}</h3>
+                            <h3 className="text-lg font-semibold text-foreground">{sub.gallery_name}</h3>
                             {getStatusBadge(sub.status, sub.cancel_at_period_end)}
                           </div>
-                          <p className="text-sm text-neutral-400 mb-2">
+                          <p className="text-sm text-muted-foreground mb-2">
                             by {sub.photographer_name}
                           </p>
-                          <div className="flex flex-wrap gap-4 text-sm text-neutral-400">
+                          <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                             <div className="flex items-center gap-1">
                               <Calendar className="h-4 w-4" />
                               <span>Renews {formatDate(sub.current_period_end)}</span>
@@ -624,25 +624,25 @@ function ClientBillingContent() {
 
           {/* Payment History */}
           <section>
-            <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-neutral-100">
+            <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-foreground">
               <DollarSign className="h-5 w-5 text-green-600" />
               Payment History
             </h2>
 
             {payments.length === 0 ? (
-              <Card className="bg-neutral-800/50 border-white/10">
+              <Card className="bg-card/50 border-border">
                 <CardContent className="py-8 text-center">
-                  <p className="text-neutral-400">No payment history yet.</p>
+                  <p className="text-muted-foreground">No payment history yet.</p>
                 </CardContent>
               </Card>
             ) : (
-              <Card className="bg-neutral-800/50 border-white/10">
+              <Card className="bg-card/50 border-border">
                 <CardContent className="p-0">
                   <div className="divide-y dark:divide-slate-700">
                     {payments.map((payment) => (
                       <div
                         key={payment.id}
-                        className="flex items-center justify-between p-4 hover:bg-neutral-800"
+                        className="flex items-center justify-between p-4 hover:bg-card"
                       >
                         <div className="flex items-center gap-4">
                           <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
@@ -660,7 +660,7 @@ function ClientBillingContent() {
                             <div className="font-medium">
                               {payment.status === 'succeeded' ? 'Payment Successful' : 'Payment Failed'}
                             </div>
-                            <div className="text-sm text-slate-500">
+                            <div className="text-sm text-muted-foreground">
                               {formatDate(payment.paid_at)}
                             </div>
                           </div>
@@ -681,10 +681,10 @@ function ClientBillingContent() {
           </section>
 
           {/* Help Section */}
-          <Card className="bg-neutral-800/50 border-white/10">
+          <Card className="bg-card/50 border-border">
             <CardContent className="p-6">
-              <h3 className="font-semibold mb-2 text-neutral-100">Need Help?</h3>
-              <p className="text-sm text-neutral-400 mb-4">
+              <h3 className="font-semibold mb-2 text-foreground">Need Help?</h3>
+              <p className="text-sm text-muted-foreground mb-4">
                 If you have questions about billing or need to make changes to your subscription,
                 our support team is here to help.
               </p>
@@ -746,7 +746,7 @@ function ClientBillingContent() {
 export default function ClientBillingPage() {
   return (
     <Suspense fallback={
-      <div className="min-h-screen bg-neutral-900 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     }>
