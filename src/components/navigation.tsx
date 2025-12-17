@@ -72,7 +72,8 @@ export function Navigation({ hideOnPaths = [] }: NavigationProps) {
     { href: '/photographer/clients', icon: Users, label: 'Clients' },
     { href: '/photographers/revenue', icon: DollarSign, label: 'Revenue' },
     { href: '/photographers/reports', icon: FileText, label: 'Reports' },
-    { href: '/photographers/settings', icon: Settings, label: 'Settings' }
+    { href: '/photographers/settings', icon: Settings, label: 'Settings' },
+    { href: '/photographer/support', icon: HelpCircle, label: 'Support' }
   ]
 
   const adminLinks = [

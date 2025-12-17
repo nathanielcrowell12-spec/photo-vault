@@ -19,74 +19,77 @@ import {
   MessageCircle,
   Search,
   Clock,
-  AlertCircle,
-  Users,
   CreditCard,
-  Camera,
-  Loader2
+  Upload,
+  Users,
+  DollarSign,
+  Settings,
+  Loader2,
+  ExternalLink,
+  BookOpen
 } from 'lucide-react'
 import Link from 'next/link'
 
 interface FAQItem {
   question: string
   answer: string
-  category: 'billing' | 'gallery' | 'technical' | 'account'
+  category: 'stripe' | 'upload' | 'clients' | 'billing' | 'general'
 }
 
 const faqItems: FAQItem[] = [
   {
-    question: "How do I access my photo gallery?",
-    answer: "Once you've made payment, you'll receive an email with a direct link to your gallery. You can also access it anytime from your PhotoVault dashboard.",
-    category: "gallery"
+    question: "How do I connect my Stripe account?",
+    answer: "Go to Settings in your dashboard and click 'Connect Stripe Account'. You'll be redirected to Stripe's secure signup where you'll enter your business and banking details.",
+    category: "stripe"
   },
   {
-    question: "Can I download all my photos?",
-    answer: "Yes! With any paid plan, you get unlimited downloads in high resolution. You can download individual photos or entire galleries as ZIP files.",
-    category: "gallery"
+    question: "When do I get paid?",
+    answer: "Commissions are deposited within 2-3 business days of client payment. Funds go directly to your connected Stripe account - no invoicing required.",
+    category: "stripe"
   },
   {
-    question: "How long do I have access to my photos?",
-    answer: "Access duration depends on your plan: Annual+Monthly (1 year + ongoing), 6-Month Trial (6 months), or Monthly (ongoing monthly access).",
+    question: "How much do I earn per client?",
+    answer: "Year Package: $50 upfront commission. 6-Month Package: $25 upfront. After the initial package, you earn $4/month for each active client paying $8/month.",
+    category: "stripe"
+  },
+  {
+    question: "How do I upload photos?",
+    answer: "For large uploads (ZIP files), use the Desktop App - it handles large files reliably. For smaller batches (under 100 photos), you can upload directly in your browser from the gallery page.",
+    category: "upload"
+  },
+  {
+    question: "What file formats are supported?",
+    answer: "JPEG/JPG, PNG, and HEIC are supported. HEIC files are converted automatically. RAW file support is coming soon.",
+    category: "upload"
+  },
+  {
+    question: "My upload is stuck or failing. What do I do?",
+    answer: "For large uploads, use the Desktop App - it handles interruptions gracefully. Check your internet connection, try a smaller batch, and make sure files are under 100MB each for web upload.",
+    category: "upload"
+  },
+  {
+    question: "How do I invite a client to their gallery?",
+    answer: "Open the gallery, click 'Share' or 'Invite Client', and copy the unique gallery link. Send it via email, text, or your booking software.",
+    category: "clients"
+  },
+  {
+    question: "What happens when a client clicks the gallery link?",
+    answer: "They can preview a few teaser photos, choose their package (Year or 6-Month), create an account and pay, then instantly access all photos.",
+    category: "clients"
+  },
+  {
+    question: "How much is the platform fee?",
+    answer: "PhotoVault charges $22/month for the platform. This covers unlimited galleries, unlimited photo storage, client management tools, commission payouts, and customer support.",
     category: "billing"
   },
   {
-    question: "What payment methods do you accept?",
-    answer: "We accept all major credit cards (Visa, Mastercard, American Express) and debit cards. All payments are processed securely through our payment processor.",
-    category: "billing"
-  },
-  {
-    question: "Can I share my gallery with family and friends?",
-    answer: "Absolutely! You can share your gallery with anyone by sending them the gallery link. They can view and download photos without needing an account.",
-    category: "gallery"
-  },
-  {
-    question: "How do I update my payment method?",
-    answer: "Go to your Billing & Payments page and click 'Update Payment Method'. You can change your card details anytime before your next billing date.",
-    category: "billing"
-  },
-  {
-    question: "What if I can't access my gallery?",
-    answer: "First, check if your payment is up to date. If you're still having issues, try clearing your browser cache or using a different browser. Contact support if problems persist.",
-    category: "technical"
-  },
-  {
-    question: "Can I cancel my subscription?",
-    answer: "Yes, you can cancel anytime from your account settings. You'll keep access until your current billing period ends.",
-    category: "account"
-  },
-  {
-    question: "How do I contact my photographer?",
-    answer: "Each gallery includes your photographer's contact information. You can also reach them directly through the messaging system in your gallery.",
-    category: "gallery"
-  },
-  {
-    question: "Is my payment information secure?",
-    answer: "Yes, we use industry-standard encryption and never store your full payment details. All transactions are processed securely through our payment processor.",
+    question: "How do I cancel my subscription?",
+    answer: "Go to Settings > Subscription and click 'Cancel Subscription'. Your galleries remain accessible to clients even if you cancel, and you'll continue earning commissions from existing clients.",
     category: "billing"
   }
 ]
 
-export default function ClientSupportPage() {
+export default function PhotographerSupportPage() {
   const { user, userType, loading } = useAuth()
   const router = useRouter()
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
@@ -100,7 +103,7 @@ export default function ClientSupportPage() {
   const [submitting, setSubmitting] = useState(false)
 
   useEffect(() => {
-    if (!loading && userType !== 'client') {
+    if (!loading && userType !== 'photographer') {
       router.push('/dashboard')
     }
   }, [loading, userType, router])
@@ -113,13 +116,13 @@ export default function ClientSupportPage() {
     )
   }
 
-  if (userType !== 'client') {
+  if (userType !== 'photographer') {
     return null
   }
 
   const filteredFAQs = faqItems.filter(item => {
     const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory
-    const matchesSearch = searchQuery === '' || 
+    const matchesSearch = searchQuery === '' ||
       item.question.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.answer.toLowerCase().includes(searchQuery.toLowerCase())
     return matchesCategory && matchesSearch
@@ -128,9 +131,8 @@ export default function ClientSupportPage() {
   const handleSupportSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSubmitting(true)
-    
+
     try {
-      // Simulate support ticket submission
       await new Promise(resolve => setTimeout(resolve, 1000))
       alert('Support ticket submitted successfully! We\'ll get back to you within 24 hours.')
       setSupportForm({ subject: '', category: '', message: '', priority: 'normal' })
@@ -144,20 +146,20 @@ export default function ClientSupportPage() {
 
   const getCategoryIcon = (category: string) => {
     switch (category) {
+      case 'stripe': return <DollarSign className="h-4 w-4" />
+      case 'upload': return <Upload className="h-4 w-4" />
+      case 'clients': return <Users className="h-4 w-4" />
       case 'billing': return <CreditCard className="h-4 w-4" />
-      case 'gallery': return <Camera className="h-4 w-4" />
-      case 'technical': return <AlertCircle className="h-4 w-4" />
-      case 'account': return <Users className="h-4 w-4" />
       default: return <HelpCircle className="h-4 w-4" />
     }
   }
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case 'billing': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
-      case 'gallery': return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
-      case 'technical': return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200'
-      case 'account': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+      case 'stripe': return 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200'
+      case 'upload': return 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200'
+      case 'clients': return 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200'
+      case 'billing': return 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200'
       default: return 'bg-slate-100 text-slate-800 dark:bg-slate-900 dark:text-slate-200'
     }
   }
@@ -169,7 +171,7 @@ export default function ClientSupportPage() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Button asChild variant="ghost" size="sm">
-              <Link href="/dashboard">
+              <Link href="/photographer/dashboard">
                 <ArrowLeft className="h-4 w-4 mr-2" />
                 Back to Dashboard
               </Link>
@@ -177,25 +179,62 @@ export default function ClientSupportPage() {
             <Separator orientation="vertical" className="h-6" />
             <div className="flex items-center space-x-2">
               <HelpCircle className="h-6 w-6 text-blue-600" />
-              <span className="text-xl font-bold text-foreground">Support & Help</span>
+              <span className="text-xl font-bold text-foreground">Help & Support</span>
             </div>
-          </div>
-          <div className="flex items-center space-x-2">
-            <Badge variant="outline" className="bg-blue-50 text-blue-700 dark:bg-blue-900 dark:text-blue-200">
-              24/7 Support
-            </Badge>
           </div>
         </div>
       </header>
 
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto">
-          {/* Quick Help */}
+          {/* Quick Links */}
+          <div className="grid md:grid-cols-3 gap-4 mb-8">
+            <Card className="bg-card/50 border-border hover:border-primary/50 transition-colors">
+              <CardContent className="p-4">
+                <Link href="/download-desktop-app" className="flex items-center space-x-3">
+                  <Upload className="h-8 w-8 text-purple-600" />
+                  <div>
+                    <h3 className="font-semibold text-foreground">Desktop App</h3>
+                    <p className="text-sm text-muted-foreground">For large uploads</p>
+                  </div>
+                  <ExternalLink className="h-4 w-4 text-muted-foreground ml-auto" />
+                </Link>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-card/50 border-border hover:border-primary/50 transition-colors">
+              <CardContent className="p-4">
+                <Link href="/photographers/settings" className="flex items-center space-x-3">
+                  <Settings className="h-8 w-8 text-blue-600" />
+                  <div>
+                    <h3 className="font-semibold text-foreground">Settings</h3>
+                    <p className="text-sm text-muted-foreground">Stripe & billing</p>
+                  </div>
+                  <ExternalLink className="h-4 w-4 text-muted-foreground ml-auto" />
+                </Link>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-card/50 border-border hover:border-primary/50 transition-colors">
+              <CardContent className="p-4">
+                <Link href="/photographers/revenue" className="flex items-center space-x-3">
+                  <DollarSign className="h-8 w-8 text-green-600" />
+                  <div>
+                    <h3 className="font-semibold text-foreground">Revenue</h3>
+                    <p className="text-sm text-muted-foreground">Track earnings</p>
+                  </div>
+                  <ExternalLink className="h-4 w-4 text-muted-foreground ml-auto" />
+                </Link>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* FAQ Section */}
           <Card className="mb-8 bg-card/50 border-border">
             <CardHeader>
               <CardTitle className="flex items-center space-x-2">
                 <Search className="h-6 w-6 text-green-600" />
-                <span>Quick Help</span>
+                <span>Frequently Asked Questions</span>
               </CardTitle>
               <CardDescription>
                 Find answers to common questions
@@ -216,10 +255,10 @@ export default function ClientSupportPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Categories</SelectItem>
+                    <SelectItem value="stripe">Stripe & Payments</SelectItem>
+                    <SelectItem value="upload">Uploading</SelectItem>
+                    <SelectItem value="clients">Clients</SelectItem>
                     <SelectItem value="billing">Billing</SelectItem>
-                    <SelectItem value="gallery">Gallery</SelectItem>
-                    <SelectItem value="technical">Technical</SelectItem>
-                    <SelectItem value="account">Account</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -231,7 +270,7 @@ export default function ClientSupportPage() {
                       <h3 className="font-medium text-foreground">
                         {item.question}
                       </h3>
-                      <Badge className={`${getCategoryColor(item.category)} flex items-center space-x-1`}>
+                      <Badge className={`${getCategoryColor(item.category)} flex items-center space-x-1 ml-2 shrink-0`}>
                         {getCategoryIcon(item.category)}
                         <span className="capitalize">{item.category}</span>
                       </Badge>
@@ -271,18 +310,18 @@ export default function ClientSupportPage() {
                   </div>
                   <div>
                     <Label htmlFor="category">Category</Label>
-                    <Select 
-                      value={supportForm.category} 
+                    <Select
+                      value={supportForm.category}
                       onValueChange={(value) => setSupportForm({...supportForm, category: value})}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select category" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="billing">Billing & Payments</SelectItem>
-                        <SelectItem value="gallery">Gallery Access</SelectItem>
-                        <SelectItem value="technical">Technical Issues</SelectItem>
-                        <SelectItem value="account">Account Settings</SelectItem>
+                        <SelectItem value="stripe">Stripe & Payments</SelectItem>
+                        <SelectItem value="upload">Uploading Issues</SelectItem>
+                        <SelectItem value="clients">Client Management</SelectItem>
+                        <SelectItem value="billing">Platform Billing</SelectItem>
                         <SelectItem value="other">Other</SelectItem>
                       </SelectContent>
                     </Select>
@@ -291,8 +330,8 @@ export default function ClientSupportPage() {
 
                 <div>
                   <Label htmlFor="priority">Priority</Label>
-                  <Select 
-                    value={supportForm.priority} 
+                  <Select
+                    value={supportForm.priority}
                     onValueChange={(value) => setSupportForm({...supportForm, priority: value})}
                   >
                     <SelectTrigger>
@@ -318,8 +357,8 @@ export default function ClientSupportPage() {
                   />
                 </div>
 
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   disabled={submitting}
                   className="w-full"
                 >
@@ -340,7 +379,7 @@ export default function ClientSupportPage() {
           </Card>
 
           {/* Contact Methods */}
-          <div className="grid md:grid-cols-3 gap-6 mb-8">
+          <div className="grid md:grid-cols-2 gap-6">
             <Card className="bg-card/50 border-border">
               <CardContent className="p-6 text-center">
                 <Mail className="h-8 w-8 text-blue-600 mx-auto mb-3" />
@@ -368,7 +407,6 @@ export default function ClientSupportPage() {
                 </Button>
               </CardContent>
             </Card>
-
           </div>
         </div>
       </main>
