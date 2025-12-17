@@ -12,7 +12,7 @@
     },
     {
       "path": "/api/internal/monitor-webhooks",
-      "schedule": "*/15 * * * *"
+      "schedule": "0 8 * * *"
     }
   ]
 }
