@@ -549,4 +549,191 @@ Update payment method: ${process.env.NEXT_PUBLIC_APP_URL}/billing
       return { success: false, error: error.message }
     }
   }
+
+  // ============================================================================
+  // ADMIN ALERT EMAILS (Monitoring & Error Tracking)
+  // ============================================================================
+
+  /**
+   * Send alert email to admin
+   * Used by monitoring scripts and webhook alerts
+   */
+  static async sendAlertEmail(params: {
+    to: string
+    subject: string
+    body: string // HTML content
+    alertType: 'payment_failure' | 'webhook_failure' | 'error_spike' | 'churn' | 'monitoring_failure'
+    severity: 'critical' | 'high' | 'medium' | 'info'
+  }): Promise<{ success: boolean; messageId?: string; error?: string }> {
+    try {
+      const severityEmoji = {
+        critical: '🚨',
+        high: '⚠️',
+        medium: '📊',
+        info: 'ℹ️',
+      }[params.severity]
+
+      const severityLabel = {
+        critical: 'CRITICAL',
+        high: 'HIGH',
+        medium: 'MEDIUM',
+        info: 'INFO',
+      }[params.severity]
+
+      const severityColor = {
+        critical: '#dc2626', // red
+        high: '#f59e0b', // amber
+        medium: '#3b82f6', // blue
+        info: '#6b7280', // gray
+      }[params.severity]
+
+      // Get remediation steps based on alert type
+      const remediationSteps = this.getRemediationSteps(params.alertType)
+
+      const result = await (await getClient()).emails.send({
+        from: await getFromEmail(),
+        to: params.to,
+        subject: `${severityEmoji} [${severityLabel}] ${params.subject}`,
+        html: `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <style>
+              body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+              .alert-box {
+                background: #fffbeb;
+                border: 2px solid ${severityColor};
+                border-left-width: 6px;
+                padding: 20px;
+                margin: 20px 0;
+                border-radius: 8px;
+              }
+              .severity-badge {
+                display: inline-block;
+                background: ${severityColor};
+                color: white;
+                padding: 4px 12px;
+                border-radius: 4px;
+                font-weight: bold;
+                font-size: 12px;
+                margin-bottom: 10px;
+              }
+              ul { padding-left: 20px; }
+              li { margin: 10px 0; }
+              .remediation {
+                background: #f3f4f6;
+                padding: 15px;
+                border-radius: 8px;
+                margin-top: 20px;
+              }
+              .remediation h3 { margin-top: 0; }
+              .cta-button {
+                display: inline-block;
+                background: #2563eb;
+                color: white;
+                padding: 10px 20px;
+                border-radius: 6px;
+                text-decoration: none;
+                margin-top: 15px;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="alert-box">
+              <span class="severity-badge">${severityLabel}</span>
+              ${params.body}
+            </div>
+
+            ${remediationSteps ? `
+            <div class="remediation">
+              <h3>Recommended Actions:</h3>
+              ${remediationSteps}
+            </div>
+            ` : ''}
+
+            <p>
+              <a href="${process.env.NEXT_PUBLIC_SITE_URL}/admin" class="cta-button">
+                Open Admin Dashboard
+              </a>
+            </p>
+
+            <hr style="margin-top: 30px; border: none; border-top: 1px solid #e5e7eb;">
+            <p style="color: #6b7280; font-size: 12px;">
+              This is an automated alert from PhotoVault monitoring system.<br>
+              Time: ${new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })} CST
+            </p>
+          </body>
+          </html>
+        `,
+        text: `
+[${severityLabel}] ${params.subject}
+
+${params.body.replace(/<[^>]*>/g, '')}
+
+${remediationSteps ? `Recommended Actions:\n${remediationSteps.replace(/<[^>]*>/g, '')}` : ''}
+
+Open Admin Dashboard: ${process.env.NEXT_PUBLIC_SITE_URL}/admin
+
+---
+Automated alert from PhotoVault monitoring system.
+Time: ${new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })} CST
+        `.trim(),
+      })
+
+      console.log(`[Email] Alert email sent: ${params.alertType} (${params.severity}) to ${params.to}`)
+      return { success: true, messageId: result.id }
+    } catch (error: any) {
+      console.error('[Email] Error sending alert email:', error)
+      return { success: false, error: error.message }
+    }
+  }
+
+  /**
+   * Get remediation steps based on alert type
+   */
+  private static getRemediationSteps(alertType: string): string {
+    const steps: Record<string, string> = {
+      payment_failure: `
+        <ol>
+          <li>Check <a href="https://dashboard.stripe.com/test/payments">Stripe Dashboard</a> for failed payment details</li>
+          <li>Review the failure_reason in the webhook_logs table</li>
+          <li>If widespread issue, check Stripe status page</li>
+          <li>Contact affected customers if card issues</li>
+        </ol>
+      `,
+      webhook_failure: `
+        <ol>
+          <li>Check <a href="https://dashboard.stripe.com/test/webhooks">Stripe Webhook Dashboard</a> for delivery status</li>
+          <li>Review webhook_logs table for specific error messages</li>
+          <li>Verify STRIPE_WEBHOOK_SECRET is correct in Vercel env vars</li>
+          <li>Check Vercel function logs for stack traces</li>
+          <li>If issue persists 1 hour, contact Stripe support</li>
+        </ol>
+      `,
+      error_spike: `
+        <ol>
+          <li>Check <a href="https://app.posthog.com">PostHog Dashboard</a> for error patterns</li>
+          <li>Review error_logs table for stack traces</li>
+          <li>Check recent deployments for potential causes</li>
+          <li>Verify third-party services (Supabase, Stripe) are operational</li>
+        </ol>
+      `,
+      churn: `
+        <ol>
+          <li>Review churn reasons in user feedback</li>
+          <li>Check if related to recent changes or issues</li>
+          <li>Consider reaching out to churned users for feedback</li>
+        </ol>
+      `,
+      monitoring_failure: `
+        <ol>
+          <li>Check Vercel function logs for the monitoring job</li>
+          <li>Verify Supabase connection is working</li>
+          <li>Verify environment variables are set correctly</li>
+          <li>Re-run the monitoring check manually</li>
+        </ol>
+      `,
+    }
+    return steps[alertType] || ''
+  }
 }

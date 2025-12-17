@@ -63,6 +63,17 @@ POSTHOG_API_KEY=phc_your_project_key_here
 ```
 Get these from: https://app.posthog.com/project/settings
 
+#### **Monitoring & Alerting (Story 5.1)**
+```
+ADMIN_EMAIL=nathaniel.crowell12@gmail.com
+CRON_SECRET=your-secure-random-secret-here
+```
+- `ADMIN_EMAIL`: Email address for system alerts (webhook failures, error spikes)
+- `CRON_SECRET`: Secure token to protect internal monitoring endpoints. Generate with:
+  ```bash
+  openssl rand -hex 32
+  ```
+
 ### 🚀 After Setting Environment Variables
 
 1. **Save all environment variables** in Vercel
