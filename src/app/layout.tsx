@@ -7,6 +7,8 @@ import { ThemeProvider } from "@/components/ThemeProvider";
 import { Navigation, Footer } from "@/components/navigation";
 import { Toaster } from "@/components/ui/toaster";
 import { PostHogProvider } from "@/app/providers/PostHogProvider";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
+import { RouteErrorBoundary } from "@/components/RouteErrorBoundary";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -123,14 +125,20 @@ export default function RootLayout({
           <ThemeProvider>
             <AuthProvider>
               <ViewProvider>
-              <div className="flex flex-col min-h-screen bg-background">
-                <Navigation hideOnPaths={['/photographer/dashboard', '/login', '/signup', '/auth/signup', '/photographers/signup']} />
-                <main className="flex-1">
-                  {children}
-                </main>
-                <Footer hideOnPaths={['/photographer/dashboard', '/login', '/signup', '/auth/signup', '/photographers/signup']} />
-                <Toaster />
-              </div>
+                {/* Root-level error boundary - catches catastrophic errors */}
+                <ErrorBoundary level="root">
+                  <div className="flex flex-col min-h-screen bg-background">
+                    <Navigation hideOnPaths={['/photographer/dashboard', '/login', '/signup', '/auth/signup', '/photographers/signup']} />
+                    {/* Route-level error boundary - preserves navigation on page errors */}
+                    <main className="flex-1">
+                      <RouteErrorBoundary>
+                        {children}
+                      </RouteErrorBoundary>
+                    </main>
+                    <Footer hideOnPaths={['/photographer/dashboard', '/login', '/signup', '/auth/signup', '/photographers/signup']} />
+                    <Toaster />
+                  </div>
+                </ErrorBoundary>
               </ViewProvider>
             </AuthProvider>
           </ThemeProvider>

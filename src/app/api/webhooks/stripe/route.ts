@@ -1110,6 +1110,7 @@ async function handlePaymentFailed(
 
 /**
  * Handle subscription cancellation
+ * Includes churn tracking with LTV metrics (Story 6.3)
  */
 async function handleSubscriptionDeleted(
   subscription: Stripe.Subscription,
@@ -1117,6 +1118,17 @@ async function handleSubscriptionDeleted(
 ): Promise<string> {
   console.log('[Webhook] Processing customer.subscription.deleted', subscription.id)
 
+  // Get subscription details BEFORE updating (to get user_id and user_type)
+  const { data: subData } = await supabase
+    .from('subscriptions')
+    .select(`
+      *,
+      user_profiles!subscriptions_user_id_fkey(user_type, created_at)
+    `)
+    .eq('stripe_subscription_id', subscription.id)
+    .single()
+
+  // Update subscription status
   const { error } = await supabase
     .from('subscriptions')
     .update({
@@ -1128,6 +1140,98 @@ async function handleSubscriptionDeleted(
     .eq('stripe_subscription_id', subscription.id)
 
   if (error) throw error
+
+  // Track churn event asynchronously (don't block webhook response)
+  if (subData && subData.user_id) {
+    const userType = subData.user_profiles?.user_type
+    const signupDate = subData.user_profiles?.created_at
+
+    // Calculate tenure
+    const tenureDays = signupDate
+      ? Math.round((Date.now() - new Date(signupDate).getTime()) / (1000 * 60 * 60 * 24))
+      : 0
+
+    // Fire churn tracking asynchronously with timeout protection
+    Promise.resolve().then(async () => {
+      try {
+        if (userType === 'photographer') {
+          // Get photographer stats with timeout protection (2 second max)
+          const statsPromise = supabase
+            .rpc('get_photographer_churn_stats', { p_photographer_id: subData.user_id })
+            .single()
+
+          const statsResult = await Promise.race([
+            statsPromise,
+            new Promise<{ data: null }>((resolve) =>
+              setTimeout(() => resolve({ data: null }), 2000)
+            )
+          ]).catch((err: Error) => {
+            console.error('[Churn Tracking] Stats query failed or timed out:', err)
+            return { data: null }
+          })
+
+          const stats = (statsResult as { data: { total_revenue_cents?: number; client_count?: number; gallery_count?: number } | null })?.data || {
+            total_revenue_cents: 0,
+            client_count: 0,
+            gallery_count: 0
+          }
+
+          await trackServerEvent(subData.user_id, EVENTS.PHOTOGRAPHER_CHURNED, {
+            tenure_days: tenureDays,
+            total_revenue_cents: stats.total_revenue_cents || 0,
+            client_count: stats.client_count || 0,
+            gallery_count: stats.gallery_count || 0,
+            churn_reason: subscription.cancellation_details?.reason || undefined,
+          })
+
+          console.log('[Churn Tracking] Photographer churn tracked:', subData.user_id)
+
+        } else if (userType === 'client') {
+          // Get client stats with timeout protection
+          const statsPromise = supabase
+            .rpc('get_client_churn_stats', { p_client_id: subData.user_id })
+            .single()
+
+          const statsResult = await Promise.race([
+            statsPromise,
+            new Promise<{ data: null }>((resolve) =>
+              setTimeout(() => resolve({ data: null }), 2000)
+            )
+          ]).catch((err: Error) => {
+            console.error('[Churn Tracking] Stats query failed or timed out:', err)
+            return { data: null }
+          })
+
+          const stats = (statsResult as { data: { photographer_id?: string; gallery_count?: number } | null })?.data || {
+            photographer_id: undefined,
+            gallery_count: 0
+          }
+
+          await trackServerEvent(subData.user_id, EVENTS.CLIENT_CHURNED, {
+            tenure_days: tenureDays,
+            photographer_id: stats.photographer_id || undefined,
+            gallery_count: stats.gallery_count || 0,
+            churn_reason: subscription.cancellation_details?.reason || undefined,
+          })
+
+          console.log('[Churn Tracking] Client churn tracked:', subData.user_id)
+        }
+      } catch (churnError) {
+        // Log to error_logs table but don't fail the webhook
+        console.error('[Churn Tracking] Failed to track churn event:', churnError)
+        try {
+          await supabase.from('error_logs').insert({
+            user_id: subData.user_id,
+            error_type: 'ChurnTrackingError',
+            error_message: String(churnError),
+            page: '/api/webhooks/stripe',
+          })
+        } catch (logError) {
+          console.error('[Churn Tracking] Failed to log error:', logError)
+        }
+      }
+    })
+  }
 
   return `Subscription ${subscription.id} canceled`
 }

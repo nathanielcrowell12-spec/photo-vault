@@ -42,6 +42,11 @@ export default function OnboardingPage() {
   const track = useTrackEvent()
   const hasTrackedStartRef = useRef(false)
   const [currentStep, setCurrentStep] = useState(0)
+
+  // Abandonment tracking refs (Story 6.3)
+  const onboardingStartTimeRef = useRef<number>(Date.now())
+  const onboardingCompletedRef = useRef(false)
+  const currentStepRef = useRef(0) // Track step in ref to avoid stale closure
   const [onboardingData, setOnboardingData] = useState<OnboardingData>({
     businessName: '',
     bio: '',
@@ -77,6 +82,28 @@ export default function OnboardingPage() {
     hasTrackedStartRef.current = true
   }, [user, track])
 
+  // Keep ref in sync with state for abandonment tracking
+  useEffect(() => {
+    currentStepRef.current = currentStep
+  }, [currentStep])
+
+  // Track abandonment on unmount (Story 6.3)
+  // CRITICAL: Empty dependency array - only runs on actual unmount, not step changes
+  useEffect(() => {
+    return () => {
+      // Only track if user started (step > 0) but didn't complete
+      if (!onboardingCompletedRef.current && currentStepRef.current > 0 && currentStepRef.current < steps.length - 1) {
+        const timeSpent = Math.round((Date.now() - onboardingStartTimeRef.current) / 1000)
+
+        track(EVENTS.ONBOARDING_ABANDONED, {
+          step_abandoned_at: steps[currentStepRef.current]?.title || `Step ${currentStepRef.current}`,
+          time_spent_seconds: timeSpent,
+        })
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // Empty deps - intentional, uses refs for current values
+
   const handleNext = (stepData: Partial<OnboardingData>) => {
     const updatedData = {
       ...onboardingData,
@@ -97,6 +124,9 @@ export default function OnboardingPage() {
   }
 
   const handleComplete = () => {
+    // Mark as completed to prevent abandonment tracking
+    onboardingCompletedRef.current = true
+
     // Track onboarding completion
     const timeFromSignup = calculateTimeFromSignup(user?.created_at)
     track(EVENTS.PHOTOGRAPHER_COMPLETED_ONBOARDING, {

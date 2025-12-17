@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
+import { useTrackFlowTime } from '@/hooks/useAnalytics'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -43,6 +44,27 @@ export default function UploadPage() {
   const [galleryName, setGalleryName] = useState('')
   const [galleryDescription, setGalleryDescription] = useState('')
   const [uploadCancelled, setUploadCancelled] = useState(false)
+
+  // Analytics: Track upload abandonment (Story 6.3)
+  const endFlow = useTrackFlowTime('upload')
+  const uploadStartedRef = useRef(false)
+  const uploadCompletedRef = useRef(false)
+  const filesUploadedRef = useRef(0)
+  const totalFilesRef = useRef(0)
+
+  // Track abandonment on unmount
+  useEffect(() => {
+    return () => {
+      // Only track abandonment if upload was started but not completed
+      if (uploadStartedRef.current && !uploadCompletedRef.current) {
+        endFlow('abandoned', {
+          gallery_id: undefined,
+          photos_uploaded: filesUploadedRef.current,
+          photos_remaining: totalFilesRef.current - filesUploadedRef.current,
+        })
+      }
+    }
+  }, [endFlow])
 
   const fetchClients = async () => {
     console.log('[Upload] fetchClients called, user.id:', user?.id)
@@ -109,6 +131,11 @@ export default function UploadPage() {
     setUploading(true)
     setUploadProgress(0)
     setUploadCancelled(false)
+
+    // Analytics: Mark upload as started
+    uploadStartedRef.current = true
+    totalFilesRef.current = files.length
+    filesUploadedRef.current = 0
 
     try {
       setUploadStatus('Creating gallery...')
@@ -220,7 +247,8 @@ export default function UploadPage() {
           fileSize: file.size
         })
 
-        // Update progress
+        // Update progress and track uploaded count for analytics
+        filesUploadedRef.current = i + 1
         const progress = 10 + ((i + 1) / files.length) * 80
         setUploadProgress(Math.round(progress))
       }
@@ -288,6 +316,10 @@ export default function UploadPage() {
 
       setUploadStatus('Complete!')
       setUploadProgress(100)
+
+      // Analytics: Mark upload as completed (prevents false abandonment tracking)
+      uploadCompletedRef.current = true
+      endFlow('completed', { gallery_id: gallery.id })
 
       alert(`✅ Gallery "${galleryName}" created successfully!\n\n${files.length} photos uploaded.`)
       router.push('/photographer/clients')
