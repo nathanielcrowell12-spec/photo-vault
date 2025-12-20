@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import {
@@ -44,25 +44,29 @@ export function GalleryFilters({
 
   const [showFilters, setShowFilters] = useState(false)
 
-  useEffect(() => {
-    onFiltersChange(filters)
-  }, [filters, onFiltersChange])
-
+  // Call parent callback directly when user changes a filter - no useEffect needed
+  // This prevents the infinite loop caused by object reference changes in useEffect
   const updateFilter = (key: keyof GalleryFiltersState, value: string | number | null) => {
-    setFilters((prev) => ({ ...prev, [key]: value }))
+    const newFilters = { ...filters, [key]: value }
+    setFilters(newFilters)
+    onFiltersChange(newFilters)
   }
 
   const clearFilter = (key: keyof GalleryFiltersState) => {
-    setFilters((prev) => ({ ...prev, [key]: null }))
+    const newFilters = { ...filters, [key]: null }
+    setFilters(newFilters)
+    onFiltersChange(newFilters)
   }
 
   const clearAllFilters = () => {
-    setFilters({
+    const newFilters = {
       eventType: null,
       year: null,
       location: null,
       person: null
-    })
+    }
+    setFilters(newFilters)
+    onFiltersChange(newFilters)
   }
 
   const activeFilterCount = Object.values(filters).filter(Boolean).length
