@@ -22,7 +22,8 @@ export default function PaymentPage() {
     if (!loading && !user) {
       router.push('/login')
     }
-  }, [user, loading, router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, loading])
 
   const handleAdminBypass = async () => {
     if (!user) return

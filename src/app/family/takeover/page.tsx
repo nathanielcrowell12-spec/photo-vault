@@ -72,7 +72,8 @@ function TakeoverPageContent() {
     if (!authLoading && !user) {
       router.push(`/login?redirect=/family/takeover${accountId ? `?account=${accountId}` : ''}`)
     }
-  }, [authLoading, user, router, accountId])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authLoading, user, accountId])
 
   // Handle success/cancel from Stripe
   useEffect(() => {

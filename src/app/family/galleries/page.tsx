@@ -72,7 +72,8 @@ export default function FamilyGalleriesPage() {
     if (!authLoading && !user) {
       router.push('/login')
     }
-  }, [authLoading, user, router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authLoading, user])
 
   useEffect(() => {
     async function fetchSharedGalleries() {

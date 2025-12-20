@@ -70,7 +70,8 @@ export default function SecurityPage() {
     if (!loading && (!user || userType !== 'admin')) {
       router.push('/login')
     }
-  }, [loading, user, userType, router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, user, userType])
 
   if (loading) {
     return (

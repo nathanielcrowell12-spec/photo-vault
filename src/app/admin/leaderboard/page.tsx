@@ -43,7 +43,8 @@ function LeaderboardContent() {
     if (!loading && (!user || userType !== 'admin')) {
       router.push('/login')
     }
-  }, [loading, user, userType, router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, user, userType])
 
   // Update period from URL params
   useEffect(() => {

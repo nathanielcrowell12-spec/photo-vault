@@ -118,18 +118,44 @@ export default function GalleryViewerPage() {
         if (!galleryError && galleryData) {
           setGallery(galleryData)
 
-          // Fetch photos for this gallery
-          const { data: photosData, error: photosError } = await supabase
+          // Fetch photos for this gallery - try gallery_photos first, then photos table
+          let { data: photosData, error: photosError } = await supabase
             .from('gallery_photos')
             .select('*')
             .eq('gallery_id', galleryId)
             .order('created_at', { ascending: true })
 
-          console.log('[Gallery] Photos query result:', {
+          console.log('[Gallery] gallery_photos query result:', {
             count: photosData?.length,
             photosError,
             galleryId
           })
+
+          // If no photos in gallery_photos, check the photos table (used by photographer upload)
+          if (!photosData || photosData.length === 0) {
+            const { data: altPhotosData, error: altPhotosError } = await supabase
+              .from('photos')
+              .select('id, original_url, thumbnail_url, filename, created_at')
+              .eq('gallery_id', galleryId)
+              .order('created_at', { ascending: true })
+
+            console.log('[Gallery] photos table fallback result:', {
+              count: altPhotosData?.length,
+              altPhotosError,
+              galleryId
+            })
+
+            if (altPhotosData && altPhotosData.length > 0) {
+              // Map photos table columns to expected Photo interface
+              photosData = altPhotosData.map(p => ({
+                id: p.id,
+                photo_url: p.original_url,
+                thumbnail_url: p.thumbnail_url || p.original_url,
+                original_filename: p.filename,
+                is_favorite: false
+              }))
+            }
+          }
 
           setPhotos(photosData || [])
           console.log('[Gallery] Successfully loaded gallery with', photosData?.length || 0, 'photos')

@@ -63,7 +63,8 @@ export default function SystemSettingsPage() {
     if (!loading && (!user || userType !== 'admin')) {
       router.push('/login')
     }
-  }, [loading, user, userType, router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, user, userType])
 
   useEffect(() => {
     // Validate password requirements

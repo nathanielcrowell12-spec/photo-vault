@@ -58,16 +58,39 @@ export async function GET(
       .eq('id', gallery.photographer_id)
       .single()
 
-    // Fetch photos (just thumbnails for preview)
-    const { data: photos, error: photosError } = await supabaseAdmin
+    // Fetch photos (just thumbnails for preview) - try gallery_photos first, then photos table
+    let { data: photos, error: photosError } = await supabaseAdmin
       .from('gallery_photos')
-      .select('id, thumbnail_url, original_url')
+      .select('id, thumbnail_url, photo_url')
       .eq('gallery_id', galleryId)
       .order('created_at', { ascending: true })
       .limit(6) // Only return first 6 for preview
 
     if (photosError) {
-      console.error('[API Gallery] Photos error:', photosError)
+      console.error('[API Gallery] gallery_photos error:', photosError)
+    }
+
+    // If no photos in gallery_photos, check the photos table (used by photographer upload)
+    if (!photos || photos.length === 0) {
+      const { data: altPhotos, error: altPhotosError } = await supabaseAdmin
+        .from('photos')
+        .select('id, original_url, thumbnail_url')
+        .eq('gallery_id', galleryId)
+        .order('created_at', { ascending: true })
+        .limit(6)
+
+      if (altPhotosError) {
+        console.error('[API Gallery] photos table fallback error:', altPhotosError)
+      }
+
+      if (altPhotos && altPhotos.length > 0) {
+        // Map photos table columns to expected format
+        photos = altPhotos.map(p => ({
+          id: p.id,
+          thumbnail_url: p.thumbnail_url || p.original_url,
+          photo_url: p.original_url
+        }))
+      }
     }
 
     return NextResponse.json({

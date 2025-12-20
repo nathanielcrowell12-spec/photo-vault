@@ -105,7 +105,8 @@ export default function UploadPage() {
     } else if (user?.id && userType === 'photographer') {
       fetchClients()
     }
-  }, [user?.id, userType, router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id, userType])
 
   if (userType !== 'photographer') {
     return null

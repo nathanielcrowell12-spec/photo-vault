@@ -40,6 +40,7 @@ export async function POST(request: NextRequest) {
         client_id,
         total_amount,
         photo_count,
+        email_sent_at,
         clients (
           id,
           name,
@@ -52,6 +53,17 @@ export async function POST(request: NextRequest) {
     if (galleryError || !gallery) {
       console.log('[GalleryReady] Gallery not found:', galleryId, galleryError)
       return NextResponse.json({ error: 'Gallery not found' }, { status: 404 })
+    }
+
+    // IDEMPOTENCY CHECK: If email was already sent, return success without resending
+    if (gallery.email_sent_at) {
+      console.log('[GalleryReady] Email already sent at:', gallery.email_sent_at)
+      return NextResponse.json({
+        success: true,
+        message: 'Email was already sent',
+        alreadySent: true,
+        code: 'EMAIL_ALREADY_SENT'
+      }, { status: 200 })
     }
 
     console.log('[GalleryReady] Gallery data:', JSON.stringify(gallery, null, 2))
@@ -220,6 +232,17 @@ export async function POST(request: NextRequest) {
         </html>
       `
     })
+
+    // CRITICAL: Set email_sent_at timestamp to track successful send
+    const { error: updateError } = await supabase
+      .from('photo_galleries')
+      .update({ email_sent_at: new Date().toISOString() })
+      .eq('id', galleryId)
+
+    if (updateError) {
+      // Log but don't fail - email was sent successfully
+      console.error('[GalleryReady] Failed to update email_sent_at:', updateError)
+    }
 
     console.log(`[GalleryReady] Email sent to ${client.email} for gallery ${galleryId}`)
 

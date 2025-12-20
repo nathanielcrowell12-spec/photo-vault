@@ -59,7 +59,8 @@ export default function SneakPeekSelectPage() {
       return
     }
     fetchGalleryAndPhotos()
-  }, [galleryId, user, userType, authLoading, router])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [galleryId, user, userType, authLoading])
 
   const fetchGalleryAndPhotos = async () => {
     try {
@@ -177,13 +178,32 @@ export default function SneakPeekSelectPage() {
 
       if (!response.ok) {
         const data = await response.json()
+
+        // CRITICAL: Rollback gallery status to 'draft' so photographer can retry
+        await supabase
+          .from('photo_galleries')
+          .update({ gallery_status: 'draft' })
+          .eq('id', galleryId)
+
+        // Show error to user based on error type
         if (data.code === 'PHOTOGRAPHER_STRIPE_MISSING') {
-          // Show error but don't block gallery from being marked ready
-          alert('Warning: Gallery marked as ready, but email not sent. You must complete your payment setup (Stripe Connect) before sending gallery notifications to clients. Please connect your Stripe account in Settings.')
+          setError('Payment setup required: You must connect your Stripe account in Settings before sending gallery notifications to clients.')
+        } else if (data.code === 'EMAIL_ALREADY_SENT') {
+          // Email was already sent - this is actually success
+          setSuccess(true)
+          setTimeout(() => {
+            router.push('/photographer/galleries')
+          }, 2000)
+          return
         } else {
-          console.warn('Email send warning:', data.error)
+          setError(data.error || data.message || 'Failed to send notification. Please try again.')
         }
-        // Continue anyway - gallery is marked ready
+
+        // Redirect back to upload page after delay so user sees error
+        setTimeout(() => {
+          router.push(`/photographer/galleries/${galleryId}/upload`)
+        }, 3000)
+        return
       }
 
       setSuccess(true)

@@ -33,7 +33,8 @@ export default function SignupPage() {
       console.log('[Signup] User already logged in, redirecting to dashboard')
       router.push('/dashboard')
     }
-  }, [user, currentUserType, router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, currentUserType])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

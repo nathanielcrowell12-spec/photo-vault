@@ -1,8 +1,9 @@
 'use client'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
+import { useAuthRedirect } from '@/hooks/useAuthRedirect'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -57,7 +58,10 @@ interface Gallery {
 }
 
 export default function GalleriesPage() {
-  const { user, userType, loading: authLoading } = useAuth()
+  // Use custom hook for auth redirect (handles Next.js 15 HMR correctly)
+  const { user, userType, loading: authLoading, hasAccess } = useAuthRedirect({
+    requiredType: 'photographer',
+  })
   const router = useRouter()
   const { toast } = useToast()
   const [galleries, setGalleries] = useState<Gallery[]>([])
@@ -75,6 +79,7 @@ export default function GalleriesPage() {
     people: [] as string[]
   })
   const [sendingNotification, setSendingNotification] = useState<string | null>(null)
+  const isInitialLoad = useRef(true)
 
   // Fetch filter options
   const fetchFilterOptions = useCallback(async () => {
@@ -168,26 +173,27 @@ export default function GalleriesPage() {
     }
   }
 
+  // Initial data load when authenticated (auth redirect handled by useAuthRedirect hook)
   useEffect(() => {
-    if (authLoading) return
-    if (!user) {
-      router.push('/login')
-      return
-    }
-    if (userType !== 'photographer') {
-      router.push('/client/dashboard')
-      return
-    }
+    if (!hasAccess || authLoading) return
     fetchFilterOptions()
     searchGalleries()
-  }, [user, userType, authLoading, router, fetchFilterOptions, searchGalleries])
+    // Mark initial load complete after first data fetch
+    isInitialLoad.current = false
+    // Callbacks are stable via useCallback - including them would cause HMR loops
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasAccess, authLoading])
 
-  // Re-search when search or filters change
+  // Re-search when search or filters change (skip initial mount - first useEffect handles it)
   useEffect(() => {
-    if (user?.id && !authLoading) {
+    // Skip on initial load - the first useEffect handles initial data fetch
+    if (isInitialLoad.current) return
+    if (hasAccess && !authLoading) {
       searchGalleries()
     }
-  }, [searchQuery, filters, user?.id, authLoading, searchGalleries])
+    // searchGalleries is memoized with its own deps - including it would cause HMR loops
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery, filters, hasAccess, authLoading])
 
   const handleResendNotification = async (galleryId: string, clientEmail: string | undefined) => {
     if (!clientEmail) {

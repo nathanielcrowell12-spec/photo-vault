@@ -55,7 +55,8 @@ export default function PhotoImportPage() {
     if (!loading && userType !== 'client' && userType !== null) {
       router.push('/dashboard')
     }
-  }, [loading, userType, router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, userType])
 
   if (loading) {
     return (

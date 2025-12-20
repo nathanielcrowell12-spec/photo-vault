@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
+import { useAuthRedirect } from '@/hooks/useAuthRedirect'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
@@ -62,7 +63,10 @@ interface Gallery {
 }
 
 export default function ClientsPage() {
-  const { user, userType, loading: authLoading } = useAuth()
+  // Use custom hook for auth redirect (handles Next.js 15 HMR correctly)
+  const { user, userType, loading: authLoading, hasAccess } = useAuthRedirect({
+    requiredType: 'photographer',
+  })
   const router = useRouter()
   const [clients, setClients] = useState<Client[]>([])
   const [galleries, setGalleries] = useState<Gallery[]>([])
@@ -126,20 +130,14 @@ export default function ClientsPage() {
     }
   }, [user?.id])
 
+  // Initial data load when authenticated (auth redirect handled by useAuthRedirect hook)
   useEffect(() => {
-    if (!authLoading && !user) {
-      router.push('/login')
-    } else if (user && userType === 'photographer') {
-      if (authLoading) {
-        // Still loading auth state
-      } else {
-        fetchClients()
-        fetchGalleries()
-      }
-    } else if (user && userType !== 'photographer') {
-      router.push('/dashboard')
-    }
-  }, [user, userType, authLoading, fetchClients, fetchGalleries, router])
+    if (!hasAccess || authLoading) return
+    fetchClients()
+    fetchGalleries()
+    // Callbacks are stable via useCallback - including them would cause HMR loops
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasAccess, authLoading])
 
   // Show loading or redirect if not photographer
   if (userType !== 'photographer') {

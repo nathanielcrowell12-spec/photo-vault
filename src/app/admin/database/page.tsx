@@ -166,7 +166,8 @@ export default function AdminDatabasePage() {
     if (!loading && (!user || userType !== 'admin')) {
       router.push('/login')
     }
-  }, [loading, user, userType, router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, user, userType])
 
   const appendLog = (entry: Omit<OperationLog, 'id' | 'timestamp'>) => {
     const newEntry: OperationLog = {

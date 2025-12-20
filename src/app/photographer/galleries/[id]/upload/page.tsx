@@ -31,6 +31,7 @@ interface Gallery {
   shoot_fee: number
   total_amount: number
   gallery_status: string
+  email_sent_at: string | null  // Track if client email was sent
   photo_count: number
   client_id: string
   clients?: {
@@ -129,7 +130,8 @@ export default function GalleryUploadPage({ params }: { params: Promise<{ id: st
     }
 
     fetchGallery()
-  }, [galleryId, user, userType, authLoading, router])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [galleryId, user, userType, authLoading])
 
   // Handle file selection
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -299,10 +301,14 @@ export default function GalleryUploadPage({ params }: { params: Promise<{ id: st
                 </p>
               </div>
             </div>
-            {photos.length > 0 && gallery?.gallery_status === 'draft' && (
+            {photos.length > 0 &&
+              (gallery?.gallery_status === 'draft' ||
+                (gallery?.gallery_status === 'ready' && !gallery?.email_sent_at)) && (
               <Button onClick={handleMarkAsReady}>
                 <Send className="h-4 w-4 mr-2" />
-                Mark as Ready
+                {gallery?.gallery_status === 'ready' && !gallery?.email_sent_at
+                  ? 'Resend to Client'
+                  : 'Mark as Ready'}
               </Button>
             )}
           </div>

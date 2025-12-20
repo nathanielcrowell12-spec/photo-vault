@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
       .from('photo_galleries')
       .select('*')
       .eq('id', galleryId)
-      .eq('user_id', user.id)
+      .eq('photographer_id', user.id)
       .single()
 
     if (galleryError || !gallery) {
@@ -105,18 +105,23 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    // Update gallery photo count - use verified gallery.id
+    // Update gallery photo count and cover image - use verified gallery.id
     const { data: photos } = await supabase
       .from('gallery_photos')
-      .select('id')
+      .select('id, thumbnail_url')
       .eq('gallery_id', gallery.id)
+      .order('created_at', { ascending: true })
+
+    // Set cover image to first photo if gallery doesn't have one
+    const coverImageUrl = gallery.cover_image_url || photos?.[0]?.thumbnail_url || null
 
     await supabase
       .from('photo_galleries')
       .update({
         photo_count: photos?.length || 0,
         is_imported: true,
-        import_completed_at: new Date().toISOString()
+        import_completed_at: new Date().toISOString(),
+        cover_image_url: coverImageUrl
       })
       .eq('id', gallery.id)
 

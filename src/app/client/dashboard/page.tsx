@@ -51,7 +51,8 @@ export default function ClientDashboardPage() {
     if (!loading && !user) {
       router.push('/login')
     }
-  }, [user, loading, router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, loading])
 
   // Fetch client stats
   useEffect(() => {

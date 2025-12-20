@@ -49,7 +49,8 @@ export default function PhotoUploadPage() {
     if (!loading && (!user || userType !== 'admin')) {
       router.push('/login')
     }
-  }, [user, userType, loading, router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, userType, loading])
 
   const categories = [
     { value: 'hero', label: 'Hero Backgrounds', description: 'Full-width 1920x1080' },

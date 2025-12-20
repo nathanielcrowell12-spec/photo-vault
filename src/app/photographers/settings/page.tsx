@@ -85,7 +85,8 @@ function PhotographerSettingsContent() {
     if (!loading && (!user || userType !== 'photographer')) {
       router.push('/login')
     }
-  }, [loading, user, userType, router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, user, userType])
 
   // Check for Stripe return status
   useEffect(() => {

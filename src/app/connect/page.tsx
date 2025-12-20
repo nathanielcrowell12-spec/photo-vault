@@ -43,7 +43,8 @@ export default function ConnectPage() {
     if (!loading && !user) {
       router.push('/login')
     }
-  }, [loading, user, router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, user])
 
   if (loading) {
     return (

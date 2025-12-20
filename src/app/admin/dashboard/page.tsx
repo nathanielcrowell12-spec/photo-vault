@@ -91,7 +91,8 @@ export default function AdminDashboardPage() {
     if (!loading && !user) {
       router.push('/login')
     }
-  }, [user, loading, router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, loading])
 
   useEffect(() => {
     if (loading || !user) {

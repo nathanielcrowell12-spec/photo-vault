@@ -126,7 +126,8 @@ export default function CreateGalleryPage() {
     }
 
     fetchClients()
-  }, [user, userType, authLoading, router])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, userType, authLoading])
 
   // Handle inline client creation
   const handleAddClient = async () => {

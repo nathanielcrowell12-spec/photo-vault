@@ -61,28 +61,28 @@ export default function GalleryEditModal({ gallery, isOpen, onClose, onSave }: G
   const [familySharingEnabled, setFamilySharingEnabled] = useState(false)
   const [togglingSharing, setTogglingSharing] = useState(false)
 
-  const fetchClients = async () => {
-    try {
-      const { data, error } = await supabase
-        .from('clients')
-        .select('id, name, email')
-        .eq('photographer_id', user?.id)
-        .eq('status', 'active')
-        .order('name')
-
-      if (error) throw error
-      setClients(data || [])
-    } catch (err) {
-      console.error('Error fetching clients:', err)
-    }
-  }
-
-  // Fetch photographer's clients
+  // Fetch photographer's clients (function inlined to avoid HMR loops)
   useEffect(() => {
+    async function fetchClients() {
+      try {
+        const { data, error } = await supabase
+          .from('clients')
+          .select('id, name, email')
+          .eq('photographer_id', user?.id)
+          .eq('status', 'active')
+          .order('name')
+
+        if (error) throw error
+        setClients(data || [])
+      } catch (err) {
+        console.error('Error fetching clients:', err)
+      }
+    }
+
     if (isOpen && isPhotographer && user?.id) {
       fetchClients()
     }
-  }, [isOpen, isPhotographer, user?.id, fetchClients])
+  }, [isOpen, isPhotographer, user?.id])
 
   // Fetch family sharing status for clients
   useEffect(() => {

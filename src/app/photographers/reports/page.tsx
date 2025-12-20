@@ -60,7 +60,8 @@ export default function ReportsPage() {
     }
     fetchReportHistory()
     setDefaultDates()
-  }, [userType, router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userType])
 
   // Show loading or redirect if not photographer
   if (userType !== 'photographer') {

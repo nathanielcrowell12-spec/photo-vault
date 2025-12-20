@@ -39,7 +39,8 @@ export function useDashboardRouting(
     }
 
     setIsRedirecting(false)
-  }, [user, userType, loading, router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, userType, loading])
 
   const shouldShowLoading = loading || !userType || isRedirecting
 

@@ -21,7 +21,8 @@ export default function SignOutPage() {
       }, 500)
     }
     handleSignOut()
-  }, [signOut, router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [signOut])
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center">

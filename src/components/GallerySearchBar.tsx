@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Input } from '@/components/ui/input'
 import { Search, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -20,14 +20,23 @@ export function GallerySearchBar({
   debounceMs = 300
 }: GallerySearchBarProps) {
   const [query, setQuery] = useState('')
+  const isInitialMount = useRef(true)
 
   useEffect(() => {
+    // Skip initial mount to prevent triggering parent API calls on load
+    if (isInitialMount.current) {
+      isInitialMount.current = false
+      return
+    }
+
     const timer = setTimeout(() => {
       onSearch(query)
     }, debounceMs)
 
     return () => clearTimeout(timer)
-  }, [query, debounceMs, onSearch])
+    // onSearch is a stable setState function - excluding from deps to prevent HMR loops
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query, debounceMs])
 
   const clearSearch = () => {
     setQuery('')

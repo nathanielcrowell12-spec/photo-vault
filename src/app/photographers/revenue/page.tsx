@@ -68,7 +68,8 @@ export default function RevenuePage() {
       return
     }
     fetchRevenueData()
-  }, [period, userType, router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [period, userType])
 
   // Show loading or redirect if not photographer
   if (userType !== 'photographer') {

@@ -55,7 +55,8 @@ export default function PhotographersPage() {
     if (!loading && (!user || userType !== 'admin')) {
       router.push('/login')
     }
-  }, [loading, user, userType, router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, user, userType])
 
   const fetchData = useCallback(async () => {
     setDataLoading(true)

@@ -63,7 +63,8 @@ export default function PhotoTimelinePage() {
     if (!authLoading && userType !== 'client' && userType !== null) {
       router.push('/dashboard')
     }
-  }, [userType, authLoading, router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userType, authLoading])
 
   useEffect(() => {
     if (userType === 'client') {

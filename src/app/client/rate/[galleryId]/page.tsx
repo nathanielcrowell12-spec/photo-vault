@@ -83,7 +83,8 @@ export default function RatePhotographerPage() {
     if (user && galleryId) {
       fetchData()
     }
-  }, [user, loading, galleryId, router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, loading, galleryId])
 
   const handleSubmit = async () => {
     if (overallRating < 1) return

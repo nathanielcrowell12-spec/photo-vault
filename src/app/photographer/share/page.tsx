@@ -29,7 +29,8 @@ export default function SharePage() {
     if (!loading && userType !== 'photographer') {
       router.push('/dashboard')
     }
-  }, [loading, userType, router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, userType])
 
   if (loading) {
     return (

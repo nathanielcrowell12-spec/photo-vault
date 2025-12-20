@@ -103,7 +103,8 @@ export default function FamilySettingsPage() {
     if (!authLoading && (!user || userType !== 'client')) {
       router.push('/login')
     }
-  }, [authLoading, user, userType, router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authLoading, user, userType])
 
   // Fetch family status and secondaries
   useEffect(() => {

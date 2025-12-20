@@ -26,20 +26,26 @@ export default function AccessGuard({
 
   useEffect(() => {
     if (loading) return
-    
+
     if (!user) {
       router.push('/login')
       return
     }
 
     const accessRules = getUserAccessRules(user.email || null, userType)
-    
+
     if (!accessRules[requiredAccess]) {
       const redirectRoute = fallbackRoute || getDashboardRoute(userType)
       router.push(redirectRoute)
       return
     }
-  }, [user, userType, loading, requiredAccess, fallbackRoute, router])
+    // IMPORTANT: router is intentionally omitted from dependencies.
+    // Next.js 15 + Turbopack creates new router instances during HMR Fast Refresh.
+    // Including router would cause infinite re-renders during development.
+    // Router methods (push, replace) are stable and don't need to trigger re-runs.
+    // See: https://nextjs.org/docs/app/api-reference/functions/use-router
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, userType, loading, requiredAccess, fallbackRoute])
 
   if (loading) {
     return (

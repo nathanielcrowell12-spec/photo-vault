@@ -502,6 +502,48 @@ async function handleCheckoutCompleted(
       // Don't block webhook if tracking fails
     }
 
+    // CRITICAL: Create subscription record to grant gallery access
+    // This is what the gallery viewer checks to determine if user can see photos
+    if (userId && galleryId) {
+      const customerId = typeof session.customer === 'string'
+        ? session.customer
+        : session.customer?.id || null
+
+      // Use payment intent or session ID as a pseudo-subscription ID
+      // This is unique and tracks back to the actual payment
+      const pseudoSubscriptionId = session.payment_intent
+        ? `pi_${session.payment_intent}`
+        : `cs_${session.id}`
+
+      // Calculate subscription period (1 year for annual payment)
+      const periodStart = new Date()
+      const periodEnd = new Date()
+      periodEnd.setFullYear(periodEnd.getFullYear() + 1)
+
+      const { error: subscriptionError } = await supabase.from('subscriptions').upsert({
+        user_id: userId,
+        gallery_id: galleryId,
+        stripe_subscription_id: pseudoSubscriptionId,
+        stripe_customer_id: customerId,
+        status: 'active',
+        plan_type: 'annual_upfront', // Year 1 payment
+        current_period_start: periodStart.toISOString(),
+        current_period_end: periodEnd.toISOString(),
+        cancel_at_period_end: false,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      }, {
+        onConflict: 'stripe_subscription_id'
+      })
+
+      if (subscriptionError) {
+        console.error('[Webhook] Error creating subscription record:', subscriptionError)
+        // Don't fail webhook - payment is processed, this can be fixed later
+      } else {
+        console.log('[Webhook] Created subscription record for user', userId, 'gallery', galleryId)
+      }
+    }
+
     // Send welcome email with temp password if account was just created
     if (tempPassword && userId) {
       try {

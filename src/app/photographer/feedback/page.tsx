@@ -58,7 +58,8 @@ export default function PhotographerFeedbackPage() {
     if (!loading && !user) {
       router.push('/login')
     }
-  }, [user, loading, router])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, loading])
 
   useEffect(() => {
     const fetchRatings = async () => {
