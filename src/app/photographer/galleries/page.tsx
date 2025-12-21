@@ -20,7 +20,8 @@ import {
   Loader2,
   Send,
   MapPin,
-  Users
+  Users,
+  Trash2
 } from 'lucide-react'
 import { useToast } from '@/components/ui/use-toast'
 import Link from 'next/link'
@@ -31,6 +32,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { GallerySearchBar } from '@/components/GallerySearchBar'
 import { GalleryFilters, GalleryFiltersState } from '@/components/GalleryFilters'
 
@@ -79,6 +90,9 @@ export default function GalleriesPage() {
     people: [] as string[]
   })
   const [sendingNotification, setSendingNotification] = useState<string | null>(null)
+  const [deletingGallery, setDeletingGallery] = useState<Gallery | null>(null)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
   const isInitialLoad = useRef(true)
 
   // Fetch filter options
@@ -235,6 +249,43 @@ export default function GalleriesPage() {
       })
     } finally {
       setSendingNotification(null)
+    }
+  }
+
+  const handleDeleteGallery = async (gallery: Gallery) => {
+    const originalGalleries = galleries
+    setIsDeleting(true)
+
+    // Optimistic update
+    setGalleries(prev => prev.filter(g => g.id !== gallery.id))
+
+    try {
+      const response = await fetch(`/api/galleries/${gallery.id}`, {
+        method: 'DELETE',
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to delete gallery')
+      }
+
+      toast({
+        title: 'Gallery deleted',
+        description: `"${gallery.gallery_name}" has been moved to Recently Deleted. You have 30 days to restore it.`,
+      })
+
+      setShowDeleteDialog(false)
+      setDeletingGallery(null)
+    } catch (error) {
+      console.error('Error deleting gallery:', error)
+      // Rollback on error
+      setGalleries(originalGalleries)
+      toast({
+        title: 'Error',
+        description: 'Failed to delete gallery. Please try again.',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsDeleting(false)
     }
   }
 
@@ -396,6 +447,16 @@ export default function GalleriesPage() {
                             Resend Notification
                           </DropdownMenuItem>
                         )}
+                        <DropdownMenuItem
+                          className="text-destructive hover:text-destructive focus:text-destructive cursor-pointer"
+                          onClick={() => {
+                            setDeletingGallery(gallery)
+                            setShowDeleteDialog(true)
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4 mr-2" />
+                          Delete Gallery
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </div>
@@ -477,6 +538,38 @@ export default function GalleriesPage() {
           </div>
         )}
       </div>
+
+      {/* Gallery Delete Confirmation Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Gallery?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will move &quot;{deletingGallery?.gallery_name}&quot; to Recently Deleted.
+              You can restore it within 30 days. After that, it will be permanently removed.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => {
+              setShowDeleteDialog(false)
+              setDeletingGallery(null)
+            }}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={isDeleting}
+              onClick={() => {
+                if (deletingGallery) {
+                  handleDeleteGallery(deletingGallery)
+                }
+              }}
+            >
+              {isDeleting ? 'Deleting...' : 'Delete Gallery'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

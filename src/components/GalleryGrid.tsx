@@ -6,9 +6,21 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
-import { Calendar, Camera, User, ExternalLink, Grid3X3, List, Filter, Lock, AlertCircle, Edit, Share2 } from 'lucide-react'
+import { Calendar, Camera, User, ExternalLink, Grid3X3, List, Filter, Lock, AlertCircle, Edit, Share2, Trash2 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
+import { useToast } from '@/components/ui/use-toast'
+import { useRouter } from 'next/navigation'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import GalleryEditModal from './GalleryEditModal'
 
 interface Gallery {
@@ -38,6 +50,8 @@ interface GalleryGridProps {
 
 export default function GalleryGrid({ userId }: GalleryGridProps) {
   const { user, userType, paymentStatus, isPaymentActive } = useAuth()
+  const { toast } = useToast()
+  const router = useRouter()
   const [galleries, setGalleries] = useState<Gallery[]>([])
   const [filteredGalleries, setFilteredGalleries] = useState<Gallery[]>([])
   const [clients, setClients] = useState<Client[]>([])
@@ -49,6 +63,9 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [editingGallery, setEditingGallery] = useState<Gallery | null>(null)
   const [showEditModal, setShowEditModal] = useState(false)
+  const [deletingGallery, setDeletingGallery] = useState<Gallery | null>(null)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
   const isPhotographer = userType === 'photographer'
 
   const fetchClients = useCallback(async () => {
@@ -204,6 +221,43 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
   useEffect(() => {
     filterAndSortGalleries()
   }, [filterAndSortGalleries])
+
+  const handleDeleteGallery = async (gallery: Gallery) => {
+    const originalGalleries = galleries
+    setIsDeleting(true)
+
+    // Optimistic update
+    setGalleries(prev => prev.filter(g => g.id !== gallery.id))
+
+    try {
+      const response = await fetch(`/api/galleries/${gallery.id}`, {
+        method: 'DELETE',
+      })
+
+      if (!response.ok) {
+        throw new Error('Failed to delete gallery')
+      }
+
+      toast({
+        title: 'Gallery deleted',
+        description: `"${gallery.gallery_name}" has been moved to Recently Deleted. You have 30 days to restore it.`,
+      })
+
+      setShowDeleteDialog(false)
+      setDeletingGallery(null)
+    } catch (error) {
+      console.error('Error deleting gallery:', error)
+      // Rollback on error
+      setGalleries(originalGalleries)
+      toast({
+        title: 'Error',
+        description: 'Failed to delete gallery. Please try again.',
+        variant: 'destructive',
+      })
+    } finally {
+      setIsDeleting(false)
+    }
+  }
 
   const getPlatformColor = (platform: string) => {
     const colors: { [key: string]: string } = {
@@ -480,6 +534,19 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
                         >
                           <Edit className="h-3 w-3" />
                         </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 w-6 p-0 ml-2 text-destructive hover:text-destructive/90 hover:bg-destructive/10"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setDeletingGallery(gallery)
+                            setShowDeleteDialog(true)
+                          }}
+                          title="Delete gallery"
+                        >
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
                       </div>
                     )}
                   </div>
@@ -529,6 +596,38 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
           fetchGalleries()
         }}
       />
+
+      {/* Gallery Delete Confirmation Dialog */}
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Gallery?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will move &quot;{deletingGallery?.gallery_name}&quot; to Recently Deleted.
+              You can restore it within 30 days. After that, it will be permanently removed.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => {
+              setShowDeleteDialog(false)
+              setDeletingGallery(null)
+            }}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={isDeleting}
+              onClick={() => {
+                if (deletingGallery) {
+                  handleDeleteGallery(deletingGallery)
+                }
+              }}
+            >
+              {isDeleting ? 'Deleting...' : 'Delete Gallery'}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

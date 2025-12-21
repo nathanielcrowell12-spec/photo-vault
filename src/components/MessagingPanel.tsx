@@ -372,7 +372,7 @@ export default function MessagingPanel({ onClose, initialConversationId }: Messa
   if (loading) {
     return (
       <Card className="w-full h-[85vh] max-h-[800px] min-h-[500px] flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </Card>
     )
   }
@@ -413,15 +413,15 @@ export default function MessagingPanel({ onClose, initialConversationId }: Messa
 
           {/* Show photographers for clients to message */}
           {userType === 'client' && photographers.length > 0 && (conversations.length === 0 || showPhotographerList) && (
-            <div className="p-4 border-b bg-blue-50">
+            <div className="p-4 border-b bg-muted">
               <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-semibold text-blue-900">
+                <h3 className="text-sm font-semibold text-foreground">
                   {conversations.length === 0 ? 'Your Photographers' : 'Start New Chat'}
                 </h3>
                 {conversations.length > 0 && (
                   <button
                     onClick={() => setShowPhotographerList(false)}
-                    className="text-blue-600 hover:text-blue-800 text-xs"
+                    className="text-primary hover:text-primary/80 text-xs"
                   >
                     Cancel
                   </button>
@@ -435,15 +435,15 @@ export default function MessagingPanel({ onClose, initialConversationId }: Messa
                       startConversationWithPhotographer(photographer.id)
                       setShowPhotographerList(false)
                     }}
-                    className="w-full p-3 bg-white rounded-lg hover:bg-blue-100 transition-colors text-left"
+                    className="w-full p-3 bg-card rounded-lg hover:bg-accent transition-colors text-left"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                        <User className="h-5 w-5 text-blue-600" />
+                      <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center flex-shrink-0">
+                        <User className="h-5 w-5 text-primary" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="font-medium text-sm truncate">{photographer.name}</h4>
-                        <p className="text-xs text-gray-600 truncate">{photographer.email}</p>
+                        <p className="text-xs text-muted-foreground truncate">{photographer.email}</p>
                       </div>
                     </div>
                   </button>
@@ -453,24 +453,24 @@ export default function MessagingPanel({ onClose, initialConversationId }: Messa
           )}
 
           {conversations.length === 0 && !(userType === 'client' && photographers.length > 0) ? (
-            <div className="p-8 text-center text-gray-500">
-              <MessageSquare className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+            <div className="p-8 text-center text-muted-foreground">
+              <MessageSquare className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
               <p>No messages yet</p>
               <p className="text-sm">Start a conversation</p>
             </div>
           ) : (
-            <div className="divide-y">
+            <div className="divide-y divide-border">
               {conversations.map((conv) => (
                 <div
                   key={conv.id}
-                  className={`p-4 cursor-pointer hover:bg-gray-50 transition-colors ${
-                    selectedConversation?.id === conv.id ? 'bg-blue-50' : ''
+                  className={`p-4 cursor-pointer transition-colors ${
+                    selectedConversation?.id === conv.id ? 'bg-accent' : 'hover:bg-accent/50'
                   }`}
                   onClick={() => setSelectedConversation(conv)}
                 >
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                      <User className="h-5 w-5 text-blue-600" />
+                    <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center flex-shrink-0">
+                      <User className="h-5 w-5 text-primary" />
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-1">
@@ -483,10 +483,10 @@ export default function MessagingPanel({ onClose, initialConversationId }: Messa
                           </Badge>
                         )}
                       </div>
-                      <p className="text-xs text-gray-600 truncate">
+                      <p className="text-xs text-muted-foreground truncate">
                         {conv.last_message_preview || 'No messages yet'}
                       </p>
-                      <div className="flex items-center gap-1 mt-1 text-xs text-gray-500">
+                      <div className="flex items-center gap-1 mt-1 text-xs text-muted-foreground">
                         <Clock className="h-3 w-3" />
                         <span>{formatTime(conv.last_message_at)}</span>
                       </div>
@@ -503,7 +503,7 @@ export default function MessagingPanel({ onClose, initialConversationId }: Messa
           {selectedConversation ? (
             <>
               {/* Chat Header */}
-              <div className="p-4 border-b bg-gray-50 flex items-center justify-between">
+              <div className="p-4 border-b bg-muted flex items-center justify-between">
                 <div className="flex items-center gap-2">
                   <Button
                     variant="ghost"
@@ -515,7 +515,7 @@ export default function MessagingPanel({ onClose, initialConversationId }: Messa
                   </Button>
                   <div>
                     <h3 className="font-semibold">{selectedConversation.other_user.name}</h3>
-                    <p className="text-xs text-gray-600 capitalize">
+                    <p className="text-xs text-muted-foreground capitalize">
                       {selectedConversation.other_user.user_type}
                     </p>
                   </div>
@@ -542,20 +542,20 @@ export default function MessagingPanel({ onClose, initialConversationId }: Messa
                         <div
                           className={`rounded-lg p-3 ${
                             isSender
-                              ? 'bg-blue-600 text-foreground'
-                              : 'bg-gray-100 text-gray-900'
+                              ? 'bg-primary text-primary-foreground'
+                              : 'bg-card text-card-foreground'
                           }`}
                         >
                           <p className="text-sm whitespace-pre-wrap">{message.message_text}</p>
                         </div>
                         <div className="flex items-center gap-2 mt-1 px-1">
-                          <span className={`text-xs ${isSender ? 'text-blue-600' : 'text-gray-500'}`}>
+                          <span className={`text-xs ${isSender ? 'text-primary-foreground/70' : 'text-muted-foreground'}`}>
                             {formatTime(message.created_at)}
                           </span>
                           {!isSender && (
                             <button
                               onClick={() => setReportMessageId(message.id)}
-                              className="text-xs text-gray-400 hover:text-red-600"
+                              className="text-xs text-muted-foreground hover:text-destructive"
                               title="Report message"
                             >
                               <Flag className="h-3 w-3" />
@@ -596,9 +596,9 @@ export default function MessagingPanel({ onClose, initialConversationId }: Messa
               </div>
             </>
           ) : (
-            <div className="flex-1 flex items-center justify-center text-gray-500">
+            <div className="flex-1 flex items-center justify-center text-muted-foreground">
               <div className="text-center">
-                <MessageSquare className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                <MessageSquare className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
                 <p>Select a conversation to start messaging</p>
               </div>
             </div>
@@ -612,7 +612,7 @@ export default function MessagingPanel({ onClose, initialConversationId }: Messa
           <Card className="w-full max-w-md">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <AlertCircle className="h-5 w-5 text-red-600" />
+                <AlertCircle className="h-5 w-5 text-destructive" />
                 Report Message
               </CardTitle>
             </CardHeader>
@@ -637,7 +637,8 @@ export default function MessagingPanel({ onClose, initialConversationId }: Messa
                 <Button
                   onClick={reportMessage}
                   disabled={reporting || !reportReason.trim()}
-                  className="flex-1 bg-red-600 hover:bg-red-700"
+                  className="flex-1"
+                  variant="destructive"
                 >
                   {reporting ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Report'}
                 </Button>

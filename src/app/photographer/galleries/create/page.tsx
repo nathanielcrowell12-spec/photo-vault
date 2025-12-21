@@ -698,7 +698,7 @@ export default function CreateGalleryPage() {
                     />
                   </div>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Your photography fee - you keep 100% (minus ~3% Stripe fees)
+                    Your photography fee - you keep 100% (PhotoVault covers Stripe fees)
                   </p>
                 </div>
               )}
@@ -765,10 +765,10 @@ export default function CreateGalleryPage() {
                   <div>
                     <p className="text-muted-foreground">You Will Receive:</p>
                     <p className="text-2xl font-bold text-green-400">
-                      ~${(pricingSummary.photographerPayout - pricingSummary.stripeFees).toFixed(2)}
+                      ${pricingSummary.photographerPayout.toFixed(2)}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      (after ~${pricingSummary.stripeFees.toFixed(2)} Stripe fees)
+                      (PhotoVault absorbs Stripe fees)
                     </p>
                   </div>
                 </div>
