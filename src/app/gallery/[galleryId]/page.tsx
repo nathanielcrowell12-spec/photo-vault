@@ -23,7 +23,8 @@ import {
   Lock,
   CreditCard,
   CheckCircle,
-  Heart
+  Heart,
+  Link2
 } from 'lucide-react'
 import { supabaseBrowser as supabase } from '@/lib/supabase-browser'
 import Link from 'next/link'
@@ -65,6 +66,15 @@ interface Photo {
   is_favorite: boolean
 }
 
+interface ShareLinkInfo {
+  id: string
+  downloadLimit: number | null
+  downloadsUsed: number
+  expiresAt: string | null
+  viewOnly: boolean
+  downloadsRemaining: number | null
+}
+
 export default function GalleryViewerPage() {
   const params = useParams()
   const router = useRouter()
@@ -84,9 +94,14 @@ export default function GalleryViewerPage() {
   const [checkingAccess, setCheckingAccess] = useState(true)
   const [showPaymentSuccess, setShowPaymentSuccess] = useState(false)
   const [accessSuspended, setAccessSuspended] = useState(false)
+  // Share link state
+  const [shareAccess, setShareAccess] = useState(false)
+  const [shareLink, setShareLink] = useState<ShareLinkInfo | null>(null)
+  const [shareToken, setShareToken] = useState<string | null>(null)
 
   const galleryId = params.galleryId as string
   const paymentStatus = searchParams.get('payment')
+  const shareTokenParam = searchParams.get('share')
 
   const fetchGallery = useCallback(async () => {
     try {
@@ -305,6 +320,37 @@ export default function GalleryViewerPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [authLoading, galleryId])
 
+  // Validate share token if present
+  const validateShareToken = useCallback(async (token: string) => {
+    try {
+      console.log('[Gallery] Validating share token...')
+      const response = await fetch(`/api/gallery/${galleryId}/validate-share-token`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ shareToken: token })
+      })
+
+      const data = await response.json()
+
+      if (data.valid) {
+        console.log('[Gallery] Valid share token - granting access')
+        setShareToken(token)
+        setShareLink(data.shareLink)
+        setShareAccess(true)
+        setHasAccess(true)
+        setCheckingAccess(false)
+        return true
+      } else {
+        console.log('[Gallery] Invalid share token:', data.error)
+        // Don't set shareAccess, let normal flow continue
+        return false
+      }
+    } catch (error) {
+      console.error('[Gallery] Error validating share token:', error)
+      return false
+    }
+  }, [galleryId])
+
   // Check access once gallery is loaded
   useEffect(() => {
     if (gallery) {
@@ -319,8 +365,27 @@ export default function GalleryViewerPage() {
         return
       }
 
+      // Check for share token FIRST (before subscription check)
+      // This allows anyone with the token to access
+      if (shareTokenParam && !shareAccess) {
+        validateShareToken(shareTokenParam).then(valid => {
+          if (!valid) {
+            // Share token invalid, continue with normal access check
+            proceedWithAccessCheck()
+          }
+        })
+        return
+      }
+
+      proceedWithAccessCheck()
+    }
+
+    function proceedWithAccessCheck() {
+      if (!gallery) return
+
       if (user && userType) {
         // Authenticated user - check based on role
+        // Note: Even with a share token, subscribers get full access
         checkAccess(gallery)
       } else if (!authLoading && !user) {
         // Unauthenticated user - check if gallery requires payment
@@ -347,7 +412,7 @@ export default function GalleryViewerPage() {
         setCheckingAccess(false)
       }
     }
-  }, [gallery, user, userType, authLoading, checkAccess, paymentStatus])
+  }, [gallery, user, userType, authLoading, checkAccess, paymentStatus, shareTokenParam, shareAccess, validateShareToken])
 
   // Track gallery view when user has access (once per page load)
   useEffect(() => {
@@ -481,6 +546,44 @@ export default function GalleryViewerPage() {
 
   const downloadPhoto = async (photoUrl: string, filename: string) => {
     try {
+      // If accessing via share link, track the download
+      if (shareAccess && shareToken && shareLink) {
+        // Check if view-only
+        if (shareLink.viewOnly) {
+          alert('This is a view-only share link. Downloads are disabled.')
+          return
+        }
+
+        // Check if downloads remaining
+        if (shareLink.downloadsRemaining !== null && shareLink.downloadsRemaining <= 0) {
+          alert('Download limit reached for this share link.')
+          return
+        }
+
+        // Track the download
+        const trackResponse = await fetch(`/api/gallery/${galleryId}/share-links/track-download`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ shareToken })
+        })
+
+        const trackData = await trackResponse.json()
+
+        if (!trackData.allowed) {
+          alert(trackData.error || 'Download not allowed')
+          return
+        }
+
+        // Update local state with new remaining count
+        if (trackData.downloadsRemaining !== undefined) {
+          setShareLink(prev => prev ? {
+            ...prev,
+            downloadsRemaining: trackData.downloadsRemaining,
+            downloadsUsed: prev.downloadsUsed + 1
+          } : null)
+        }
+      }
+
       const response = await fetch(photoUrl)
       const blob = await response.blob()
       const url = window.URL.createObjectURL(blob)
@@ -503,9 +606,33 @@ export default function GalleryViewerPage() {
       return
     }
 
-    if (confirm(`Download all ${photos.length} photos? This may take a while.`)) {
-      for (let i = 0; i < photos.length; i++) {
-        const photo = photos[i]
+    // Check share link restrictions
+    if (shareAccess && shareLink) {
+      if (shareLink.viewOnly) {
+        alert('This is a view-only share link. Downloads are disabled.')
+        return
+      }
+      if (shareLink.downloadsRemaining !== null && shareLink.downloadsRemaining <= 0) {
+        alert('Download limit reached for this share link.')
+        return
+      }
+      // Warn about download limit
+      if (shareLink.downloadsRemaining !== null && photos.length > shareLink.downloadsRemaining) {
+        const proceed = confirm(
+          `You have ${shareLink.downloadsRemaining} downloads remaining, but there are ${photos.length} photos. ` +
+          `Only the first ${shareLink.downloadsRemaining} photos will be downloaded. Continue?`
+        )
+        if (!proceed) return
+      }
+    }
+
+    const photosToDownload = shareAccess && shareLink && shareLink.downloadsRemaining !== null
+      ? photos.slice(0, shareLink.downloadsRemaining)
+      : photos
+
+    if (confirm(`Download ${photosToDownload.length} photos? This may take a while.`)) {
+      for (let i = 0; i < photosToDownload.length; i++) {
+        const photo = photosToDownload[i]
         const filename = photo.original_filename || `photo-${i + 1}.jpg`
         await downloadPhoto(photo.photo_url, filename)
         // Add delay between downloads to avoid overwhelming the browser
@@ -886,6 +1013,30 @@ export default function GalleryViewerPage() {
         </div>
       )}
 
+      {/* Share Link Access Banner */}
+      {shareAccess && shareLink && (
+        <div className="bg-blue-500 text-white py-3 px-4 text-center">
+          <div className="flex items-center justify-center gap-2 flex-wrap">
+            <Link2 className="h-5 w-5" />
+            <span className="font-medium">
+              You&apos;re viewing this gallery via a share link
+            </span>
+            {shareLink.viewOnly ? (
+              <Badge variant="secondary" className="bg-blue-700 text-white">View Only</Badge>
+            ) : shareLink.downloadsRemaining !== null && (
+              <Badge variant="secondary" className="bg-blue-700 text-white">
+                {shareLink.downloadsRemaining} downloads remaining
+              </Badge>
+            )}
+            {shareLink.expiresAt && (
+              <span className="text-blue-100 text-sm">
+                • Expires {new Date(shareLink.expiresAt).toLocaleDateString()}
+              </span>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <header className="border-b border-border bg-background sticky top-0 z-40 backdrop-blur-sm">
         <div className="container-pixieset py-4">
@@ -907,10 +1058,18 @@ export default function GalleryViewerPage() {
             </div>
 
             <div className="flex items-center space-x-2">
-              <Button variant="outline" size="sm" onClick={downloadAllPhotos} disabled={photos.length === 0}>
-                <Download className="h-4 w-4 mr-2" />
-                Download All ({photos.length})
-              </Button>
+              {/* Hide download button for view-only share links */}
+              {!(shareAccess && shareLink?.viewOnly) && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={downloadAllPhotos}
+                  disabled={photos.length === 0 || (shareAccess && shareLink?.downloadsRemaining === 0)}
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  Download All ({photos.length})
+                </Button>
+              )}
             </div>
           </div>
         </div>
@@ -1044,26 +1203,29 @@ export default function GalleryViewerPage() {
         {viewMode === 'slideshow' && selectedPhotoIndex !== null && (
           <div className="fixed inset-0 bg-black z-50 flex items-center justify-center">
             {/* Top Action Buttons */}
-            <div className="absolute top-4 right-4 flex items-center gap-2">
+            <div className="absolute top-4 right-4 flex items-center gap-2 z-10">
+              {/* Favorite button - only show for authenticated users */}
+              {user && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-white hover:bg-white/20"
+                  onClick={() => toggleFavorite(photos[selectedPhotoIndex].id)}
+                  title={photos[selectedPhotoIndex].is_favorite ? 'Remove from favorites' : 'Add to favorites'}
+                >
+                  <Heart
+                    className={`h-5 w-5 transition-colors ${
+                      photos[selectedPhotoIndex].is_favorite
+                        ? 'fill-red-500 text-red-500'
+                        : 'text-white'
+                    }`}
+                  />
+                </Button>
+              )}
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-foreground hover:bg-white/20"
-                onClick={() => toggleFavorite(photos[selectedPhotoIndex].id)}
-                title={photos[selectedPhotoIndex].is_favorite ? 'Remove from favorites' : 'Add to favorites'}
-              >
-                <Heart
-                  className={`h-5 w-5 transition-colors ${
-                    photos[selectedPhotoIndex].is_favorite
-                      ? 'fill-red-500 text-red-500'
-                      : 'text-foreground'
-                  }`}
-                />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-foreground hover:bg-white/20"
+                className="text-white hover:bg-white/20"
                 onClick={() => {
                   const photo = photos[selectedPhotoIndex]
                   const filename = photo.original_filename || `photo-${selectedPhotoIndex + 1}.jpg`
@@ -1075,7 +1237,7 @@ export default function GalleryViewerPage() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-foreground hover:bg-white/20"
+                className="text-white hover:bg-white/20"
                 onClick={closeSlideshow}
               >
                 <X className="h-6 w-6" />
@@ -1087,7 +1249,7 @@ export default function GalleryViewerPage() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute left-4 text-foreground hover:bg-white/20"
+                className="absolute left-4 text-white hover:bg-white/20 z-10"
                 onClick={prevPhoto}
               >
                 <ChevronLeft className="h-8 w-8" />
@@ -1110,7 +1272,7 @@ export default function GalleryViewerPage() {
               />
 
               {/* Photo Counter */}
-              <div className="text-center mt-4 text-foreground text-sm">
+              <div className="text-center mt-4 text-white text-sm">
                 {selectedPhotoIndex + 1} of {photos.length}
               </div>
             </div>
@@ -1120,7 +1282,7 @@ export default function GalleryViewerPage() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute right-4 text-foreground hover:bg-white/20"
+                className="absolute right-4 text-white hover:bg-white/20 z-10"
                 onClick={nextPhoto}
               >
                 <ChevronRight className="h-8 w-8" />

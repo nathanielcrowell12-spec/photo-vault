@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
-import { Calendar, Camera, User, ExternalLink, Grid3X3, List, Filter, Lock, AlertCircle, Edit } from 'lucide-react'
+import { Calendar, Camera, User, ExternalLink, Grid3X3, List, Filter, Lock, AlertCircle, Edit, Share2 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import GalleryEditModal from './GalleryEditModal'
@@ -449,19 +449,38 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
                       {gallery.gallery_name}
                     </h3>
                     {!isLocked && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-6 w-6 p-0 ml-2"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          setEditingGallery(gallery)
-                          setShowEditModal(true)
-                        }}
-                        title="Edit gallery info"
-                      >
-                        <Edit className="h-3 w-3" />
-                      </Button>
+                      <div className="flex items-center">
+                        {/* Share button - only for clients with active payment */}
+                        {!isPhotographer && isPaymentActive && (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-6 w-6 p-0 ml-2"
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              if (typeof window !== 'undefined') {
+                                window.location.href = `/client/gallery/${gallery.id}/share`
+                              }
+                            }}
+                            title="Share gallery"
+                          >
+                            <Share2 className="h-3 w-3" />
+                          </Button>
+                        )}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 w-6 p-0 ml-2"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setEditingGallery(gallery)
+                            setShowEditModal(true)
+                          }}
+                          title="Edit gallery info"
+                        >
+                          <Edit className="h-3 w-3" />
+                        </Button>
+                      </div>
                     )}
                   </div>
                   
