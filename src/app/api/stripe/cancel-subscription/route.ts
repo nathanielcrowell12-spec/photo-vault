@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerSupabaseClient } from '@/lib/supabase'
+import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { getStripeClient } from '@/lib/stripe'
 
 export const dynamic = 'force-dynamic'
@@ -7,13 +7,13 @@ export const dynamic = 'force-dynamic'
 /**
  * Cancel a subscription
  * Sets cancel_at_period_end = true (triggers 6-month grace period)
- * 
+ *
  * POST /api/stripe/cancel-subscription
  * Body: { subscriptionId: string }
  */
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createServerSupabaseClient()
+    const supabase = await createServerSupabaseClient()
     const body = await request.json()
     const { subscriptionId } = body
 

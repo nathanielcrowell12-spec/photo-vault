@@ -235,7 +235,8 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
       })
 
       if (!response.ok) {
-        throw new Error('Failed to delete gallery')
+        const data = await response.json().catch(() => ({}))
+        throw new Error(data.error || 'Failed to delete gallery')
       }
 
       toast({
@@ -249,9 +250,10 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
       console.error('Error deleting gallery:', error)
       // Rollback on error
       setGalleries(originalGalleries)
+      const errorMessage = error instanceof Error ? error.message : 'Failed to delete gallery. Please try again.'
       toast({
         title: 'Error',
-        description: 'Failed to delete gallery. Please try again.',
+        description: errorMessage,
         variant: 'destructive',
       })
     } finally {

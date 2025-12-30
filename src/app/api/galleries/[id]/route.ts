@@ -1,12 +1,12 @@
 // src/app/api/galleries/[id]/route.ts
 import { NextResponse } from 'next/server';
-import { createServerSupabaseClient } from '@/lib/supabase';
+import { createServerSupabaseClient } from '@/lib/supabase-server';
 
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -22,7 +22,7 @@ export async function POST(
     .from('photo_galleries')
     .update({ status: 'active', deleted_at: null })
     .eq('id', id)
-    .eq('user_id', user.id);
+    .eq('photographer_id', user.id);
 
   if (galleryError) {
     console.error('Error restoring gallery:', galleryError);
@@ -49,7 +49,7 @@ export async function DELETE(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -66,10 +66,19 @@ export async function DELETE(
     .from('photo_galleries')
     .delete()
     .eq('id', id)
-    .eq('user_id', user.id); // Ensure users can only delete their own galleries
+    .eq('photographer_id', user.id); // Ensure photographers can only delete their own galleries
 
   if (error) {
     console.error('Error soft deleting gallery:', error);
+
+    // Check for foreign key constraint (gallery has active subscription)
+    if (error.code === '23503' && error.message?.includes('subscriptions')) {
+      return NextResponse.json(
+        { error: 'Cannot delete gallery with active subscription. Please cancel the subscription first.' },
+        { status: 409 }
+      );
+    }
+
     return NextResponse.json({ error: 'Failed to delete gallery' }, { status: 500 });
   }
 

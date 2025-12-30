@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createServerSupabaseClient } from '@/lib/supabase'
+import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { getStripeClient } from '@/lib/stripe'
 
 export const dynamic = 'force-dynamic'
@@ -12,13 +12,13 @@ const REACTIVATION_FEE_CENTS = 2000
  * Two scenarios:
  * 1. During grace period: Resume subscription without fee
  * 2. After grace period (access suspended): Pay $20 reactivation fee
- * 
+ *
  * POST /api/stripe/reactivate
  * Body: { subscriptionId: string }
  */
 export async function POST(request: NextRequest) {
   try {
-    const supabase = createServerSupabaseClient()
+    const supabase = await createServerSupabaseClient()
     const body = await request.json()
     const { subscriptionId } = body
 

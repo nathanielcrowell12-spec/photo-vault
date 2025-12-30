@@ -103,13 +103,16 @@ export async function POST(request: NextRequest) {
         for (let i = 0; i < imageFiles.length; i += batchSize) {
           const batch = imageFiles.slice(i, i + batchSize)
 
-          await Promise.all(
-            batch.map(async ({ name, buffer }) => {
+          const results = await Promise.all(
+            batch.map(async ({ name, buffer }, batchIndex) => {
               try {
                 // Upload to Supabase Storage
                 const sanitizedName = name.replace(/[^a-zA-Z0-9.-]/g, '_')
                 const timestamp = Date.now()
-                const photoPath = `galleries/${galleryId}/${timestamp}-${sanitizedName}`
+                const randomSuffix = Math.random().toString(36).substring(2, 8)
+                const photoPath = `galleries/${galleryId}/${timestamp}-${randomSuffix}-${sanitizedName}`
+
+                console.log(`[Process] Uploading photo ${batchIndex + 1}: ${name} -> ${photoPath}`)
 
                 const { error: uploadPhotoError } = await supabase.storage
                   .from('photos')
@@ -119,8 +122,8 @@ export async function POST(request: NextRequest) {
                   })
 
                 if (uploadPhotoError) {
-                  console.error('Error uploading photo:', uploadPhotoError)
-                  return
+                  console.error(`[Process] Storage upload error for ${name}:`, uploadPhotoError)
+                  return { success: false, error: 'storage', name }
                 }
 
                 // Get public URL for the photo
@@ -145,16 +148,23 @@ export async function POST(request: NextRequest) {
                   })
 
                 if (photoRecordError) {
-                  console.error('Error creating photo record:', photoRecordError)
-                  return
+                  console.error(`[Process] Database insert error for ${name}:`, photoRecordError)
+                  return { success: false, error: 'database', name }
                 }
 
-                uploadedCount++
+                console.log(`[Process] Successfully uploaded ${name}`)
+                return { success: true, name }
               } catch (error) {
-                console.error('Error processing photo:', error)
+                console.error(`[Process] Exception processing ${name}:`, error)
+                return { success: false, error: 'exception', name }
               }
             })
           )
+
+          // Count successes safely (not in parallel)
+          const batchSuccesses = results.filter(r => r?.success).length
+          uploadedCount += batchSuccesses
+          console.log(`[Process] Batch complete: ${batchSuccesses}/${batch.length} succeeded, total: ${uploadedCount}`)
 
           const uploadProgress = 25 + ((uploadedCount / imageFiles.length) * 70)
           send({ message: `Uploaded ${uploadedCount}/${imageFiles.length} photos...`, progress: Math.floor(uploadProgress) })

@@ -9,41 +9,81 @@ const supabase = createClient(
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { fileName, fileSize, userId, galleryName, platform, clientId } = body
+    const { fileName, fileSize, userId, galleryName, platform, clientId, galleryId } = body
 
-    console.log('[Upload Prepare] Request:', { fileName, fileSize, userId, galleryName, platform, clientId })
+    console.log('[Upload Prepare] Request:', { fileName, fileSize, userId, galleryName, platform, clientId, galleryId })
 
     // Validate inputs
-    if (!fileName || !fileSize || !userId || !galleryName) {
+    if (!fileName || !fileSize || !userId) {
       return NextResponse.json({
         error: 'Missing required fields'
       }, { status: 400 })
     }
 
-    // Create gallery in database
-    const { data: gallery, error: galleryError } = await supabase
-      .from('photo_galleries')
-      .insert({
-        photographer_id: userId,
-        client_id: clientId || null,
-        platform: platform || 'photovault',
-        gallery_name: galleryName,
-        photo_count: 0,
-        session_date: new Date().toISOString(),
-        is_imported: false
-      })
-      .select()
-      .single()
-
-    if (galleryError) {
-      console.error('[Upload Prepare] Gallery creation error:', galleryError)
+    // If galleryId is provided, gallery name is not required (we use the existing gallery)
+    if (!galleryId && !galleryName) {
       return NextResponse.json({
-        error: 'Failed to create gallery',
-        details: galleryError.message
-      }, { status: 500 })
+        error: 'Missing galleryName (required when not using existing gallery)'
+      }, { status: 400 })
     }
 
-    console.log('[Upload Prepare] Gallery created:', gallery.id)
+    let gallery
+
+    if (galleryId) {
+      // Use existing gallery - verify ownership
+      console.log('[Upload Prepare] Using existing gallery:', galleryId)
+
+      const { data: existingGallery, error: fetchError } = await supabase
+        .from('photo_galleries')
+        .select('*')
+        .eq('id', galleryId)
+        .eq('photographer_id', userId)
+        .single()
+
+      if (fetchError || !existingGallery) {
+        console.error('[Upload Prepare] Gallery not found or access denied:', fetchError)
+        return NextResponse.json({
+          error: 'Gallery not found or access denied',
+          details: fetchError?.message || 'Gallery does not exist or you do not own it'
+        }, { status: 404 })
+      }
+
+      gallery = existingGallery
+      console.log('[Upload Prepare] Using existing gallery with pricing:', {
+        id: gallery.id,
+        name: gallery.gallery_name,
+        total_amount: gallery.total_amount,
+        payment_option_id: gallery.payment_option_id
+      })
+    } else {
+      // Create new gallery in database (backwards compatibility for old desktop versions)
+      console.log('[Upload Prepare] Creating new gallery (no galleryId provided)')
+
+      const { data: newGallery, error: galleryError } = await supabase
+        .from('photo_galleries')
+        .insert({
+          photographer_id: userId,
+          client_id: clientId || null,
+          platform: platform || 'photovault',
+          gallery_name: galleryName,
+          photo_count: 0,
+          session_date: new Date().toISOString(),
+          is_imported: false
+        })
+        .select()
+        .single()
+
+      if (galleryError) {
+        console.error('[Upload Prepare] Gallery creation error:', galleryError)
+        return NextResponse.json({
+          error: 'Failed to create gallery',
+          details: galleryError.message
+        }, { status: 500 })
+      }
+
+      gallery = newGallery
+      console.log('[Upload Prepare] Gallery created:', gallery.id)
+    }
 
     // Generate storage path
     const fileExt = fileName.split('.').pop()
