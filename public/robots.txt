@@ -1,7 +1,40 @@
+# PhotoVault - AI-Friendly Robots.txt
+# Last updated: 2025-12-31
+
 User-agent: *
 Allow: /
-Sitemap: https://photovault.com/sitemap.xml
+Disallow: /photographer/
+Disallow: /client/
+Disallow: /admin/
+Disallow: /api/
+Disallow: /auth/
+Disallow: /_next/
+
+# Sitemap
+Sitemap: https://photovault.photo/sitemap.xml
+
+# AI Search Crawlers - Explicitly Allowed
 User-agent: GPTBot
 Allow: /
+
+User-agent: OAI-SearchBot
+Allow: /
+
 User-agent: PerplexityBot
 Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: anthropic-ai
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+# LLM Context Files
+# /llms.txt - Concise context for AI agents
+# /llms-full.txt - Extended context with full taxonomy
