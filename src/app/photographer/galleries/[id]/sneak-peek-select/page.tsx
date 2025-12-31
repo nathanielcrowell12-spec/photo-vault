@@ -32,6 +32,7 @@ interface Gallery {
   client_id: string
   gallery_status: string
   photo_count: number
+  total_amount?: number
   clients?: {
     name: string
     email: string
@@ -69,7 +70,7 @@ export default function SneakPeekSelectPage() {
       // Fetch gallery first (without join to avoid RLS issues)
       const { data: galleryData, error: galleryError } = await supabase
         .from('photo_galleries')
-        .select('id, gallery_name, client_id, gallery_status, photo_count')
+        .select('id, gallery_name, client_id, gallery_status, photo_count, total_amount')
         .eq('id', galleryId)
         .single()
 
@@ -243,9 +244,16 @@ export default function SneakPeekSelectPage() {
             <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
               <Check className="h-8 w-8 text-green-400" />
             </div>
-            <h2 className="text-xl font-bold text-foreground mb-2">Gallery Ready!</h2>
-            <p className="text-muted-foreground mb-4">
-              {gallery?.clients?.name || 'Your client'} has been notified that their gallery is ready.
+            <h2 className="text-xl font-bold text-foreground mb-2">Gallery Sent!</h2>
+            <p className="text-muted-foreground mb-2">
+              Email sent to <span className="font-medium">{gallery?.clients?.email}</span>
+            </p>
+            <p className="text-sm text-muted-foreground mb-4">
+              {gallery?.clients?.name || 'Your client'} can now view
+              {gallery?.total_amount && gallery.total_amount > 0
+                ? ' and purchase access to '
+                : ' '}
+              their gallery.
             </p>
             <p className="text-muted-foreground text-sm">Redirecting to galleries...</p>
           </CardContent>
@@ -265,9 +273,12 @@ export default function SneakPeekSelectPage() {
             </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Select Sneak Peek Photos</h1>
+            <h1 className="text-2xl font-bold text-foreground">
+              Send Gallery to {gallery?.clients?.name || 'Client'}
+            </h1>
             <p className="text-muted-foreground">
-              Choose up to 5 photos to include in the notification email (optional)
+              {gallery?.clients?.email} will receive a notification email.
+              Optionally select up to 5 preview photos to include.
             </p>
           </div>
         </div>
@@ -278,6 +289,20 @@ export default function SneakPeekSelectPage() {
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
+
+        {/* What will happen notification */}
+        <Alert className="mb-6 bg-blue-500/10 border-blue-500/30">
+          <Send className="h-4 w-4 text-blue-400" />
+          <AlertDescription className="text-blue-100">
+            This will send an email to{' '}
+            <span className="font-medium">{gallery?.clients?.email}</span>
+            {' '}with a link to view
+            {gallery?.total_amount && gallery.total_amount > 0
+              ? ' and pay for '
+              : ' '}
+            the gallery.
+          </AlertDescription>
+        </Alert>
 
         {/* Gallery Info */}
         <Card className="bg-slate-800/50 border-border mb-6">

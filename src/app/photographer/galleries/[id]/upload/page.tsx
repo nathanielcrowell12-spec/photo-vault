@@ -308,7 +308,7 @@ export default function GalleryUploadPage({ params }: { params: Promise<{ id: st
                 <Send className="h-4 w-4 mr-2" />
                 {gallery?.gallery_status === 'ready' && !gallery?.email_sent_at
                   ? 'Resend to Client'
-                  : 'Mark as Ready'}
+                  : 'Complete & Send to Client'}
               </Button>
             )}
           </div>
@@ -535,7 +535,8 @@ export default function GalleryUploadPage({ params }: { params: Promise<{ id: st
                   )}
                 </CardTitle>
                 <CardDescription>
-                  Photos in this gallery. Click "Mark as Ready" when you're done uploading.
+                  Photos in this gallery. When ready, click &quot;Complete &amp; Send to Client&quot; to notify{' '}
+                  <span className="font-medium">{gallery?.clients?.name || 'your client'}</span>.
                 </CardDescription>
               </CardHeader>
               <CardContent>
