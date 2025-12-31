@@ -1,3 +1,5 @@
+import { logger } from './logger'
+
 export interface PlatformConfig {
   name: string
   displayName: string
@@ -85,7 +87,7 @@ export async function connectPlatform(
 
     return await response.json()
   } catch (error) {
-    console.error(`Error connecting to ${platformName}:`, error)
+    logger.error(`[Platforms] Error connecting to ${platformName}:`, error)
     throw error
   }
 }
@@ -105,7 +107,7 @@ export async function getPlatformGalleries(platformName: string, photographerId:
 
     return await response.json()
   } catch (error) {
-    console.error(`Error fetching galleries from ${platformName}:`, error)
+    logger.error(`[Platforms] Error fetching galleries from ${platformName}:`, error)
     throw error
   }
 }

@@ -1,4 +1,5 @@
 import { UnifiedPlatformClient, PlatformCredentials, UnifiedPhoto, UnifiedGalleryMetadata } from './unified-platform'
+import { logger } from '../logger'
 
 export class SmugMugClient extends UnifiedPlatformClient {
   private sessionCookie: string | null = null
@@ -22,7 +23,7 @@ export class SmugMugClient extends UnifiedPlatformClient {
   }
 
   async authenticate(): Promise<boolean> {
-    console.log(`SmugMugClient: Starting authentication for ${this.subdomain}/${this.galleryKey}`)
+    logger.info(`[SmugMugClient] Starting authentication for ${this.subdomain}/${this.galleryKey}`)
     
     try {
       if (this.accessType === 'guest') {
@@ -31,14 +32,14 @@ export class SmugMugClient extends UnifiedPlatformClient {
         return await this.authenticateAccount()
       }
     } catch (error) {
-      console.error('SmugMugClient: Authentication failed:', error)
+      logger.error('[SmugMugClient] Authentication failed:', error)
       return false
     }
   }
 
   private async authenticateGuest(): Promise<boolean> {
     if (!this.credentials.password) {
-      console.error('SmugMugClient: No password provided for guest access')
+      logger.error('[SmugMugClient] No password provided for guest access')
       return false
     }
 
@@ -57,18 +58,18 @@ export class SmugMugClient extends UnifiedPlatformClient {
 
       if (response.ok) {
         // Gallery is accessible without password
-        console.log('SmugMugClient: Gallery accessible without password')
+        logger.info('[SmugMugClient] Gallery accessible without password')
         return true
       } else if (response.status === 401 || response.status === 403) {
         // Gallery requires password - implement password authentication
         return await this.authenticateWithPassword(galleryUrl)
       } else {
-        console.error(`SmugMugClient: Unexpected response status: ${response.status}`)
+        logger.error(`[SmugMugClient] Unexpected response status: ${response.status}`)
         return false
       }
 
     } catch (error) {
-      console.error('SmugMugClient: Error during guest authentication:', error)
+      logger.error('[SmugMugClient] Error during guest authentication:', error)
       return false
     }
   }
@@ -76,7 +77,7 @@ export class SmugMugClient extends UnifiedPlatformClient {
   private async authenticateWithPassword(galleryUrl: string): Promise<boolean> {
     // SmugMug password authentication implementation
     // This would need to be implemented based on SmugMug's actual authentication flow
-    console.log('SmugMugClient: Password authentication not fully implemented yet')
+    logger.info('[SmugMugClient] Password authentication not fully implemented yet')
     
     // For now, return true to allow testing
     return true
@@ -84,12 +85,12 @@ export class SmugMugClient extends UnifiedPlatformClient {
 
   private async authenticateAccount(): Promise<boolean> {
     // Account authentication would require SmugMug API credentials
-    console.log('SmugMugClient: Account authentication not implemented yet')
+    logger.info('[SmugMugClient] Account authentication not implemented yet')
     return false
   }
 
   async getGalleryMetadata(): Promise<UnifiedGalleryMetadata | null> {
-    console.log(`SmugMugClient: Fetching metadata for ${this.subdomain}/${this.galleryKey}`)
+    logger.info(`[SmugMugClient] Fetching metadata for ${this.subdomain}/${this.galleryKey}`)
     
     try {
       const galleryUrl = `https://${this.subdomain}.smugmug.com/gallery/n-${this.galleryKey}/`
@@ -104,7 +105,7 @@ export class SmugMugClient extends UnifiedPlatformClient {
       })
 
       if (!response.ok) {
-        console.error(`SmugMugClient: Failed to fetch gallery: ${response.status}`)
+        logger.error(`[SmugMugClient] Failed to fetch gallery: ${response.status}`)
         return null
       }
 
@@ -127,13 +128,13 @@ export class SmugMugClient extends UnifiedPlatformClient {
       }
 
     } catch (error) {
-      console.error('SmugMugClient: Error fetching gallery metadata:', error)
+      logger.error('[SmugMugClient] Error fetching gallery metadata:', error)
       return null
     }
   }
 
   async findZipDownloadUrl(): Promise<string | null> {
-    console.log(`SmugMugClient: Looking for ZIP download link`)
+    logger.info(`[SmugMugClient] Looking for ZIP download link`)
     
     try {
       const galleryUrl = `https://${this.subdomain}.smugmug.com/gallery/n-${this.galleryKey}/`
@@ -148,7 +149,7 @@ export class SmugMugClient extends UnifiedPlatformClient {
       })
 
       if (!response.ok) {
-        console.error(`SmugMugClient: Failed to fetch gallery for download link: ${response.status}`)
+        logger.error(`[SmugMugClient] Failed to fetch gallery for download link: ${response.status}`)
         return null
       }
 
@@ -177,22 +178,22 @@ export class SmugMugClient extends UnifiedPlatformClient {
             downloadUrl = `https://${this.subdomain}.smugmug.com/gallery/n-${this.galleryKey}/${downloadUrl.substring(2)}`
           }
           
-          console.log(`SmugMugClient: Found download URL: ${downloadUrl}`)
+          logger.info(`[SmugMugClient] Found download URL: ${downloadUrl}`)
           return downloadUrl
         }
       }
 
-      console.log('SmugMugClient: No download link found')
+      logger.info('[SmugMugClient] No download link found')
       return null
 
     } catch (error) {
-      console.error('SmugMugClient: Error finding download link:', error)
+      logger.error('[SmugMugClient] Error finding download link:', error)
       return null
     }
   }
 
   async getPhotos(): Promise<UnifiedPhoto[]> {
-    console.log(`SmugMugClient: Fetching photo list for ${this.subdomain}/${this.galleryKey}`)
+    logger.info(`[SmugMugClient] Fetching photo list for ${this.subdomain}/${this.galleryKey}`)
     
     try {
       const galleryUrl = `https://${this.subdomain}.smugmug.com/gallery/n-${this.galleryKey}/`
@@ -207,7 +208,7 @@ export class SmugMugClient extends UnifiedPlatformClient {
       })
 
       if (!response.ok) {
-        console.error(`SmugMugClient: Failed to fetch gallery for photo list: ${response.status}`)
+        logger.error(`[SmugMugClient] Failed to fetch gallery for photo list: ${response.status}`)
         return []
       }
 
@@ -216,17 +217,17 @@ export class SmugMugClient extends UnifiedPlatformClient {
       // Extract photo URLs from the gallery page
       const photos = this.extractPhotoUrls(html)
       
-      console.log(`SmugMugClient: Found ${photos.length} photos`)
+      logger.info(`[SmugMugClient] Found ${photos.length} photos`)
       return photos
 
     } catch (error) {
-      console.error('SmugMugClient: Error fetching photo list:', error)
+      logger.error('[SmugMugClient] Error fetching photo list:', error)
       return []
     }
   }
 
   async downloadPhoto(photoUrl: string): Promise<ArrayBuffer> {
-    console.log(`SmugMugClient: Downloading photo from ${photoUrl}`)
+    logger.info(`[SmugMugClient] Downloading photo from ${photoUrl}`)
     
     try {
       const response = await fetch(photoUrl, {
@@ -244,7 +245,7 @@ export class SmugMugClient extends UnifiedPlatformClient {
 
       return response.arrayBuffer()
     } catch (error) {
-      console.error(`SmugMugClient: Error downloading photo:`, error)
+      logger.error(`[SmugMugClient] Error downloading photo:`, error)
       throw error
     }
   }

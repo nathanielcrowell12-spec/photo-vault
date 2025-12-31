@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
+import { logger } from '@/lib/logger'
 
 export async function GET(request: NextRequest) {
   try {
@@ -34,7 +35,7 @@ export async function GET(request: NextRequest) {
     const { data: suggestions, error } = await dbQuery
 
     if (error) {
-      console.error('[Suggest] Database error:', error)
+      logger.error('[Suggest] Database error:', error)
       return NextResponse.json({ error: 'Suggest failed' }, { status: 500 })
     }
 
@@ -43,7 +44,7 @@ export async function GET(request: NextRequest) {
       suggestions: suggestions || []
     })
   } catch (error) {
-    console.error('[Suggest] Unexpected error:', error)
+    logger.error('[Suggest] Unexpected error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

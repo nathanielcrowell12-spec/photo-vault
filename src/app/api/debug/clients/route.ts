@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
+import { logger } from '@/lib/logger'
 
 export async function GET(request: NextRequest) {
   try {
@@ -30,7 +31,7 @@ export async function GET(request: NextRequest) {
       error: clientsError
     })
   } catch (error) {
-    console.error('[Debug API] Error:', error)
+    logger.error('[DebugClients] Error:', error)
     return NextResponse.json({
       error: 'Internal server error',
       details: error

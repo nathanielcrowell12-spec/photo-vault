@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
+import { logger } from '@/lib/logger'
 
 export async function GET() {
   try {
@@ -47,7 +48,7 @@ export async function GET() {
       .order('created_at', { ascending: false })
 
     if (favError) {
-      console.error('[Favorites API] Error:', favError)
+      logger.error('[Favorites] Error:', favError)
       return NextResponse.json(
         { error: 'Failed to fetch favorites' },
         { status: 500 }
@@ -65,7 +66,7 @@ export async function GET() {
       favorites: favoritesWithGallery
     })
   } catch (error) {
-    console.error('[Favorites API] Error:', error)
+    logger.error('[Favorites] Error:', error)
     return NextResponse.json(
       { error: 'Failed to fetch favorites' },
       { status: 500 }

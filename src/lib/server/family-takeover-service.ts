@@ -1,5 +1,6 @@
 import { createServiceRoleClient } from '@/lib/supabase-server'
 import { EmailService } from '@/lib/email/email-service'
+import { logger } from '@/lib/logger'
 
 /**
  * Helper function to complete takeover after successful payment
@@ -141,11 +142,11 @@ export async function completeTakeover(
       }
     }
 
-    console.log(`[Takeover] Completed takeover: ${takeover_type} for account ${account_id} by secondary ${secondary_id}`)
+    logger.info(`[Takeover] Completed takeover: ${takeover_type} for account ${account_id} by secondary ${secondary_id}`)
 
     return { success: true }
   } catch (error) {
-    console.error('[Takeover] Error completing takeover:', error)
+    logger.error('[Takeover] Error completing takeover:', error)
     throw error
   }
 }

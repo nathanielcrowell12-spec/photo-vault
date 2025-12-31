@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase'
 import type { Photographer, PhotographersResponse } from '@/types/admin'
+import { logger } from '@/lib/logger'
 
 export async function GET(request: NextRequest) {
   try {
@@ -33,7 +34,7 @@ export async function GET(request: NextRequest) {
     const { data: photographers, error: profileError } = await query.range(from, to)
 
     if (profileError) {
-      console.error('[api/admin/photographers] Profile query error:', profileError)
+      logger.error('[AdminPhotographers] Profile query error:', profileError)
       throw profileError
     }
 
@@ -57,7 +58,7 @@ export async function GET(request: NextRequest) {
     })
 
     if (authError) {
-      console.error('[api/admin/photographers] Auth error:', authError)
+      logger.error('[AdminPhotographers] Auth error:', authError)
       // Don't throw - continue without emails
     }
 
@@ -73,7 +74,7 @@ export async function GET(request: NextRequest) {
       .in('photographer_id', photographerIds)
 
     if (galleriesError) {
-      console.error('[api/admin/photographers] Galleries error:', galleriesError)
+      logger.error('[AdminPhotographers] Galleries error:', galleriesError)
     }
 
     // Step 4: Bulk fetch commissions
@@ -84,7 +85,7 @@ export async function GET(request: NextRequest) {
       .eq('status', 'paid')
 
     if (commissionsError) {
-      console.error('[api/admin/photographers] Commissions error:', commissionsError)
+      logger.error('[AdminPhotographers] Commissions error:', commissionsError)
     }
 
     // Step 5: Aggregate in JavaScript
@@ -168,7 +169,7 @@ export async function GET(request: NextRequest) {
       },
     })
   } catch (error) {
-    console.error('[api/admin/photographers] Failed to fetch photographers', error)
+    logger.error('[AdminPhotographers] Failed to fetch photographers', error)
     return NextResponse.json(
       {
         success: false,

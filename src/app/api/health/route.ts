@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 import { HEALTH_CHECK_TIMEOUT_MS, HEALTH_CHECK_QUERY_LIMIT } from '@/lib/api-constants'
+import { logger } from '@/lib/logger'
 
 /**
  * Health Check Endpoint
@@ -93,8 +94,8 @@ export async function GET(request: NextRequest) {
     })
     
   } catch (error) {
-    console.error('Health check failed:', error)
-    
+    logger.error('[Health] Health check failed:', error)
+
     return NextResponse.json({
       status: 'unhealthy',
       timestamp: new Date().toISOString(),
@@ -103,7 +104,7 @@ export async function GET(request: NextRequest) {
         database: 'error',
         helmProject: 'error',
       }
-    }, { 
+    }, {
       status: 503,
       headers: {
         'Cache-Control': 'no-cache, no-store, must-revalidate',

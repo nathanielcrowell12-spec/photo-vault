@@ -7,6 +7,7 @@
  */
 
 import { createServiceRoleClient } from '@/lib/supabase-server'
+import { logger } from '@/lib/logger'
 
 export interface AccessCheckResult {
   hasAccess: boolean
@@ -157,7 +158,7 @@ export async function getSuspendedSubscriptions(): Promise<any[]> {
     .order('access_suspended_at', { ascending: false })
 
   if (error) {
-    console.error('[SubscriptionAccess] Error fetching suspended subscriptions:', error)
+    logger.error('[SubscriptionAccess] Error fetching suspended subscriptions:', error)
     return []
   }
 
@@ -184,11 +185,11 @@ export async function suspendSubscriptionAccess(
     .eq('stripe_subscription_id', subscriptionId)
 
   if (error) {
-    console.error('[SubscriptionAccess] Error suspending access:', error)
+    logger.error('[SubscriptionAccess] Error suspending access:', error)
     return false
   }
 
-  console.log(`[SubscriptionAccess] Access suspended for subscription ${subscriptionId}${reason ? `: ${reason}` : ''}`)
+  logger.info(`[SubscriptionAccess] Access suspended for subscription ${subscriptionId}${reason ? `: ${reason}` : ''}`)
   return true
 }
 
@@ -214,11 +215,11 @@ export async function restoreSubscriptionAccess(
     .eq('stripe_subscription_id', subscriptionId)
 
   if (error) {
-    console.error('[SubscriptionAccess] Error restoring access:', error)
+    logger.error('[SubscriptionAccess] Error restoring access:', error)
     return false
   }
 
-  console.log(`[SubscriptionAccess] Access restored for subscription ${subscriptionId}${reason ? `: ${reason}` : ''}`)
+  logger.info(`[SubscriptionAccess] Access restored for subscription ${subscriptionId}${reason ? `: ${reason}` : ''}`)
   return true
 }
 

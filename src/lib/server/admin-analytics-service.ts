@@ -1,6 +1,7 @@
 'use server'
 
 import { createServiceRoleClient } from '@/lib/supabase-server'
+import { logger } from '@/lib/logger'
 
 export type AnalyticsMetrics = {
   totalUsers: number
@@ -39,7 +40,7 @@ export async function fetchAdminAnalyticsData(): Promise<AdminAnalyticsData> {
       .select('id', { count: 'exact', head: true })
 
     if (usersError) {
-      console.warn('[admin-analytics-service] Could not fetch total users', usersError)
+      logger.warn('[admin-analytics-service] Could not fetch total users', usersError)
     }
 
     // Fetch total photos uploaded - use count for safety
@@ -48,7 +49,7 @@ export async function fetchAdminAnalyticsData(): Promise<AdminAnalyticsData> {
       .select('id', { count: 'exact', head: true })
 
     if (photosError) {
-      console.warn('[admin-analytics-service] Could not fetch photos count', photosError)
+      logger.warn('[admin-analytics-service] Could not fetch photos count', photosError)
     }
 
     // Fetch total file sizes for storage calculation
@@ -57,7 +58,7 @@ export async function fetchAdminAnalyticsData(): Promise<AdminAnalyticsData> {
       .select('file_size')
 
     if (sizesError) {
-      console.warn('[admin-analytics-service] Could not fetch photo sizes', sizesError)
+      logger.warn('[admin-analytics-service] Could not fetch photo sizes', sizesError)
     }
 
     const totalBytes = photoSizes?.reduce((sum, photo) => sum + (photo.file_size || 0), 0) || 0
@@ -73,7 +74,7 @@ export async function fetchAdminAnalyticsData(): Promise<AdminAnalyticsData> {
       .gte('created_at', startOfDay.toISOString())
 
     if (activeGalleryError) {
-      console.warn('[admin-analytics-service] Could not fetch active gallery users', activeGalleryError)
+      logger.warn('[admin-analytics-service] Could not fetch active gallery users', activeGalleryError)
     }
 
     const { count: activePhotoUsers, error: activePhotoError } = await supabase
@@ -82,7 +83,7 @@ export async function fetchAdminAnalyticsData(): Promise<AdminAnalyticsData> {
       .gte('created_at', startOfDay.toISOString())
 
     if (activePhotoError) {
-      console.warn('[admin-analytics-service] Could not fetch active photo users', activePhotoError)
+      logger.warn('[admin-analytics-service] Could not fetch active photo users', activePhotoError)
     }
 
     // Approximate active users (this is a rough estimate)
@@ -158,7 +159,7 @@ export async function fetchAdminAnalyticsData(): Promise<AdminAnalyticsData> {
       recentEvents: recentEvents.slice(0, 5), // Return top 5 most recent events
     }
   } catch (error) {
-    console.error('[admin-analytics-service] Failed to fetch analytics data', error)
+    logger.error('[admin-analytics-service] Failed to fetch analytics data', error)
 
     // Return safe defaults on error
     return {

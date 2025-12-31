@@ -5,6 +5,8 @@
  * All consumers should use dynamic imports: const { getResendClient } = await import('@/lib/email/resend')
  */
 
+import { logger } from '../logger'
+
 export const FROM_EMAIL = process.env.FROM_EMAIL || 'PhotoVault <noreply@photovault.photo>';
 
 // Type definition for Resend client (without importing the actual package)
@@ -41,13 +43,13 @@ export async function getResendClient(): Promise<ResendClient> {
   // Return mock if API key is not available OR if we're in build phase
   if (!process.env.RESEND_API_KEY || isVercelBuild) {
     const reason = isVercelBuild ? 'Vercel build phase' : 'RESEND_API_KEY not set';
-    console.warn(`[Resend] Using mock client - ${reason}`);
+    logger.warn(`[Resend] Using mock client - ${reason}`);
 
     if (!mockInstance) {
       mockInstance = {
         emails: {
           send: async (params) => {
-            console.log('[Resend Mock] Would send email:', {
+            logger.info('[Resend Mock] Would send email:', {
               to: params.to,
               subject: params.subject
             });
@@ -74,17 +76,17 @@ export async function getResendClient(): Promise<ResendClient> {
 
     const client = new ResendClass(process.env.RESEND_API_KEY);
     resendInstance = client as unknown as ResendClient;
-    console.log('[Resend] Client initialized successfully');
+    logger.info('[Resend] Client initialized successfully');
     return resendInstance;
   } catch (error) {
-    console.error('[Resend] Failed to initialize client:', error);
+    logger.error('[Resend] Failed to initialize client:', error);
 
     // Fall back to mock on error
     if (!mockInstance) {
       mockInstance = {
         emails: {
           send: async (params) => {
-            console.error('[Resend Error] Cannot send email - initialization failed');
+            logger.error('[Resend Error] Cannot send email - initialization failed');
             throw new Error('Resend client initialization failed');
           }
         }

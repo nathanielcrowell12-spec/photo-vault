@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
+import { logger } from '@/lib/logger'
 
 export async function GET(request: NextRequest) {
   try {
@@ -36,7 +37,7 @@ export async function GET(request: NextRequest) {
       .order('payment_period_start', { ascending: false })
 
     if (commissionError) {
-      console.error('Error fetching commission payments:', commissionError)
+      logger.error('[RevenueDashboard] Error fetching commission payments:', commissionError)
       return NextResponse.json(
         { error: 'Failed to fetch commission data' },
         { status: 500 }
@@ -62,7 +63,7 @@ export async function GET(request: NextRequest) {
       .order('payment_date', { ascending: false })
 
     if (clientError) {
-      console.error('Error fetching client payments:', clientError)
+      logger.error('[RevenueDashboard] Error fetching client payments:', clientError)
       return NextResponse.json(
         { error: 'Failed to fetch client payment data' },
         { status: 500 }
@@ -207,7 +208,7 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Revenue dashboard error:', error)
+    logger.error('[RevenueDashboard] Revenue dashboard error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

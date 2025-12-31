@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
+import { logger } from '@/lib/logger'
 
 interface TimelineGallery {
   id: string
@@ -63,7 +64,7 @@ export async function GET() {
       .order('created_at', { ascending: false })
 
     if (galleriesError) {
-      console.error('[Timeline API] Galleries error:', galleriesError)
+      logger.error('[Timeline] Galleries error:', galleriesError)
       return NextResponse.json(
         { error: 'Failed to fetch galleries' },
         { status: 500 }
@@ -162,7 +163,7 @@ export async function GET() {
       timeline
     })
   } catch (error) {
-    console.error('[Timeline API] Error:', error)
+    logger.error('[Timeline] Error:', error)
     return NextResponse.json(
       { error: 'Failed to fetch timeline data' },
       { status: 500 }

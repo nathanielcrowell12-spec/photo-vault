@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { logger } from '@/lib/logger'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -45,7 +46,7 @@ export async function GET(request: NextRequest) {
       .order('last_message_at', { ascending: false })
 
     if (error) {
-      console.error('Error fetching threads:', error)
+      logger.error('[MessageThreads] Error fetching threads:', error)
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
@@ -84,7 +85,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ threads: formattedThreads }, { status: 200 })
   } catch (error: any) {
-    console.error('Error in GET /api/messages/threads:', error)
+    logger.error('[MessageThreads] Error in GET:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
+import { logger } from '@/lib/logger'
 
 export async function GET() {
   try {
@@ -85,7 +86,7 @@ export async function GET() {
       }
     })
   } catch (error) {
-    console.error('[API] Error fetching photographer stats:', error)
+    logger.error('[PhotographerStats] Error fetching photographer stats:', error)
     return NextResponse.json(
       { error: 'Failed to fetch stats' },
       { status: 500 }

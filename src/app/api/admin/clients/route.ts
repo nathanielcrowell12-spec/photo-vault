@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase'
 import type { Client, ClientsResponse } from '@/types/admin'
+import { logger } from '@/lib/logger'
 
 export async function GET(request: NextRequest) {
   try {
@@ -33,7 +34,7 @@ export async function GET(request: NextRequest) {
     const { data: clients, error: profileError } = await query.range(from, to)
 
     if (profileError) {
-      console.error('[api/admin/clients] Profile query error:', profileError)
+      logger.error('[AdminClients] Profile query error:', profileError)
       throw profileError
     }
 
@@ -57,7 +58,7 @@ export async function GET(request: NextRequest) {
     })
 
     if (authError) {
-      console.error('[api/admin/clients] Auth error:', authError)
+      logger.error('[AdminClients] Auth error:', authError)
     }
 
     const emailMap = new Map<string, string>()
@@ -72,7 +73,7 @@ export async function GET(request: NextRequest) {
       .in('client_id', clientIds)
 
     if (galleriesError) {
-      console.error('[api/admin/clients] Galleries error:', galleriesError)
+      logger.error('[AdminClients] Galleries error:', galleriesError)
     }
 
     // Step 4: Bulk fetch active subscriptions
@@ -83,7 +84,7 @@ export async function GET(request: NextRequest) {
       .eq('status', 'active')
 
     if (subscriptionsError) {
-      console.error('[api/admin/clients] Subscriptions error:', subscriptionsError)
+      logger.error('[AdminClients] Subscriptions error:', subscriptionsError)
     }
 
     // Step 5: Bulk fetch commissions (total spent by clients)
@@ -99,7 +100,7 @@ export async function GET(request: NextRequest) {
         .eq('status', 'paid')
 
       if (commissionsError) {
-        console.error('[api/admin/clients] Commissions error:', commissionsError)
+        logger.error('[AdminClients] Commissions error:', commissionsError)
       }
       commissions = commissionData || []
     }
@@ -197,7 +198,7 @@ export async function GET(request: NextRequest) {
       },
     })
   } catch (error) {
-    console.error('[api/admin/clients] Failed to fetch clients', error)
+    logger.error('[AdminClients] Failed to fetch clients', error)
     return NextResponse.json(
       {
         success: false,

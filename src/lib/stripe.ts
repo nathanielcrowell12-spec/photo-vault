@@ -9,6 +9,7 @@
  */
 
 import Stripe from 'stripe'
+import { logger } from './logger'
 
 // Cached Stripe instance
 let stripeInstance: Stripe | null = null
@@ -20,8 +21,8 @@ let stripeInstance: Stripe | null = null
 export function getStripeClient(): Stripe {
   if (!stripeInstance) {
     if (!process.env.STRIPE_SECRET_KEY) {
-      console.warn('⚠️  STRIPE_SECRET_KEY not set. Stripe features will not work.')
-      console.warn('📖 See STRIPE-SETUP-GUIDE.md for setup instructions')
+      logger.warn('[Stripe] STRIPE_SECRET_KEY not set. Stripe features will not work.')
+      logger.warn('[Stripe] See STRIPE-SETUP-GUIDE.md for setup instructions')
       // Return a mock or throw - for now we'll create with empty string to maintain compatibility
     }
 
@@ -322,10 +323,10 @@ export async function createPlatformSubscription({
   // Create or retrieve customer
   let customer: Stripe.Customer
   if (customerId) {
-    console.log('[createPlatformSubscription] Using existing customer:', customerId)
+    logger.info('[createPlatformSubscription] Using existing customer:', customerId)
     customer = await getCustomer(customerId)
   } else {
-    console.log('[createPlatformSubscription] No customerId provided, creating/retrieving by email:', email)
+    logger.info('[createPlatformSubscription] No customerId provided, creating/retrieving by email:', email)
     customer = await createOrRetrieveCustomer({
       email,
       userId: photographerId,
@@ -333,7 +334,7 @@ export async function createPlatformSubscription({
     })
   }
 
-  console.log('[createPlatformSubscription] Final customer:', {
+  logger.info('[createPlatformSubscription] Final customer:', {
     id: customer.id,
     email: customer.email,
     defaultPaymentMethod: customer.invoice_settings?.default_payment_method,
@@ -359,7 +360,7 @@ export async function createPlatformSubscription({
   })
 
   // Log full subscription for debugging
-  console.log('[createPlatformSubscription] Full subscription:', JSON.stringify(subscription, null, 2))
+  logger.debug('[createPlatformSubscription] Full subscription:', JSON.stringify(subscription, null, 2))
 
   return subscription
 }

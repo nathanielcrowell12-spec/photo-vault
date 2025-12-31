@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { logger } from '@/lib/logger'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -90,7 +91,7 @@ export async function GET(request: NextRequest) {
       .in('id', Array.from(photographerIds))
 
     if (photographersError) {
-      console.error('Error fetching photographers:', photographersError)
+      logger.error('[ClientPhotographers] Error fetching photographers:', photographersError)
       return NextResponse.json({ error: photographersError.message }, { status: 500 })
     }
 
@@ -113,7 +114,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ photographers: formattedPhotographers })
   } catch (error: any) {
-    console.error('Error in GET /api/client/photographers:', error)
+    logger.error('[ClientPhotographers] Error in GET:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

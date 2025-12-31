@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase'
+import { logger } from '@/lib/logger'
 
 export async function GET() {
   try {
@@ -11,7 +12,7 @@ export async function GET() {
     })
 
     if (authError) {
-      console.error('[api/admin/users] Auth error:', authError)
+      logger.error('[AdminUsers] Auth error:', authError)
       throw authError
     }
 
@@ -43,7 +44,7 @@ export async function GET() {
       data: usersWithEmails,
     })
   } catch (error) {
-    console.error('[api/admin/users] Failed to fetch users', error)
+    logger.error('[AdminUsers] Failed to fetch users', error)
     return NextResponse.json(
       {
         success: false,

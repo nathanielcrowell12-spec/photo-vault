@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server'
 import { fetchAdminDashboardStatus } from '@/lib/server/admin-dashboard-service'
+import { logger } from '@/lib/logger'
 
 export async function GET() {
   try {
     const data = await fetchAdminDashboardStatus()
     return NextResponse.json({ success: true, data })
   } catch (error) {
-    console.error('[api/admin/dashboard/status] Failed to fetch status', error)
+    logger.error('[AdminDashboardStatus] Failed to fetch status', error)
     return NextResponse.json(
       {
         success: false,

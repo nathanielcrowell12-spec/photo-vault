@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server'
 import { vacuumStorage } from '@/lib/server/admin-database-service'
+import { logger } from '@/lib/logger'
 
 export async function POST() {
   try {
     const result = await vacuumStorage()
     return NextResponse.json({ success: true, data: result })
   } catch (error) {
-    console.error('[api/admin/database/vacuum] Failed to vacuum storage', error)
+    logger.error('[AdminDatabaseVacuum] Failed to vacuum storage', error)
     return NextResponse.json(
       {
         success: false,

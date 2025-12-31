@@ -1,6 +1,7 @@
 'use server'
 
 import { createServerSupabaseClient } from '@/lib/supabase'
+import { logger } from '@/lib/logger'
 
 type NullableNumber = number | null
 type NullableString = string | null
@@ -39,7 +40,7 @@ async function fetchTotalUsers() {
     if (error) throw error
     return { value: count ?? 0 } satisfies FetchResult<number>
   } catch (error) {
-    console.error('[admin-dashboard-service] Failed to fetch total users', error)
+    logger.error('[admin-dashboard-service] Failed to fetch total users', error)
     return { value: null, error: error instanceof Error ? error : new Error('Unknown error') } satisfies FetchResult<NullableNumber>
   }
 }
@@ -55,7 +56,7 @@ async function fetchPhotographerCount() {
     if (error) throw error
     return { value: count ?? 0 } satisfies FetchResult<number>
   } catch (error) {
-    console.error('[admin-dashboard-service] Failed to fetch photographer count', error)
+    logger.error('[admin-dashboard-service] Failed to fetch photographer count', error)
     return { value: null, error: error instanceof Error ? error : new Error('Unknown error') } satisfies FetchResult<NullableNumber>
   }
 }
@@ -85,7 +86,7 @@ async function fetchMonthlyRevenue() {
 
     return { value: totalDollars } satisfies FetchResult<number>
   } catch (error) {
-    console.warn('[admin-dashboard-service] Monthly revenue unavailable', error)
+    logger.warn('[admin-dashboard-service] Monthly revenue unavailable', error)
     return { value: null, error: error instanceof Error ? error : new Error('Unknown error') } satisfies FetchResult<NullableNumber>
   }
 }

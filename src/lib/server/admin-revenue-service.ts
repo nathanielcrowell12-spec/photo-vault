@@ -1,6 +1,7 @@
 'use server'
 
 import { createServiceRoleClient } from '@/lib/supabase-server'
+import { logger } from '@/lib/logger'
 
 export type RevenueStats = {
   totalRevenue: number
@@ -180,7 +181,7 @@ export async function fetchAdminRevenueData(): Promise<AdminRevenueData> {
       failedPayments,
     }
   } catch (error) {
-    console.error('[admin-revenue-service] Failed to fetch revenue data', error)
+    logger.error('[admin-revenue-service] Failed to fetch revenue data', error)
 
     // Return empty data structure on error
     return {

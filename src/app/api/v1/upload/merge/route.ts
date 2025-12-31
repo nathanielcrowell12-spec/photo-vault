@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { logger } from '@/lib/logger'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -28,7 +29,7 @@ export async function POST(request: NextRequest) {
         .download(chunkPath)
 
       if (downloadError || !chunkData) {
-        console.error(`Error downloading chunk ${i}:`, downloadError)
+        logger.error(`[UploadMerge] Error downloading chunk ${i}:`, downloadError)
         return NextResponse.json(
           { error: `Failed to download chunk ${i}` },
           { status: 500 }
@@ -49,7 +50,7 @@ export async function POST(request: NextRequest) {
       })
 
     if (uploadError) {
-      console.error('Error uploading merged file:', uploadError)
+      logger.error('[UploadMerge] Error uploading merged file:', uploadError)
       return NextResponse.json(
         { error: 'Failed to upload merged file' },
         { status: 500 }
@@ -73,7 +74,7 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Merge error:', error)
+    logger.error('[UploadMerge] Merge error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

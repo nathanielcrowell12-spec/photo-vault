@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createServerSupabaseClient, createServiceRoleClient } from '@/lib/supabase-server'
+import { logger } from '@/lib/logger'
 
 // GET - Check if client has already rated a gallery
 export async function GET(request: Request) {
@@ -45,7 +46,7 @@ export async function GET(request: Request) {
       existingRating: existingRating || null,
     })
   } catch (error) {
-    console.error('[API] Error checking rating status:', error)
+    logger.error('[ClientRating] Error checking rating status:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -121,7 +122,7 @@ export async function POST(request: Request) {
         .eq('id', existingRating.id)
 
       if (updateError) {
-        console.error('Error updating rating:', updateError)
+        logger.error('[ClientRating] Error updating rating:', updateError)
         return NextResponse.json({ error: 'Failed to update rating' }, { status: 500 })
       }
 
@@ -143,13 +144,13 @@ export async function POST(request: Request) {
       })
 
     if (insertError) {
-      console.error('Error creating rating:', insertError)
+      logger.error('[ClientRating] Error creating rating:', insertError)
       return NextResponse.json({ error: 'Failed to submit rating' }, { status: 500 })
     }
 
     return NextResponse.json({ success: true, created: true })
   } catch (error) {
-    console.error('[API] Error submitting rating:', error)
+    logger.error('[ClientRating] Error submitting rating:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

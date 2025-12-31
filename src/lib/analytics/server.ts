@@ -12,6 +12,7 @@
  * These events are tracked from API routes and webhooks.
  */
 import { PostHog } from 'posthog-node'
+import { logger } from '../logger'
 
 // Singleton for the server-side client
 let posthogClient: PostHog | null = null
@@ -21,7 +22,7 @@ let posthogClient: PostHog | null = null
  */
 function getPostHogClient(): PostHog | null {
   if (!process.env.POSTHOG_API_KEY) {
-    console.warn('[Analytics Server] POSTHOG_API_KEY not set, skipping server-side tracking')
+    logger.warn('[Analytics Server] POSTHOG_API_KEY not set, skipping server-side tracking')
     return null
   }
 

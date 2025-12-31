@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getCompetitorLogos, forceUpdateLogos } from '@/lib/competitor-logos'
+import { logger } from '@/lib/logger'
 
 // GET /api/competitor-logos - Get competitor logos (with auto-update check)
 export async function GET() {
@@ -11,7 +12,7 @@ export async function GET() {
       message: 'Competitor logos retrieved successfully'
     })
   } catch (error) {
-    console.error('Error fetching competitor logos:', error)
+    logger.error('[CompetitorLogos] Error fetching competitor logos:', error)
     return NextResponse.json(
       { 
         success: false, 
@@ -40,7 +41,7 @@ export async function POST(_request: NextRequest) {
       updatedAt: new Date().toISOString()
     })
   } catch (error) {
-    console.error('Error updating competitor logos:', error)
+    logger.error('[CompetitorLogos] Error updating competitor logos:', error)
     return NextResponse.json(
       { 
         success: false, 

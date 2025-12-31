@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
+import { logger } from '@/lib/logger'
 
 // Admin client bypasses RLS
 const supabaseAdmin = createClient(
@@ -69,7 +70,7 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (galleryError) {
-      console.error('Error creating gallery:', galleryError)
+      logger.error('[DeprecatedGalleries] Error creating gallery:', galleryError)
       return NextResponse.json(
         { error: galleryError.message, details: galleryError },
         { status: 500 }
@@ -78,7 +79,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ gallery })
   } catch (error) {
-    console.error('Unexpected error:', error)
+    logger.error('[DeprecatedGalleries] Unexpected error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

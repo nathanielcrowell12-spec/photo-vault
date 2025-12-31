@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceRoleClient } from '@/lib/supabase-server'
 import type { LeaderboardEntry, LeaderboardResponse } from '@/types/admin'
+import { logger } from '@/lib/logger'
 
 export async function GET(request: NextRequest): Promise<NextResponse<LeaderboardResponse>> {
   const supabase = createServiceRoleClient()
@@ -123,7 +124,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<Leaderboar
       },
     })
   } catch (error) {
-    console.error('[api/admin/leaderboard] Error:', error)
+    logger.error('[AdminLeaderboard] Error:', error)
     return NextResponse.json(
       { success: false, error: 'Failed to fetch leaderboard' },
       { status: 500 }

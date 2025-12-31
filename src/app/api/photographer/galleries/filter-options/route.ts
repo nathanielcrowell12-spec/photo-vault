@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
+import { logger } from '@/lib/logger'
 
 export async function GET() {
   try {
@@ -17,7 +18,7 @@ export async function GET() {
       .eq('photographer_id', user.id)
 
     if (error) {
-      console.error('[FilterOptions] Database error:', error)
+      logger.error('[FilterOptions] Database error:', error)
       return NextResponse.json({ error: 'Failed to fetch options' }, { status: 500 })
     }
 
@@ -51,7 +52,7 @@ export async function GET() {
       people: Array.from(people).sort(),
     })
   } catch (error) {
-    console.error('[FilterOptions] Unexpected error:', error)
+    logger.error('[FilterOptions] Unexpected error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

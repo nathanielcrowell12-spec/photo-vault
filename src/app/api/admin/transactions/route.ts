@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceRoleClient } from '@/lib/supabase-server'
 import type { Transaction, TransactionsResponse } from '@/types/admin'
+import { logger } from '@/lib/logger'
 
 export async function GET(request: NextRequest): Promise<NextResponse<TransactionsResponse>> {
   const supabase = createServiceRoleClient()
@@ -100,7 +101,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<Transactio
       },
     })
   } catch (error) {
-    console.error('[api/admin/transactions] Error:', error)
+    logger.error('[AdminTransactions] Error:', error)
     return NextResponse.json(
       { success: false, error: 'Failed to fetch transactions' },
       { status: 500 }

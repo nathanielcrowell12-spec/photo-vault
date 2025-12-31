@@ -1,6 +1,7 @@
 import { createClient } from '@supabase/supabase-js'
 import { v4 as uuidv4 } from 'uuid'
 import { UnifiedPlatformClient, UnifiedPhoto, UnifiedGalleryMetadata, ImportProgress } from '../platforms/unified-platform'
+import { logger } from '../logger'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -40,7 +41,7 @@ export class UnifiedImportService {
     }
   ): Promise<{ success: boolean; photosImported: number; error?: string }> {
     try {
-      console.log(`UnifiedImportService: Starting import for gallery ${galleryId} from ${platformClient.getPlatform()}`)
+      logger.info(`[UnifiedImportService] Starting import for gallery ${galleryId} from ${platformClient.getPlatform()}`)
 
       // Step 1: Authenticate
       this.updateProgress({
@@ -78,7 +79,7 @@ export class UnifiedImportService {
         throw new Error('Could not find download link on the gallery page. The gallery may not allow downloads.')
       }
 
-      console.log(`UnifiedImportService: Found download URL: ${zipUrl}`)
+      logger.info(`[UnifiedImportService] Found download URL: ${zipUrl}`)
 
       // Step 4: Download ZIP stream
       this.updateProgress({
@@ -107,7 +108,7 @@ export class UnifiedImportService {
         })
       })
 
-      console.log(`UnifiedImportService: Extracted ${photos.length} photos`)
+      logger.info(`[UnifiedImportService] Extracted ${photos.length} photos`)
 
       // Step 6: Upload photos to Supabase
       this.updateProgress({
@@ -147,7 +148,7 @@ export class UnifiedImportService {
             })
 
           if (uploadError) {
-            console.error(`UnifiedImportService: Failed to upload photo ${photo.filename}:`, uploadError)
+            logger.error(`[UnifiedImportService] Failed to upload photo ${photo.filename}:`, uploadError)
             failCount++
             continue
           }
@@ -178,7 +179,7 @@ export class UnifiedImportService {
             })
 
           if (dbError) {
-            console.error(`UnifiedImportService: Failed to save photo record for ${photo.filename}:`, dbError)
+            logger.error(`[UnifiedImportService] Failed to save photo record for ${photo.filename}:`, dbError)
             failCount++
             continue
           }
@@ -186,7 +187,7 @@ export class UnifiedImportService {
           successCount++
 
         } catch (error) {
-          console.error(`UnifiedImportService: Error processing photo ${photo.filename}:`, error)
+          logger.error(`[UnifiedImportService] Error processing photo ${photo.filename}:`, error)
           failCount++
         }
       }
@@ -222,7 +223,7 @@ export class UnifiedImportService {
         })
         .eq('id', galleryId)
 
-      console.log(`UnifiedImportService: Import completed. Success: ${successCount}, Failed: ${failCount}`)
+      logger.info(`[UnifiedImportService] Import completed. Success: ${successCount}, Failed: ${failCount}`)
 
       return {
         success: true,
@@ -231,7 +232,7 @@ export class UnifiedImportService {
       }
 
     } catch (error) {
-      console.error('UnifiedImportService: Import failed:', error)
+      logger.error('[UnifiedImportService] Import failed:', error)
       
       const errorMessage = platformClient.getErrorMessage(error)
       
@@ -266,7 +267,7 @@ export class UnifiedImportService {
   private async downloadZipWithRetry(zipUrl: string, maxRetries: number = 3): Promise<Response | null> {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
-        console.log(`UnifiedImportService: Download attempt ${attempt}/${maxRetries} for ${zipUrl}`)
+        logger.info(`[UnifiedImportService] Download attempt ${attempt}/${maxRetries} for ${zipUrl}`)
         
         const response = await fetch(zipUrl, {
           method: 'GET',
@@ -280,22 +281,22 @@ export class UnifiedImportService {
         if (response.ok) {
           return response
         } else {
-          console.warn(`UnifiedImportService: Download attempt ${attempt} failed with status ${response.status}`)
+          logger.warn(`[UnifiedImportService] Download attempt ${attempt} failed with status ${response.status}`)
         }
 
       } catch (error) {
-        console.warn(`UnifiedImportService: Download attempt ${attempt} failed:`, error)
+        logger.warn(`[UnifiedImportService] Download attempt ${attempt} failed:`, error)
       }
 
       // Wait before retry (exponential backoff)
       if (attempt < maxRetries) {
         const delay = Math.pow(2, attempt) * 1000 // 2s, 4s, 8s
-        console.log(`UnifiedImportService: Waiting ${delay}ms before retry...`)
+        logger.info(`[UnifiedImportService] Waiting ${delay}ms before retry...`)
         await new Promise(resolve => setTimeout(resolve, delay))
       }
     }
 
-    console.error(`UnifiedImportService: All ${maxRetries} download attempts failed`)
+    logger.error(`[UnifiedImportService] All ${maxRetries} download attempts failed`)
     return null
   }
 
@@ -318,7 +319,7 @@ export class UnifiedImportService {
     
     // TODO: Implement actual ZIP extraction
     // This is a placeholder that would need a proper ZIP library
-    console.log(`UnifiedImportService: ZIP buffer size: ${zipBuffer.byteLength} bytes`)
+    logger.info(`[UnifiedImportService] ZIP buffer size: ${zipBuffer.byteLength} bytes`)
     
     progressCallback(100)
     

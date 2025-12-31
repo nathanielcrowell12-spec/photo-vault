@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { generateRandomId } from '@/lib/api-constants'
 import { createClient } from '@supabase/supabase-js'
 import JSZip from 'jszip'
+import { logger } from '@/lib/logger'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -36,7 +37,7 @@ export async function POST(request: NextRequest) {
           .download(storagePath)
 
         if (downloadError || !zipData) {
-          console.error('Error downloading ZIP:', downloadError)
+          logger.error('[ProcessFast] Error downloading ZIP:', downloadError)
           send({ error: 'Failed to download ZIP file from storage', progress: 0 })
           controller.close()
           return
@@ -121,7 +122,7 @@ export async function POST(request: NextRequest) {
               })
 
             if (uploadError) {
-              console.error(`Failed to upload ${imageFile.name}:`, uploadError)
+              logger.error(`[ProcessFast] Failed to upload ${imageFile.name}:`, uploadError)
               return
             }
 
@@ -154,7 +155,7 @@ export async function POST(request: NextRequest) {
             })
 
           } catch (photoError) {
-            console.error(`Error processing ${imageFile.name}:`, photoError)
+            logger.error(`[ProcessFast] Error processing ${imageFile.name}:`, photoError)
           }
         }
 
@@ -197,11 +198,11 @@ export async function POST(request: NextRequest) {
         controller.close()
 
       } catch (error) {
-        console.error('Super Fast Processing error:', error)
+        logger.error('[ProcessFast] Super Fast Processing error:', error)
         controller.enqueue(
-          encoder.encode(`data: ${JSON.stringify({ 
+          encoder.encode(`data: ${JSON.stringify({
             error: error instanceof Error ? error.message : 'Processing failed',
-            progress: 0 
+            progress: 0
           })}\n\n`)
         )
         controller.close()

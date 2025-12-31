@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { logger } from '@/lib/logger'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -68,7 +69,7 @@ export async function GET(
     const { data: messages, error } = await query
 
     if (error) {
-      console.error('Error fetching messages:', error)
+      logger.error('[ConversationMessages] Error fetching messages:', error)
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
@@ -80,7 +81,7 @@ export async function GET(
 
     return NextResponse.json({ messages: messages?.reverse() || [] })
   } catch (error: any) {
-    console.error('Error in GET /api/conversations/[conversationId]/messages:', error)
+    logger.error('[ConversationMessages] Error in GET:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }
@@ -167,13 +168,13 @@ export async function POST(
       .single()
 
     if (insertError) {
-      console.error('Error inserting message:', insertError)
+      logger.error('[ConversationMessages] Error inserting message:', insertError)
       return NextResponse.json({ error: insertError.message }, { status: 500 })
     }
 
     return NextResponse.json({ message }, { status: 201 })
   } catch (error: any) {
-    console.error('Error in POST /api/conversations/[conversationId]/messages:', error)
+    logger.error('[ConversationMessages] Error in POST:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

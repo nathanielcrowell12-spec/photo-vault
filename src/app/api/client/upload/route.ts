@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { v4 as uuidv4 } from 'uuid'
+import { logger } from '@/lib/logger'
 
 interface UploadRequest {
   client_id: string
@@ -75,7 +76,7 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (sessionError) {
-      console.error('Error creating upload session:', sessionError)
+      logger.error('[ClientUpload] Error creating upload session:', sessionError)
       return NextResponse.json(
         { error: 'Failed to create upload session' },
         { status: 500 }
@@ -108,7 +109,7 @@ export async function POST(request: NextRequest) {
           })
 
         if (uploadError) {
-          console.error('Error uploading photo:', uploadError)
+          logger.error('[ClientUpload] Error uploading photo:', uploadError)
           errors.push({
             filename: photo.filename,
             error: 'Failed to upload to storage'
@@ -183,7 +184,7 @@ export async function POST(request: NextRequest) {
               .single()
 
             if (galleryError) {
-              console.error('Error creating gallery:', galleryError)
+              logger.error('[ClientUpload] Error creating gallery:', galleryError)
             } else {
               galleryId = newGallery.id
             }
@@ -217,7 +218,7 @@ export async function POST(request: NextRequest) {
           .single()
 
         if (photoError) {
-          console.error('Error storing photo record:', photoError)
+          logger.error('[ClientUpload] Error storing photo record:', photoError)
           errors.push({
             filename: photo.filename,
             error: 'Failed to store photo record'
@@ -238,7 +239,7 @@ export async function POST(request: NextRequest) {
         })
 
       } catch (error) {
-        console.error('Error processing photo:', error)
+        logger.error('[ClientUpload] Error processing photo:', error)
         errors.push({
           filename: photos[i].filename,
           error: 'Failed to process photo'
@@ -286,7 +287,7 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Upload API error:', error)
+    logger.error('[ClientUpload] Upload API error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -312,7 +313,7 @@ async function extractPhotoMetadata(_imageData: Buffer) {
       focal_length: '26mm'
     }
   } catch (error) {
-    console.error('Error extracting photo metadata:', error)
+    logger.error('[ClientUpload] Error extracting photo metadata:', error)
     return {
       width: null,
       height: null,
@@ -389,7 +390,7 @@ export async function GET(request: NextRequest) {
       .order('created_at', { ascending: false })
 
     if (sessionsError) {
-      console.error('Error fetching upload sessions:', sessionsError)
+      logger.error('[ClientUpload] Error fetching upload sessions:', sessionsError)
       return NextResponse.json(
         { error: 'Failed to fetch upload sessions' },
         { status: 500 }
@@ -404,7 +405,7 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Upload GET API error:', error)
+    logger.error('[ClientUpload] Upload GET API error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

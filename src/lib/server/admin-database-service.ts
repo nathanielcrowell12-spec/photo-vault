@@ -1,6 +1,7 @@
 'use server'
 
 import { createServerSupabaseClient } from '@/lib/supabase'
+import { logger } from '@/lib/logger'
 
 type SupabaseResponse<T> = {
   data: T
@@ -93,7 +94,7 @@ async function fetchCounts(supabase: SupabaseClient) {
 
   let collectionsCount = collectionResult.count ?? 0
   if (collectionResult.error) {
-    console.warn('[admin-database-service] Falling back to photo_galleries for collection count', collectionResult.error)
+    logger.warn('[admin-database-service] Falling back to photo_galleries for collection count', collectionResult.error)
     const { count: galleriesCount, error: galleriesError } = await supabase
       .from('photo_galleries')
       .select('id', { count: 'exact', head: true })
@@ -185,7 +186,7 @@ export async function fetchDatabaseStatus(): Promise<{
   try {
     storageUsedBytes = await fetchPhotoStorageUsage(supabase)
   } catch (error) {
-    console.error('[admin-database-service] Failed to compute storage usage', error)
+    logger.error('[admin-database-service] Failed to compute storage usage', error)
   }
 
   let rlsPolicies: RlsPolicy[] = []
@@ -199,7 +200,7 @@ export async function fetchDatabaseStatus(): Promise<{
       rlsPolicies = data as RlsPolicy[]
     }
   } catch (error) {
-    console.warn('[admin-database-service] Using fallback RLS policies', error)
+    logger.warn('[admin-database-service] Using fallback RLS policies', error)
     rlsPolicies = [
       {
         name: 'photographers_own_collections',

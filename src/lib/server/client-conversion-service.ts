@@ -16,6 +16,7 @@
 
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { getStripeClient } from '@/lib/stripe'
+import { logger } from '@/lib/logger'
 
 // Price IDs from environment
 const STRIPE_PRICE_DIRECT_MONTHLY = process.env.STRIPE_PRICE_DIRECT_MONTHLY!
@@ -105,7 +106,7 @@ export async function convertDirectClientToPhotographer(
       })
 
     if (conversionError) {
-      console.error('[ClientConversion] Database conversion error:', conversionError)
+      logger.error('[ClientConversion] Database conversion error:', conversionError)
       return {
         success: false,
         converted: false,
@@ -134,10 +135,10 @@ export async function convertDirectClientToPhotographer(
         )
 
         if (stripeSwapped) {
-          console.log(`[ClientConversion] Swapped subscription ${dbResult.old_stripe_subscription_id} from Direct to Client Monthly`)
+          logger.info(`[ClientConversion] Swapped subscription ${dbResult.old_stripe_subscription_id} from Direct to Client Monthly`)
         }
       } catch (stripeError) {
-        console.error('[ClientConversion] Stripe swap error:', stripeError)
+        logger.error('[ClientConversion] Stripe swap error:', stripeError)
         // Don't fail the conversion if Stripe swap fails - log it for manual fix
       }
     }
@@ -152,7 +153,7 @@ export async function convertDirectClientToPhotographer(
     }
 
   } catch (error) {
-    console.error('[ClientConversion] Unexpected error:', error)
+    logger.error('[ClientConversion] Unexpected error:', error)
     return {
       success: false,
       converted: false,
@@ -177,7 +178,7 @@ async function swapSubscriptionPrice(
     const subscription = await stripe.subscriptions.retrieve(subscriptionId)
 
     if (subscription.status !== 'active' && subscription.status !== 'trialing') {
-      console.log(`[ClientConversion] Subscription ${subscriptionId} is not active (${subscription.status}), skipping swap`)
+      logger.info(`[ClientConversion] Subscription ${subscriptionId} is not active (${subscription.status}), skipping swap`)
       return false
     }
 
@@ -187,7 +188,7 @@ async function swapSubscriptionPrice(
     )
 
     if (!itemToUpdate) {
-      console.log(`[ClientConversion] Subscription ${subscriptionId} does not have price ${oldPriceId}, may already be converted`)
+      logger.info(`[ClientConversion] Subscription ${subscriptionId} does not have price ${oldPriceId}, may already be converted`)
       return false
     }
 
@@ -211,7 +212,7 @@ async function swapSubscriptionPrice(
     return true
 
   } catch (error) {
-    console.error('[ClientConversion] Stripe subscription swap failed:', error)
+    logger.error('[ClientConversion] Stripe subscription swap failed:', error)
     throw error
   }
 }

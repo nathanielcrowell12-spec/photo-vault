@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
+import { logger } from '@/lib/logger'
 
 interface SearchRequest {
   query?: string
@@ -47,7 +48,7 @@ export async function POST(request: NextRequest) {
     })
 
     if (error) {
-      console.error('[Search] Database error:', error)
+      logger.error('[Search] Database error:', error)
       return NextResponse.json({ error: 'Search failed' }, { status: 500 })
     }
 
@@ -81,7 +82,7 @@ export async function POST(request: NextRequest) {
       total: enrichedGalleries.length
     })
   } catch (error) {
-    console.error('[Search] Unexpected error:', error)
+    logger.error('[Search] Unexpected error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

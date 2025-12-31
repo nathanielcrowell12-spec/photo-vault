@@ -18,11 +18,12 @@ export const dynamic = 'force-dynamic'
 export const runtime = 'nodejs'
 
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 
 export async function GET(request: NextRequest) {
-  console.warn('[Cron:Payouts] DEPRECATED: This cron job is no longer needed.')
-  console.warn('[Cron:Payouts] Stripe destination charges handle payouts automatically.')
-  console.warn('[Cron:Payouts] Remove this cron from vercel.json and delete this file.')
+  logger.warn('[CronPayouts] DEPRECATED: This cron job is no longer needed.')
+  logger.warn('[CronPayouts] Stripe destination charges handle payouts automatically.')
+  logger.warn('[CronPayouts] Remove this cron from vercel.json and delete this file.')
 
   return NextResponse.json({
     message: 'DEPRECATED: Payouts are now handled automatically by Stripe destination charges',

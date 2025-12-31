@@ -5,6 +5,7 @@ import { generateRandomId } from '@/lib/api-constants'
 import { trackServerEvent } from '@/lib/analytics/server'
 import { EVENTS } from '@/types/analytics'
 import { isFirstTime, calculateTimeFromSignup, getPhotographerSignupDate } from '@/lib/analytics/helpers'
+import { logger } from '@/lib/logger'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -39,7 +40,7 @@ export async function POST(request: NextRequest) {
           .download(storagePath)
 
         if (downloadError || !zipData) {
-          console.error('Error downloading ZIP:', downloadError)
+          logger.error('[UploadProcess] Error downloading ZIP:', downloadError)
           send({ error: 'Failed to download ZIP file from storage', progress: 0 })
           controller.close()
           return
@@ -160,7 +161,7 @@ export async function POST(request: NextRequest) {
                   })
 
                 if (uploadError) {
-                  console.error(`Failed to upload ${name}:`, uploadError)
+                  logger.error(`[UploadProcess] Failed to upload ${name}:`, uploadError)
                   return
                 }
 
@@ -195,7 +196,7 @@ export async function POST(request: NextRequest) {
                       file_size_bytes: photoBlob.size,
                     })
                   } catch (trackError) {
-                    console.error('[Upload Process] Error tracking first upload:', trackError)
+                    logger.error('[UploadProcess] Error tracking first upload:', trackError)
                     // Don't block upload if tracking fails
                   }
                 }
@@ -210,7 +211,7 @@ export async function POST(request: NextRequest) {
                 })
 
               } catch (photoError) {
-                console.error(`Error processing ${name}:`, photoError)
+                logger.error(`[UploadProcess] Error processing ${name}:`, photoError)
               }
             })
           )
@@ -243,7 +244,7 @@ export async function POST(request: NextRequest) {
         controller.close()
 
       } catch (error) {
-        console.error('ZIP Processing error:', error)
+        logger.error('[UploadProcess] ZIP Processing error:', error)
         controller.enqueue(
           encoder.encode(`data: ${JSON.stringify({ 
             error: error instanceof Error ? error.message : 'Processing failed',

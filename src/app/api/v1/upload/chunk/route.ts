@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { logger } from '@/lib/logger'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -34,7 +35,7 @@ export async function POST(request: NextRequest) {
       })
 
     if (uploadError) {
-      console.error(`Error uploading chunk ${chunkIndex}:`, uploadError)
+      logger.error(`[UploadChunk] Error uploading chunk ${chunkIndex}:`, uploadError)
       return NextResponse.json(
         { error: `Failed to upload chunk ${chunkIndex}` },
         { status: 500 }
@@ -48,7 +49,7 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Chunk upload error:', error)
+    logger.error('[UploadChunk] Chunk upload error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

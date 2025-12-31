@@ -3,6 +3,7 @@
 // API Base: https://galleries.pixieset.com/api/v1
 
 import { BasePlatformClient, GalleryMetadata, PhotoMetadata, PlatformCredentials } from './base-platform'
+import { logger } from '../logger'
 
 interface PixiesetGalleryInfo {
   subdomain: string
@@ -53,7 +54,7 @@ export class PixiesetClient extends BasePlatformClient {
 
       // If no password required or already authenticated, skip
       if (!this.credentials.password) {
-        console.log('No password provided - attempting unauthenticated access')
+        logger.info('[PixiesetClient] No password provided - attempting unauthenticated access')
         this.isAuthenticated = true
         return
       }
@@ -86,10 +87,10 @@ export class PixiesetClient extends BasePlatformClient {
       }
 
       this.isAuthenticated = true
-      console.log('✅ Authenticated with Pixieset')
+      logger.info('[PixiesetClient] Authenticated with Pixieset')
 
     } catch (error) {
-      console.error('Pixieset authentication error:', error)
+      logger.error('[PixiesetClient] Authentication error:', error)
       throw error
     }
   }
@@ -137,7 +138,7 @@ export class PixiesetClient extends BasePlatformClient {
       }
 
     } catch (error) {
-      console.error('Error fetching gallery metadata:', error)
+      logger.error('[PixiesetClient] Error fetching gallery metadata:', error)
       throw error
     }
   }
@@ -188,7 +189,7 @@ export class PixiesetClient extends BasePlatformClient {
       }))
 
     } catch (error) {
-      console.error('Error fetching photo list:', error)
+      logger.error('[PixiesetClient] Error fetching photo list:', error)
       throw error
     }
   }
@@ -211,7 +212,7 @@ export class PixiesetClient extends BasePlatformClient {
       return await response.blob()
 
     } catch (error) {
-      console.error('Error downloading photo:', error)
+      logger.error('[PixiesetClient] Error downloading photo:', error)
       throw error
     }
   }

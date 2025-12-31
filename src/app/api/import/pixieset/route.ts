@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { PixiesetClient } from '@/lib/platforms/pixieset-client'
 import { PhotoImportService } from '@/lib/services/photo-import-service'
+import { logger } from '@/lib/logger'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -58,7 +59,7 @@ export async function POST(request: NextRequest) {
       userId,
       gallery.gallery_url
     ).catch(error => {
-      console.error('Background import error:', error)
+      logger.error('[PixiesetImport] Background import error:', error)
       // Update gallery with error status
       supabase
         .from('photo_galleries')
@@ -77,7 +78,7 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Error starting import:', error)
+    logger.error('[PixiesetImport] Error starting import:', error)
     return NextResponse.json(
       { error: 'Failed to start import' },
       { status: 500 }

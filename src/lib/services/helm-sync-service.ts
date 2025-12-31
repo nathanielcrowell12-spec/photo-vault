@@ -4,6 +4,7 @@
  */
 
 import { helmClient } from '@/lib/helm-client'
+import { logger } from '../logger'
 
 interface SyncConfig {
   enabled: boolean
@@ -32,7 +33,7 @@ class HelmSyncService {
       return
     }
 
-    console.log('Starting Helm Project sync service...')
+    logger.info('[HelmSyncService] Starting sync service...')
     this.isRunning = true
 
     // Initial sync
@@ -55,7 +56,7 @@ class HelmSyncService {
       this.syncInterval = null
     }
     this.isRunning = false
-    console.log('Helm Project sync service stopped')
+    logger.info('[HelmSyncService] Sync service stopped')
   }
 
   /**
@@ -63,7 +64,7 @@ class HelmSyncService {
    */
   async syncWithHelmProject(): Promise<void> {
     try {
-      console.log('Syncing with Helm Project...')
+      logger.info('[HelmSyncService] Syncing with Helm Project...')
       
       // First check if Helm Project is available
       const healthResponse = await fetch('/api/helm/health', {
@@ -72,7 +73,7 @@ class HelmSyncService {
       })
 
       if (!healthResponse.ok) {
-        console.log('Helm Project not available, skipping sync')
+        logger.info('[HelmSyncService] Helm Project not available, skipping sync')
         return
       }
       
@@ -86,15 +87,15 @@ class HelmSyncService {
       })
 
       if (!response.ok) {
-        console.log(`Helm Project sync failed with status ${response.status}, continuing without sync`)
+        logger.warn(`[HelmSyncService] Sync failed with status ${response.status}, continuing without sync`)
         return
       }
 
       const result = await response.json()
-      console.log('Helm Project sync successful:', result.message)
+      logger.info('[HelmSyncService] Sync successful:', result.message)
 
     } catch (error) {
-      console.log('Helm Project sync failed (non-critical):', error instanceof Error ? error.message : 'Unknown error')
+      logger.warn('[HelmSyncService] Sync failed (non-critical):', error instanceof Error ? error.message : 'Unknown error')
       // Don't throw the error - this is a non-critical operation
     }
   }
@@ -118,7 +119,7 @@ class HelmSyncService {
       }
 
     } catch (error) {
-      console.error('Failed to get Helm Project status:', error)
+      logger.error('[HelmSyncService] Failed to get status:', error)
       throw error
     }
   }

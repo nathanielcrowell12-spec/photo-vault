@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server'
 import { fetchDatabaseStatus } from '@/lib/server/admin-database-service'
+import { logger } from '@/lib/logger'
 
 export async function GET() {
   try {
     const status = await fetchDatabaseStatus()
     return NextResponse.json({ success: true, data: status })
   } catch (error) {
-    console.error('[api/admin/database/status] Failed to fetch status', error)
+    logger.error('[AdminDatabaseStatus] Failed to fetch status', error)
     return NextResponse.json(
       {
         success: false,

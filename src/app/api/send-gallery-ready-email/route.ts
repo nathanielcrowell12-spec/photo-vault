@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
 import { EmailService } from '@/lib/email/email-service'
 import { nanoid } from 'nanoid'
+import { logger } from '@/lib/logger'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -98,7 +99,7 @@ export async function POST(request: NextRequest) {
       })
 
     if (invitationError) {
-      console.error('Error creating invitation:', invitationError)
+      logger.error('[GalleryReadyEmail] Error creating invitation:', invitationError)
       return NextResponse.json(
         { error: 'Failed to create invitation' },
         { status: 500 }
@@ -131,7 +132,7 @@ export async function POST(request: NextRequest) {
       invitationToken,
     })
   } catch (error: any) {
-    console.error('Error in POST /api/send-gallery-ready-email:', error)
+    logger.error('[GalleryReadyEmail] Error in POST:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

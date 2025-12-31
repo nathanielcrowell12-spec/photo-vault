@@ -1,6 +1,8 @@
 // CRITICAL: Use dynamic import for resend to prevent build-time evaluation
 // Do NOT add static import for resend module
 
+import { logger } from '../logger'
+
 // Helper to get resend client (uses dynamic import)
 const getClient = async () => {
   const { getResendClient } = await import('./resend')
@@ -91,10 +93,10 @@ export class EmailService {
         text: getGalleryReadyEmailText(data),
       })
 
-      console.log(`[Email] Gallery ready email sent to ${data.clientEmail}`)
+      logger.info(`[Email] Gallery ready email sent to ${data.clientEmail}`)
       return { success: true }
     } catch (error: any) {
-      console.error('[Email] Error sending gallery ready email:', error)
+      logger.error('[Email] Error sending gallery ready email:', error)
       return { success: false, error: error.message }
     }
   }
@@ -113,10 +115,10 @@ export class EmailService {
         text: getWelcomeEmailText(data),
       })
 
-      console.log(`[Email] Welcome email sent to ${data.customerEmail}`)
+      logger.info(`[Email] Welcome email sent to ${data.customerEmail}`)
       return { success: true }
     } catch (error: any) {
-      console.error('[Email] Error sending welcome email:', error)
+      logger.error('[Email] Error sending welcome email:', error)
       return { success: false, error: error.message }
     }
   }
@@ -135,10 +137,10 @@ export class EmailService {
         text: getWelcomeEmailWithPasswordText(data),
       })
 
-      console.log(`[Email] Welcome email with password sent to ${data.customerEmail}`)
+      logger.info(`[Email] Welcome email with password sent to ${data.customerEmail}`)
       return { success: true }
     } catch (error: any) {
-      console.error('[Email] Error sending welcome email with password:', error)
+      logger.error('[Email] Error sending welcome email with password:', error)
       return { success: false, error: error.message }
     }
   }
@@ -176,10 +178,10 @@ If you didn't request this, you can safely ignore this email.
         `,
       })
 
-      console.log(`[Email] Password reset email sent to ${email}`)
+      logger.info(`[Email] Password reset email sent to ${email}`)
       return { success: true }
     } catch (error: any) {
-      console.error('[Email] Error sending password reset email:', error)
+      logger.error('[Email] Error sending password reset email:', error)
       return { success: false, error: error.message }
     }
   }
@@ -215,10 +217,10 @@ Update payment method: ${process.env.NEXT_PUBLIC_APP_URL}/billing
         `,
       })
 
-      console.log(`[Email] Payment reminder sent to ${email}`)
+      logger.info(`[Email] Payment reminder sent to ${email}`)
       return { success: true }
     } catch (error: any) {
-      console.error('[Email] Error sending payment reminder:', error)
+      logger.error('[Email] Error sending payment reminder:', error)
       return { success: false, error: error.message }
     }
   }
@@ -236,10 +238,10 @@ Update payment method: ${process.env.NEXT_PUBLIC_APP_URL}/billing
         text: 'Test Email\n\nThis is a test email from PhotoVault.',
       })
 
-      console.log(`[Email] Test email sent to ${to}`)
+      logger.info(`[Email] Test email sent to ${to}`)
       return { success: true }
     } catch (error: any) {
-      console.error('[Email] Error sending test email:', error)
+      logger.error('[Email] Error sending test email:', error)
       return { success: false, error: error.message }
     }
   }
@@ -262,10 +264,10 @@ Update payment method: ${process.env.NEXT_PUBLIC_APP_URL}/billing
         text: getClientInvitationEmailText(data),
       })
 
-      console.log(`[Email] Client invitation sent to ${data.clientEmail}`)
+      logger.info(`[Email] Client invitation sent to ${data.clientEmail}`)
       return { success: true }
     } catch (error: any) {
-      console.error('[Email] Error sending client invitation:', error)
+      logger.error('[Email] Error sending client invitation:', error)
       return { success: false, error: error.message }
     }
   }
@@ -284,10 +286,10 @@ Update payment method: ${process.env.NEXT_PUBLIC_APP_URL}/billing
         text: getPhotographerWelcomeEmailText(data),
       })
 
-      console.log(`[Email] Photographer welcome email sent to ${data.photographerEmail}`)
+      logger.info(`[Email] Photographer welcome email sent to ${data.photographerEmail}`)
       return { success: true }
     } catch (error: any) {
-      console.error('[Email] Error sending photographer welcome email:', error)
+      logger.error('[Email] Error sending photographer welcome email:', error)
       return { success: false, error: error.message }
     }
   }
@@ -306,10 +308,10 @@ Update payment method: ${process.env.NEXT_PUBLIC_APP_URL}/billing
         text: getPaymentSuccessfulEmailText(data),
       })
 
-      console.log(`[Email] Payment successful email sent to ${data.customerEmail}`)
+      logger.info(`[Email] Payment successful email sent to ${data.customerEmail}`)
       return { success: true }
     } catch (error: any) {
-      console.error('[Email] Error sending payment successful email:', error)
+      logger.error('[Email] Error sending payment successful email:', error)
       return { success: false, error: error.message }
     }
   }
@@ -332,10 +334,10 @@ Update payment method: ${process.env.NEXT_PUBLIC_APP_URL}/billing
         text: getSubscriptionExpiringEmailText(data),
       })
 
-      console.log(`[Email] Subscription expiring email sent to ${data.customerEmail}`)
+      logger.info(`[Email] Subscription expiring email sent to ${data.customerEmail}`)
       return { success: true }
     } catch (error: any) {
-      console.error('[Email] Error sending subscription expiring email:', error)
+      logger.error('[Email] Error sending subscription expiring email:', error)
       return { success: false, error: error.message }
     }
   }
@@ -354,10 +356,10 @@ Update payment method: ${process.env.NEXT_PUBLIC_APP_URL}/billing
         text: getPaymentFailedEmailText(data),
       })
 
-      console.log(`[Email] Payment failed email sent to ${data.customerEmail}`)
+      logger.info(`[Email] Payment failed email sent to ${data.customerEmail}`)
       return { success: true }
     } catch (error: any) {
-      console.error('[Email] Error sending payment failed email:', error)
+      logger.error('[Email] Error sending payment failed email:', error)
       return { success: false, error: error.message }
     }
   }
@@ -376,10 +378,10 @@ Update payment method: ${process.env.NEXT_PUBLIC_APP_URL}/billing
         text: getPayoutNotificationEmailText(data),
       })
 
-      console.log(`[Email] Payout notification sent to ${data.photographerEmail}`)
+      logger.info(`[Email] Payout notification sent to ${data.photographerEmail}`)
       return { success: true }
     } catch (error: any) {
-      console.error('[Email] Error sending payout notification:', error)
+      logger.error('[Email] Error sending payout notification:', error)
       return { success: false, error: error.message }
     }
   }
@@ -402,10 +404,10 @@ Update payment method: ${process.env.NEXT_PUBLIC_APP_URL}/billing
         text: getFirstGalleryUploadEmailText(data),
       })
 
-      console.log(`[Email] First gallery upload email sent to ${data.photographerEmail}`)
+      logger.info(`[Email] First gallery upload email sent to ${data.photographerEmail}`)
       return { success: true }
     } catch (error: any) {
-      console.error('[Email] Error sending first gallery upload email:', error)
+      logger.error('[Email] Error sending first gallery upload email:', error)
       return { success: false, error: error.message }
     }
   }
@@ -424,10 +426,10 @@ Update payment method: ${process.env.NEXT_PUBLIC_APP_URL}/billing
         text: getGalleryAccessRestoredEmailText(data),
       })
 
-      console.log(`[Email] Gallery access restored email sent to ${data.customerEmail}`)
+      logger.info(`[Email] Gallery access restored email sent to ${data.customerEmail}`)
       return { success: true }
     } catch (error: any) {
-      console.error('[Email] Error sending gallery access restored email:', error)
+      logger.error('[Email] Error sending gallery access restored email:', error)
       return { success: false, error: error.message }
     }
   }
@@ -450,10 +452,10 @@ Update payment method: ${process.env.NEXT_PUBLIC_APP_URL}/billing
         text: getSecondaryInvitationEmailText(data),
       })
 
-      console.log(`[Email] Secondary invitation email sent to ${data.secondaryEmail}`)
+      logger.info(`[Email] Secondary invitation email sent to ${data.secondaryEmail}`)
       return { success: true }
     } catch (error: any) {
-      console.error('[Email] Error sending secondary invitation email:', error)
+      logger.error('[Email] Error sending secondary invitation email:', error)
       return { success: false, error: error.message }
     }
   }
@@ -476,10 +478,10 @@ Update payment method: ${process.env.NEXT_PUBLIC_APP_URL}/billing
         text: getGracePeriodAlertEmailText(data),
       })
 
-      console.log(`[Email] Grace period alert (${data.monthsRemaining}mo remaining) sent to ${data.secondaryEmail}`)
+      logger.info(`[Email] Grace period alert (${data.monthsRemaining}mo remaining) sent to ${data.secondaryEmail}`)
       return { success: true }
     } catch (error: any) {
-      console.error('[Email] Error sending grace period alert email:', error)
+      logger.error('[Email] Error sending grace period alert email:', error)
       return { success: false, error: error.message }
     }
   }
@@ -498,10 +500,10 @@ Update payment method: ${process.env.NEXT_PUBLIC_APP_URL}/billing
         text: getTakeoverConfirmationEmailText(data),
       })
 
-      console.log(`[Email] Takeover confirmation email sent to ${data.newPayerEmail}`)
+      logger.info(`[Email] Takeover confirmation email sent to ${data.newPayerEmail}`)
       return { success: true }
     } catch (error: any) {
-      console.error('[Email] Error sending takeover confirmation email:', error)
+      logger.error('[Email] Error sending takeover confirmation email:', error)
       return { success: false, error: error.message }
     }
   }
@@ -520,10 +522,10 @@ Update payment method: ${process.env.NEXT_PUBLIC_APP_URL}/billing
         text: getPhotographerTakeoverNotificationText(data),
       })
 
-      console.log(`[Email] Photographer takeover notification sent to ${data.photographerEmail}`)
+      logger.info(`[Email] Photographer takeover notification sent to ${data.photographerEmail}`)
       return { success: true }
     } catch (error: any) {
-      console.error('[Email] Error sending photographer takeover notification:', error)
+      logger.error('[Email] Error sending photographer takeover notification:', error)
       return { success: false, error: error.message }
     }
   }
@@ -542,10 +544,10 @@ Update payment method: ${process.env.NEXT_PUBLIC_APP_URL}/billing
         text: getSecondaryWelcomeEmailText(data),
       })
 
-      console.log(`[Email] Secondary welcome email sent to ${data.secondaryEmail}`)
+      logger.info(`[Email] Secondary welcome email sent to ${data.secondaryEmail}`)
       return { success: true }
     } catch (error: any) {
-      console.error('[Email] Error sending secondary welcome email:', error)
+      logger.error('[Email] Error sending secondary welcome email:', error)
       return { success: false, error: error.message }
     }
   }
@@ -680,10 +682,10 @@ Time: ${new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })} CST
         `.trim(),
       })
 
-      console.log(`[Email] Alert email sent: ${params.alertType} (${params.severity}) to ${params.to}`)
+      logger.info(`[Email] Alert email sent: ${params.alertType} (${params.severity}) to ${params.to}`)
       return { success: true, messageId: result.id }
     } catch (error: any) {
-      console.error('[Email] Error sending alert email:', error)
+      logger.error('[Email] Error sending alert email:', error)
       return { success: false, error: error.message }
     }
   }

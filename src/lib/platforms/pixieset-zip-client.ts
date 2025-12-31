@@ -1,4 +1,5 @@
 import { UnifiedPlatformClient, PlatformCredentials, UnifiedPhoto, UnifiedGalleryMetadata, ImportProgress } from './unified-platform'
+import { logger } from '../logger'
 
 export class PixiesetClient extends UnifiedPlatformClient {
   private sessionCookie: string | null = null
@@ -21,7 +22,7 @@ export class PixiesetClient extends UnifiedPlatformClient {
   }
 
   async authenticate(): Promise<boolean> {
-    console.log(`PixiesetZipClient: Starting authentication for ${this.subdomain}/${this.gallerySlug}`)
+    logger.info(`[PixiesetZipClient] Starting authentication for ${this.subdomain}/${this.gallerySlug}`)
     
     try {
       if (this.accessType === 'guest') {
@@ -30,14 +31,14 @@ export class PixiesetClient extends UnifiedPlatformClient {
         return await this.authenticateAccount()
       }
     } catch (error) {
-      console.error('PixiesetZipClient: Authentication failed:', error)
+      logger.error('[PixiesetZipClient] Authentication failed:', error)
       return false
     }
   }
 
   private async authenticateGuest(): Promise<boolean> {
     if (!this.credentials.password) {
-      console.error('PixiesetZipClient: No password provided for guest access')
+      logger.error('[PixiesetZipClient] No password provided for guest access')
       return false
     }
 
@@ -58,7 +59,7 @@ export class PixiesetClient extends UnifiedPlatformClient {
       })
 
       if (!loginPageResponse.ok) {
-        console.error(`PixiesetZipClient: Failed to load login page: ${loginPageResponse.status}`)
+        logger.error(`[PixiesetZipClient] Failed to load login page: ${loginPageResponse.status}`)
         return false
       }
 
@@ -100,7 +101,7 @@ export class PixiesetClient extends UnifiedPlatformClient {
 
       // Check if login was successful (redirect to gallery or 200 OK)
       if (loginResponse.status === 302 || loginResponse.status === 200) {
-        console.log('PixiesetZipClient: Guest authentication successful')
+        logger.info('[PixiesetZipClient] Guest authentication successful')
         
         // Update session cookie if new one provided
         const newSetCookie = loginResponse.headers.get('set-cookie')
@@ -113,12 +114,12 @@ export class PixiesetClient extends UnifiedPlatformClient {
         
         return true
       } else {
-        console.error(`PixiesetZipClient: Guest login failed with status: ${loginResponse.status}`)
+        logger.error(`[PixiesetZipClient] Guest login failed with status: ${loginResponse.status}`)
         return false
       }
 
     } catch (error) {
-      console.error('PixiesetZipClient: Error during guest authentication:', error)
+      logger.error('[PixiesetZipClient] Error during guest authentication:', error)
       return false
     }
   }
@@ -126,12 +127,12 @@ export class PixiesetClient extends UnifiedPlatformClient {
   private async authenticateAccount(): Promise<boolean> {
     // Account authentication would require different approach
     // For now, return false as we'll focus on guest access first
-    console.log('PixiesetZipClient: Account authentication not implemented yet')
+    logger.info('[PixiesetZipClient] Account authentication not implemented yet')
     return false
   }
 
   async getGalleryMetadata(): Promise<UnifiedGalleryMetadata | null> {
-    console.log(`PixiesetZipClient: Fetching metadata for ${this.subdomain}/${this.gallerySlug}`)
+    logger.info(`[PixiesetZipClient] Fetching metadata for ${this.subdomain}/${this.gallerySlug}`)
     
     try {
       const galleryUrl = `https://${this.subdomain}.pixieset.com/${this.gallerySlug}/`
@@ -146,7 +147,7 @@ export class PixiesetClient extends UnifiedPlatformClient {
       })
 
       if (!response.ok) {
-        console.error(`PixiesetZipClient: Failed to fetch gallery: ${response.status}`)
+        logger.error(`[PixiesetZipClient] Failed to fetch gallery: ${response.status}`)
         return null
       }
 
@@ -169,13 +170,13 @@ export class PixiesetClient extends UnifiedPlatformClient {
       }
 
     } catch (error) {
-      console.error('PixiesetZipClient: Error fetching gallery metadata:', error)
+      logger.error('[PixiesetZipClient] Error fetching gallery metadata:', error)
       return null
     }
   }
 
   async getPhotos(): Promise<UnifiedPhoto[]> {
-    console.log(`PixiesetZipClient: Fetching photo list for ${this.subdomain}/${this.gallerySlug}`)
+    logger.info(`[PixiesetZipClient] Fetching photo list for ${this.subdomain}/${this.gallerySlug}`)
     
     try {
       const galleryUrl = `https://${this.subdomain}.pixieset.com/${this.gallerySlug}/`
@@ -190,7 +191,7 @@ export class PixiesetClient extends UnifiedPlatformClient {
       })
 
       if (!response.ok) {
-        console.error(`PixiesetZipClient: Failed to fetch gallery for photo list: ${response.status}`)
+        logger.error(`[PixiesetZipClient] Failed to fetch gallery for photo list: ${response.status}`)
         return []
       }
 
@@ -199,17 +200,17 @@ export class PixiesetClient extends UnifiedPlatformClient {
       // Extract photo URLs from the gallery page
       const photos = this.extractPhotoUrls(html)
       
-      console.log(`PixiesetZipClient: Found ${photos.length} photos`)
+      logger.info(`[PixiesetZipClient] Found ${photos.length} photos`)
       return photos
 
     } catch (error) {
-      console.error('PixiesetZipClient: Error fetching photo list:', error)
+      logger.error('[PixiesetZipClient] Error fetching photo list:', error)
       return []
     }
   }
 
   async downloadPhoto(photoUrl: string): Promise<ArrayBuffer> {
-    console.log(`PixiesetZipClient: Downloading photo from ${photoUrl}`)
+    logger.info(`[PixiesetZipClient] Downloading photo from ${photoUrl}`)
     
     try {
       const response = await fetch(photoUrl, {
@@ -227,13 +228,13 @@ export class PixiesetClient extends UnifiedPlatformClient {
 
       return response.arrayBuffer()
     } catch (error) {
-      console.error(`PixiesetZipClient: Error downloading photo:`, error)
+      logger.error(`[PixiesetZipClient] Error downloading photo:`, error)
       throw error
     }
   }
 
   async findZipDownloadUrl(): Promise<string | null> {
-    console.log(`PixiesetZipClient: Looking for "Download to Device" link`)
+    logger.info(`[PixiesetZipClient] Looking for "Download to Device" link`)
     
     try {
       const galleryUrl = `https://${this.subdomain}.pixieset.com/${this.gallerySlug}/`
@@ -248,7 +249,7 @@ export class PixiesetClient extends UnifiedPlatformClient {
       })
 
       if (!response.ok) {
-        console.error(`PixiesetZipClient: Failed to fetch gallery for download link: ${response.status}`)
+        logger.error(`[PixiesetZipClient] Failed to fetch gallery for download link: ${response.status}`)
         return null
       }
 
@@ -275,16 +276,16 @@ export class PixiesetClient extends UnifiedPlatformClient {
             downloadUrl = `https://${this.subdomain}.pixieset.com/${this.gallerySlug}/${downloadUrl.substring(2)}`
           }
           
-          console.log(`PixiesetZipClient: Found download URL: ${downloadUrl}`)
+          logger.info(`[PixiesetZipClient] Found download URL: ${downloadUrl}`)
           return downloadUrl
         }
       }
 
-      console.log('PixiesetZipClient: No download link found')
+      logger.info('[PixiesetZipClient] No download link found')
       return null
 
     } catch (error) {
-      console.error('PixiesetZipClient: Error finding download link:', error)
+      logger.error('[PixiesetZipClient] Error finding download link:', error)
       return null
     }
   }

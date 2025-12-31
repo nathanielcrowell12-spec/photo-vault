@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
+import { logger } from '@/lib/logger'
 
 interface ImportRequest {
   client_id: string
@@ -136,7 +137,7 @@ export async function POST(request: NextRequest) {
     }
 
   } catch (error) {
-    console.error('Import API error:', error)
+    logger.error('[ClientImport] Import API error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -448,7 +449,7 @@ async function storeImportedData(clientId: string, platform: string, galleries: 
       .single()
 
     if (galleryError) {
-      console.error('Error storing gallery:', galleryError)
+      logger.error('[ClientImport] Error storing gallery:', galleryError)
       continue
     }
 

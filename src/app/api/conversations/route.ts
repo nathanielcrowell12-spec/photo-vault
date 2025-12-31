@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { logger } from '@/lib/logger'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -51,7 +52,7 @@ export async function GET(request: NextRequest) {
       .order('last_message_at', { ascending: false })
 
     if (error) {
-      console.error('Error fetching conversations:', error)
+      logger.error('[Conversations] Error fetching conversations:', error)
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
 
@@ -111,7 +112,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json({ conversations: formattedConversations })
   } catch (error: any) {
-    console.error('Error in GET /api/conversations:', error)
+    logger.error('[Conversations] Error in GET:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }
@@ -165,13 +166,13 @@ export async function POST(request: NextRequest) {
     })
 
     if (convError) {
-      console.error('Error creating conversation:', convError)
+      logger.error('[Conversations] Error creating conversation:', convError)
       return NextResponse.json({ error: convError.message }, { status: 500 })
     }
 
     return NextResponse.json({ conversation_id: conversationId })
   } catch (error: any) {
-    console.error('Error in POST /api/conversations:', error)
+    logger.error('[Conversations] Error in POST:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

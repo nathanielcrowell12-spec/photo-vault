@@ -1,12 +1,13 @@
 import { NextResponse } from 'next/server'
 import { runDatabaseBackup } from '@/lib/server/admin-database-service'
+import { logger } from '@/lib/logger'
 
 export async function POST() {
   try {
     const result = await runDatabaseBackup()
     return NextResponse.json({ success: true, data: result })
   } catch (error) {
-    console.error('[api/admin/database/backup] Failed to run backup', error)
+    logger.error('[AdminDatabaseBackup] Failed to run backup', error)
     return NextResponse.json(
       {
         success: false,

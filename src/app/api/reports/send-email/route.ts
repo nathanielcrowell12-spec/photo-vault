@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { EmailReportService, EmailReportData, defaultEmailConfig } from '@/lib/email-service'
 import { PDFReportGenerator, ReportData } from '@/lib/pdf-generator'
 import { supabase } from '@/lib/supabase'
+import { logger } from '@/lib/logger'
 
 export async function POST(request: NextRequest) {
   try {
@@ -75,7 +76,7 @@ export async function POST(request: NextRequest) {
       .order('payment_period_start', { ascending: false })
 
     if (commissionError) {
-      console.error('Error fetching commission payments:', commissionError)
+      logger.error('[ReportsSendEmail] Error fetching commission payments:', commissionError)
       return NextResponse.json(
         { error: 'Failed to fetch commission data' },
         { status: 500 }
@@ -272,7 +273,7 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Email report sending error:', error)
+    logger.error('[ReportsSendEmail] Email report sending error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

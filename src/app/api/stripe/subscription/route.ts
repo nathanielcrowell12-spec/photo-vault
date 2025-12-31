@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { getStripeClient, getSubscription, cancelSubscription } from '@/lib/stripe'
+import { logger } from '@/lib/logger'
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic'
@@ -73,7 +74,7 @@ export async function GET(request: NextRequest) {
     })
   } catch (error) {
     const err = error as Error
-    console.error('[Subscription] Error fetching subscription:', err)
+    logger.error('[Subscription] Error fetching subscription:', err)
     return NextResponse.json(
       { error: 'Failed to fetch subscription', message: err.message },
       { status: 500 }
@@ -164,7 +165,7 @@ export async function POST(request: NextRequest) {
     })
   } catch (error) {
     const err = error as Error
-    console.error('[Subscription] Error cancelling subscription:', err)
+    logger.error('[Subscription] Error cancelling subscription:', err)
     return NextResponse.json(
       { error: 'Failed to cancel subscription', message: err.message },
       { status: 500 }

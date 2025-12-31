@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { getStripeClient } from '@/lib/stripe'
+import { logger } from '@/lib/logger'
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic'
@@ -75,7 +76,7 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     const err = error as Error
-    console.error('[SetupIntent] Error:', err)
+    logger.error('[SetupIntent] Error:', err)
 
     return NextResponse.json(
       { error: 'Failed to create setup intent', message: err.message },
@@ -140,7 +141,7 @@ export async function GET() {
 
   } catch (error) {
     const err = error as Error
-    console.error('[SetupIntent] Error fetching payment methods:', err)
+    logger.error('[SetupIntent] Error fetching payment methods:', err)
 
     return NextResponse.json(
       { error: 'Failed to fetch payment methods', message: err.message },
@@ -205,7 +206,7 @@ export async function PUT(request: NextRequest) {
 
   } catch (error) {
     const err = error as Error
-    console.error('[SetupIntent] Error setting default payment method:', err)
+    logger.error('[SetupIntent] Error setting default payment method:', err)
 
     return NextResponse.json(
       { error: 'Failed to set default payment method', message: err.message },
@@ -252,7 +253,7 @@ export async function DELETE(request: NextRequest) {
 
   } catch (error) {
     const err = error as Error
-    console.error('[SetupIntent] Error deleting payment method:', err)
+    logger.error('[SetupIntent] Error deleting payment method:', err)
 
     return NextResponse.json(
       { error: 'Failed to delete payment method', message: err.message },

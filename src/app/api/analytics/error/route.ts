@@ -16,6 +16,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase'
 import { trackServerEvent } from '@/lib/analytics/server'
 import { EVENTS } from '@/types/analytics'
+import { logger } from '@/lib/logger'
 
 export const dynamic = 'force-dynamic'
 
@@ -126,13 +127,13 @@ export async function POST(request: NextRequest) {
     })
 
     if (insertError) {
-      console.error('[Error API] Failed to insert error log:', insertError)
+      logger.error('[ErrorAPI] Failed to insert error log:', insertError)
       // Don't throw - still return success for PostHog tracking
     }
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('[Error API] Failed to log error:', error)
+    logger.error('[ErrorAPI] Failed to log error:', error)
     // Don't throw - we're already handling an error
     return NextResponse.json({ success: false }, { status: 500 })
   }

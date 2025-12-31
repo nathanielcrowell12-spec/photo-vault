@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
+import { logger } from '@/lib/logger'
 
 export async function GET(request: NextRequest) {
   try {
@@ -53,7 +54,7 @@ export async function GET(request: NextRequest) {
       .order('payment_date', { ascending: false })
 
     if (paymentsError) {
-      console.error('Error fetching client payments:', paymentsError)
+      logger.error('[ClientBilling] Error fetching client payments:', paymentsError)
       return NextResponse.json(
         { error: 'Failed to fetch payment data' },
         { status: 500 }
@@ -126,7 +127,7 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Client billing API error:', error)
+    logger.error('[ClientBilling] Client billing API error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -180,7 +181,7 @@ export async function POST(request: NextRequest) {
     }
 
   } catch (error) {
-    console.error('Client billing POST error:', error)
+    logger.error('[ClientBilling] Client billing POST error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

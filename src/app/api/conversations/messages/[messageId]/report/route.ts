@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { logger } from '@/lib/logger'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -75,13 +76,13 @@ export async function POST(
       .eq('id', messageId)
 
     if (updateError) {
-      console.error('Error reporting message:', updateError)
+      logger.error('[MessageReport] Error reporting message:', updateError)
       return NextResponse.json({ error: updateError.message }, { status: 500 })
     }
 
     return NextResponse.json({ success: true, message: 'Message reported successfully' })
   } catch (error: any) {
-    console.error('Error in POST /api/conversations/messages/[messageId]/report:', error)
+    logger.error('[MessageReport] Error in POST:', error)
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 }

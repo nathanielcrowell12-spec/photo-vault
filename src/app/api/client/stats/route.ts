@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
+import { logger } from '@/lib/logger'
 
 export async function GET() {
   try {
@@ -98,7 +99,7 @@ export async function GET() {
       recentGalleries: mappedGalleries
     })
   } catch (error) {
-    console.error('[API] Error fetching client stats:', error)
+    logger.error('[ClientStats] Error fetching client stats:', error)
     return NextResponse.json(
       { error: 'Failed to fetch stats' },
       { status: 500 }

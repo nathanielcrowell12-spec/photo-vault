@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@supabase/supabase-js'
+import { logger } from '@/lib/logger'
 
 // Use service role to bypass RLS for public gallery viewing
 const supabaseAdmin = createClient(
@@ -47,7 +48,7 @@ export async function GET(
       .single()
 
     if (galleryError || !gallery) {
-      console.error('[API Gallery] Error:', galleryError)
+      logger.error('[Gallery] Error:', galleryError)
       return NextResponse.json({ error: 'Gallery not found' }, { status: 404 })
     }
 
@@ -67,7 +68,7 @@ export async function GET(
       .limit(6) // Only return first 6 for preview
 
     if (photosError) {
-      console.error('[API Gallery] gallery_photos error:', photosError)
+      logger.error('[Gallery] gallery_photos error:', photosError)
     }
 
     // If no photos in gallery_photos, check the photos table (used by photographer upload)
@@ -80,7 +81,7 @@ export async function GET(
         .limit(6)
 
       if (altPhotosError) {
-        console.error('[API Gallery] photos table fallback error:', altPhotosError)
+        logger.error('[Gallery] photos table fallback error:', altPhotosError)
       }
 
       if (altPhotos && altPhotos.length > 0) {
@@ -102,7 +103,7 @@ export async function GET(
     })
 
   } catch (error) {
-    console.error('[API Gallery] Error:', error)
+    logger.error('[Gallery] Error:', error)
     return NextResponse.json(
       { error: 'Failed to fetch gallery' },
       { status: 500 }

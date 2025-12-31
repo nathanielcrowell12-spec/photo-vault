@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createServerSupabaseClient, createServiceRoleClient } from '@/lib/supabase-server'
+import { logger } from '@/lib/logger'
 
 // GET - Fetch ratings for the authenticated photographer
 export async function GET() {
@@ -43,7 +44,7 @@ export async function GET() {
       .order('created_at', { ascending: false })
 
     if (ratingsError) {
-      console.error('Error fetching ratings:', ratingsError)
+      logger.error('[Ratings] Error fetching ratings:', ratingsError)
       return NextResponse.json({ error: 'Failed to fetch ratings' }, { status: 500 })
     }
 
@@ -120,7 +121,7 @@ export async function GET() {
       }
     })
   } catch (error) {
-    console.error('[API] Error in ratings endpoint:', error)
+    logger.error('[Ratings] Error in ratings endpoint:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -166,13 +167,13 @@ export async function POST(request: Request) {
       .eq('id', ratingId)
 
     if (updateError) {
-      console.error('Error updating rating:', updateError)
+      logger.error('[Ratings] Error updating rating:', updateError)
       return NextResponse.json({ error: 'Failed to save response' }, { status: 500 })
     }
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('[API] Error in ratings POST:', error)
+    logger.error('[Ratings] Error in ratings POST:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

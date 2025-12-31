@@ -1,5 +1,6 @@
 // Competitor logo management with automatic updates every 2 months
 import { supabase } from './supabase'
+import { logger } from './logger'
 
 export interface CompetitorLogo {
   id: string
@@ -99,7 +100,7 @@ export async function getCompetitorLogos(): Promise<CompetitorLogo[]> {
     const needsUpdate = dbLogos.some(logo => shouldUpdateLogos(logo.last_updated))
     
     if (needsUpdate) {
-      console.log('🔄 Competitor logos need updating, fetching new ones...')
+      logger.info('[CompetitorLogos] Logos need updating, fetching new ones...')
       
       // Fetch updated logos
       const updatedLogos = await fetchCompetitorLogos()
@@ -118,7 +119,7 @@ export async function getCompetitorLogos(): Promise<CompetitorLogo[]> {
           })
       }
       
-      console.log('✅ Competitor logos updated successfully')
+      logger.info('[CompetitorLogos] Logos updated successfully')
       return updatedLogos
     }
 
@@ -133,7 +134,7 @@ export async function getCompetitorLogos(): Promise<CompetitorLogo[]> {
     }))
 
   } catch (error) {
-    console.error('Error fetching competitor logos:', error)
+    logger.error('[CompetitorLogos] Error fetching logos:', error)
     // Fallback to default logos
     return DEFAULT_COMPETITOR_LOGOS
   }
@@ -141,7 +142,7 @@ export async function getCompetitorLogos(): Promise<CompetitorLogo[]> {
 
 // Function to manually trigger logo updates (for admin use)
 export async function forceUpdateLogos(): Promise<CompetitorLogo[]> {
-  console.log('🔄 Force updating competitor logos...')
+  logger.info('[CompetitorLogos] Force updating logos...')
   
   const updatedLogos = await fetchCompetitorLogos()
   
@@ -159,6 +160,6 @@ export async function forceUpdateLogos(): Promise<CompetitorLogo[]> {
       })
   }
   
-  console.log('✅ Competitor logos force updated successfully')
+  logger.info('[CompetitorLogos] Force update completed successfully')
   return updatedLogos
 }

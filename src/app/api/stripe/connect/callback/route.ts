@@ -4,6 +4,7 @@ import { getStripeClient } from '@/lib/stripe'
 import { trackServerEvent } from '@/lib/analytics/server'
 import { EVENTS } from '@/types/analytics'
 import { calculateTimeFromSignup } from '@/lib/analytics/helpers'
+import { logger } from '@/lib/logger'
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic'
@@ -43,7 +44,7 @@ export async function GET(request: NextRequest) {
       .single()
 
     if (photographerError || !photographer?.stripe_connect_account_id) {
-      console.error('[Stripe Connect] No account ID found for photographer:', user.id)
+      logger.error('[StripeConnect] No account ID found for photographer:', user.id)
       return NextResponse.redirect(
         new URL('/photographers/settings?stripe=error&reason=no_account', request.url)
       )
@@ -66,7 +67,7 @@ export async function GET(request: NextRequest) {
       .eq('id', user.id)
 
     if (updateError) {
-      console.error('[Stripe Connect] Error updating photographer:', updateError)
+      logger.error('[StripeConnect] Error updating photographer:', updateError)
     }
 
     // Redirect based on onboarding completion
@@ -91,7 +92,7 @@ export async function GET(request: NextRequest) {
           is_first_connection: wasFirstConnection,
         })
       } catch (trackError) {
-        console.error('[Stripe Connect] Error tracking Stripe Connect:', trackError)
+        logger.error('[StripeConnect] Error tracking Stripe Connect:', trackError)
         // Don't block redirect if tracking fails
       }
 
@@ -106,7 +107,7 @@ export async function GET(request: NextRequest) {
     }
   } catch (error) {
     const err = error as Error
-    console.error('[Stripe Connect] Error handling callback:', err)
+    logger.error('[StripeConnect] Error handling callback:', err)
     return NextResponse.redirect(
       new URL('/photographers/settings?stripe=error', request.url)
     )

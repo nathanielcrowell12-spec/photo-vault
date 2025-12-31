@@ -1,6 +1,7 @@
 // src/app/api/galleries/[id]/route.ts
 import { NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase-server';
+import { logger } from '@/lib/logger';
 
 export async function POST(
   request: Request,
@@ -25,7 +26,7 @@ export async function POST(
     .eq('photographer_id', user.id);
 
   if (galleryError) {
-    console.error('Error restoring gallery:', galleryError);
+    logger.error('[Galleries] Error restoring gallery:', galleryError);
     return NextResponse.json({ error: 'Failed to restore gallery' }, { status: 500 });
   }
 
@@ -38,7 +39,7 @@ export async function POST(
   if (photosError) {
     // Note: At this point, the gallery is restored but photos are not.
     // You might want to add more robust transaction handling here in a real-world scenario.
-    console.error('Error restoring photos for gallery:', photosError);
+    logger.error('[Galleries] Error restoring photos for gallery:', photosError);
     return NextResponse.json({ error: 'Failed to restore photos' }, { status: 500 });
   }
 
@@ -69,7 +70,7 @@ export async function DELETE(
     .eq('photographer_id', user.id); // Ensure photographers can only delete their own galleries
 
   if (error) {
-    console.error('Error soft deleting gallery:', error);
+    logger.error('[Galleries] Error soft deleting gallery:', error);
 
     // Check for foreign key constraint (gallery has active subscription)
     if (error.code === '23503' && error.message?.includes('subscriptions')) {

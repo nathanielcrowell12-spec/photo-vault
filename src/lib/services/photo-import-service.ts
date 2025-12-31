@@ -3,6 +3,7 @@
 
 import { BasePlatformClient, PhotoMetadata } from '../platforms/base-platform'
 import { createClient } from '@supabase/supabase-js'
+import { logger } from '../logger'
 
 export interface ImportProgress {
   stage: 'authenticating' | 'fetching_gallery' | 'fetching_photos' | 'downloading' | 'complete' | 'error'
@@ -143,7 +144,7 @@ export class PhotoImportService {
             })
 
           if (uploadError) {
-            console.error(`Failed to upload photo ${photo.filename}:`, uploadError)
+            logger.error(`[PhotoImportService] Failed to upload photo ${photo.filename}:`, uploadError)
             failCount++
             continue
           }
@@ -180,7 +181,7 @@ export class PhotoImportService {
           successCount++
 
         } catch (error) {
-          console.error(`Error processing photo ${photo.filename}:`, error)
+          logger.error(`[PhotoImportService] Error processing photo ${photo.filename}:`, error)
           failCount++
         }
       }
@@ -203,7 +204,7 @@ export class PhotoImportService {
         .eq('id', galleryId)
 
     } catch (error) {
-      console.error('Import error:', error)
+      logger.error('[PhotoImportService] Import error:', error)
       
       this.updateProgress({
         stage: 'error',

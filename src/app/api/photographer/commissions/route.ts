@@ -13,6 +13,7 @@ import {
   getPhotographerCommissions,
   getPhotographerCommissionTotals,
 } from '@/lib/server/commission-service'
+import { logger } from '@/lib/logger'
 
 export const dynamic = 'force-dynamic'
 
@@ -96,7 +97,7 @@ export async function GET(request: NextRequest) {
     })
   } catch (error) {
     const err = error as Error
-    console.error('[API:Commissions] Error:', err)
+    logger.error('[Commissions] Error:', err)
     return NextResponse.json(
       { error: 'Failed to fetch commissions', message: err.message },
       { status: 500 }

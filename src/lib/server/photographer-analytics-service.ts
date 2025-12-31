@@ -1,6 +1,7 @@
 'use server'
 
 import { createServiceRoleClient } from '@/lib/supabase-server'
+import { logger } from '@/lib/logger'
 
 export type MonthlyBreakdown = {
   month: string
@@ -61,7 +62,7 @@ export async function fetchPhotographerAnalyticsData(
       .eq('status', 'active')
 
     if (clientsError) {
-      console.warn('[photographer-analytics] Could not fetch clients', clientsError)
+      logger.warn('[photographer-analytics] Could not fetch clients', clientsError)
     }
 
     // Fetch all commissions for this photographer from the commissions table
@@ -72,7 +73,7 @@ export async function fetchPhotographerAnalyticsData(
       .order('created_at', { ascending: true })
 
     if (commissionsError) {
-      console.warn('[photographer-analytics] Could not fetch commissions', commissionsError)
+      logger.warn('[photographer-analytics] Could not fetch commissions', commissionsError)
     }
 
     // Fetch client creation dates for new client tracking
@@ -82,7 +83,7 @@ export async function fetchPhotographerAnalyticsData(
       .eq('photographer_id', photographerId)
 
     if (clientListError) {
-      console.warn('[photographer-analytics] Could not fetch client list', clientListError)
+      logger.warn('[photographer-analytics] Could not fetch client list', clientListError)
     }
 
     // Generate 12 months of data from real commission data
@@ -210,7 +211,7 @@ export async function fetchPhotographerAnalyticsData(
       },
     }
   } catch (error) {
-    console.error('[photographer-analytics-service] Failed to fetch analytics', error)
+    logger.error('[photographer-analytics-service] Failed to fetch analytics', error)
 
     // Return safe empty structure
     const emptyMonths: MonthlyBreakdown[] = []

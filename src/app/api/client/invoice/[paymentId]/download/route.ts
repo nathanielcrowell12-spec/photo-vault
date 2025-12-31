@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
 import jsPDF from 'jspdf'
+import { logger } from '@/lib/logger'
 
 export async function GET(
   request: NextRequest,
@@ -69,7 +70,7 @@ export async function GET(
     })
 
   } catch (error) {
-    console.error('Invoice download error:', error)
+    logger.error('[InvoiceDownload] Invoice download error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

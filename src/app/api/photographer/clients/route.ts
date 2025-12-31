@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
+import { logger } from '@/lib/logger'
 
 export async function GET(request: NextRequest) {
   try {
@@ -24,7 +25,7 @@ export async function GET(request: NextRequest) {
       .order('name')
 
     if (clientsError) {
-      console.error('[API] Error fetching clients:', clientsError)
+      logger.error('[PhotographerClients] Error fetching clients:', clientsError)
       return NextResponse.json(
         { error: 'Failed to fetch clients', details: clientsError },
         { status: 500 }
@@ -36,7 +37,7 @@ export async function GET(request: NextRequest) {
       clients: clients || []
     })
   } catch (error) {
-    console.error('[API] Error:', error)
+    logger.error('[PhotographerClients] Error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

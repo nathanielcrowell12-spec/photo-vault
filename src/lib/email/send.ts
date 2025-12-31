@@ -1,5 +1,7 @@
 // CRITICAL: Use dynamic imports to prevent build-time evaluation
 
+import { logger } from '../logger'
+
 export async function sendPhotographerSuspensionWarning(
   photographerEmail: string,
   daysRemaining: number
@@ -19,7 +21,7 @@ export async function sendPhotographerSuspensionWarning(
     });
     return { success: true };
   } catch (error) {
-    console.error('Email send failed:', error);
+    logger.error('[Email] Send failed:', error);
     return { success: false, error };
   }
 }
@@ -43,7 +45,7 @@ export async function sendPhotographerDeleted(
     });
     return { success: true };
   } catch (error) {
-    console.error('Email send failed:', error);
+    logger.error('[Email] Send failed:', error);
     return { success: false, error };
   }
 }
@@ -72,7 +74,7 @@ export async function sendCommissionPaid(
     });
     return { success: true };
   } catch (error) {
-    console.error('Email send failed:', error);
+    logger.error('[Email] Send failed:', error);
     return { success: false, error };
   }
 }
@@ -110,7 +112,7 @@ export async function sendClientPaymentFailed(
 
     return { success: true };
   } catch (error) {
-    console.error('Email send failed:', error);
+    logger.error('[Email] Send failed:', error);
     return { success: false, error };
   }
 }
@@ -134,7 +136,7 @@ export async function sendClientDeactivated(
     });
     return { success: true };
   } catch (error) {
-    console.error('Email send failed:', error);
+    logger.error('[Email] Send failed:', error);
     return { success: false, error };
   }
 }

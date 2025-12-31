@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { PDFReportGenerator, ReportData } from '@/lib/pdf-generator'
 import { createServiceRoleClient } from '@/lib/supabase-server'
+import { logger } from '@/lib/logger'
 
 export async function POST(request: NextRequest) {
   try {
@@ -64,7 +65,7 @@ export async function POST(request: NextRequest) {
       .order('created_at', { ascending: false })
 
     if (commissionError) {
-      console.error('Error fetching commissions:', commissionError)
+      logger.error('[ReportsGenerate] Error fetching commissions:', commissionError)
       return NextResponse.json(
         { error: 'Failed to fetch commission data' },
         { status: 500 }
@@ -200,7 +201,7 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Report generation error:', error)
+    logger.error('[ReportsGenerate] Report generation error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

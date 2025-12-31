@@ -5,6 +5,7 @@
  * and avoid race conditions with first-time flag checks.
  */
 import { createServiceRoleClient } from '@/lib/supabase-server'
+import { logger } from '../logger'
 
 /**
  * Check if this is the first time something happened for a user
@@ -42,7 +43,7 @@ export async function isFirstTime(
 
     return (count || 0) === 0
   } catch (error) {
-    console.error('[Analytics Helper] isFirstTime check failed:', error)
+    logger.error('[Analytics Helper] isFirstTime check failed:', error)
     // Return false on error - don't break the flow, just don't mark as "first"
     return false
   }
@@ -98,7 +99,7 @@ export async function getPhotographerSignupDate(
 
     return data?.created_at || null
   } catch (error) {
-    console.error('[Analytics Helper] getPhotographerSignupDate failed:', error)
+    logger.error('[Analytics Helper] getPhotographerSignupDate failed:', error)
     return null
   }
 }
@@ -120,7 +121,7 @@ export async function getClientSignupDate(
 
     return data?.created_at || null
   } catch (error) {
-    console.error('[Analytics Helper] getClientSignupDate failed:', error)
+    logger.error('[Analytics Helper] getClientSignupDate failed:', error)
     return null
   }
 }
@@ -143,7 +144,7 @@ export function mapPaymentOptionToPlanType(
       return 'monthly'
     default:
       // Log unknown types but don't break
-      console.warn('[Analytics Helper] Unknown payment option:', paymentOptionId)
+      logger.warn('[Analytics Helper] Unknown payment option:', paymentOptionId)
       return undefined
   }
 }
@@ -165,7 +166,7 @@ export function validateRequiredProperties(
   for (const key of required) {
     const value = properties[key]
     if (value === undefined || value === null || value === '') {
-      console.warn(`[Analytics Helper] Missing required property: ${key}`)
+      logger.warn(`[Analytics Helper] Missing required property: ${key}`)
       return false
     }
   }

@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import { v4 as uuidv4 } from 'uuid'
+import { logger } from '../logger'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -48,7 +49,7 @@ export class ZipStreamService {
     }
   ): Promise<{ success: boolean; photosImported: number; error?: string }> {
     try {
-      console.log(`ZipStreamService: Starting ZIP stream import from ${zipUrl}`)
+      logger.info(`[ZipStreamService] Starting ZIP stream import from ${zipUrl}`)
 
       // Step 1: Download ZIP stream
       this.updateProgress({
@@ -77,7 +78,7 @@ export class ZipStreamService {
         })
       })
 
-      console.log(`ZipStreamService: Extracted ${photos.length} photos`)
+      logger.info(`[ZipStreamService] Extracted ${photos.length} photos`)
 
       // Step 3: Upload photos to Supabase
       this.updateProgress({
@@ -117,7 +118,7 @@ export class ZipStreamService {
             })
 
           if (uploadError) {
-            console.error(`ZipStreamService: Failed to upload photo ${photo.filename}:`, uploadError)
+            logger.error(`[ZipStreamService] Failed to upload photo ${photo.filename}:`, uploadError)
             failCount++
             continue
           }
@@ -148,7 +149,7 @@ export class ZipStreamService {
             })
 
           if (dbError) {
-            console.error(`ZipStreamService: Failed to save photo record for ${photo.filename}:`, dbError)
+            logger.error(`[ZipStreamService] Failed to save photo record for ${photo.filename}:`, dbError)
             failCount++
             continue
           }
@@ -156,7 +157,7 @@ export class ZipStreamService {
           successCount++
 
         } catch (error) {
-          console.error(`ZipStreamService: Error processing photo ${photo.filename}:`, error)
+          logger.error(`[ZipStreamService] Error processing photo ${photo.filename}:`, error)
           failCount++
         }
       }
@@ -191,7 +192,7 @@ export class ZipStreamService {
         })
         .eq('id', galleryId)
 
-      console.log(`ZipStreamService: Import completed. Success: ${successCount}, Failed: ${failCount}`)
+      logger.info(`[ZipStreamService] Import completed. Success: ${successCount}, Failed: ${failCount}`)
 
       return {
         success: true,
@@ -200,7 +201,7 @@ export class ZipStreamService {
       }
 
     } catch (error) {
-      console.error('ZipStreamService: Import failed:', error)
+      logger.error('[ZipStreamService] Import failed:', error)
       
       this.updateProgress({
         stage: 'error',
@@ -232,7 +233,7 @@ export class ZipStreamService {
   private async downloadZipWithRetry(zipUrl: string, maxRetries: number = 3): Promise<Response | null> {
     for (let attempt = 1; attempt <= maxRetries; attempt++) {
       try {
-        console.log(`ZipStreamService: Download attempt ${attempt}/${maxRetries} for ${zipUrl}`)
+        logger.info(`[ZipStreamService] Download attempt ${attempt}/${maxRetries} for ${zipUrl}`)
         
         const response = await fetch(zipUrl, {
           method: 'GET',
@@ -246,22 +247,22 @@ export class ZipStreamService {
         if (response.ok) {
           return response
         } else {
-          console.warn(`ZipStreamService: Download attempt ${attempt} failed with status ${response.status}`)
+          logger.warn(`[ZipStreamService] Download attempt ${attempt} failed with status ${response.status}`)
         }
 
       } catch (error) {
-        console.warn(`ZipStreamService: Download attempt ${attempt} failed:`, error)
+        logger.warn(`[ZipStreamService] Download attempt ${attempt} failed:`, error)
       }
 
       // Wait before retry (exponential backoff)
       if (attempt < maxRetries) {
         const delay = Math.pow(2, attempt) * 1000 // 2s, 4s, 8s
-        console.log(`ZipStreamService: Waiting ${delay}ms before retry...`)
+        logger.info(`[ZipStreamService] Waiting ${delay}ms before retry...`)
         await new Promise(resolve => setTimeout(resolve, delay))
       }
     }
 
-    console.error(`ZipStreamService: All ${maxRetries} download attempts failed`)
+    logger.error(`[ZipStreamService] All ${maxRetries} download attempts failed`)
     return null
   }
 
@@ -284,7 +285,7 @@ export class ZipStreamService {
     
     // TODO: Implement actual ZIP extraction
     // This is a placeholder that would need a proper ZIP library
-    console.log(`ZipStreamService: ZIP buffer size: ${zipBuffer.byteLength} bytes`)
+    logger.info(`[ZipStreamService] ZIP buffer size: ${zipBuffer.byteLength} bytes`)
     
     progressCallback(100)
     

@@ -3,6 +3,7 @@ import { generateRandomId } from '@/lib/api-constants'
 import { createClient } from '@supabase/supabase-js'
 import unzipper from 'unzipper'
 import { Readable } from 'stream'
+import { logger } from '@/lib/logger'
 
 // Runtime configuration for streaming upload processing
 export const runtime = 'nodejs'
@@ -41,7 +42,7 @@ export async function POST(request: NextRequest) {
           .download(storagePath)
 
         if (downloadError || !zipData) {
-          console.error('Error downloading ZIP:', downloadError)
+          logger.error('[ProcessStreaming] Error downloading ZIP:', downloadError)
           send({ error: 'Failed to download ZIP file from storage', progress: 0 })
           controller.close()
           return
@@ -194,11 +195,11 @@ export async function POST(request: NextRequest) {
         controller.close()
 
       } catch (error) {
-        console.error('Streaming ZIP Processing error:', error)
+        logger.error('[ProcessStreaming] Streaming ZIP Processing error:', error)
         controller.enqueue(
-          encoder.encode(`data: ${JSON.stringify({ 
+          encoder.encode(`data: ${JSON.stringify({
             error: error instanceof Error ? error.message : 'Processing failed',
-            progress: 0 
+            progress: 0
           })}\n\n`)
         )
         controller.close()
@@ -269,7 +270,7 @@ async function processPhotoEntry(
       })
 
     if (uploadError) {
-      console.error(`Failed to upload ${entry.path}:`, uploadError)
+      logger.error(`[ProcessStreaming] Failed to upload ${entry.path}:`, uploadError)
       return
     }
 
@@ -293,7 +294,7 @@ async function processPhotoEntry(
     onComplete()
 
   } catch (error) {
-    console.error(`Error processing ${entry.path}:`, error)
+    logger.error(`[ProcessStreaming] Error processing ${entry.path}:`, error)
   }
 }
 

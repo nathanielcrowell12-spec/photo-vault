@@ -15,6 +15,7 @@
 
 import { createServerSupabaseClient, createServiceRoleClient } from '../supabase-server'
 import { PHOTOGRAPHER_COMMISSION_RATE } from '../stripe'
+import { logger } from '../logger'
 
 export interface Commission {
   id: string
@@ -71,7 +72,7 @@ export async function getPhotographerCommissions(
     .limit(limit)
 
   if (error) {
-    console.error('[Commission] Error fetching commissions:', error)
+    logger.error('[Commission] Error fetching commissions:', error)
     return []
   }
 
@@ -95,7 +96,7 @@ export async function getPhotographerCommissionTotals(photographerId: string): P
     .eq('photographer_id', photographerId)
 
   if (error) {
-    console.error('[Commission] Error fetching totals:', error)
+    logger.error('[Commission] Error fetching totals:', error)
     return {
       totalEarnings: 0,
       upfrontEarnings: 0,
@@ -145,7 +146,7 @@ export async function getCommissionById(commissionId: string): Promise<Commissio
     .single()
 
   if (error) {
-    console.error('[Commission] Error fetching commission:', error)
+    logger.error('[Commission] Error fetching commission:', error)
     return null
   }
 
@@ -168,7 +169,7 @@ export async function getCommissionByPaymentIntent(
 
   if (error && error.code !== 'PGRST116') {
     // PGRST116 = no rows returned
-    console.error('[Commission] Error fetching commission by payment intent:', error)
+    logger.error('[Commission] Error fetching commission by payment intent:', error)
   }
 
   return data as Commission | null
@@ -184,7 +185,7 @@ export async function getCommissionByPaymentIntent(
  * @deprecated No longer needed - Stripe handles payouts automatically
  */
 export function calculateScheduledPayoutDate(paymentDate: Date): Date {
-  console.warn('[Commission] calculateScheduledPayoutDate is deprecated - Stripe handles payouts automatically')
+  logger.warn('[Commission] calculateScheduledPayoutDate is deprecated - Stripe handles payouts automatically')
   const payoutDate = new Date(paymentDate)
   payoutDate.setDate(payoutDate.getDate() + 2) // Stripe's 2-day settlement
   return payoutDate
@@ -197,7 +198,7 @@ export async function processScheduledPayout(commissionId: string): Promise<{
   success: boolean
   error?: string
 }> {
-  console.warn('[Commission] processScheduledPayout is deprecated - Stripe handles payouts via destination charges')
+  logger.warn('[Commission] processScheduledPayout is deprecated - Stripe handles payouts via destination charges')
   return {
     success: false,
     error: 'Manual payouts are deprecated. Stripe handles transfers via destination charges.',
@@ -208,7 +209,7 @@ export async function processScheduledPayout(commissionId: string): Promise<{
  * @deprecated Use getPhotographerCommissions instead - all commissions are "paid" now
  */
 export async function getPhotographerPendingCommissions(photographerId: string) {
-  console.warn('[Commission] getPhotographerPendingCommissions is deprecated - all commissions are paid immediately via destination charges')
+  logger.warn('[Commission] getPhotographerPendingCommissions is deprecated - all commissions are paid immediately via destination charges')
   return []
 }
 
@@ -226,6 +227,6 @@ export async function getPhotographerCommissionHistory(
  * @deprecated Commission calculation now happens in checkout routes
  */
 export function calculateCommissionAmount(paymentAmountCents: number): number {
-  console.warn('[Commission] calculateCommissionAmount is deprecated - use calculatePhotographerGross instead')
+  logger.warn('[Commission] calculateCommissionAmount is deprecated - use calculatePhotographerGross instead')
   return Math.round(paymentAmountCents * PHOTOGRAPHER_COMMISSION_RATE)
 }

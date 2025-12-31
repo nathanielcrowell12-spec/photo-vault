@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
+import { logger } from '@/lib/logger'
 
 export async function POST(request: NextRequest) {
   try {
@@ -39,7 +40,7 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (error) {
-      console.error('Error creating commission payment:', error)
+      logger.error('[Commission] Error creating commission payment:', error)
       return NextResponse.json(
         { error: 'Failed to create commission payment' },
         { status: 500 }
@@ -52,7 +53,7 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Commission creation error:', error)
+    logger.error('[Commission] creation error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -101,7 +102,7 @@ export async function GET(request: NextRequest) {
       .order('payment_period_start', { ascending: false })
 
     if (error) {
-      console.error('Error fetching commission payments:', error)
+      logger.error('[Commission] Error fetching commission payments:', error)
       return NextResponse.json(
         { error: 'Failed to fetch commission payments' },
         { status: 500 }
@@ -114,7 +115,7 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Commission fetch error:', error)
+    logger.error('[Commission] fetch error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -151,7 +152,7 @@ export async function PUT(request: NextRequest) {
       .single()
 
     if (error) {
-      console.error('Error updating commission payment:', error)
+      logger.error('[Commission] Error updating commission payment:', error)
       return NextResponse.json(
         { error: 'Failed to update commission payment' },
         { status: 500 }
@@ -164,7 +165,7 @@ export async function PUT(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Commission update error:', error)
+    logger.error('[Commission] update error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

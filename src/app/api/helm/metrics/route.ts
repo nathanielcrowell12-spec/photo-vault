@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { helmClient } from '@/lib/helm-client'
 import { supabase } from '@/lib/supabase'
-import { 
-  DEFAULT_UPTIME_PERCENTAGE, 
-  DEFAULT_RESPONSE_TIME_MS, 
+import {
+  DEFAULT_UPTIME_PERCENTAGE,
+  DEFAULT_RESPONSE_TIME_MS,
   MAX_PHOTOS_THRESHOLD,
-  ERROR_CODES 
+  ERROR_CODES
 } from '@/lib/api-constants'
+import { logger } from '@/lib/logger'
 
 /**
  * Send Photo Vault metrics to Helm Project
@@ -35,10 +36,10 @@ export async function POST(_request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Failed to send metrics to Helm Project:', error)
+    logger.error('[HelmMetrics] Failed to send metrics to Helm Project:', error)
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     return NextResponse.json(
-      { 
+      {
         error: 'Failed to send metrics to Helm Project',
         details: errorMessage,
         code: ERROR_CODES.HELM_METRICS_SEND_FAILED
@@ -61,7 +62,7 @@ export async function GET() {
     })
 
   } catch (error) {
-    console.error('Failed to collect Photo Vault metrics:', error)
+    logger.error('[HelmMetrics] Failed to collect Photo Vault metrics:', error)
     return NextResponse.json(
       { error: 'Failed to collect metrics' },
       { status: 500 }
@@ -115,7 +116,7 @@ async function collectPhotoVaultMetrics() {
     }
 
   } catch (error) {
-    console.error('Error collecting Photo Vault metrics:', error)
+    logger.error('[HelmMetrics] Error collecting Photo Vault metrics:', error)
     throw error
   }
 }

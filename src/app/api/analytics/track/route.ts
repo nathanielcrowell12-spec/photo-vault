@@ -9,6 +9,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { trackServerEvent } from '@/lib/analytics/server'
 import { EVENTS, type EventName } from '@/types/analytics'
+import { logger } from '@/lib/logger'
 
 // Allowlist of events that can be tracked via this endpoint
 const ALLOWED_EVENTS: EventName[] = [
@@ -38,7 +39,7 @@ export async function POST(request: NextRequest) {
 
     // Only allow specific events for security
     if (!ALLOWED_EVENTS.includes(eventName as EventName)) {
-      console.warn(`[Analytics API] Blocked tracking of unauthorized event: ${eventName}`)
+      logger.warn(`[AnalyticsTrack] Blocked tracking of unauthorized event: ${eventName}`)
       return NextResponse.json(
         { error: 'Event not allowed via this endpoint' },
         { status: 403 }
@@ -50,7 +51,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ success: true })
   } catch (error) {
-    console.error('[Analytics API] Error tracking event:', error)
+    logger.error('[AnalyticsTrack] Error tracking event:', error)
     return NextResponse.json(
       { error: 'Failed to track event' },
       { status: 500 }

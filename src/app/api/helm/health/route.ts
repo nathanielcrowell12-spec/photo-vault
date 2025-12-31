@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 
 export async function GET(request: NextRequest) {
   try {
@@ -28,7 +29,7 @@ export async function GET(request: NextRequest) {
       }, { status: response.status })
     }
   } catch (error) {
-    console.error('Helm Project health check failed:', error)
+    logger.error('[HelmHealth] Helm Project health check failed:', error)
     return NextResponse.json({
       status: 'disconnected',
       message: `Helm Project is not available: ${error instanceof Error ? error.message : 'Unknown error'}`,

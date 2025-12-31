@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server'
 import { generateRandomId } from '@/lib/api-constants'
 import { createClient } from '@supabase/supabase-js'
 import JSZip from 'jszip'
+import { logger } from '@/lib/logger'
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -97,7 +98,7 @@ export async function POST(request: NextRequest) {
           .single()
 
         if (galleryError || !gallery) {
-          console.error('ZIP Upload: Error creating gallery:', galleryError)
+          logger.error('[ZipImport] Error creating gallery:', galleryError)
           send({ error: 'Failed to create gallery record', progress: 30 })
           controller.close()
           return
@@ -139,7 +140,7 @@ export async function POST(request: NextRequest) {
                   })
 
                 if (uploadError) {
-                  console.error(`Failed to upload ${name}:`, uploadError)
+                  logger.error(`[ZipImport] Failed to upload ${name}:`, uploadError)
                   return
                 }
 
@@ -172,7 +173,7 @@ export async function POST(request: NextRequest) {
                 })
 
               } catch (photoError) {
-                console.error(`Error processing ${name}:`, photoError)
+                logger.error(`[ZipImport] Error processing ${name}:`, photoError)
               }
             })
           )
@@ -197,11 +198,11 @@ export async function POST(request: NextRequest) {
         controller.close()
 
       } catch (error) {
-        console.error('ZIP Upload: Processing error:', error)
+        logger.error('[ZipImport] Processing error:', error)
         controller.enqueue(
-          encoder.encode(`data: ${JSON.stringify({ 
+          encoder.encode(`data: ${JSON.stringify({
             error: error instanceof Error ? error.message : 'Upload failed',
-            progress: 0 
+            progress: 0
           })}\n\n`)
         )
         controller.close()

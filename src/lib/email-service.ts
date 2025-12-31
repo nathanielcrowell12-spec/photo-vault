@@ -1,4 +1,5 @@
 import nodemailer from 'nodemailer'
+import { logger } from './logger'
 
 export interface EmailConfig {
   host: string
@@ -56,7 +57,7 @@ export class EmailReportService {
 
       return true
     } catch (error) {
-      console.error('Error sending monthly report:', error)
+      logger.error('[EmailReport] Error sending monthly report:', error)
       return false
     }
   }
@@ -78,7 +79,7 @@ export class EmailReportService {
 
       return true
     } catch (error) {
-      console.error('Error sending quarterly report:', error)
+      logger.error('[EmailReport] Error sending quarterly report:', error)
       return false
     }
   }
@@ -100,7 +101,7 @@ export class EmailReportService {
 
       return true
     } catch (error) {
-      console.error('Error sending yearly report:', error)
+      logger.error('[EmailReport] Error sending yearly report:', error)
       return false
     }
   }

@@ -3,6 +3,8 @@
  * Communication bridge between Photo Vault and Helm Project (Mission Control)
  */
 
+import { logger } from './logger'
+
 interface HelmProjectConfig {
   baseUrl: string
   apiKey?: string
@@ -84,7 +86,7 @@ export class HelmProjectClient {
 
       return await response.json()
     } catch (error) {
-      console.error('Failed to fetch system health from Helm Project:', error)
+      logger.error('[HelmClient] Failed to fetch system health:', error)
       throw error
     }
   }
@@ -108,7 +110,7 @@ export class HelmProjectClient {
 
       return await response.json()
     } catch (error) {
-      console.error('Failed to fetch autonomy metrics from Helm Project:', error)
+      logger.error('[HelmClient] Failed to fetch autonomy metrics:', error)
       throw error
     }
   }
@@ -132,7 +134,7 @@ export class HelmProjectClient {
 
       return await response.json()
     } catch (error) {
-      console.error('Failed to fetch persona status from Helm Project:', error)
+      logger.error('[HelmClient] Failed to fetch persona status:', error)
       throw error
     }
   }
@@ -165,7 +167,7 @@ export class HelmProjectClient {
         throw new Error(`Helm Project API error: ${response.status}`)
       }
     } catch (error) {
-      console.error('Failed to send Photo Vault metrics to Helm Project:', error)
+      logger.error('[HelmClient] Failed to send Photo Vault metrics:', error)
       throw error
     }
   }
@@ -194,7 +196,7 @@ export class HelmProjectClient {
         throw new Error(`Helm Project API error: ${response.status}`)
       }
     } catch (error) {
-      console.error('Failed to send health status to Helm Project:', error)
+      logger.error('[HelmClient] Failed to send health status:', error)
       throw error
     }
   }
@@ -221,7 +223,7 @@ const isHelmProjectAvailable = async (): Promise<boolean> => {
     })
     return response.ok
   } catch (error) {
-    console.log('Helm Project not available:', error)
+    logger.info('[HelmClient] Helm Project not available:', error)
     return false
   }
 }
