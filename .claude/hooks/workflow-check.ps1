@@ -1,41 +1,33 @@
 # workflow-check.ps1
-# This script runs before every Claude response to remind about the skill/expert workflow
+# Runs before every Claude response to remind about skill/expert workflow
 
 $reminder = @"
 ===============================================================================
-***  WORKFLOW CHECK - Before you respond, verify:
+WORKFLOW CHECK
 ===============================================================================
 
-STEP 1: Is this a COMPLEX task?
-  Complex = touches multiple files, needs research, takes >5 minutes
-  Simple = quick fix, one-liner, user said "just do it"
+Before responding, verify:
 
-STEP 2: Does it involve these trigger words?
-  - database, supabase, RLS, query, migration, schema -> Supabase
-  - payment, stripe, checkout, webhook, subscription -> Stripe
-  - component, UI, page, modal, form, button, styling -> Shadcn (+ ui-ux-design)
-  - API route, middleware, server component, server action -> Next.js
-  - email, template, notification, resend -> Resend
-  - desktop, electron, upload, tus, chunked -> Electron
-  - test, e2e, playwright, vitest, QA -> Testing
-  - image, thumbnail, EXIF, sharp -> Image Processing
-  - SEO, meta, schema, sitemap -> SEO
+1. Is this a COMPLEX task? (multiple files, needs research, >5 minutes)
+   - YES -> Read .claude/SKILL-INDEX.md and follow the workflow
+   - NO -> Proceed if user said "quick fix" or "just do it"
 
-STEP 3: If COMPLEX + TRIGGER WORDS, you MUST:
-  1. READ the skill file first (from VENTURES/PhotoVault/claude/skills/)
-  2. SPAWN a subagent with the expert prompt (from VENTURES/PhotoVault/claude/experts/)
-  3. WAIT for the plan to be written to docs/claude/plans/
-  4. READ the plan and summarize to user
-  5. ONLY implement after user approval
+2. Does user request contain TRIGGER WORDS?
+   (database, stripe, component, API, email, desktop, test, image, SEO, analytics)
+   - YES -> Read .claude/SKILL-INDEX.md for the right skill/expert to load
+   - NO -> May proceed directly for simple tasks
 
-STEP 4: If SIMPLE or user said "quick fix" / "just do it":
-  -> Proceed directly without subagents
+3. For complex tasks with trigger words:
+   a) Read the skill file (knowledge)
+   b) Read the discipline file (TDD/debugging)
+   c) Spawn expert subagent (research)
+   d) Expert writes plan to docs/claude/plans/
+   e) Present plan to user, implement after approval
 
-Skills path: C:\Users\natha\Stone-Fence-Brain\VENTURES\PhotoVault\claude\skills\
-Experts path: C:\Users\natha\Stone-Fence-Brain\VENTURES\PhotoVault\claude\experts\
+SKILL INDEX: .claude/SKILL-INDEX.md
+CURRENT STATE: Stone-Fence-Brain/VENTURES/PhotoVault/CURRENT_STATE.md
 
-DO NOT skip this workflow just because you see an error you know how to fix.
-DO NOT start editing files until you have confirmed this is a simple task.
+DO NOT skip this workflow just because you know how to fix something.
 ===============================================================================
 "@
 
