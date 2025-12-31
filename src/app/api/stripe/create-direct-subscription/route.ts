@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { getStripeClient } from '@/lib/stripe'
 
@@ -38,7 +39,7 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (profileError || !userProfile) {
-      console.error('[DirectSubscription] User profile not found:', user.id)
+      logger.error('[DirectSubscription] User profile not found:', user.id)
       return NextResponse.json({ error: 'User profile not found' }, { status: 404 })
     }
 
@@ -96,7 +97,7 @@ export async function POST(request: NextRequest) {
     const directMonthlyPriceId = process.env.STRIPE_PRICE_DIRECT_MONTHLY
 
     if (!directMonthlyPriceId) {
-      console.error('[DirectSubscription] STRIPE_PRICE_DIRECT_MONTHLY not configured')
+      logger.error('[DirectSubscription] STRIPE_PRICE_DIRECT_MONTHLY not configured')
       return NextResponse.json(
         { error: 'Direct subscription not configured' },
         { status: 500 }
@@ -133,7 +134,7 @@ export async function POST(request: NextRequest) {
     })
 
     // 7. Log checkout session creation
-    console.log(`[DirectSubscription] Created session ${session.id} for user ${user.id}`)
+    logger.info(`[DirectSubscription] Created session ${session.id} for user ${user.id}`)
 
     return NextResponse.json(
       {
@@ -146,7 +147,7 @@ export async function POST(request: NextRequest) {
     )
   } catch (error) {
     const err = error as Error
-    console.error('[DirectSubscription] Error creating checkout session:', err)
+    logger.error('[DirectSubscription] Error creating checkout session:', err)
 
     return NextResponse.json(
       { error: 'Failed to create checkout session', message: err.message },

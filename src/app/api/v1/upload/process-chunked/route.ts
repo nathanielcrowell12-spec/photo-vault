@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server'
+import { logger } from '@/lib/logger'
 import { createClient } from '@supabase/supabase-js'
 import JSZip from 'jszip'
 
@@ -42,7 +43,7 @@ export async function POST(request: NextRequest) {
             .download(chunkPath)
 
           if (downloadError || !chunkData) {
-            console.error(`Error downloading chunk ${i}:`, downloadError)
+            logger.error(`Error downloading chunk ${i}:`, downloadError)
             send({ error: `Failed to download chunk ${i}`, progress: 0 })
             controller.close()
             return
@@ -112,7 +113,7 @@ export async function POST(request: NextRequest) {
                 const randomSuffix = Math.random().toString(36).substring(2, 8)
                 const photoPath = `galleries/${galleryId}/${timestamp}-${randomSuffix}-${sanitizedName}`
 
-                console.log(`[Process] Uploading photo ${batchIndex + 1}: ${name} -> ${photoPath}`)
+                logger.info(`[Process] Uploading photo ${batchIndex + 1}: ${name} -> ${photoPath}`)
 
                 const { error: uploadPhotoError } = await supabase.storage
                   .from('photos')
@@ -122,7 +123,7 @@ export async function POST(request: NextRequest) {
                   })
 
                 if (uploadPhotoError) {
-                  console.error(`[Process] Storage upload error for ${name}:`, uploadPhotoError)
+                  logger.error(`[Process] Storage upload error for ${name}:`, uploadPhotoError)
                   return { success: false, error: 'storage', name }
                 }
 
@@ -148,14 +149,14 @@ export async function POST(request: NextRequest) {
                   })
 
                 if (photoRecordError) {
-                  console.error(`[Process] Database insert error for ${name}:`, photoRecordError)
+                  logger.error(`[Process] Database insert error for ${name}:`, photoRecordError)
                   return { success: false, error: 'database', name }
                 }
 
-                console.log(`[Process] Successfully uploaded ${name}`)
+                logger.info(`[Process] Successfully uploaded ${name}`)
                 return { success: true, name }
               } catch (error) {
-                console.error(`[Process] Exception processing ${name}:`, error)
+                logger.error(`[Process] Exception processing ${name}:`, error)
                 return { success: false, error: 'exception', name }
               }
             })
@@ -164,7 +165,7 @@ export async function POST(request: NextRequest) {
           // Count successes safely (not in parallel)
           const batchSuccesses = results.filter(r => r?.success).length
           uploadedCount += batchSuccesses
-          console.log(`[Process] Batch complete: ${batchSuccesses}/${batch.length} succeeded, total: ${uploadedCount}`)
+          logger.info(`[Process] Batch complete: ${batchSuccesses}/${batch.length} succeeded, total: ${uploadedCount}`)
 
           const uploadProgress = 25 + ((uploadedCount / imageFiles.length) * 70)
           send({ message: `Uploaded ${uploadedCount}/${imageFiles.length} photos...`, progress: Math.floor(uploadProgress) })
@@ -188,16 +189,16 @@ export async function POST(request: NextRequest) {
 
         // Use RPC function for atomic increment to avoid race conditions
         // First increment the photo count using the database function
-        console.log(`[Process] Incrementing photo count for gallery ${galleryId} by ${uploadedCount}`)
+        logger.info(`[Process] Incrementing photo count for gallery ${galleryId} by ${uploadedCount}`)
         const { error: incrementError } = await supabase.rpc('increment_gallery_photo_count', {
           gallery_id: galleryId,
           count_increment: uploadedCount
         })
 
         if (incrementError) {
-          console.error('[Process] Error incrementing photo count:', incrementError)
+          logger.error('[Process] Error incrementing photo count:', incrementError)
         } else {
-          console.log(`[Process] Successfully incremented photo count by ${uploadedCount}`)
+          logger.info(`[Process] Successfully incremented photo count by ${uploadedCount}`)
         }
 
         // Then update the import status
@@ -210,7 +211,7 @@ export async function POST(request: NextRequest) {
           .eq('id', galleryId)
 
         if (statusError) {
-          console.error('[Process] Error updating gallery status:', statusError)
+          logger.error('[Process] Error updating gallery status:', statusError)
         }
 
         // Update cover image separately if needed (less critical, not part of atomic operation)
@@ -231,7 +232,7 @@ export async function POST(request: NextRequest) {
         }
 
       } catch (error) {
-        console.error('Processing error:', error)
+        logger.error('Processing error:', error)
         send({ error: 'Failed to process ZIP file', progress: 0 })
         try {
           controller.close()

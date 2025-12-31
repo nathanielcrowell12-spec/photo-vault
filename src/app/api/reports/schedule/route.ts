@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { supabase } from '@/lib/supabase'
 import { EmailReportService, EmailReportData, defaultEmailConfig } from '@/lib/email-service'
 import { PDFReportGenerator, ReportData } from '@/lib/pdf-generator'
@@ -43,7 +44,7 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (createError) {
-      console.error('Error creating scheduled report:', createError)
+      logger.error('Error creating scheduled report:', createError)
       return NextResponse.json(
         { error: 'Failed to create scheduled report' },
         { status: 500 }
@@ -61,7 +62,7 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Schedule report error:', error)
+    logger.error('Schedule report error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -90,7 +91,7 @@ export async function GET(request: NextRequest) {
       .order('next_send_date', { ascending: true })
 
     if (error) {
-      console.error('Error fetching scheduled reports:', error)
+      logger.error('Error fetching scheduled reports:', error)
       return NextResponse.json(
         { error: 'Failed to fetch scheduled reports' },
         { status: 500 }
@@ -103,7 +104,7 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Fetch scheduled reports error:', error)
+    logger.error('Fetch scheduled reports error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -130,7 +131,7 @@ export async function DELETE(request: NextRequest) {
       .eq('id', scheduledReportId)
 
     if (error) {
-      console.error('Error deactivating scheduled report:', error)
+      logger.error('Error deactivating scheduled report:', error)
       return NextResponse.json(
         { error: 'Failed to deactivate scheduled report' },
         { status: 500 }
@@ -143,7 +144,7 @@ export async function DELETE(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Deactivate scheduled report error:', error)
+    logger.error('Deactivate scheduled report error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -200,7 +201,7 @@ async function processScheduledReports() {
       .lte('next_send_date', now.toISOString())
 
     if (error) {
-      console.error('Error fetching due reports:', error)
+      logger.error('Error fetching due reports:', error)
       return
     }
 
@@ -294,7 +295,7 @@ async function processScheduledReports() {
         }
 
       } catch (error) {
-        console.error(`Error processing scheduled report ${scheduledReport.id}:`, error)
+        logger.error(`Error processing scheduled report ${scheduledReport.id}:`, error)
         const errorMessage = error instanceof Error ? error.message : 'Unknown error'
         results.push({
           id: scheduledReport.id,
@@ -304,11 +305,11 @@ async function processScheduledReports() {
       }
     }
 
-    console.log('Processed scheduled reports:', results)
+    logger.info('Processed scheduled reports:', results)
     return results
 
   } catch (error) {
-    console.error('Error processing scheduled reports:', error)
+    logger.error('Error processing scheduled reports:', error)
   }
 }
 

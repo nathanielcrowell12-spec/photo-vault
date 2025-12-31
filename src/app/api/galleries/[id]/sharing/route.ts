@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { createServerSupabaseClient, createServiceRoleClient } from '@/lib/supabase-server'
 
 export const dynamic = 'force-dynamic'
@@ -75,7 +76,7 @@ export async function GET(
     })
 
   } catch (error) {
-    console.error('[Gallery Sharing GET] Error:', error)
+    logger.error('[Gallery Sharing GET] Error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -177,7 +178,7 @@ export async function PATCH(
       .eq('id', galleryId)
 
     if (updateError) {
-      console.error('[Gallery Sharing PATCH] Update error:', updateError)
+      logger.error('[Gallery Sharing PATCH] Update error:', updateError)
       return NextResponse.json(
         { error: 'Failed to update sharing status' },
         { status: 500 }
@@ -198,11 +199,11 @@ export async function PATCH(
       })
 
     if (sharingError) {
-      console.warn('[Gallery Sharing PATCH] Gallery sharing record error:', sharingError)
+      logger.warn('[Gallery Sharing PATCH] Gallery sharing record error:', sharingError)
       // Don't fail - the main update succeeded
     }
 
-    console.log(`[Gallery Sharing] Gallery ${galleryId} sharing ${is_family_shared ? 'enabled' : 'disabled'} by user ${user.id}`)
+    logger.info(`[Gallery Sharing] Gallery ${galleryId} sharing ${is_family_shared ? 'enabled' : 'disabled'} by user ${user.id}`)
 
     return NextResponse.json({
       success: true,
@@ -214,7 +215,7 @@ export async function PATCH(
     })
 
   } catch (error) {
-    console.error('[Gallery Sharing PATCH] Error:', error)
+    logger.error('[Gallery Sharing PATCH] Error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

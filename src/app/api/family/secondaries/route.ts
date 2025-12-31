@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { createServerSupabaseClient, createServiceRoleClient } from '@/lib/supabase-server'
 import { nanoid } from 'nanoid'
 import { EmailService } from '@/lib/email/email-service'
@@ -119,7 +120,7 @@ export async function POST(request: NextRequest) {
           .eq('id', existing.id)
 
         if (updateError) {
-          console.error('[Secondaries] Re-invite error:', updateError)
+          logger.error('[Secondaries] Re-invite error:', updateError)
           return NextResponse.json(
             { error: 'Failed to re-invite secondary' },
             { status: 500 }
@@ -142,7 +143,7 @@ export async function POST(request: NextRequest) {
           invitationToken,
         })
 
-        console.log(`[Secondaries] Re-invited ${email} as secondary for user ${user.id}`)
+        logger.info(`[Secondaries] Re-invited ${email} as secondary for user ${user.id}`)
 
         return NextResponse.json({
           success: true,
@@ -175,7 +176,7 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (insertError) {
-      console.error('[Secondaries] Insert error:', insertError)
+      logger.error('[Secondaries] Insert error:', insertError)
       return NextResponse.json(
         { error: 'Failed to create secondary invitation' },
         { status: 500 }
@@ -198,7 +199,7 @@ export async function POST(request: NextRequest) {
       invitationToken,
     })
 
-    console.log(`[Secondaries] Invited ${email} as secondary for user ${user.id}`)
+    logger.info(`[Secondaries] Invited ${email} as secondary for user ${user.id}`)
 
     return NextResponse.json({
       success: true,
@@ -207,7 +208,7 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('[Secondaries POST] Error:', error)
+    logger.error('[Secondaries POST] Error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -252,7 +253,7 @@ export async function GET(request: NextRequest) {
       .order('created_at', { ascending: false })
 
     if (error) {
-      console.error('[Secondaries GET] Error:', error)
+      logger.error('[Secondaries GET] Error:', error)
       return NextResponse.json(
         { error: 'Failed to fetch secondaries' },
         { status: 500 }
@@ -264,7 +265,7 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('[Secondaries GET] Error:', error)
+    logger.error('[Secondaries GET] Error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -341,14 +342,14 @@ export async function DELETE(request: NextRequest) {
       .eq('id', secondaryId)
 
     if (updateError) {
-      console.error('[Secondaries DELETE] Error:', updateError)
+      logger.error('[Secondaries DELETE] Error:', updateError)
       return NextResponse.json(
         { error: 'Failed to remove secondary' },
         { status: 500 }
       )
     }
 
-    console.log(`[Secondaries] Removed secondary ${secondaryId} from user ${user.id}`)
+    logger.info(`[Secondaries] Removed secondary ${secondaryId} from user ${user.id}`)
 
     return NextResponse.json({
       success: true,
@@ -356,7 +357,7 @@ export async function DELETE(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('[Secondaries DELETE] Error:', error)
+    logger.error('[Secondaries DELETE] Error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

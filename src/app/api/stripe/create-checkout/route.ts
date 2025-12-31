@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { createServerSupabaseClient, createServiceRoleClient } from '@/lib/supabase-server'
 import { getStripeClient, STRIPE_PRICES, PRICING } from '@/lib/stripe'
 
@@ -67,7 +68,7 @@ export async function POST(request: NextRequest) {
         .single()
 
       if (clientError || !clientRecord) {
-        console.error('[Checkout] Client record not found for gallery:', galleryId)
+        logger.error('[Checkout] Client record not found for gallery:', galleryId)
         return NextResponse.json(
           { error: 'Client record not found for this gallery' },
           { status: 404 }
@@ -79,7 +80,7 @@ export async function POST(request: NextRequest) {
       const isLinkedByEmail = clientRecord.email?.toLowerCase() === user.email?.toLowerCase()
 
       if (!isLinkedByUserId && !isLinkedByEmail) {
-        console.warn(
+        logger.warn(
           `[Checkout] SECURITY: User ${user.id} (${user.email}) attempted to checkout for gallery ${galleryId} ` +
           `but is not the associated client (client_id: ${gallery.client_id}, client_email: ${clientRecord.email})`
         )
@@ -95,7 +96,7 @@ export async function POST(request: NextRequest) {
           .from('clients')
           .update({ user_id: user.id })
           .eq('id', gallery.client_id)
-        console.log(`[Checkout] Linked client ${gallery.client_id} to user ${user.id} via email match`)
+        logger.info(`[Checkout] Linked client ${gallery.client_id} to user ${user.id} via email match`)
       }
     } else {
       // Gallery has no client_id - this is likely a family/direct account scenario
@@ -107,7 +108,7 @@ export async function POST(request: NextRequest) {
         .single()
 
       if (galleryWithUser?.user_id && galleryWithUser.user_id !== user.id) {
-        console.warn(
+        logger.warn(
           `[Checkout] SECURITY: User ${user.id} attempted to checkout for gallery ${galleryId} ` +
           `but gallery belongs to user ${galleryWithUser.user_id}`
         )
@@ -142,7 +143,7 @@ export async function POST(request: NextRequest) {
     const userName = userData?.full_name || undefined
 
     if (userError && !userData) {
-      console.warn('[Checkout] User profile not found, using auth user data')
+      logger.warn('[Checkout] User profile not found, using auth user data')
     }
 
     // 8. Create or retrieve Stripe customer
@@ -233,7 +234,7 @@ export async function POST(request: NextRequest) {
     })
 
     // 11. Log checkout session creation
-    console.log(`[Checkout] Created session ${session.id} for user ${user.id}, gallery ${galleryId}`)
+    logger.info(`[Checkout] Created session ${session.id} for user ${user.id}, gallery ${galleryId}`)
 
     return NextResponse.json(
       {
@@ -246,7 +247,7 @@ export async function POST(request: NextRequest) {
     )
   } catch (error) {
     const err = error as Error
-    console.error('[Checkout] Error creating checkout session:', err)
+    logger.error('[Checkout] Error creating checkout session:', err)
 
     return NextResponse.json(
       { error: 'Failed to create checkout session', message: err.message },

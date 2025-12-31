@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { createClient } from '@supabase/supabase-js'
 import { cookies } from 'next/headers'
 
@@ -10,8 +11,8 @@ export async function GET(request: NextRequest) {
     const accessToken = cookieStore.get('sb-gqmycgopitxpjkxzrnyv-auth-token')?.value
     const refreshToken = cookieStore.get('sb-gqmycgopitxpjkxzrnyv-auth-token-refresh')?.value
 
-    console.log('[Check Session] Access token exists:', !!accessToken)
-    console.log('[Check Session] Refresh token exists:', !!refreshToken)
+    logger.info('[Check Session] Access token exists:', !!accessToken)
+    logger.info('[Check Session] Refresh token exists:', !!refreshToken)
 
     if (!accessToken) {
       return NextResponse.json({
@@ -29,8 +30,8 @@ export async function GET(request: NextRequest) {
     // Verify the session
     const { data: { user }, error } = await supabase.auth.getUser(accessToken)
 
-    console.log('[Check Session] User:', user?.email)
-    console.log('[Check Session] Error:', error)
+    logger.info('[Check Session] User:', user?.email)
+    logger.info('[Check Session] Error:', error)
 
     if (error || !user) {
       return NextResponse.json({
@@ -46,7 +47,7 @@ export async function GET(request: NextRequest) {
       token: accessToken
     })
   } catch (error) {
-    console.error('[Check Session] Error:', error)
+    logger.error('[Check Session] Error:', error)
     return NextResponse.json({
       authenticated: false,
       error: 'Failed to check session'

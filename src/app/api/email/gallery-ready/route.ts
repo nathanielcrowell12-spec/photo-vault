@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 
 export const dynamic = 'force-dynamic'
@@ -51,13 +52,13 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (galleryError || !gallery) {
-      console.log('[GalleryReady] Gallery not found:', galleryId, galleryError)
+      logger.info('[GalleryReady] Gallery not found', { galleryId, error: galleryError })
       return NextResponse.json({ error: 'Gallery not found' }, { status: 404 })
     }
 
     // IDEMPOTENCY CHECK: If email was already sent, return success without resending
     if (gallery.email_sent_at) {
-      console.log('[GalleryReady] Email already sent at:', gallery.email_sent_at)
+      logger.info('[GalleryReady] Email already sent at:', gallery.email_sent_at)
       return NextResponse.json({
         success: true,
         message: 'Email was already sent',
@@ -66,7 +67,7 @@ export async function POST(request: NextRequest) {
       }, { status: 200 })
     }
 
-    console.log('[GalleryReady] Gallery data:', JSON.stringify(gallery, null, 2))
+    logger.info('[GalleryReady] Gallery data:', JSON.stringify(gallery, null, 2))
 
     // Verify this photographer owns the gallery
     if (gallery.photographer_id !== user.id) {
@@ -82,7 +83,7 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (photographerError || !photographerRecord) {
-      console.error('[GalleryReady] Photographer record not found:', photographerError)
+      logger.error('[GalleryReady] Photographer record not found:', photographerError)
       return NextResponse.json({
         error: 'Payment setup required',
         message: 'You must complete your payment setup before sending gallery notifications. Please connect your Stripe account in Settings.',
@@ -91,7 +92,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (!photographerRecord.stripe_connect_account_id || photographerRecord.stripe_connect_status !== 'active') {
-      console.error('[GalleryReady] Photographer missing Stripe Connect:', {
+      logger.error('[GalleryReady] Photographer missing Stripe Connect:', {
         photographerId: user.id,
         hasAccountId: !!photographerRecord.stripe_connect_account_id,
         status: photographerRecord.stripe_connect_status
@@ -111,7 +112,7 @@ export async function POST(request: NextRequest) {
       : clientsData as { id: string; name: string; email: string } | null
 
     if (!client?.email) {
-      console.log('[GalleryReady] No client email - clients:', clientsData, 'client:', client)
+      logger.info('[GalleryReady] No client email found', { clientsData, client })
       return NextResponse.json({ error: 'No client email found' }, { status: 400 })
     }
 
@@ -241,10 +242,10 @@ export async function POST(request: NextRequest) {
 
     if (updateError) {
       // Log but don't fail - email was sent successfully
-      console.error('[GalleryReady] Failed to update email_sent_at:', updateError)
+      logger.error('[GalleryReady] Failed to update email_sent_at:', updateError)
     }
 
-    console.log(`[GalleryReady] Email sent to ${client.email} for gallery ${galleryId}`)
+    logger.info(`[GalleryReady] Email sent to ${client.email} for gallery ${galleryId}`)
 
     return NextResponse.json({
       success: true,
@@ -253,7 +254,7 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     const err = error as Error
-    console.error('[GalleryReady] Error:', err)
+    logger.error('[GalleryReady] Error:', err)
     return NextResponse.json(
       { error: 'Failed to send notification', message: err.message },
       { status: 500 }

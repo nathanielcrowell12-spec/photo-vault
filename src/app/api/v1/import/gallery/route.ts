@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { createClient } from '@supabase/supabase-js'
 import { createPlatformClient } from '@/lib/platforms/unified-platform'
 import { UnifiedImportService } from '@/lib/services/unified-import-service'
@@ -48,7 +49,7 @@ export async function POST(request: NextRequest) {
       }, { status: 401 })
     }
 
-    console.log(`UnifiedImport: Starting import for user ${userId} from ${platform}`)
+    logger.info(`UnifiedImport: Starting import for user ${userId} from ${platform}`)
 
     // Create gallery record
     const { data: gallery, error: galleryError } = await supabase
@@ -77,8 +78,8 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (galleryError || !gallery) {
-      console.error('UnifiedImport: Error creating gallery:', galleryError)
-      console.error('UnifiedImport: Gallery insert details:', {
+      logger.error('UnifiedImport: Error creating gallery:', galleryError)
+      logger.error('UnifiedImport: Gallery insert details:', {
         user_id: userId,
         platform,
         galleryUrl,
@@ -104,7 +105,7 @@ export async function POST(request: NextRequest) {
       galleryId,
       galleryMetadata
     ).catch(error => {
-      console.error('UnifiedImport: Background import error:', error)
+      logger.error('UnifiedImport: Background import error:', error)
       
       // Update gallery with error
       supabase
@@ -128,7 +129,7 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('UnifiedImport: Error starting import:', error)
+    logger.error('UnifiedImport: Error starting import:', error)
     return NextResponse.json(
       { error: 'Failed to start import' },
       { status: 500 }
@@ -148,7 +149,7 @@ async function processImportInBackground(
   galleryMetadata: Record<string, unknown>
 ) {
   try {
-    console.log(`UnifiedImport: Processing import for gallery ${galleryId} from ${platform}`)
+    logger.info(`UnifiedImport: Processing import for gallery ${galleryId} from ${platform}`)
 
     // Create platform client using factory
     const platformClient = await createPlatformClient({
@@ -178,13 +179,13 @@ async function processImportInBackground(
     )
 
     if (result.success) {
-      console.log(`UnifiedImport: Successfully imported ${result.photosImported} photos from ${platform}`)
+      logger.info(`UnifiedImport: Successfully imported ${result.photosImported} photos from ${platform}`)
     } else {
-      console.error(`UnifiedImport: Import failed from ${platform}: ${result.error}`)
+      logger.error(`UnifiedImport: Import failed from ${platform}: ${result.error}`)
     }
 
   } catch (error) {
-    console.error(`UnifiedImport: Background processing error for ${platform}:`, error)
+    logger.error(`UnifiedImport: Background processing error for ${platform}:`, error)
     
     // Update gallery with error
     const { createClient } = await import('@supabase/supabase-js')

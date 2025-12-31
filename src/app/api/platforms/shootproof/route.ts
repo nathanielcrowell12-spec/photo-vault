@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { supabase } from '@/lib/supabase'
 
 export async function POST(request: NextRequest) {
@@ -51,7 +52,7 @@ export async function POST(request: NextRequest) {
         .select()
 
       if (error) {
-        console.error('Error importing gallery:', error)
+        logger.error('Error importing gallery:', error)
         continue
       }
 
@@ -67,7 +68,7 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('ShootProof import error:', error)
+    logger.error('ShootProof import error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -90,7 +91,7 @@ async function importGalleryPhotos(
     })
 
     if (!photosResponse.ok) {
-      console.error('Failed to fetch photos from ShootProof')
+      logger.error('Failed to fetch photos from ShootProof')
       return
     }
 
@@ -115,8 +116,8 @@ async function importGalleryPhotos(
         })
     }
 
-    console.log(`Imported ${photos.length} photos for gallery ${galleryId}`)
+    logger.info(`Imported ${photos.length} photos for gallery ${galleryId}`)
   } catch (error) {
-    console.error('Error importing photos:', error)
+    logger.error('Error importing photos:', error)
   }
 }

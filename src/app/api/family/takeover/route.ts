@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { createServerSupabaseClient, createServiceRoleClient } from '@/lib/supabase-server'
 import { getStripeClient } from '@/lib/stripe'
 
@@ -165,7 +166,7 @@ export async function GET(request: NextRequest) {
     } as TakeoverEligibility)
 
   } catch (error) {
-    console.error('[Takeover GET] Error:', error)
+    logger.error('[Takeover GET] Error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -340,7 +341,7 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    console.log(`[Takeover] Created checkout session for user ${user.id} to take over account ${accountId}`)
+    logger.info(`[Takeover] Created checkout session for user ${user.id} to take over account ${accountId}`)
 
     return NextResponse.json({
       success: true,
@@ -349,7 +350,7 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('[Takeover POST] Error:', error)
+    logger.error('[Takeover POST] Error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

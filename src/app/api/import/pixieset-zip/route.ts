@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { createClient } from '@supabase/supabase-js'
 import { PixiesetClient } from '@/lib/platforms/pixieset-zip-client'
 import { ZipStreamService } from '@/lib/services/zip-stream-service'
@@ -46,7 +47,7 @@ export async function POST(request: NextRequest) {
       }, { status: 401 })
     }
 
-    console.log(`PixiesetZipImport: Starting import for user ${userId}`)
+    logger.info(`PixiesetZipImport: Starting import for user ${userId}`)
 
     // Create gallery record
     const { data: gallery, error: galleryError } = await supabase
@@ -75,7 +76,7 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (galleryError || !gallery) {
-      console.error('PixiesetZipImport: Error creating gallery:', galleryError)
+      logger.error('PixiesetZipImport: Error creating gallery:', galleryError)
       return NextResponse.json({ 
         error: 'Failed to create gallery record' 
       }, { status: 500 })
@@ -94,7 +95,7 @@ export async function POST(request: NextRequest) {
       galleryId,
       galleryMetadata
     ).catch(error => {
-      console.error('PixiesetZipImport: Background import error:', error)
+      logger.error('PixiesetZipImport: Background import error:', error)
       
       // Update gallery with error
       supabase
@@ -117,7 +118,7 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('PixiesetZipImport: Error starting import:', error)
+    logger.error('PixiesetZipImport: Error starting import:', error)
     return NextResponse.json(
       { error: 'Failed to start import' },
       { status: 500 }
@@ -136,7 +137,7 @@ async function processImportInBackground(
   galleryMetadata: Record<string, unknown>
 ) {
   try {
-    console.log(`PixiesetZipImport: Processing import for gallery ${galleryId}`)
+    logger.info(`PixiesetZipImport: Processing import for gallery ${galleryId}`)
 
     // Create Pixieset client
     const pixiesetClient = new PixiesetClient({
@@ -160,7 +161,7 @@ async function processImportInBackground(
       throw new Error('Could not find "Download to Device" link on the gallery page. The gallery may not allow downloads.')
     }
 
-    console.log(`PixiesetZipImport: Found download URL: ${downloadUrl}`)
+    logger.info(`PixiesetZipImport: Found download URL: ${downloadUrl}`)
 
     // Create ZIP stream service
     const zipStreamService = new ZipStreamService()
@@ -180,13 +181,13 @@ async function processImportInBackground(
     )
 
     if (result.success) {
-      console.log(`PixiesetZipImport: Successfully imported ${result.photosImported} photos`)
+      logger.info(`PixiesetZipImport: Successfully imported ${result.photosImported} photos`)
     } else {
-      console.error(`PixiesetZipImport: Import failed: ${result.error}`)
+      logger.error(`PixiesetZipImport: Import failed: ${result.error}`)
     }
 
   } catch (error) {
-    console.error('PixiesetZipImport: Background processing error:', error)
+    logger.error('PixiesetZipImport: Background processing error:', error)
     
     // Update gallery with error
     const { createClient } = await import('@supabase/supabase-js')

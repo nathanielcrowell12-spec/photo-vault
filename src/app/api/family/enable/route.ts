@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { createServerSupabaseClient, createServiceRoleClient } from '@/lib/supabase-server'
 
 export const dynamic = 'force-dynamic'
@@ -70,14 +71,14 @@ export async function POST(request: NextRequest) {
       .eq('id', user.id)
 
     if (updateError) {
-      console.error('[Family Enable] Update error:', updateError)
+      logger.error('[Family Enable] Update error:', updateError)
       return NextResponse.json(
         { error: 'Failed to update family sharing status' },
         { status: 500 }
       )
     }
 
-    console.log(`[Family Enable] User ${user.id} ${enabled ? 'enabled' : 'disabled'} family sharing`)
+    logger.info(`[Family Enable] User ${user.id} ${enabled ? 'enabled' : 'disabled'} family sharing`)
 
     return NextResponse.json({
       success: true,
@@ -88,7 +89,7 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('[Family Enable] Error:', error)
+    logger.error('[Family Enable] Error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -141,7 +142,7 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('[Family Enable GET] Error:', error)
+    logger.error('[Family Enable GET] Error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

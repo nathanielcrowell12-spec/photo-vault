@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { createClient } from '@supabase/supabase-js'
 
 const supabase = createClient(
@@ -11,7 +12,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json()
     const { fileName, fileSize, userId, galleryName, platform, clientId, galleryId } = body
 
-    console.log('[Upload Prepare] Request:', { fileName, fileSize, userId, galleryName, platform, clientId, galleryId })
+    logger.info('[Upload Prepare] Request:', { fileName, fileSize, userId, galleryName, platform, clientId, galleryId })
 
     // Validate inputs
     if (!fileName || !fileSize || !userId) {
@@ -31,7 +32,7 @@ export async function POST(request: NextRequest) {
 
     if (galleryId) {
       // Use existing gallery - verify ownership
-      console.log('[Upload Prepare] Using existing gallery:', galleryId)
+      logger.info('[Upload Prepare] Using existing gallery:', galleryId)
 
       const { data: existingGallery, error: fetchError } = await supabase
         .from('photo_galleries')
@@ -41,7 +42,7 @@ export async function POST(request: NextRequest) {
         .single()
 
       if (fetchError || !existingGallery) {
-        console.error('[Upload Prepare] Gallery not found or access denied:', fetchError)
+        logger.error('[Upload Prepare] Gallery not found or access denied:', fetchError)
         return NextResponse.json({
           error: 'Gallery not found or access denied',
           details: fetchError?.message || 'Gallery does not exist or you do not own it'
@@ -49,7 +50,7 @@ export async function POST(request: NextRequest) {
       }
 
       gallery = existingGallery
-      console.log('[Upload Prepare] Using existing gallery with pricing:', {
+      logger.info('[Upload Prepare] Using existing gallery with pricing:', {
         id: gallery.id,
         name: gallery.gallery_name,
         total_amount: gallery.total_amount,
@@ -57,7 +58,7 @@ export async function POST(request: NextRequest) {
       })
     } else {
       // Create new gallery in database (backwards compatibility for old desktop versions)
-      console.log('[Upload Prepare] Creating new gallery (no galleryId provided)')
+      logger.info('[Upload Prepare] Creating new gallery (no galleryId provided)')
 
       const { data: newGallery, error: galleryError } = await supabase
         .from('photo_galleries')
@@ -74,7 +75,7 @@ export async function POST(request: NextRequest) {
         .single()
 
       if (galleryError) {
-        console.error('[Upload Prepare] Gallery creation error:', galleryError)
+        logger.error('[Upload Prepare] Gallery creation error:', galleryError)
         return NextResponse.json({
           error: 'Failed to create gallery',
           details: galleryError.message
@@ -82,7 +83,7 @@ export async function POST(request: NextRequest) {
       }
 
       gallery = newGallery
-      console.log('[Upload Prepare] Gallery created:', gallery.id)
+      logger.info('[Upload Prepare] Gallery created:', gallery.id)
     }
 
     // Generate storage path
@@ -98,7 +99,7 @@ export async function POST(request: NextRequest) {
       fileSize
     })
   } catch (error: any) {
-    console.error('[Upload Prepare] Error:', error)
+    logger.error('[Upload Prepare] Error:', error)
     return NextResponse.json({
       error: 'Internal server error',
       details: error.message

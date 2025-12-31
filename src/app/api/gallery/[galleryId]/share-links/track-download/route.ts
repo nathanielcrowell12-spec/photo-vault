@@ -7,6 +7,7 @@
  */
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceRoleClient } from '@/lib/supabase-server'
+import { logger } from '@/lib/logger'
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic'
@@ -100,7 +101,7 @@ export async function POST(
     })
 
     if (rpcError) {
-      console.error('[ShareLinks] Error incrementing download count:', rpcError)
+      logger.error('[ShareLinks] Error incrementing download count:', rpcError)
       // Still allow download but don't track accurately
       // This is better than blocking the user
     }
@@ -110,7 +111,7 @@ export async function POST(
       ? Math.max(0, shareLink.download_limit - (newCount || shareLink.downloads_used + 1))
       : null
 
-    console.log(`[ShareLinks] Download tracked for gallery ${galleryId}, remaining: ${downloadsRemaining}`)
+    logger.info(`[ShareLinks] Download tracked for gallery ${galleryId}, remaining: ${downloadsRemaining}`)
 
     return NextResponse.json({
       allowed: true,
@@ -119,7 +120,7 @@ export async function POST(
 
   } catch (error) {
     const err = error as Error
-    console.error('[ShareLinks] Error:', err)
+    logger.error('[ShareLinks] Error:', err)
     return NextResponse.json(
       { allowed: false, error: 'Failed to track download' },
       { status: 500 }

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { createServiceRoleClient } from '@/lib/supabase-server'
 import { EmailService } from '@/lib/email/email-service'
 
@@ -37,7 +38,7 @@ export async function GET(request: NextRequest) {
   const hasValidSecret = cronSecret && authHeader === `Bearer ${cronSecret}`
 
   if (!isVercelCron && !hasValidSecret) {
-    console.error('[Grace Period Cron] Unauthorized request')
+    logger.error('[Grace Period Cron] Unauthorized request')
     return NextResponse.json(
       { error: 'Unauthorized' },
       { status: 401 }
@@ -48,7 +49,7 @@ export async function GET(request: NextRequest) {
     const supabase = createServiceRoleClient()
     const now = new Date()
 
-    console.log('[Grace Period Cron] Starting grace period notification check...')
+    logger.info('[Grace Period Cron] Starting grace period notification check...')
 
     // Query subscriptions in grace period (payment failed but not yet suspended)
     const { data: subscriptions, error: subError } = await supabase
@@ -65,12 +66,12 @@ export async function GET(request: NextRequest) {
       .in('status', ['past_due', 'unpaid'])
 
     if (subError) {
-      console.error('[Grace Period Cron] Error fetching subscriptions:', subError)
+      logger.error('[Grace Period Cron] Error fetching subscriptions:', subError)
       throw subError
     }
 
     if (!subscriptions || subscriptions.length === 0) {
-      console.log('[Grace Period Cron] No subscriptions in grace period')
+      logger.info('[Grace Period Cron] No subscriptions in grace period')
       return NextResponse.json({
         success: true,
         message: 'No subscriptions in grace period',
@@ -78,7 +79,7 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    console.log(`[Grace Period Cron] Found ${subscriptions.length} subscriptions in grace period`)
+    logger.info(`[Grace Period Cron] Found ${subscriptions.length} subscriptions in grace period`)
 
     let totalNotificationsSent = 0
     let accountsProcessed = 0
@@ -108,7 +109,7 @@ export async function GET(request: NextRequest) {
 
         // Skip if family sharing not enabled
         if (!primaryProfile?.family_sharing_enabled) {
-          console.log(`[Grace Period Cron] Skipping ${subscription.user_id} - family sharing not enabled`)
+          logger.info(`[Grace Period Cron] Skipping ${subscription.user_id} - family sharing not enabled`)
           continue
         }
 
@@ -120,12 +121,12 @@ export async function GET(request: NextRequest) {
           .eq('status', 'accepted')
 
         if (secError) {
-          console.error(`[Grace Period Cron] Error fetching secondaries for ${subscription.user_id}:`, secError)
+          logger.error(`[Grace Period Cron] Error fetching secondaries for ${subscription.user_id}:`, secError)
           continue
         }
 
         if (!secondaries || secondaries.length === 0) {
-          console.log(`[Grace Period Cron] No secondaries for account ${subscription.user_id}`)
+          logger.info(`[Grace Period Cron] No secondaries for account ${subscription.user_id}`)
           continue
         }
 
@@ -151,9 +152,9 @@ export async function GET(request: NextRequest) {
             })
 
             totalNotificationsSent++
-            console.log(`[Grace Period Cron] Sent ${milestone}-month notification to ${secondary.email} for account ${subscription.user_id}`)
+            logger.info(`[Grace Period Cron] Sent ${milestone}-month notification to ${secondary.email} for account ${subscription.user_id}`)
           } catch (emailError) {
-            console.error(`[Grace Period Cron] Error sending email to ${secondary.email}:`, emailError)
+            logger.error(`[Grace Period Cron] Error sending email to ${secondary.email}:`, emailError)
           }
         }
 
@@ -170,7 +171,7 @@ export async function GET(request: NextRequest) {
           .eq('id', subscription.id)
 
         if (updateError) {
-          console.error(`[Grace Period Cron] Error updating notification status:`, updateError)
+          logger.error(`[Grace Period Cron] Error updating notification status:`, updateError)
         }
       }
 
@@ -179,7 +180,7 @@ export async function GET(request: NextRequest) {
 
     const processingTime = Date.now() - startTime
 
-    console.log(`[Grace Period Cron] Complete. Processed ${accountsProcessed} accounts, sent ${totalNotificationsSent} notifications in ${processingTime}ms`)
+    logger.info(`[Grace Period Cron] Complete. Processed ${accountsProcessed} accounts, sent ${totalNotificationsSent} notifications in ${processingTime}ms`)
 
     return NextResponse.json({
       success: true,
@@ -189,7 +190,7 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('[Grace Period Cron] Error:', error)
+    logger.error('[Grace Period Cron] Error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

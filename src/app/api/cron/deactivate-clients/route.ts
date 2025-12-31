@@ -7,6 +7,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { createServerSupabaseClient } from '@/lib/supabase'
 
 export async function GET(request: NextRequest) {
@@ -34,7 +35,7 @@ export async function GET(request: NextRequest) {
     if (fetchError) throw fetchError
 
     if (!inactiveClients || inactiveClients.length === 0) {
-      console.log('[Cron:Deactivate] No clients to deactivate')
+      logger.info('[Cron:Deactivate] No clients to deactivate')
       return NextResponse.json({
         message: 'No clients to deactivate',
         processed: 0,
@@ -42,7 +43,7 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    console.log(`[Cron:Deactivate] Deactivating ${inactiveClients.length} clients`)
+    logger.info(`[Cron:Deactivate] Deactivating ${inactiveClients.length} clients`)
 
     // Mark as deactivated
     const { error: updateError } = await supabase
@@ -56,7 +57,7 @@ export async function GET(request: NextRequest) {
     if (updateError) throw updateError
 
     const duration = Date.now() - startTime
-    console.log(`[Cron:Deactivate] Complete: ${inactiveClients.length} clients deactivated in ${duration}ms`)
+    logger.info(`[Cron:Deactivate] Complete: ${inactiveClients.length} clients deactivated in ${duration}ms`)
 
     return NextResponse.json({
       message: 'Client deactivation complete',
@@ -67,7 +68,7 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     const err = error as Error
-    console.error('[Cron:Deactivate] Error:', err)
+    logger.error('[Cron:Deactivate] Error:', err)
     return NextResponse.json(
       { error: 'Client deactivation failed', message: err.message },
       { status: 500 }

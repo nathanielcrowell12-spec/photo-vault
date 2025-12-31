@@ -5,6 +5,7 @@
  */
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient, createServiceRoleClient } from '@/lib/supabase-server'
+import { logger } from '@/lib/logger'
 import { v4 as uuidv4 } from 'uuid'
 import { trackServerEvent } from '@/lib/analytics/server'
 import { EVENTS } from '@/types/analytics'
@@ -116,7 +117,7 @@ export async function POST(
       .single()
 
     if (insertError) {
-      console.error('[ShareLinks] Error creating share link:', insertError)
+      logger.error('[ShareLinks] Error creating share link:', insertError)
       return NextResponse.json({ error: 'Failed to create share link' }, { status: 500 })
     }
 
@@ -133,10 +134,10 @@ export async function POST(
         download_limit: downloadLimit,
       })
     } catch (trackError) {
-      console.error('[ShareLinks] Error tracking event:', trackError)
+      logger.error('[ShareLinks] Error tracking event:', trackError)
     }
 
-    console.log(`[ShareLinks] Created share link for gallery ${galleryId} by user ${user.id}`)
+    logger.info(`[ShareLinks] Created share link for gallery ${galleryId} by user ${user.id}`)
 
     return NextResponse.json({
       id: shareLink.id,
@@ -150,7 +151,7 @@ export async function POST(
 
   } catch (error) {
     const err = error as Error
-    console.error('[ShareLinks] Error:', err)
+    logger.error('[ShareLinks] Error:', err)
     return NextResponse.json(
       { error: 'Failed to create share link', message: err.message },
       { status: 500 }
@@ -187,7 +188,7 @@ export async function GET(
       .order('created_at', { ascending: false })
 
     if (error) {
-      console.error('[ShareLinks] Error fetching share links:', error)
+      logger.error('[ShareLinks] Error fetching share links:', error)
       return NextResponse.json({ error: 'Failed to fetch share links' }, { status: 500 })
     }
 
@@ -203,7 +204,7 @@ export async function GET(
 
   } catch (error) {
     const err = error as Error
-    console.error('[ShareLinks] Error:', err)
+    logger.error('[ShareLinks] Error:', err)
     return NextResponse.json(
       { error: 'Failed to fetch share links', message: err.message },
       { status: 500 }

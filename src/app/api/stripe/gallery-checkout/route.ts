@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { getStripeClient, PHOTOGRAPHER_COMMISSION_RATE } from '@/lib/stripe'
 import { getPaymentOptionById } from '@/lib/payment-models'
@@ -88,7 +89,7 @@ export async function POST(request: NextRequest) {
         .single()
 
       if (clientError || !clientRecord) {
-        console.error('[GalleryCheckout] Client record not found:', galleryId)
+        logger.error('[GalleryCheckout] Client record not found:', galleryId)
         return NextResponse.json(
           { error: 'Client record not found' },
           { status: 404 }
@@ -99,7 +100,7 @@ export async function POST(request: NextRequest) {
       const isLinkedByEmail = clientRecord.email?.toLowerCase() === user.email?.toLowerCase()
 
       if (!isLinkedByUserId && !isLinkedByEmail) {
-        console.warn(
+        logger.warn(
           `[GalleryCheckout] SECURITY: User ${user.id} tried to pay for gallery ${galleryId} ` +
           `but is not the assigned client`
         )
@@ -115,7 +116,7 @@ export async function POST(request: NextRequest) {
           .from('clients')
           .update({ user_id: user.id })
           .eq('id', gallery.client_id)
-        console.log(`[GalleryCheckout] Linked client ${gallery.client_id} to user ${user.id}`)
+        logger.info(`[GalleryCheckout] Linked client ${gallery.client_id} to user ${user.id}`)
       }
     }
 
@@ -139,7 +140,7 @@ export async function POST(request: NextRequest) {
 
     // CRITICAL: Block payment if photographer can't receive money
     if (!photographerRecord?.stripe_connect_account_id || photographerRecord.stripe_connect_status !== 'active') {
-      console.error('[GalleryCheckout] Photographer missing Stripe Connect:', {
+      logger.error('[GalleryCheckout] Photographer missing Stripe Connect:', {
         photographerId: gallery.photographer_id,
         hasAccountId: !!photographerRecord?.stripe_connect_account_id,
         status: photographerRecord?.stripe_connect_status
@@ -235,7 +236,7 @@ export async function POST(request: NextRequest) {
     // Money goes DIRECTLY to photographer via Stripe Connect
     // PhotoVault gets its cut via application_fee_amount
 
-    console.log('[GalleryCheckout] Fee breakdown:', {
+    logger.info('[GalleryCheckout] Fee breakdown:', {
       totalAmount: totalAmountCents,
       shootFee: shootFeeCents,
       storageFee: storageFeeCents,
@@ -304,7 +305,7 @@ export async function POST(request: NextRequest) {
       .update({ stripe_checkout_session_id: session.id })
       .eq('id', galleryId)
 
-    console.log(
+    logger.info(
       `[GalleryCheckout] Created session ${session.id} for gallery ${galleryId}`,
       {
         total: totalAmountCents,
@@ -326,7 +327,7 @@ export async function POST(request: NextRequest) {
         amount_cents: totalAmountCents,
       })
     } catch (trackError) {
-      console.error('[GalleryCheckout] Error tracking payment start:', trackError)
+      logger.error('[GalleryCheckout] Error tracking payment start:', trackError)
       // Don't block checkout if tracking fails
     }
 
@@ -339,7 +340,7 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     const err = error as Error
-    console.error('[GalleryCheckout] Error:', err)
+    logger.error('[GalleryCheckout] Error:', err)
 
     return NextResponse.json(
       { error: 'Failed to create checkout session', message: err.message },

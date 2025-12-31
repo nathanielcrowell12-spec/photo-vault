@@ -5,6 +5,7 @@ import { createServiceRoleClient } from '@/lib/supabase-server'
 import { trackServerEvent } from '@/lib/analytics/server'
 import { EVENTS } from '@/types/analytics'
 import { isFirstTime, calculateTimeFromSignup, getPhotographerSignupDate, mapPaymentOptionToPlanType } from '@/lib/analytics/helpers'
+import { logger } from '@/lib/logger'
 
 // Force dynamic rendering to prevent module evaluation during build
 export const dynamic = 'force-dynamic'
@@ -40,7 +41,7 @@ export async function POST(request: NextRequest) {
     const signature = request.headers.get('stripe-signature')
 
     if (!signature) {
-      console.error('[Webhook] Missing Stripe signature')
+      logger.error('[Webhook] Missing Stripe signature')
       return NextResponse.json(
         { error: 'Missing signature' },
         { status: 400 }
@@ -59,14 +60,14 @@ export async function POST(request: NextRequest) {
       )
     } catch (err) {
       const error = err as Error
-      console.error('[Webhook] Signature verification failed:', error.message)
+      logger.error('[Webhook] Signature verification failed:', error.message)
       return NextResponse.json(
         { error: `Webhook signature verification failed: ${error.message}` },
         { status: 400 }
       )
     }
 
-    console.log(`[Webhook] Received event: ${event.type} (${event.id})`)
+    logger.info(`[Webhook] Received event: ${event.type} (${event.id})`)
 
     // 3. Initialize Supabase client with service role (elevated permissions for admin operations)
     const supabase = createServiceRoleClient()
@@ -79,7 +80,7 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (alreadyProcessed) {
-      console.log(`[Webhook] Event ${event.id} already processed, skipping`)
+      logger.info(`[Webhook] Event ${event.id} already processed, skipping`)
       return NextResponse.json({ message: 'Already processed' }, { status: 200 })
     }
 
@@ -117,12 +118,12 @@ export async function POST(request: NextRequest) {
           break
 
         default:
-          console.log(`[Webhook] Unhandled event type: ${event.type}`)
+          logger.info(`[Webhook] Unhandled event type: ${event.type}`)
           handlerResult = `Unhandled event type: ${event.type}`
       }
     } catch (handlerError) {
       const error = handlerError as Error
-      console.error(`[Webhook] Handler error for ${event.type}:`, error)
+      logger.error(`[Webhook] Handler error for ${event.type}:`, error)
       throw error // Re-throw to be caught by outer try-catch
     }
 
@@ -144,7 +145,7 @@ export async function POST(request: NextRequest) {
       processed_at: new Date().toISOString()
     })
 
-    console.log(`[Webhook] Successfully processed ${event.type} in ${processingTime}ms`)
+    logger.info(`[Webhook] Successfully processed ${event.type} in ${processingTime}ms`)
 
     return NextResponse.json({
       message: 'Webhook processed successfully',
@@ -154,7 +155,7 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     const err = error as Error
-    console.error('[Webhook] Error:', err)
+    logger.error('[Webhook] Error:', err)
 
     // Log error to database
     try {
@@ -168,7 +169,7 @@ export async function POST(request: NextRequest) {
         processed_at: new Date().toISOString()
       })
     } catch (logError) {
-      console.error('[Webhook] Failed to log error:', logError)
+      logger.error('[Webhook] Failed to log error:', logError)
     }
 
     // Return 500 so Stripe will retry
@@ -186,7 +187,7 @@ async function handleCheckoutCompleted(
   session: Stripe.Checkout.Session,
   supabase: any
 ): Promise<string> {
-  console.log('[Webhook] Processing checkout.session.completed', session.id)
+  logger.info('[Webhook] Processing checkout.session.completed', session.id)
 
   // Extract metadata
   const metadata = session.metadata || {}
@@ -197,7 +198,7 @@ async function handleCheckoutCompleted(
   // Authenticated checkout uses: type === 'gallery_payment'
   if ((isPublicCheckout === 'true' || type === 'gallery_payment') && galleryId) {
     const checkoutType = isPublicCheckout === 'true' ? 'public' : 'authenticated'
-    console.log(`[Webhook] Processing ${checkoutType} gallery checkout for gallery:`, galleryId)
+    logger.info(`[Webhook] Processing ${checkoutType} gallery checkout for gallery:`, galleryId)
 
     // Get client email from clients table (photographer already has it)
     let customerEmail: string = ''
@@ -223,7 +224,7 @@ async function handleCheckoutCompleted(
     }
 
     if (!customerEmail) {
-      console.error('[Webhook] No customer email found in checkout')
+      logger.error('[Webhook] No customer email found in checkout')
       throw new Error('No customer email found in checkout')
     }
 
@@ -242,17 +243,17 @@ async function handleCheckoutCompleted(
 
       if (!lookupError && existingUser?.user) {
         userId = existingUser.user.id
-        console.log('[Webhook] Found existing user by email:', userId)
+        logger.info('[Webhook] Found existing user by email:', userId)
       }
     } catch (lookupErr) {
       // getUserByEmail might not exist in older versions, fall through to creation
-      console.log('[Webhook] getUserByEmail not available or failed, will try to create user')
+      logger.info('[Webhook] getUserByEmail not available or failed, will try to create user')
     }
     let tempPassword: string | null = null
 
     // If no user exists and this is a public checkout, create account with temp password
     if (!userId && isPublicCheckout === 'true') {
-      console.log('[Webhook] Creating new user account for public checkout:', customerEmail)
+      logger.info('[Webhook] Creating new user account for public checkout:', customerEmail)
 
       // Generate secure random password (16 chars: uppercase, lowercase, numbers)
       const crypto = await import('crypto')
@@ -276,7 +277,7 @@ async function handleCheckoutCompleted(
       if (createError) {
         // If user already exists, fetch the existing user instead of failing
         if (createError.code === 'email_exists' || createError.message?.includes('already been registered')) {
-          console.log('[Webhook] User already exists, fetching existing user:', customerEmail)
+          logger.info('[Webhook] User already exists, fetching existing user:', customerEmail)
 
           // List all users and find the matching one (workaround for missing getUserByEmail)
           const { data: allUsers } = await supabase.auth.admin.listUsers({ perPage: 1000 })
@@ -285,20 +286,20 @@ async function handleCheckoutCompleted(
           if (existingUser) {
             userId = existingUser.id
             tempPassword = null // Don't send temp password for existing users
-            console.log('[Webhook] Found existing user:', userId)
+            logger.info('[Webhook] Found existing user:', userId)
           } else {
-            console.error('[Webhook] Could not find existing user despite email_exists error')
+            logger.error('[Webhook] Could not find existing user despite email_exists error')
             throw new Error(`User lookup failed: ${createError.message}`)
           }
         } else {
-          console.error('[Webhook] Error creating user:', createError)
+          logger.error('[Webhook] Error creating user:', createError)
           throw new Error(`Failed to create user account: ${createError.message}`)
         }
       } else if (!newUser?.user) {
         throw new Error('User creation succeeded but no user returned')
       } else {
         userId = newUser.user.id
-        console.log('[Webhook] Created new user account:', userId)
+        logger.info('[Webhook] Created new user account:', userId)
 
         // Track client account creation (server-side - critical funnel event)
         // userId is guaranteed to be set here (assigned on line above)
@@ -309,7 +310,7 @@ async function handleCheckoutCompleted(
             signup_method: 'email' as const,
           })
         } catch (trackError) {
-          console.error('[Webhook] Error tracking client account creation:', trackError)
+          logger.error('[Webhook] Error tracking client account creation:', trackError)
           // Don't block checkout if tracking fails
         }
       }
@@ -326,7 +327,7 @@ async function handleCheckoutCompleted(
         })
 
       if (profileError) {
-        console.error('[Webhook] Error creating user profile:', profileError)
+        logger.error('[Webhook] Error creating user profile:', profileError)
         // Don't fail - profile might already exist or be created by trigger
       }
     }
@@ -342,7 +343,7 @@ async function handleCheckoutCompleted(
       .eq('id', galleryId)
 
     if (galleryError) {
-      console.error('[Webhook] Error updating gallery:', galleryError)
+      logger.error('[Webhook] Error updating gallery:', galleryError)
     }
 
     // Update client record to link user (happens after user creation)
@@ -355,13 +356,13 @@ async function handleCheckoutCompleted(
         .eq('id', clientId)
 
       if (clientUpdateError) {
-        console.error('[Webhook] Error linking user to client:', clientUpdateError)
+        logger.error('[Webhook] Error linking user to client:', clientUpdateError)
         // Don't fail webhook - user account is created, just not linked
       } else {
-        console.log('[Webhook] Successfully linked user', userId, 'to client', clientId)
+        logger.info('[Webhook] Successfully linked user to client', { userId, clientId })
       }
     } else if (clientId && !userId) {
-      console.warn('[Webhook] Cannot link client - no user ID available')
+      logger.warn('[Webhook] Cannot link client - no user ID available')
     }
 
     // Record the commission for the photographer
@@ -422,12 +423,12 @@ async function handleCheckoutCompleted(
         }
       }
     } catch (err) {
-      console.warn('[Webhook] Could not retrieve transfer ID:', err)
+      logger.warn('[Webhook] Could not retrieve transfer ID:', err)
       // Don't fail the webhook if we can't get transfer ID - it's not critical
       // The transfer ID can be updated later if needed
     }
 
-    console.log('[Webhook] Commission breakdown (DESTINATION CHARGE - already paid):', {
+    logger.info('[Webhook] Commission breakdown (DESTINATION CHARGE - already paid):', {
       totalPaid: amountPaidCents,
       shootFee: shootFeeCents,
       storageFee: storageFeeCents,
@@ -452,7 +453,7 @@ async function handleCheckoutCompleted(
       paid_at: new Date().toISOString(), // Paid NOW
       created_at: new Date().toISOString(),
     }).then(({ error }: { error: any }) => {
-      if (error) console.warn('[Webhook] Commission insert error (may be duplicate):', error.message)
+      if (error) logger.warn('[Webhook] Commission insert error (may be duplicate):', error.message)
     })
 
     // Track payment analytics (server-side - critical funnel events)
@@ -498,7 +499,7 @@ async function handleCheckoutCompleted(
         }
       }
     } catch (trackError) {
-      console.error('[Webhook] Error tracking payment analytics:', trackError)
+      logger.error('[Webhook] Error tracking payment analytics:', trackError)
       // Don't block webhook if tracking fails
     }
 
@@ -537,10 +538,10 @@ async function handleCheckoutCompleted(
       })
 
       if (subscriptionError) {
-        console.error('[Webhook] Error creating subscription record:', subscriptionError)
+        logger.error('[Webhook] Error creating subscription record:', subscriptionError)
         // Don't fail webhook - payment is processed, this can be fixed later
       } else {
-        console.log('[Webhook] Created subscription record for user', userId, 'gallery', galleryId)
+        logger.info('[Webhook] Created subscription record', { userId, galleryId })
       }
     }
 
@@ -563,14 +564,14 @@ async function handleCheckoutCompleted(
           loginUrl: `${process.env.NEXT_PUBLIC_SITE_URL}/login`
         })
 
-        console.log(`[Webhook] Sent welcome email with temp password to ${customerEmail}`)
+        logger.info(`[Webhook] Sent welcome email with temp password to ${customerEmail}`)
       } catch (emailError) {
-        console.error('[Webhook] Error sending welcome email:', emailError)
+        logger.error('[Webhook] Error sending welcome email:', emailError)
         // Don't fail webhook if email fails - payment is already processed
       }
     }
 
-    console.log(`[Webhook] ${checkoutType === 'public' ? 'Public' : 'Authenticated'} checkout complete for gallery ${galleryId}, customer ${customerEmail}`)
+    logger.info(`[Webhook] ${checkoutType === 'public' ? 'Public' : 'Authenticated'} checkout complete for gallery ${galleryId}, customer ${customerEmail}`)
 
     return `${checkoutType === 'public' ? 'Public' : 'Authenticated'} gallery checkout completed for gallery ${galleryId}, customer ${customerEmail}`
   }
@@ -593,7 +594,7 @@ async function handleCheckoutCompleted(
     })
 
     if (rpcError) {
-      console.error('[Webhook] RPC error:', rpcError)
+      logger.error('[Webhook] RPC error:', rpcError)
       // If RPC doesn't exist, update directly
       const { error: updateError } = await supabase
         .from('users')
@@ -624,7 +625,7 @@ async function handleCheckoutCompleted(
     return `Subscription checkout completed for user ${user_id}`
   } else if (type === 'family_takeover') {
     // Family account takeover - secondary taking over billing
-    console.log(`[Webhook] Processing family takeover for account: ${metadata.account_id}`)
+    logger.info(`[Webhook] Processing family takeover for account: ${metadata.account_id}`)
 
     const { completeTakeover } = await import('@/lib/server/family-takeover-service')
 
@@ -648,7 +649,7 @@ async function handleCheckoutCompleted(
       throw new Error('Missing subscription_id in reactivation checkout metadata')
     }
 
-    console.log(`[Webhook] Processing reactivation payment for subscription ${subscriptionId}`)
+    logger.info(`[Webhook] Processing reactivation payment for subscription ${subscriptionId}`)
 
     // Calculate 30-day access period
     const now = new Date()
@@ -672,7 +673,7 @@ async function handleCheckoutCompleted(
       .eq('stripe_subscription_id', subscriptionId)
 
     if (updateError) {
-      console.error('[Webhook] Error restoring access:', updateError)
+      logger.error('[Webhook] Error restoring access:', updateError)
       throw updateError
     }
 
@@ -715,14 +716,14 @@ async function handleCheckoutCompleted(
           accessLink: `${process.env.NEXT_PUBLIC_SITE_URL}/gallery/${galleryId}`,
         })
 
-        console.log(`[Webhook] Sent reactivation confirmation email to ${userEmail}`)
+        logger.info(`[Webhook] Sent reactivation confirmation email to ${userEmail}`)
       }
     } catch (emailError) {
-      console.error('[Webhook] Error sending reactivation email:', emailError)
+      logger.error('[Webhook] Error sending reactivation email:', emailError)
       // Don't fail webhook for email issues
     }
 
-    console.log(`[Webhook] Reactivation completed for subscription ${subscriptionId}, 30-day access until ${accessEndDate.toISOString()}`)
+    logger.info(`[Webhook] Reactivation completed for subscription ${subscriptionId}, 30-day access until ${accessEndDate.toISOString()}`)
 
     return `Reactivation completed for subscription ${subscriptionId}, user ${user_id}, 30-day access window`
   } else {
@@ -737,7 +738,7 @@ async function handleSubscriptionCreated(
   subscription: Stripe.Subscription,
   supabase: any
 ): Promise<string> {
-  console.log('[Webhook] Processing customer.subscription.created', subscription.id)
+  logger.info('[Webhook] Processing customer.subscription.created', subscription.id)
 
   const customerId = subscription.customer as string
 
@@ -789,7 +790,7 @@ async function handlePaymentSucceeded(
   invoice: Stripe.Invoice,
   supabase: any
 ): Promise<string> {
-  console.log('[Webhook] Processing invoice.payment_succeeded', invoice.id)
+  logger.info('[Webhook] Processing invoice.payment_succeeded', invoice.id)
 
   // Extract subscription ID - it can be a string ID or expanded Subscription object
   const invoiceSubscription = (invoice as any).subscription
@@ -831,7 +832,7 @@ async function handlePaymentSucceeded(
 
   // If access was suspended, send restoration email
   if (wasAccessSuspended && previousState?.user_id) {
-    console.log(`[Webhook] Access restored for subscription ${subscriptionId}`)
+    logger.info(`[Webhook] Access restored for subscription ${subscriptionId}`)
     
     try {
       // Get user details for email
@@ -872,10 +873,10 @@ async function handlePaymentSucceeded(
           accessLink: `${process.env.NEXT_PUBLIC_SITE_URL}/gallery/${previousState.gallery_id}`,
         })
 
-        console.log(`[Webhook] Sent access restored email to ${userEmail}`)
+        logger.info(`[Webhook] Sent access restored email to ${userEmail}`)
       }
     } catch (emailError) {
-      console.error('[Webhook] Error sending access restored email:', emailError)
+      logger.error('[Webhook] Error sending access restored email:', emailError)
       // Don't fail webhook if email fails
     }
   }
@@ -926,7 +927,7 @@ async function handlePaymentSucceeded(
         }
       }
     } catch (err) {
-      console.warn('[Webhook] Could not retrieve transfer ID for subscription:', err)
+      logger.warn('[Webhook] Could not retrieve transfer ID for subscription:', err)
     }
 
     await supabase.from('commissions').insert({
@@ -945,11 +946,11 @@ async function handlePaymentSucceeded(
       paid_at: new Date().toISOString(),
       created_at: new Date().toISOString(),
     }).then(({ error }: { error: any }) => {
-      if (error) console.warn('[Webhook] Commission insert error (may be duplicate):', error.message)
-      else console.log(`[Webhook] Recorded subscription commission for photographer ${photographerId}`)
+      if (error) logger.warn('[Webhook] Commission insert error (may be duplicate):', error.message)
+      else logger.info(`[Webhook] Recorded subscription commission for photographer ${photographerId}`)
     })
   } else {
-    console.warn('[Webhook] Missing photographer_id in subscription metadata')
+    logger.warn('[Webhook] Missing photographer_id in subscription metadata')
   }
 
   // Send payment successful email to client
@@ -998,7 +999,7 @@ async function handlePaymentSucceeded(
         }),
       })
 
-      console.log(`[Webhook] Sent payment successful email to ${clientData.email}`)
+      logger.info(`[Webhook] Sent payment successful email to ${clientData.email}`)
     }
   }
 
@@ -1013,7 +1014,7 @@ async function handlePaymentFailed(
   invoice: Stripe.Invoice,
   supabase: any
 ): Promise<string> {
-  console.log('[Webhook] Processing invoice.payment_failed', invoice.id)
+  logger.info('[Webhook] Processing invoice.payment_failed', invoice.id)
 
   const invoiceSubscription = (invoice as any).subscription
   const subscriptionId = typeof invoiceSubscription === 'string'
@@ -1064,7 +1065,7 @@ async function handlePaymentFailed(
   if (shouldSuspend) {
     updateData.access_suspended = true
     updateData.access_suspended_at = now.toISOString()
-    console.log(`[Webhook] Suspending access for subscription ${subscriptionId} - 6 month grace period exceeded`)
+    logger.info(`[Webhook] Suspending access for subscription ${subscriptionId} - 6 month grace period exceeded`)
   }
 
   // Update subscription
@@ -1103,7 +1104,7 @@ async function handlePaymentFailed(
       })
     }
   } catch (trackError) {
-    console.error('[Webhook] Error tracking payment failure:', trackError)
+    logger.error('[Webhook] Error tracking payment failure:', trackError)
     // Don't block webhook if tracking fails
   }
 
@@ -1143,7 +1144,7 @@ async function handlePaymentFailed(
         gracePeriodDays: gracePeriodDays,
       })
 
-      console.log(`[Webhook] Sent payment failure email to ${userEmail} (${daysRemaining} days / ~${Math.ceil(daysRemaining / 30)} months remaining in grace period)`)
+      logger.info(`[Webhook] Sent payment failure email to ${userEmail} (${daysRemaining} days / ~${Math.ceil(daysRemaining / 30)} months remaining in grace period)`)
     }
   }
 
@@ -1158,7 +1159,7 @@ async function handleSubscriptionDeleted(
   subscription: Stripe.Subscription,
   supabase: any
 ): Promise<string> {
-  console.log('[Webhook] Processing customer.subscription.deleted', subscription.id)
+  logger.info('[Webhook] Processing customer.subscription.deleted', subscription.id)
 
   // Get subscription details BEFORE updating (to get user_id and user_type)
   const { data: subData } = await supabase
@@ -1208,7 +1209,7 @@ async function handleSubscriptionDeleted(
               setTimeout(() => resolve({ data: null }), 2000)
             )
           ]).catch((err: Error) => {
-            console.error('[Churn Tracking] Stats query failed or timed out:', err)
+            logger.error('[Churn Tracking] Stats query failed or timed out:', err)
             return { data: null }
           })
 
@@ -1226,7 +1227,7 @@ async function handleSubscriptionDeleted(
             churn_reason: subscription.cancellation_details?.reason || undefined,
           })
 
-          console.log('[Churn Tracking] Photographer churn tracked:', subData.user_id)
+          logger.info('[Churn Tracking] Photographer churn tracked:', subData.user_id)
 
         } else if (userType === 'client') {
           // Get client stats with timeout protection
@@ -1240,7 +1241,7 @@ async function handleSubscriptionDeleted(
               setTimeout(() => resolve({ data: null }), 2000)
             )
           ]).catch((err: Error) => {
-            console.error('[Churn Tracking] Stats query failed or timed out:', err)
+            logger.error('[Churn Tracking] Stats query failed or timed out:', err)
             return { data: null }
           })
 
@@ -1256,11 +1257,11 @@ async function handleSubscriptionDeleted(
             churn_reason: subscription.cancellation_details?.reason || undefined,
           })
 
-          console.log('[Churn Tracking] Client churn tracked:', subData.user_id)
+          logger.info('[Churn Tracking] Client churn tracked:', subData.user_id)
         }
       } catch (churnError) {
         // Log to error_logs table but don't fail the webhook
-        console.error('[Churn Tracking] Failed to track churn event:', churnError)
+        logger.error('[Churn Tracking] Failed to track churn event:', churnError)
         try {
           await supabase.from('error_logs').insert({
             user_id: subData.user_id,
@@ -1269,7 +1270,7 @@ async function handleSubscriptionDeleted(
             page: '/api/webhooks/stripe',
           })
         } catch (logError) {
-          console.error('[Churn Tracking] Failed to log error:', logError)
+          logger.error('[Churn Tracking] Failed to log error:', logError)
         }
       }
     })
@@ -1285,7 +1286,7 @@ async function handleSubscriptionUpdated(
   subscription: Stripe.Subscription,
   supabase: any
 ): Promise<string> {
-  console.log('[Webhook] Processing customer.subscription.updated', subscription.id)
+  logger.info('[Webhook] Processing customer.subscription.updated', subscription.id)
 
   // Get billing period from first subscription item (all items share the same billing period)
   const firstItem = subscription.items.data[0]
@@ -1316,7 +1317,7 @@ async function handlePayoutCreated(
   payout: Stripe.Payout,
   supabase: any
 ): Promise<string> {
-  console.log('[Webhook] Processing payout.created', payout.id)
+  logger.info('[Webhook] Processing payout.created', payout.id)
 
   // Get photographer by Stripe Connect account ID
   const { data: photographer, error: photoError } = await supabase
@@ -1326,7 +1327,7 @@ async function handlePayoutCreated(
     .single()
 
   if (photoError || !photographer) {
-    console.warn(`[Webhook] Photographer not found for Stripe Connect account: ${payout.destination}`)
+    logger.warn(`[Webhook] Photographer not found for Stripe Connect account: ${payout.destination}`)
     return `Payout ${payout.id} created but photographer not found in database`
   }
 

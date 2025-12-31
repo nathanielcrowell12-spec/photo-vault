@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { generateRandomId } from '@/lib/api-constants'
 import { createClient } from '@supabase/supabase-js'
 
@@ -61,7 +62,7 @@ export async function POST(request: NextRequest) {
       }
     }
   } catch (error) {
-    console.error('Chunked upload error:', error)
+    logger.error('Chunked upload error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -125,11 +126,11 @@ interface ChunkUploadParams {
 }
 
 async function uploadChunk({ sessionId, chunkIndex, totalChunks, formData }: ChunkUploadParams) {
-  console.log(`[CHUNK UPLOAD] Starting chunk ${chunkIndex} for session ${sessionId}`)
+  logger.info(`[CHUNK UPLOAD] Starting chunk ${chunkIndex} for session ${sessionId}`)
   
   const session = uploadSessions.get(sessionId)
   if (!session) {
-    console.error(`[CHUNK UPLOAD] Session not found: ${sessionId}`)
+    logger.error(`[CHUNK UPLOAD] Session not found: ${sessionId}`)
     return NextResponse.json({ error: 'Upload session not found' }, { status: 404 })
   }
 
@@ -137,21 +138,21 @@ async function uploadChunk({ sessionId, chunkIndex, totalChunks, formData }: Chu
     // Get chunk data from FormData (already parsed)
     const chunkFile = formData.get('chunk') as File
     
-    console.log(`[CHUNK UPLOAD] Chunk file received:`, {
+    logger.info(`[CHUNK UPLOAD] Chunk file received:`, {
       name: chunkFile?.name,
       size: chunkFile?.size,
       type: chunkFile?.type
     })
     
     if (!chunkFile) {
-      console.error(`[CHUNK UPLOAD] No chunk data received`)
+      logger.error(`[CHUNK UPLOAD] No chunk data received`)
       return NextResponse.json({ error: 'No chunk data received' }, { status: 400 })
     }
     
     // Generate unique path for this chunk
     const chunkPath = `temp-chunks/${session.userId}/${session.galleryId}/chunk-${chunkIndex}`
     
-    console.log(`[CHUNK UPLOAD] Uploading to path: ${chunkPath}`)
+    logger.info(`[CHUNK UPLOAD] Uploading to path: ${chunkPath}`)
     
     // Upload chunk to Supabase storage
     const { error: uploadError } = await supabase.storage
@@ -163,11 +164,11 @@ async function uploadChunk({ sessionId, chunkIndex, totalChunks, formData }: Chu
       })
 
     if (uploadError) {
-      console.error(`[CHUNK UPLOAD] Failed to upload chunk ${chunkIndex}:`, uploadError)
+      logger.error(`[CHUNK UPLOAD] Failed to upload chunk ${chunkIndex}:`, uploadError)
       return NextResponse.json({ error: `Failed to upload chunk ${chunkIndex}: ${uploadError.message}` }, { status: 500 })
     }
     
-    console.log(`[CHUNK UPLOAD] Successfully uploaded chunk ${chunkIndex}`)
+    logger.info(`[CHUNK UPLOAD] Successfully uploaded chunk ${chunkIndex}`)
 
     // Store chunk info
     session.chunks.set(chunkIndex, chunkPath)
@@ -189,7 +190,7 @@ async function uploadChunk({ sessionId, chunkIndex, totalChunks, formData }: Chu
     })
 
   } catch (error) {
-    console.error(`Error uploading chunk ${chunkIndex}:`, error)
+    logger.error(`Error uploading chunk ${chunkIndex}:`, error)
     return NextResponse.json({ error: `Failed to upload chunk ${chunkIndex}` }, { status: 500 })
   }
 }
@@ -259,7 +260,7 @@ async function completeUpload({ sessionId }: { sessionId: string }) {
     })
 
   } catch (error) {
-    console.error('Error completing upload:', error)
+    logger.error('Error completing upload:', error)
     return NextResponse.json({ error: 'Failed to complete upload' }, { status: 500 })
   }
 }

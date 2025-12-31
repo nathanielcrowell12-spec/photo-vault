@@ -7,6 +7,7 @@
  */
 import { NextRequest, NextResponse } from 'next/server'
 import { createServiceRoleClient } from '@/lib/supabase-server'
+import { logger } from '@/lib/logger'
 
 // Force dynamic rendering
 export const dynamic = 'force-dynamic'
@@ -66,7 +67,7 @@ export async function POST(
       .single()
 
     if (error || !shareLink) {
-      console.log(`[ShareToken] Invalid token for gallery ${galleryId}`)
+      logger.info(`[ShareToken] Invalid token for gallery ${galleryId}`)
       return NextResponse.json(
         { valid: false, error: 'Invalid share link' },
         { status: 404 }
@@ -75,7 +76,7 @@ export async function POST(
 
     // 4. Check if revoked
     if (shareLink.is_revoked) {
-      console.log(`[ShareToken] Revoked token for gallery ${galleryId}`)
+      logger.info(`[ShareToken] Revoked token for gallery ${galleryId}`)
       return NextResponse.json(
         { valid: false, error: 'This share link has been revoked' },
         { status: 403 }
@@ -84,7 +85,7 @@ export async function POST(
 
     // 5. Check if expired
     if (shareLink.expires_at && new Date(shareLink.expires_at) < new Date()) {
-      console.log(`[ShareToken] Expired token for gallery ${galleryId}`)
+      logger.info(`[ShareToken] Expired token for gallery ${galleryId}`)
       return NextResponse.json(
         { valid: false, error: 'This share link has expired' },
         { status: 403 }
@@ -98,7 +99,7 @@ export async function POST(
 
     if (rpcError) {
       // Non-fatal - log but don't fail validation
-      console.error('[ShareToken] Error incrementing view count:', rpcError)
+      logger.error('[ShareToken] Error incrementing view count:', rpcError)
     }
 
     // 7. Calculate downloads remaining
@@ -107,7 +108,7 @@ export async function POST(
       ? Math.max(0, shareLink.download_limit - shareLink.downloads_used)
       : null // null means unlimited
 
-    console.log(`[ShareToken] Valid token for gallery ${galleryId}, views incremented`)
+    logger.info(`[ShareToken] Valid token for gallery ${galleryId}, views incremented`)
 
     return NextResponse.json({
       valid: true,
@@ -123,7 +124,7 @@ export async function POST(
 
   } catch (error) {
     const err = error as Error
-    console.error('[ShareToken] Error:', err)
+    logger.error('[ShareToken] Error:', err)
     return NextResponse.json(
       { valid: false, error: 'Failed to validate share token' },
       { status: 500 }

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { generateRandomId } from '@/lib/api-constants'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 
@@ -36,7 +37,7 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (galleryError || !gallery) {
-      console.error('[Upload API] Gallery verification failed:', {
+      logger.error('[Upload API] Gallery verification failed:', {
         galleryId,
         userId: user.id,
         error: galleryError
@@ -47,7 +48,7 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    console.log('[Upload API] Gallery verified:', {
+    logger.info('[Upload API] Gallery verified:', {
       galleryId: gallery.id,
       userId: user.id,
       galleryName: gallery.gallery_name
@@ -72,7 +73,7 @@ export async function POST(request: NextRequest) {
         })
 
       if (uploadError) {
-        console.error('Error uploading photo:', uploadError)
+        logger.error('Error uploading photo:', uploadError)
         continue
       }
 
@@ -125,7 +126,7 @@ export async function POST(request: NextRequest) {
       })
       .eq('id', gallery.id)
 
-    console.log('[Upload API] Upload complete:', {
+    logger.info('[Upload API] Upload complete:', {
       galleryId: gallery.id,
       uploadedCount: uploadedPhotos.length,
       totalFiles: files.length
@@ -139,7 +140,7 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Error uploading photos:', error)
+    logger.error('Error uploading photos:', error)
     return NextResponse.json(
       { error: 'Failed to upload photos' },
       { status: 500 }

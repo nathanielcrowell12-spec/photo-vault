@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { forceUpdateLogos } from '@/lib/competitor-logos'
 
 // This endpoint can be called by a cron service like Vercel Cron, GitHub Actions, or external cron services
@@ -14,11 +15,11 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    console.log('🔄 Starting automatic competitor logo update...')
+    logger.info('🔄 Starting automatic competitor logo update...')
     
     const logos = await forceUpdateLogos()
     
-    console.log('✅ Automatic competitor logo update completed successfully')
+    logger.info('✅ Automatic competitor logo update completed successfully')
     
     return NextResponse.json({ 
       success: true, 
@@ -32,7 +33,7 @@ export async function GET(request: NextRequest) {
       }))
     })
   } catch (error) {
-    console.error('❌ Error in automatic logo update:', error)
+    logger.error('❌ Error in automatic logo update:', error)
     
     return NextResponse.json(
       { 

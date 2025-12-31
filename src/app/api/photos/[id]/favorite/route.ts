@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 
 export async function POST(
@@ -41,7 +42,7 @@ export async function POST(
       .single()
 
     if (photoError || !photo) {
-      console.error('[Favorite API] Photo not found:', photoError)
+      logger.error('[Favorite API] Photo not found:', photoError)
       return NextResponse.json(
         { error: 'Photo not found' },
         { status: 404 }
@@ -70,7 +71,7 @@ export async function POST(
       gallery.clientUserId === user.id
 
     if (!hasAccess) {
-      console.error('[Favorite API] User does not have access to this photo:', {
+      logger.error('[Favorite API] User does not have access to this photo:', {
         userId: user.id,
         galleryUserId: gallery.user_id,
         photographerId: gallery.photographer_id,
@@ -91,21 +92,21 @@ export async function POST(
       .eq('id', photoId)
 
     if (updateError) {
-      console.error('[Favorite API] Failed to update:', updateError)
+      logger.error('[Favorite API] Failed to update:', updateError)
       return NextResponse.json(
         { error: 'Failed to update favorite status' },
         { status: 500 }
       )
     }
 
-    console.log(`[Favorite API] Photo ${photoId} is_favorite set to ${newFavoriteStatus}`)
+    logger.info(`[Favorite API] Photo ${photoId} is_favorite set to ${newFavoriteStatus}`)
 
     return NextResponse.json({
       success: true,
       is_favorite: newFavoriteStatus
     })
   } catch (error) {
-    console.error('[Favorite API] Error:', error)
+    logger.error('[Favorite API] Error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

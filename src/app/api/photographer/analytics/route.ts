@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { fetchPhotographerAnalyticsData } from '@/lib/server/photographer-analytics-service'
 
@@ -12,7 +13,7 @@ export async function GET() {
       error: userError,
     } = await supabase.auth.getUser()
 
-    console.log('[api/photographer/analytics] Auth check:', {
+    logger.info('[api/photographer/analytics] Auth check:', {
       hasUser: !!user,
       userEmail: user?.email,
       errorMessage: userError?.message,
@@ -20,7 +21,7 @@ export async function GET() {
     })
 
     if (userError || !user) {
-      console.error('[api/photographer/analytics] Unauthorized -', { userError, hasUser: !!user })
+      logger.error('[api/photographer/analytics] Unauthorized -', { userError, hasUser: !!user })
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -42,7 +43,7 @@ export async function GET() {
     const data = await fetchPhotographerAnalyticsData(user.id)
     return NextResponse.json({ success: true, data })
   } catch (error) {
-    console.error('[api/photographer/analytics] Failed to fetch analytics', error)
+    logger.error('[api/photographer/analytics] Failed to fetch analytics', error)
     return NextResponse.json(
       {
         success: false,

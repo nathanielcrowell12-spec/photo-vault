@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { getStripeClient } from '@/lib/stripe'
 
@@ -66,7 +67,7 @@ export async function POST(request: NextRequest) {
       })
       .eq('id', subscription.id)
 
-    console.log(`[Cancel] Subscription ${subscriptionId} set to cancel at period end for user ${user.id}`)
+    logger.info(`[Cancel] Subscription ${subscriptionId} set to cancel at period end for user ${user.id}`)
 
     return NextResponse.json({
       success: true,
@@ -79,7 +80,7 @@ export async function POST(request: NextRequest) {
     })
   } catch (error) {
     const err = error as Error
-    console.error('[Cancel] Error cancelling subscription:', err)
+    logger.error('[Cancel] Error cancelling subscription:', err)
     return NextResponse.json(
       { error: 'Failed to cancel subscription', message: err.message },
       { status: 500 }

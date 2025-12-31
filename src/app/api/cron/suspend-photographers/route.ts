@@ -8,6 +8,7 @@
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase'
+import { logger } from '@/lib/logger'
 
 export async function GET(request: NextRequest) {
   const startTime = Date.now()
@@ -34,7 +35,7 @@ export async function GET(request: NextRequest) {
     if (fetchError) throw fetchError
 
     if (!overduePhotographers || overduePhotographers.length === 0) {
-      console.log('[Cron:Suspend] No photographers to suspend')
+      logger.info('[Cron:Suspend] No photographers to suspend')
       return NextResponse.json({
         message: 'No photographers to suspend',
         processed: 0,
@@ -42,7 +43,7 @@ export async function GET(request: NextRequest) {
       })
     }
 
-    console.log(`[Cron:Suspend] Suspending ${overduePhotographers.length} photographers`)
+    logger.info(`[Cron:Suspend] Suspending ${overduePhotographers.length} photographers`)
 
     // Mark as suspended
     const { error: updateError } = await supabase
@@ -57,10 +58,10 @@ export async function GET(request: NextRequest) {
     if (updateError) throw updateError
 
     // TODO: Send suspension notification emails
-    console.log('[Cron:Suspend] TODO: Send suspension emails to photographers')
+    logger.info('[Cron:Suspend] TODO: Send suspension emails to photographers')
 
     const duration = Date.now() - startTime
-    console.log(`[Cron:Suspend] Complete: ${overduePhotographers.length} photographers suspended in ${duration}ms`)
+    logger.info(`[Cron:Suspend] Complete: ${overduePhotographers.length} photographers suspended in ${duration}ms`)
 
     return NextResponse.json({
       message: 'Photographer suspension complete',
@@ -71,7 +72,7 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     const err = error as Error
-    console.error('[Cron:Suspend] Error:', err)
+    logger.error('[Cron:Suspend] Error:', err)
     return NextResponse.json(
       { error: 'Photographer suspension failed', message: err.message },
       { status: 500 }

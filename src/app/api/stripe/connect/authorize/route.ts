@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { createServerSupabaseClient, createServiceRoleClient } from '@/lib/supabase-server'
 import {
   createConnectAccount,
@@ -30,8 +31,8 @@ export async function POST(request: NextRequest) {
     // Use service role client for database queries (bypasses RLS)
     const adminClient = createServiceRoleClient()
 
-    console.log('[Stripe Connect] User authenticated:', { id: user.id, email: user.email })
-    console.log('[Stripe Connect] Admin client created, querying user_profiles...')
+    logger.info('[Stripe Connect] User authenticated:', { id: user.id, email: user.email })
+    logger.info('[Stripe Connect] Admin client created, querying user_profiles...')
 
     // Get user profile to verify photographer role
     // Note: email is on auth.users, not user_profiles
@@ -41,12 +42,12 @@ export async function POST(request: NextRequest) {
       .eq('id', user.id)
       .single()
 
-    console.log('[Stripe Connect] Profile query complete')
-    console.log('[Stripe Connect] userProfile:', JSON.stringify(userProfile, null, 2))
-    console.log('[Stripe Connect] profileError:', JSON.stringify(profileError, null, 2))
+    logger.info('[Stripe Connect] Profile query complete')
+    logger.info('[Stripe Connect] userProfile:', JSON.stringify(userProfile, null, 2))
+    logger.info('[Stripe Connect] profileError:', JSON.stringify(profileError, null, 2))
 
     if (profileError || !userProfile) {
-      console.error('[Stripe Connect] Profile not found:', { userId: user.id, error: profileError })
+      logger.error('[Stripe Connect] Profile not found:', { userId: user.id, error: profileError })
       return NextResponse.json({ error: 'User profile not found', details: profileError }, { status: 404 })
     }
 
@@ -125,7 +126,7 @@ export async function POST(request: NextRequest) {
     })
   } catch (error) {
     const err = error as Error
-    console.error('[Stripe Connect] Error creating account:', err)
+    logger.error('[Stripe Connect] Error creating account:', err)
     return NextResponse.json(
       { error: 'Failed to create Stripe Connect account', message: err.message },
       { status: 500 }
@@ -180,7 +181,7 @@ export async function GET(request: NextRequest) {
     })
   } catch (error) {
     const err = error as Error
-    console.error('[Stripe Connect] Error fetching account status:', err)
+    logger.error('[Stripe Connect] Error fetching account status:', err)
     return NextResponse.json(
       { error: 'Failed to fetch account status', message: err.message },
       { status: 500 }

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { createServiceRoleClient } from '@/lib/supabase-server'
 import { EmailService } from '@/lib/email/email-service'
 
@@ -34,7 +35,7 @@ export async function GET(request: NextRequest) {
   const isVercelCron = request.headers.get('x-vercel-cron') === '1'
 
   if (!isVercelCron && cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-    console.warn('[Monitor] Unauthorized access attempt to webhook monitor')
+    logger.warn('[Monitor] Unauthorized access attempt to webhook monitor')
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
@@ -51,7 +52,7 @@ export async function GET(request: NextRequest) {
       .order('processed_at', { ascending: false })
 
     if (queryError) {
-      console.error('[Monitor] Failed to query webhook_logs:', queryError)
+      logger.error('[Monitor] Failed to query webhook_logs:', queryError)
 
       // Alert about monitoring failure
       await EmailService.sendAlertEmail({
@@ -83,7 +84,7 @@ export async function GET(request: NextRequest) {
         (now.getTime() - lastAlertSentAt.getTime()) > ALERT_COOLDOWN_MS
 
       if (shouldSendAlert) {
-        console.warn(`[Monitor] ALERT: ${failureCount} webhook failures in last hour (threshold: ${WEBHOOK_FAILURE_THRESHOLD})`)
+        logger.warn(`[Monitor] ALERT: ${failureCount} webhook failures in last hour (threshold: ${WEBHOOK_FAILURE_THRESHOLD})`)
 
         // Group failures by event type
         const failuresByType: Record<string, number> = {}
@@ -126,7 +127,7 @@ export async function GET(request: NextRequest) {
         })
 
         lastAlertSentAt = now
-        console.log(`[Monitor] Alert email sent to ${ADMIN_EMAIL}`)
+        logger.info(`[Monitor] Alert email sent to ${ADMIN_EMAIL}`)
 
         return NextResponse.json({
           success: true,
@@ -140,7 +141,7 @@ export async function GET(request: NextRequest) {
         const cooldownRemaining = Math.ceil(
           (ALERT_COOLDOWN_MS - (now.getTime() - lastAlertSentAt!.getTime())) / 1000 / 60
         )
-        console.log(`[Monitor] ${failureCount} failures but alert cooldown active (${cooldownRemaining}min remaining)`)
+        logger.info(`[Monitor] ${failureCount} failures but alert cooldown active (${cooldownRemaining}min remaining)`)
 
         return NextResponse.json({
           success: true,
@@ -154,7 +155,7 @@ export async function GET(request: NextRequest) {
     }
 
     // All good, no alert needed
-    console.log(`[Monitor] Webhook check OK: ${failureCount} failures in last hour (threshold: ${WEBHOOK_FAILURE_THRESHOLD})`)
+    logger.info(`[Monitor] Webhook check OK: ${failureCount} failures in last hour (threshold: ${WEBHOOK_FAILURE_THRESHOLD})`)
 
     return NextResponse.json({
       success: true,
@@ -165,7 +166,7 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error: any) {
-    console.error('[Monitor] Unexpected error in webhook monitor:', error)
+    logger.error('[Monitor] Unexpected error in webhook monitor:', error)
 
     // Try to alert about the monitoring failure
     try {
@@ -183,7 +184,7 @@ export async function GET(request: NextRequest) {
         severity: 'critical',
       })
     } catch (emailError) {
-      console.error('[Monitor] Failed to send monitoring failure alert:', emailError)
+      logger.error('[Monitor] Failed to send monitoring failure alert:', emailError)
     }
 
     return NextResponse.json(

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { createClient } from '@supabase/supabase-js'
 
 const supabase = createClient(
@@ -11,9 +12,9 @@ export async function POST(request: NextRequest) {
   try {
     const { fileName, userId, galleryName, platform } = await request.json()
 
-    console.log('[SUPABASE DIRECT] Creating signed upload URL')
-    console.log('[SUPABASE DIRECT] File:', fileName)
-    console.log('[SUPABASE DIRECT] User:', userId)
+    logger.info('[SUPABASE DIRECT] Creating signed upload URL')
+    logger.info('[SUPABASE DIRECT] File:', fileName)
+    logger.info('[SUPABASE DIRECT] User:', userId)
 
     // Generate a unique file path
     const timestamp = Date.now()
@@ -26,11 +27,11 @@ export async function POST(request: NextRequest) {
       .createSignedUploadUrl(storagePath)
 
     if (uploadError) {
-      console.error('[SUPABASE DIRECT] Error creating signed URL:', uploadError)
+      logger.error('[SUPABASE DIRECT] Error creating signed URL:', uploadError)
       return NextResponse.json({ error: uploadError.message }, { status: 500 })
     }
 
-    console.log('[SUPABASE DIRECT] Signed URL created:', uploadData.path)
+    logger.info('[SUPABASE DIRECT] Signed URL created:', uploadData.path)
 
     // Create gallery record
     const { data: gallery, error: galleryError } = await supabase
@@ -49,11 +50,11 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (galleryError) {
-      console.error('[SUPABASE DIRECT] Error creating gallery:', galleryError)
+      logger.error('[SUPABASE DIRECT] Error creating gallery:', galleryError)
       return NextResponse.json({ error: galleryError.message }, { status: 500 })
     }
 
-    console.log('[SUPABASE DIRECT] Gallery created:', gallery.id)
+    logger.info('[SUPABASE DIRECT] Gallery created:', gallery.id)
 
     return NextResponse.json({
       uploadUrl: uploadData.signedUrl,
@@ -64,7 +65,7 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error: unknown) {
-    console.error('[SUPABASE DIRECT] Error:', error)
+    logger.error('[SUPABASE DIRECT] Error:', error)
     const errorMessage = error instanceof Error ? error.message : 'Unknown error'
     return NextResponse.json({ error: errorMessage }, { status: 500 })
   }

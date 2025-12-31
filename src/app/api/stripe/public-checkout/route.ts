@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { createServiceRoleClient } from '@/lib/supabase-server'
 import { getStripeClient } from '@/lib/stripe'
 
@@ -53,7 +54,7 @@ export async function POST(request: NextRequest) {
       .single()
 
     if (galleryError || !gallery) {
-      console.error('[PublicCheckout] Gallery not found:', galleryId, galleryError)
+      logger.error('[PublicCheckout] Gallery not found', { galleryId, error: galleryError })
       return NextResponse.json({ error: 'Gallery not found' }, { status: 404 })
     }
 
@@ -94,7 +95,7 @@ export async function POST(request: NextRequest) {
     // 5. Check if photographer has Stripe Connect set up
     // CRITICAL: Block payment if photographer can't receive money
     if (!photographer?.stripe_connect_account_id || photographer.stripe_connect_status !== 'active') {
-      console.error('[PublicCheckout] Photographer missing Stripe Connect:', {
+      logger.error('[PublicCheckout] Photographer missing Stripe Connect:', {
         photographerId,
         hasAccountId: !!photographer?.stripe_connect_account_id,
         status: photographer?.stripe_connect_status
@@ -122,7 +123,7 @@ export async function POST(request: NextRequest) {
     // - Example: $100 storage → Photographer gets $50, PhotoVault gets ~$47 after Stripe fees
     const photovaultFeeCents = Math.round(storageFeeCents * 0.5)
 
-    console.log('[PublicCheckout] Fee breakdown:', {
+    logger.info('[PublicCheckout] Fee breakdown:', {
       totalAmount: totalAmountCents,
       shootFee: shootFeeCents,
       storageFee: storageFeeCents,
@@ -190,8 +191,8 @@ export async function POST(request: NextRequest) {
       billing_address_collection: 'auto',
     })
 
-    console.log(`[PublicCheckout] Created session ${session.id} for gallery ${galleryId}`)
-    console.log(`[PublicCheckout] Destination charge: $${photovaultFeeCents/100} to PhotoVault, rest to photographer ${photographer.stripe_connect_account_id}`)
+    logger.info(`[PublicCheckout] Created session ${session.id} for gallery ${galleryId}`)
+    logger.info(`[PublicCheckout] Destination charge: $${photovaultFeeCents/100} to PhotoVault, rest to photographer ${photographer.stripe_connect_account_id}`)
 
     return NextResponse.json({
       sessionId: session.id,
@@ -199,7 +200,7 @@ export async function POST(request: NextRequest) {
     })
   } catch (error) {
     const err = error as Error
-    console.error('[PublicCheckout] Error:', err)
+    logger.error('[PublicCheckout] Error:', err)
 
     return NextResponse.json(
       { error: 'Failed to create checkout session', message: err.message },

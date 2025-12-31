@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { headers } from 'next/headers'
 import { trackServerEvent } from '@/lib/analytics/server'
@@ -116,9 +117,9 @@ export async function POST(request: NextRequest) {
       if (insertError) {
         // If it's a unique constraint violation, the photo was already downloaded
         if (insertError.code === '23505') {
-          console.log(`[Download] Photo ${photoId} already downloaded by user ${user.id}`)
+          logger.info(`[Download] Photo ${photoId} already downloaded by user ${user.id}`)
         } else {
-          console.error('[Download] Error recording download:', insertError)
+          logger.error('[Download] Error recording download:', insertError)
         }
       }
 
@@ -131,7 +132,7 @@ export async function POST(request: NextRequest) {
         .single()
 
       if (updatedGallery?.all_photos_downloaded && !gallery.all_photos_downloaded) {
-        console.log(`[Download] Gallery ${galleryId} - all photos downloaded!`)
+        logger.info(`[Download] Gallery ${galleryId} - all photos downloaded!`)
       }
 
       // Track download event (server-side - engagement tracking)
@@ -142,7 +143,7 @@ export async function POST(request: NextRequest) {
           download_type: downloadType,
         })
       } catch (trackError) {
-        console.error('[Download] Error tracking download:', trackError)
+        logger.error('[Download] Error tracking download:', trackError)
         // Don't block download if tracking fails
       }
 
@@ -162,7 +163,7 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     const err = error as Error
-    console.error('[Download] Error:', err)
+    logger.error('[Download] Error:', err)
     return NextResponse.json(
       { error: 'Failed to track download', message: err.message },
       { status: 500 }
@@ -268,7 +269,7 @@ export async function PUT(request: NextRequest) {
         })
 
       if (insertError) {
-        console.error('[Download] Error recording bulk download:', insertError)
+        logger.error('[Download] Error recording bulk download:', insertError)
       }
     }
 
@@ -289,7 +290,7 @@ export async function PUT(request: NextRequest) {
 
   } catch (error) {
     const err = error as Error
-    console.error('[Download] Error:', err)
+    logger.error('[Download] Error:', err)
     return NextResponse.json(
       { error: 'Failed to track bulk download', message: err.message },
       { status: 500 }
@@ -384,7 +385,7 @@ export async function GET(request: NextRequest) {
 
   } catch (error) {
     const err = error as Error
-    console.error('[Download] Error:', err)
+    logger.error('[Download] Error:', err)
     return NextResponse.json(
       { error: 'Failed to get download progress', message: err.message },
       { status: 500 }

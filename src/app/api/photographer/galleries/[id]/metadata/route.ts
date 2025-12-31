@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 
 interface MetadataUpdate {
@@ -50,7 +51,7 @@ export async function PATCH(
       .single()
 
     if (updateError) {
-      console.error('[Metadata] Update error:', updateError)
+      logger.error('[Metadata] Update error:', updateError)
       return NextResponse.json({ error: 'Update failed' }, { status: 500 })
     }
 
@@ -58,9 +59,9 @@ export async function PATCH(
     void (async () => {
       const result = await supabase.rpc('refresh_gallery_metadata_suggestions')
       if (result.error) {
-        console.error('[Metadata] Failed to refresh suggestions:', result.error)
+        logger.error('[Metadata] Failed to refresh suggestions:', result.error)
       } else {
-        console.log('[Metadata] Refreshed suggestions view')
+        logger.info('[Metadata] Refreshed suggestions view')
       }
     })()
 
@@ -69,7 +70,7 @@ export async function PATCH(
       gallery: updated
     })
   } catch (error) {
-    console.error('[Metadata] Unexpected error:', error)
+    logger.error('[Metadata] Unexpected error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }
@@ -102,7 +103,7 @@ export async function GET(
       gallery
     })
   } catch (error) {
-    console.error('[Metadata] Unexpected error:', error)
+    logger.error('[Metadata] Unexpected error:', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
   }
 }

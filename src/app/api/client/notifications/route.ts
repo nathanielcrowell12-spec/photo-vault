@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { supabase } from '@/lib/supabase'
 import { EmailReportService, defaultEmailConfig } from '@/lib/email-service'
 
@@ -104,7 +105,7 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Client notification error:', error)
+    logger.error('Client notification error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -175,7 +176,7 @@ async function sendPaymentReminder(client: ClientData, gallery: GalleryData, ema
 
   try {
     // For now, we'll just log the email content since we can't access the private transporter
-    console.log('Email would be sent:', {
+    logger.info('Email would be sent:', {
       from: '"PhotoVault Team" <noreply@photovault.com>',
       to: client.email,
       subject,
@@ -184,7 +185,7 @@ async function sendPaymentReminder(client: ClientData, gallery: GalleryData, ema
     })
     return true
   } catch (error) {
-    console.error('Payment reminder email error:', error)
+    logger.error('Payment reminder email error:', error)
     return false
   }
 }
@@ -247,7 +248,7 @@ async function sendPaymentConfirmation(client: ClientData, gallery: GalleryData,
 
   try {
     // For now, we'll just log the email content since we can't access the private transporter
-    console.log('Email would be sent:', {
+    logger.info('Email would be sent:', {
       from: '"PhotoVault Team" <noreply@photovault.com>',
       to: client.email,
       subject,
@@ -256,7 +257,7 @@ async function sendPaymentConfirmation(client: ClientData, gallery: GalleryData,
     })
     return true
   } catch (error) {
-    console.error('Payment confirmation email error:', error)
+    logger.error('Payment confirmation email error:', error)
     return false
   }
 }
@@ -310,7 +311,7 @@ async function sendGalleryAccessNotification(client: ClientData, gallery: Galler
 
   try {
     // For now, we'll just log the email content since we can't access the private transporter
-    console.log('Email would be sent:', {
+    logger.info('Email would be sent:', {
       from: '"PhotoVault Team" <noreply@photovault.com>',
       to: client.email,
       subject,
@@ -319,7 +320,7 @@ async function sendGalleryAccessNotification(client: ClientData, gallery: Galler
     })
     return true
   } catch (error) {
-    console.error('Gallery access notification email error:', error)
+    logger.error('Gallery access notification email error:', error)
     return false
   }
 }
@@ -374,7 +375,7 @@ async function sendAccessExpiringNotification(client: ClientData, gallery: Galle
 
   try {
     // For now, we'll just log the email content since we can't access the private transporter
-    console.log('Email would be sent:', {
+    logger.info('Email would be sent:', {
       from: '"PhotoVault Team" <noreply@photovault.com>',
       to: client.email,
       subject,
@@ -383,7 +384,7 @@ async function sendAccessExpiringNotification(client: ClientData, gallery: Galle
     })
     return true
   } catch (error) {
-    console.error('Access expiring notification email error:', error)
+    logger.error('Access expiring notification email error:', error)
     return false
   }
 }
@@ -423,7 +424,7 @@ async function sendCustomNotification(client: ClientData, message: string, email
 
   try {
     // For now, we'll just log the email content since we can't access the private transporter
-    console.log('Email would be sent:', {
+    logger.info('Email would be sent:', {
       from: '"PhotoVault Team" <noreply@photovault.com>',
       to: client.email,
       subject,
@@ -432,7 +433,7 @@ async function sendCustomNotification(client: ClientData, message: string, email
     })
     return true
   } catch (error) {
-    console.error('Custom notification email error:', error)
+    logger.error('Custom notification email error:', error)
     return false
   }
 }

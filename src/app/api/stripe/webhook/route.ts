@@ -3,6 +3,7 @@ import { headers } from 'next/headers'
 import { getStripeClient, constructWebhookEvent, PHOTOGRAPHER_COMMISSION_RATE } from '@/lib/stripe'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import Stripe from 'stripe'
+import { logger } from '@/lib/logger'
 
 // Type helpers for Stripe responses
 type StripeSubscription = {
@@ -63,7 +64,7 @@ export async function POST(request: NextRequest) {
     const signature = headersList.get('stripe-signature')
 
     if (!signature) {
-      console.error('[Webhook] Missing stripe-signature header')
+      logger.error('[Webhook] Missing stripe-signature header')
       return NextResponse.json(
         { error: 'Missing signature' },
         { status: 400 }
@@ -73,7 +74,7 @@ export async function POST(request: NextRequest) {
     // Verify webhook signature
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
     if (!webhookSecret) {
-      console.error('[Webhook] STRIPE_WEBHOOK_SECRET not configured')
+      logger.error('[Webhook] STRIPE_WEBHOOK_SECRET not configured')
       return NextResponse.json(
         { error: 'Webhook secret not configured' },
         { status: 500 }
@@ -86,14 +87,14 @@ export async function POST(request: NextRequest) {
       event = constructWebhookEvent(body, signature, webhookSecret)
     } catch (err) {
       const error = err as Error
-      console.error('[Webhook] Signature verification failed:', error.message)
+      logger.error('[Webhook] Signature verification failed:', error.message)
       return NextResponse.json(
         { error: 'Invalid signature' },
         { status: 400 }
       )
     }
 
-    console.log(`[Webhook] Received event: ${event.type} (id: ${event.id})`)
+    logger.info(`[Webhook] Received event: ${event.type} (id: ${event.id})`)
 
     // Handle different event types
     switch (event.type) {
@@ -127,13 +128,13 @@ export async function POST(request: NextRequest) {
         break
 
       default:
-        console.log(`[Webhook] Unhandled event type: ${event.type}`)
+        logger.info(`[Webhook] Unhandled event type: ${event.type}`)
     }
 
     return NextResponse.json({ received: true })
   } catch (error) {
     const err = error as Error
-    console.error('[Webhook] Error processing webhook:', err)
+    logger.error('[Webhook] Error processing webhook:', err)
     return NextResponse.json(
       { error: 'Webhook processing failed', message: err.message },
       { status: 500 }
@@ -156,14 +157,14 @@ async function handleCheckoutSessionCompleted(
     const galleryId = metadata.galleryId || metadata.gallery_id
 
     if (!userId || !galleryId) {
-      console.error('[Webhook] Missing metadata in checkout session:', session.id)
+      logger.error('[Webhook] Missing metadata in checkout session:', session.id)
       return
     }
 
     // Get subscription from session
     const subscriptionId = session.subscription as string
     if (!subscriptionId) {
-      console.error('[Webhook] No subscription ID in checkout session:', session.id)
+      logger.error('[Webhook] No subscription ID in checkout session:', session.id)
       return
     }
 
@@ -206,7 +207,7 @@ async function handleCheckoutSessionCompleted(
         })
 
       if (insertError) {
-        console.error('[Webhook] Error creating subscription:', insertError)
+        logger.error('[Webhook] Error creating subscription:', insertError)
         return
       }
     }
@@ -241,9 +242,9 @@ async function handleCheckoutSessionCompleted(
       }
     }
 
-    console.log(`[Webhook] Checkout completed for user ${userId}, gallery ${galleryId}`)
+    logger.info(`[Webhook] Checkout completed for user ${userId}, gallery ${galleryId}`)
   } catch (error) {
-    console.error('[Webhook] Error handling checkout.session.completed:', error)
+    logger.error('[Webhook] Error handling checkout.session.completed:', error)
     throw error
   }
 }
@@ -290,7 +291,7 @@ async function handleSubscriptionUpdated(
           .eq('id', photographerId)
       }
 
-      console.log(`[Webhook] Platform subscription ${subscription.status}: ${subscription.id} for photographer ${photographerId}`)
+      logger.info(`[Webhook] Platform subscription ${subscription.status}: ${subscription.id} for photographer ${photographerId}`)
       return
     }
 
@@ -352,9 +353,9 @@ async function handleSubscriptionUpdated(
       }
     }
 
-    console.log(`[Webhook] Subscription ${subscription.status}: ${subscription.id}`)
+    logger.info(`[Webhook] Subscription ${subscription.status}: ${subscription.id}`)
   } catch (error) {
-    console.error('[Webhook] Error handling subscription.updated:', error)
+    logger.error('[Webhook] Error handling subscription.updated:', error)
     throw error
   }
 }
@@ -392,7 +393,7 @@ async function handleSubscriptionDeleted(
         })
         .eq('id', photographerId)
 
-      console.log(`[Webhook] Platform subscription cancelled: ${subscription.id} for photographer ${photographerId}`)
+      logger.info(`[Webhook] Platform subscription cancelled: ${subscription.id} for photographer ${photographerId}`)
       return
     }
 
@@ -422,9 +423,9 @@ async function handleSubscriptionDeleted(
         .eq('id', sub.client_id)
     }
 
-    console.log(`[Webhook] Subscription cancelled: ${subscription.id}`)
+    logger.info(`[Webhook] Subscription cancelled: ${subscription.id}`)
   } catch (error) {
-    console.error('[Webhook] Error handling subscription.deleted:', error)
+    logger.error('[Webhook] Error handling subscription.deleted:', error)
     throw error
   }
 }
@@ -479,7 +480,7 @@ async function handleInvoicePaid(
         })
         .eq('id', photographerId)
 
-      console.log(`[Webhook] Platform subscription invoice paid: ${invoice.id} for photographer ${photographerId}`)
+      logger.info(`[Webhook] Platform subscription invoice paid: ${invoice.id} for photographer ${photographerId}`)
       return
     }
 
@@ -511,9 +512,9 @@ async function handleInvoicePaid(
         .eq('id', sub.client_id)
     }
 
-    console.log(`[Webhook] Invoice paid: ${invoice.id}`)
+    logger.info(`[Webhook] Invoice paid: ${invoice.id}`)
   } catch (error) {
-    console.error('[Webhook] Error handling invoice.paid:', error)
+    logger.error('[Webhook] Error handling invoice.paid:', error)
     throw error
   }
 }
@@ -560,7 +561,7 @@ async function handleInvoicePaymentFailed(
         })
         .eq('id', photographerId)
 
-      console.log(`[Webhook] Platform subscription payment failed: ${invoice.id} for photographer ${photographerId}`)
+      logger.info(`[Webhook] Platform subscription payment failed: ${invoice.id} for photographer ${photographerId}`)
       return
     }
 
@@ -590,9 +591,9 @@ async function handleInvoicePaymentFailed(
         .eq('id', sub.client_id)
     }
 
-    console.log(`[Webhook] Invoice payment failed: ${invoice.id}`)
+    logger.info(`[Webhook] Invoice payment failed: ${invoice.id}`)
   } catch (error) {
-    console.error('[Webhook] Error handling invoice.payment_failed:', error)
+    logger.error('[Webhook] Error handling invoice.payment_failed:', error)
     throw error
   }
 }
@@ -611,7 +612,7 @@ async function handlePaymentIntentSucceeded(
 
     // Check if this is a gallery payment
     if (metadata.type !== 'gallery_payment') {
-      console.log('[Webhook] Payment intent is not a gallery payment, skipping')
+      logger.info('[Webhook] Payment intent is not a gallery payment, skipping')
       return
     }
 
@@ -627,7 +628,7 @@ async function handlePaymentIntentSucceeded(
     const photographerPayoutCents = parseInt(metadata.photographerPayoutCents || '0', 10)
     const photovaultRevenueCents = parseInt(metadata.photovaultRevenueCents || '0', 10)
 
-    console.log(`[Webhook] Gallery payment succeeded for gallery ${galleryId}`, {
+    logger.info(`[Webhook] Gallery payment succeeded for gallery ${galleryId}`, {
       totalAmount: paymentIntent.amount,
       shootFee: shootFeeCents,
       storageFee: storageFeeCents,
@@ -646,7 +647,7 @@ async function handlePaymentIntentSucceeded(
       .eq('id', galleryId)
 
     if (updateError) {
-      console.error('[Webhook] Error updating gallery:', updateError)
+      logger.error('[Webhook] Error updating gallery:', updateError)
     }
 
     // 2. Record the payment transaction
@@ -673,7 +674,7 @@ async function handlePaymentIntentSucceeded(
       })
 
     if (txError) {
-      console.error('[Webhook] Error recording transaction:', txError)
+      logger.error('[Webhook] Error recording transaction:', txError)
     }
 
     // 3. Transfer photographer's payout to their connected account
@@ -712,10 +713,10 @@ async function handlePaymentIntentSucceeded(
             })
             .eq('stripe_payment_intent_id', paymentIntent.id)
 
-          console.log(`[Webhook] Created transfer ${transfer.id} for ${photographerPayoutCents} cents to ${photographer.stripe_account_id}`)
+          logger.info(`[Webhook] Created transfer ${transfer.id} for ${photographerPayoutCents} cents to ${photographer.stripe_account_id}`)
 
         } catch (transferError) {
-          console.error('[Webhook] Error creating transfer:', transferError)
+          logger.error('[Webhook] Error creating transfer:', transferError)
           // Don't throw - the payment succeeded, we just need to retry the transfer later
           // Mark the transaction as needing manual intervention
           await supabase
@@ -726,7 +727,7 @@ async function handlePaymentIntentSucceeded(
             .eq('stripe_payment_intent_id', paymentIntent.id)
         }
       } else {
-        console.warn(`[Webhook] Photographer ${photographerId} has no Stripe account - cannot transfer payout`)
+        logger.warn(`[Webhook] Photographer ${photographerId} has no Stripe account - cannot transfer payout`)
         await supabase
           .from('gallery_payment_transactions')
           .update({
@@ -756,10 +757,10 @@ async function handlePaymentIntentSucceeded(
       }
     }
 
-    console.log(`[Webhook] Gallery payment processing complete for ${galleryId}`)
+    logger.info(`[Webhook] Gallery payment processing complete for ${galleryId}`)
 
   } catch (error) {
-    console.error('[Webhook] Error handling payment_intent.succeeded:', error)
+    logger.error('[Webhook] Error handling payment_intent.succeeded:', error)
     throw error
   }
 }
@@ -780,7 +781,7 @@ async function handleAccountUpdated(
       .single()
 
     if (!photographer) {
-      console.log(`[Webhook] No photographer found for Stripe account: ${account.id}`)
+      logger.info(`[Webhook] No photographer found for Stripe account: ${account.id}`)
       return
     }
 
@@ -804,9 +805,9 @@ async function handleAccountUpdated(
       })
       .eq('id', photographer.id)
 
-    console.log(`[Webhook] Stripe Connect account updated: ${account.id}`)
+    logger.info(`[Webhook] Stripe Connect account updated: ${account.id}`)
   } catch (error) {
-    console.error('[Webhook] Error handling account.updated:', error)
+    logger.error('[Webhook] Error handling account.updated:', error)
     throw error
   }
 }

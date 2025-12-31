@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { getStripeClient, createPlatformSubscription, getSubscription } from '@/lib/stripe'
 import Stripe from 'stripe'
@@ -45,7 +46,7 @@ export async function POST(request: NextRequest) {
       .eq('id', user.id)
       .single()
 
-    console.log('[Platform Subscription] User verification:', {
+    logger.info('[Platform Subscription] User verification:', {
       userId: user.id,
       userEmail: user.email,
       profile: profile ? { user_type: profile.user_type } : null,
@@ -59,7 +60,7 @@ export async function POST(request: NextRequest) {
 
     if (!isPhotographer) {
       if (profileError) {
-        console.error('[Platform Subscription] Error fetching user profile:', profileError)
+        logger.error('[Platform Subscription] Error fetching user profile:', profileError)
         return NextResponse.json(
           { error: 'Failed to verify user profile', details: profileError.message },
           { status: 500 }
@@ -67,14 +68,14 @@ export async function POST(request: NextRequest) {
       }
 
       if (!profile) {
-        console.error('[Platform Subscription] User profile not found for user:', user.id)
+        logger.error('[Platform Subscription] User profile not found for user:', user.id)
         return NextResponse.json(
           { error: 'User profile not found' },
           { status: 404 }
         )
       }
 
-      console.warn('[Platform Subscription] User is not a photographer:', {
+      logger.warn('[Platform Subscription] User is not a photographer:', {
         userId: user.id,
         userType: profile.user_type,
         photographerRecordExists: !!photographerCheck,
@@ -103,7 +104,7 @@ export async function POST(request: NextRequest) {
 
     // If photographer record doesn't exist, create it
     if (photographerFetchError && photographerFetchError.code === 'PGRST116') {
-      console.log('[Platform Subscription] Photographer record not found, creating it...')
+      logger.info('[Platform Subscription] Photographer record not found, creating it...')
       const { data: newPhotographer, error: createError } = await supabase
         .from('photographers')
         .insert({ id: user.id })
@@ -111,7 +112,7 @@ export async function POST(request: NextRequest) {
         .single()
 
       if (createError) {
-        console.error('[Platform Subscription] Error creating photographer record:', createError)
+        logger.error('[Platform Subscription] Error creating photographer record:', createError)
         return NextResponse.json(
           { error: 'Failed to create photographer record', details: createError.message },
           { status: 500 }
@@ -120,7 +121,7 @@ export async function POST(request: NextRequest) {
 
       photographerData = newPhotographer
     } else if (photographerFetchError) {
-      console.error('[Platform Subscription] Error fetching photographer:', photographerFetchError)
+      logger.error('[Platform Subscription] Error fetching photographer:', photographerFetchError)
       return NextResponse.json(
         { error: 'Failed to fetch photographer data', details: photographerFetchError.message },
         { status: 500 }
@@ -146,7 +147,7 @@ export async function POST(request: NextRequest) {
       .eq('id', user.id)
       .single()
 
-    console.log('[Platform Subscription] Customer lookup:', {
+    logger.info('[Platform Subscription] Customer lookup:', {
       stripeCustomerId: userProfile?.stripe_customer_id,
       userProfileFound: !!userProfile,
       userProfileError: userProfileError?.message,
@@ -162,7 +163,7 @@ export async function POST(request: NextRequest) {
       }) as unknown as SubscriptionWithPeriods
     } catch (error) {
       const err = error as Error
-      console.error('[Platform Subscription] Error creating Stripe subscription:', err)
+      logger.error('[Platform Subscription] Error creating Stripe subscription:', err)
       return NextResponse.json(
         { 
           error: 'Failed to create subscription', 
@@ -174,7 +175,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Log subscription details for debugging
-    console.log('[Platform Subscription] Subscription created:', {
+    logger.info('[Platform Subscription] Subscription created:', {
       id: subscription.id,
       status: subscription.status,
       currentPeriodStart: subscription.current_period_start,
@@ -201,7 +202,7 @@ export async function POST(request: NextRequest) {
       .eq('id', user.id)
 
     if (updateError) {
-      console.error('[Platform Subscription] Error updating photographer:', updateError)
+      logger.error('[Platform Subscription] Error updating photographer:', updateError)
       // Don't fail - subscription is created in Stripe, we can update later
     }
 
@@ -248,7 +249,7 @@ export async function POST(request: NextRequest) {
     })
   } catch (error) {
     const err = error as Error
-    console.error('[Platform Subscription] Error creating subscription:', err)
+    logger.error('[Platform Subscription] Error creating subscription:', err)
     return NextResponse.json(
       { error: 'Failed to create subscription', message: err.message },
       { status: 500 }
@@ -290,7 +291,7 @@ export async function GET(request: NextRequest) {
     // If photographer record doesn't exist, return null (not an error)
     // This can happen if photographer profile wasn't created during signup
     if (photographerError || !photographer) {
-      console.warn('[Platform Subscription] Photographer record not found for user:', user.id)
+      logger.warn('[Platform Subscription] Photographer record not found for user:', user.id)
       return NextResponse.json({
         success: true,
         data: null,
@@ -352,7 +353,7 @@ export async function GET(request: NextRequest) {
     })
   } catch (error) {
     const err = error as Error
-    console.error('[Platform Subscription] Error fetching subscription:', err)
+    logger.error('[Platform Subscription] Error fetching subscription:', err)
     return NextResponse.json(
       { error: 'Failed to fetch subscription', message: err.message },
       { status: 500 }

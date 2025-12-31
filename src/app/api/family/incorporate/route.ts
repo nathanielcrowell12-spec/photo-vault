@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { createServerSupabaseClient, createServiceRoleClient } from '@/lib/supabase-server'
 
 export const dynamic = 'force-dynamic'
@@ -66,7 +67,7 @@ export async function GET(request: NextRequest) {
       .eq('is_family_shared', true)
 
     if (galleryError) {
-      console.error('[Incorporate GET] Error fetching galleries:', galleryError)
+      logger.error('[Incorporate GET] Error fetching galleries:', galleryError)
       return NextResponse.json(
         { error: 'Failed to fetch galleries' },
         { status: 500 }
@@ -112,7 +113,7 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('[Incorporate GET] Error:', error)
+    logger.error('[Incorporate GET] Error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -190,7 +191,7 @@ export async function POST(request: NextRequest) {
       .eq('is_family_shared', true)
 
     if (galleryError || !galleries) {
-      console.error('[Incorporate POST] Error fetching galleries:', galleryError)
+      logger.error('[Incorporate POST] Error fetching galleries:', galleryError)
       return NextResponse.json(
         { error: 'Failed to fetch galleries' },
         { status: 500 }
@@ -271,7 +272,7 @@ export async function POST(request: NextRequest) {
         .single()
 
       if (insertError) {
-        console.error('[Incorporate POST] Error inserting gallery:', insertError)
+        logger.error('[Incorporate POST] Error inserting gallery:', insertError)
         continue
       }
 
@@ -301,7 +302,7 @@ export async function POST(request: NextRequest) {
           .insert(newPhotos)
 
         if (photosError) {
-          console.error('[Incorporate POST] Error copying photos:', photosError)
+          logger.error('[Incorporate POST] Error copying photos:', photosError)
         }
       }
 
@@ -329,11 +330,11 @@ export async function POST(request: NextRequest) {
         .insert(incorporationRecords)
 
       if (incError) {
-        console.error('[Incorporate POST] Error recording incorporations:', incError)
+        logger.error('[Incorporate POST] Error recording incorporations:', incError)
       }
     }
 
-    console.log(`[Incorporate POST] User ${user.id} incorporated ${incorporatedGalleries.length} galleries`)
+    logger.info(`[Incorporate POST] User ${user.id} incorporated ${incorporatedGalleries.length} galleries`)
 
     return NextResponse.json({
       success: true,
@@ -343,7 +344,7 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('[Incorporate POST] Error:', error)
+    logger.error('[Incorporate POST] Error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

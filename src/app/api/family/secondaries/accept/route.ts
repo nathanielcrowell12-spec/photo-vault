@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { createServerSupabaseClient, createServiceRoleClient } from '@/lib/supabase-server'
 import { EmailService } from '@/lib/email/email-service'
 
@@ -80,7 +81,7 @@ export async function POST(request: NextRequest) {
       const { data: userData } = await serviceSupabase.auth.admin.getUserById(user.id)
       if (userData?.user?.email?.toLowerCase() !== invitation.email.toLowerCase()) {
         // Email mismatch - warn but allow (they might have multiple emails)
-        console.warn(`[Accept] Email mismatch: invitation for ${invitation.email}, logged in as ${userData?.user?.email}`)
+        logger.warn(`[Accept] Email mismatch: invitation for ${invitation.email}, logged in as ${userData?.user?.email}`)
       }
     } else {
       // User not logged in - check if account exists with this email
@@ -101,7 +102,7 @@ export async function POST(request: NextRequest) {
       }
 
       // No account exists in user_profiles - check if auth user exists
-      console.log(`[Accept] Checking for existing auth user: ${invitation.email}`)
+      logger.info(`[Accept] Checking for existing auth user: ${invitation.email}`)
 
       // First check if auth user already exists (they might have another account type)
       const { data: existingAuthUsers } = await serviceSupabase.auth.admin.listUsers()
@@ -111,7 +112,7 @@ export async function POST(request: NextRequest) {
 
       if (existingAuthUser) {
         // Auth user exists - link their existing account as secondary
-        console.log(`[Accept] Found existing auth user ${existingAuthUser.id} for ${invitation.email}, linking as secondary`)
+        logger.info(`[Accept] Found existing auth user ${existingAuthUser.id} for ${invitation.email}, linking as secondary`)
         secondaryUserId = existingAuthUser.id
 
         // Check if they have a user_profile, create one if not
@@ -135,7 +136,7 @@ export async function POST(request: NextRequest) {
         }
       } else {
         // No auth user exists - CREATE a new secondary user account
-        console.log(`[Accept] Creating secondary user account for ${invitation.email}`)
+        logger.info(`[Accept] Creating secondary user account for ${invitation.email}`)
 
         // Generate a temporary password
         const tempPassword = `Welcome${Math.random().toString(36).slice(-8)}!`
@@ -153,7 +154,7 @@ export async function POST(request: NextRequest) {
         })
 
         if (createUserError || !authUser.user) {
-          console.error('[Accept] Error creating user:', createUserError)
+          logger.error('[Accept] Error creating user:', createUserError)
           return NextResponse.json(
             { error: 'Failed to create your account. Please try again.' },
             { status: 500 }
@@ -175,7 +176,7 @@ export async function POST(request: NextRequest) {
           })
 
         if (profileError) {
-          console.error('[Accept] Error creating profile:', profileError)
+          logger.error('[Accept] Error creating profile:', profileError)
           // Don't fail - auth user was created, profile can be fixed later
         }
 
@@ -190,7 +191,7 @@ export async function POST(request: NextRequest) {
         })
 
         if (linkError || !linkData?.properties?.action_link) {
-          console.error('[Accept] Could not generate password reset link:', linkError)
+          logger.error('[Accept] Could not generate password reset link:', linkError)
           // Don't fail - they can use "Forgot Password" later
         } else {
           // Get primary's name for the email
@@ -210,13 +211,13 @@ export async function POST(request: NextRequest) {
           })
 
           if (emailResult.success) {
-            console.log(`[Accept] Welcome email with password link sent to ${invitation.email} via Resend`)
+            logger.info(`[Accept] Welcome email with password link sent to ${invitation.email} via Resend`)
           } else {
-            console.warn(`[Accept] Failed to send welcome email via Resend: ${emailResult.error}`)
+            logger.warn(`[Accept] Failed to send welcome email via Resend: ${emailResult.error}`)
           }
         }
 
-        console.log(`[Accept] Created secondary user ${secondaryUserId} for ${invitation.email}`)
+        logger.info(`[Accept] Created secondary user ${secondaryUserId} for ${invitation.email}`)
       }
     }
 
@@ -232,7 +233,7 @@ export async function POST(request: NextRequest) {
       .eq('id', invitation.id)
 
     if (updateError) {
-      console.error('[Accept] Update error:', updateError)
+      logger.error('[Accept] Update error:', updateError)
       return NextResponse.json(
         { error: 'Failed to accept invitation' },
         { status: 500 }
@@ -256,7 +257,7 @@ export async function POST(request: NextRequest) {
     // Use the tracked flag for whether we created a new account (vs linked existing)
     const accountCreated = newAccountCreated
 
-    console.log(`[Accept] Secondary ${invitation.email} accepted invitation for account ${invitation.account_id}${accountCreated ? ' (new account created)' : ' (existing account linked)'}`)
+    logger.info(`[Accept] Secondary ${invitation.email} accepted invitation for account ${invitation.account_id}${accountCreated ? ' (new account created)' : ' (existing account linked)'}`)
 
     return NextResponse.json({
       success: true,
@@ -278,7 +279,7 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('[Accept] Error:', error)
+    logger.error('[Accept] Error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -367,7 +368,7 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('[Accept GET] Error:', error)
+    logger.error('[Accept GET] Error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

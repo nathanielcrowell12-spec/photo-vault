@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { supabase } from '@/lib/supabase'
 
 export async function POST(request: NextRequest) {
@@ -52,7 +53,7 @@ export async function POST(request: NextRequest) {
       .select()
 
     if (reminderError) {
-      console.error('Error creating payment reminder:', reminderError)
+      logger.error('Error creating payment reminder:', reminderError)
       return NextResponse.json(
         { error: 'Failed to create payment reminder record' },
         { status: 500 }
@@ -78,7 +79,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Simulate email sending
-    console.log('Payment reminder email would be sent:', emailContent)
+    logger.info('Payment reminder email would be sent:', emailContent)
 
     return NextResponse.json({
       success: true,
@@ -88,7 +89,7 @@ export async function POST(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Payment reminder error:', error)
+    logger.error('Payment reminder error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -130,7 +131,7 @@ export async function GET(request: NextRequest) {
     const { data: reminders, error } = await query
 
     if (error) {
-      console.error('Error fetching payment reminders:', error)
+      logger.error('Error fetching payment reminders:', error)
       return NextResponse.json(
         { error: 'Failed to fetch payment reminders' },
         { status: 500 }
@@ -143,7 +144,7 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('Fetch payment reminders error:', error)
+    logger.error('Fetch payment reminders error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

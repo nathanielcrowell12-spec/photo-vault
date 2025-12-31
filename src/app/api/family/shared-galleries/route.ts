@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { logger } from '@/lib/logger'
 import { createServerSupabaseClient, createServiceRoleClient } from '@/lib/supabase-server'
 
 export const dynamic = 'force-dynamic'
@@ -39,7 +40,7 @@ export async function GET(request: NextRequest) {
       .eq('status', 'accepted')
 
     if (secondaryError) {
-      console.error('[Shared Galleries] Error fetching secondary records:', secondaryError)
+      logger.error('[Shared Galleries] Error fetching secondary records:', secondaryError)
       return NextResponse.json(
         { error: 'Failed to fetch secondary access' },
         { status: 500 }
@@ -63,7 +64,7 @@ export async function GET(request: NextRequest) {
       .in('id', accountIds)
 
     if (profileError) {
-      console.error('[Shared Galleries] Error fetching primary profiles:', profileError)
+      logger.error('[Shared Galleries] Error fetching primary profiles:', profileError)
     }
 
     // Create a map of account_id -> primary name
@@ -140,7 +141,7 @@ export async function GET(request: NextRequest) {
     )
 
     if (galleriesError) {
-      console.error('[Shared Galleries] Error fetching galleries:', galleriesError)
+      logger.error('[Shared Galleries] Error fetching galleries:', galleriesError)
       return NextResponse.json(
         { error: 'Failed to fetch shared galleries' },
         { status: 500 }
@@ -170,7 +171,7 @@ export async function GET(request: NextRequest) {
         .map(g => g.shared_by_account_id)
     )]
 
-    console.log(`[Shared Galleries] User ${user.id} has access to ${enrichedGalleries.length} shared galleries from ${accountIds.length} accounts`)
+    logger.info(`[Shared Galleries] User ${user.id} has access to ${enrichedGalleries.length} shared galleries from ${accountIds.length} accounts`)
 
     return NextResponse.json({
       galleries: enrichedGalleries,
@@ -179,7 +180,7 @@ export async function GET(request: NextRequest) {
     })
 
   } catch (error) {
-    console.error('[Shared Galleries] Error:', error)
+    logger.error('[Shared Galleries] Error:', error)
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }

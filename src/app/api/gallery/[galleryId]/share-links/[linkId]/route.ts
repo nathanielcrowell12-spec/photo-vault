@@ -4,6 +4,7 @@
  */
 import { NextRequest, NextResponse } from 'next/server'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
+import { logger } from '@/lib/logger'
 import { trackServerEvent } from '@/lib/analytics/server'
 import { EVENTS } from '@/types/analytics'
 
@@ -69,7 +70,7 @@ export async function DELETE(
       .eq('created_by_user_id', user.id)
 
     if (updateError) {
-      console.error('[ShareLinks] Error revoking share link:', updateError)
+      logger.error('[ShareLinks] Error revoking share link:', updateError)
       return NextResponse.json({ error: 'Failed to revoke share link' }, { status: 500 })
     }
 
@@ -80,10 +81,10 @@ export async function DELETE(
         share_link_id: linkId,
       })
     } catch (trackError) {
-      console.error('[ShareLinks] Error tracking event:', trackError)
+      logger.error('[ShareLinks] Error tracking event:', trackError)
     }
 
-    console.log(`[ShareLinks] Revoked share link ${linkId} for gallery ${galleryId}`)
+    logger.info(`[ShareLinks] Revoked share link ${linkId} for gallery ${galleryId}`)
 
     return NextResponse.json({
       success: true,
@@ -92,7 +93,7 @@ export async function DELETE(
 
   } catch (error) {
     const err = error as Error
-    console.error('[ShareLinks] Error:', err)
+    logger.error('[ShareLinks] Error:', err)
     return NextResponse.json(
       { error: 'Failed to revoke share link', message: err.message },
       { status: 500 }
