@@ -45,6 +45,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ]
 
+  // Resource pages (GEO content for AI search)
+  const resourcePages: MetadataRoute.Sitemap = [
+    {
+      url: `${baseUrl}/resources/photo-storage-guide`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/resources/photo-storage-comparison`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/resources/google-photos-alternatives`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+  ]
+
   // Fetch all locations from database
   const { data: locations, error } = await supabase
     .from('locations')
@@ -81,5 +103,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8, // High priority - these are our long-tail SEO targets
   })) || []
 
-  return [...staticPages, ...cityPages, ...locationPages]
+  return [...staticPages, ...resourcePages, ...cityPages, ...locationPages]
 }

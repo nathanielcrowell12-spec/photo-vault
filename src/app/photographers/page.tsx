@@ -1,17 +1,18 @@
+import { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { PricingComparison } from "@/components/pricing-comparison";
-import { 
-  ArrowLeft, 
-  Camera, 
-  Users, 
-  DollarSign, 
-  Clock, 
-  Shield, 
-  Zap, 
+import {
+  ArrowLeft,
+  Camera,
+  Users,
+  DollarSign,
+  Clock,
+  Shield,
+  Zap,
   CheckCircle,
   Star,
   TrendingUp,
@@ -20,9 +21,81 @@ import {
   Heart
 } from "lucide-react";
 
+export const metadata: Metadata = {
+  title: "PhotoVault for Photographers | Memory Insurance Platform",
+  description: "Turn every photoshoot into passive income. Earn $4/month per client forever while giving families permanent photo storage. Replace Pixieset, ShootProof, SmugMug.",
+  keywords: "photographer photo storage, client gallery hosting, photography passive income, memory insurance, photo delivery platform, Pixieset alternative, ShootProof alternative",
+  openGraph: {
+    type: "website",
+    title: "PhotoVault for Photographers | Earn Passive Income",
+    description: "Turn every photoshoot into $4/month passive income. Give clients permanent photo storage while building recurring revenue.",
+    url: "https://photovault.photo/photographers",
+    siteName: "PhotoVault",
+    images: [
+      {
+        url: "https://photovault.photo/images/og-photographers.webp",
+        width: 1200,
+        height: 630,
+        alt: "PhotoVault for Photographers - Memory Insurance Platform",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "PhotoVault for Photographers | Earn Passive Income",
+    description: "Turn every photoshoot into $4/month passive income. Give clients permanent photo storage.",
+    images: ["https://photovault.photo/images/og-photographers.webp"],
+  },
+  alternates: {
+    canonical: "https://photovault.photo/photographers",
+  },
+};
+
+// FAQ data for both rendering and structured data
+const faqs = [
+  {
+    question: "How does PhotoVault help photographers?",
+    answer: "PhotoVault stores client galleries permanently, automates engagement, and generates referral income. No more expiring galleries or lost client connections."
+  },
+  {
+    question: "Do I keep ownership of my photos?",
+    answer: "Yes, photographers retain full copyright and control. Clients only access approved galleries. Your work stays yours."
+  },
+  {
+    question: "What's the commission program?",
+    answer: "Earn $25 (6-month) or $50 (1-year) upfront + $4/month passive income for every family you protect. Plus $22/month platform fee."
+  },
+  {
+    question: "How does PhotoVault compare to Pixieset/ShootProof?",
+    answer: "PhotoVault charges $22/month vs $20-30/month competitors, but you earn $25-$50 + $4/month commission on every client - making it profitable!"
+  },
+  {
+    question: "What's included in the $22/month fee?",
+    answer: "Unlimited galleries, advanced analytics, commission tracking, PDF reports, client invitations, and professional CMS integration."
+  }
+];
+
 export default function PhotographersPage() {
   return (
     <div className="min-h-screen bg-background">
+      {/* FAQPage Structured Data for Rich Results */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "FAQPage",
+            mainEntity: faqs.map(faq => ({
+              "@type": "Question",
+              name: faq.question,
+              acceptedAnswer: {
+                "@type": "Answer",
+                text: faq.answer
+              }
+            }))
+          })
+        }}
+      />
       {/* Header */}
       <header className="border-b border-border bg-background/95 backdrop-blur-sm sticky top-0 z-50">
         <div className="container-pixieset py-5 flex items-center justify-between">
@@ -429,28 +502,7 @@ export default function PhotographersPage() {
           </div>
 
           <div className="max-w-3xl mx-auto space-y-6">
-            {[
-              {
-                question: "How does PhotoVault help photographers?",
-                answer: "PhotoVault stores client galleries permanently, automates engagement, and generates referral income. No more expiring galleries or lost client connections."
-              },
-              {
-                question: "Do I keep ownership of my photos?",
-                answer: "Yes, photographers retain full copyright and control. Clients only access approved galleries. Your work stays yours."
-              },
-              {
-                question: "What's the commission program?",
-                answer: "Earn $25 (6-month) or $50 (1-year) upfront + $4/month passive income for every family you protect. Plus $22/month platform fee."
-              },
-              {
-                question: "How does PhotoVault compare to Pixieset/ShootProof?",
-                answer: "PhotoVault charges $22/month vs $20-30/month competitors, but you earn $25-$50 + $4/month commission on every client - making it profitable!"
-              },
-              {
-                question: "What's included in the $22/month fee?",
-                answer: "Unlimited galleries, advanced analytics, commission tracking, PDF reports, client invitations, and professional CMS integration."
-              }
-            ].map((faq, index) => (
+            {faqs.map((faq, index) => (
               <Card key={index} className="border border-border bg-card/50">
                 <CardContent className="p-6">
                   <h3 className="text-lg font-semibold mb-3 text-foreground">{faq.question}</h3>

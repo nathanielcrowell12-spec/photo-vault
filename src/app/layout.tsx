@@ -25,11 +25,11 @@ export const metadata: Metadata = {
     type: "website",
     title: "Find and Keep Every Photo You Love — Forever | PhotoVault",
     description: "All your photographer galleries, together in one private dashboard. Simple. Secure. Free to start.",
-    url: "https://photovault.com",
+    url: "https://photovault.photo",
     siteName: "PhotoVault",
     images: [
       {
-        url: "https://photovault.com/images/og-consumer.webp",
+        url: "https://photovault.photo/images/og-consumer.webp",
         width: 1200,
         height: 630,
         alt: "PhotoVault - Find and Keep Your Photos Forever",
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Find and Keep Every Photo You Love — Forever | PhotoVault",
     description: "All your photographer galleries, together in one private dashboard. Simple. Secure. Free to start.",
-    images: ["https://photovault.com/images/og-consumer.webp"],
+    images: ["https://photovault.photo/images/og-consumer.webp"],
   },
   robots: {
     index: true,
@@ -54,7 +54,7 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://photovault.com",
+    canonical: "https://photovault.photo",
   },
 };
 
@@ -66,7 +66,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <link rel="canonical" href="https://photovault.com/" />
+        <link rel="canonical" href="https://photovault.photo/" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -74,7 +74,7 @@ export default function RootLayout({
               "@context": "https://schema.org",
               "@type": ["WebSite", "Service"],
               name: "PhotoVault",
-              url: "https://photovault.com/",
+              url: "https://photovault.photo/",
               description: "PhotoVault helps families find, organize, and keep every professional photo in one secure dashboard.",
               serviceType: "Photo retrieval and storage platform",
               offers: {
