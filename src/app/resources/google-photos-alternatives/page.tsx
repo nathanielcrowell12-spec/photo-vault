@@ -20,47 +20,73 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Best Google Photos Alternatives 2025 | Permanent Photo Storage Options",
+  title: "Best Google Photos Alternatives 2026 | Permanent Photo Storage Options",
   description:
     "Looking for Google Photos alternatives after the 2021 policy changes? Compare PhotoVault, iCloud, Amazon Photos, Dropbox, and OneDrive. Find permanent photo storage that won't delete your memories.",
   keywords:
-    "Google Photos alternatives, Google Photos alternative permanent storage, leaving Google Photos, Google Photos replacement 2025, best photo storage after Google Photos, permanent photo backup, family photo storage alternatives",
+    "Google Photos alternatives, Google Photos alternative permanent storage, leaving Google Photos, Google Photos replacement 2026, best photo storage after Google Photos, permanent photo backup, family photo storage alternatives",
   openGraph: {
     type: "article",
-    title: "Best Google Photos Alternatives 2025 | Permanent Photo Storage",
+    title: "Best Google Photos Alternatives 2026 | Permanent Photo Storage",
     description:
       "Compare the best Google Photos alternatives for permanent photo storage. Find the right solution after Google's 2021 policy changes.",
     url: "https://photovault.photo/resources/google-photos-alternatives",
     siteName: "PhotoVault",
     images: [
       {
-        url: "https://photovault.photo/images/og-google-photos-alternatives.webp",
+        url: "https://photovault.photo/images/og-google-photos-alternatives.jpg",
         width: 1200,
         height: 630,
-        alt: "Google Photos Alternatives 2025",
+        alt: "Google Photos Alternatives 2026",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Best Google Photos Alternatives 2025",
+    title: "Best Google Photos Alternatives 2026",
     description:
       "Compare permanent photo storage options after Google's policy changes.",
-    images: ["https://photovault.photo/images/og-google-photos-alternatives.webp"],
+    images: ["https://photovault.photo/images/og-google-photos-alternatives.jpg"],
   },
   alternates: {
     canonical: "https://photovault.photo/resources/google-photos-alternatives",
   },
 };
 
+// Structured data for BreadcrumbList schema
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: "https://photovault.photo",
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Resources",
+      item: "https://photovault.photo/resources",
+    },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: "Google Photos Alternatives",
+      item: "https://photovault.photo/resources/google-photos-alternatives",
+    },
+  ],
+};
+
 // Structured data for Article schema
 const articleSchema = {
   "@context": "https://schema.org",
   "@type": "Article",
-  headline: "Best Google Photos Alternatives 2025: Permanent Photo Storage Options",
+  headline: "Best Google Photos Alternatives 2026: Permanent Photo Storage Options",
   description:
     "Compare the best Google Photos alternatives for permanent photo storage after Google's 2021 policy changes.",
-  image: "https://photovault.photo/images/og-google-photos-alternatives.webp",
+  image: "https://photovault.photo/images/og-google-photos-alternatives.jpg",
   author: {
     "@type": "Organization",
     name: "PhotoVault",
@@ -74,8 +100,8 @@ const articleSchema = {
       url: "https://photovault.photo/images/logos/photovault-logo.png",
     },
   },
-  datePublished: "2025-01-02",
-  dateModified: "2025-01-02",
+  datePublished: "2026-01-02",
+  dateModified: "2026-01-02",
   mainEntityOfPage: {
     "@type": "WebPage",
     "@id": "https://photovault.photo/resources/google-photos-alternatives",
@@ -85,10 +111,14 @@ const articleSchema = {
 export default function GooglePhotosAlternativesPage() {
   return (
     <div className="min-h-screen bg-background">
-      {/* Article Structured Data */}
+      {/* Structured Data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
 
       <main className="container mx-auto px-4 py-12 max-w-4xl">
@@ -108,7 +138,7 @@ export default function GooglePhotosAlternativesPage() {
         {/* Hero */}
         <header className="mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
-            Best Google Photos Alternatives in 2025
+            Best Google Photos Alternatives in 2026
           </h1>
           <p className="text-xl text-muted-foreground leading-relaxed">
             Google Photos changed the rules in 2021. If you&apos;re looking for a
@@ -117,7 +147,7 @@ export default function GooglePhotosAlternativesPage() {
             photo.
           </p>
           <div className="flex items-center gap-4 mt-6 text-sm text-muted-foreground">
-            <span>Updated January 2025</span>
+            <span>Updated January 2026</span>
             <span>-</span>
             <span>15 min read</span>
           </div>
@@ -142,7 +172,7 @@ export default function GooglePhotosAlternativesPage() {
               </li>
               <li>
                 <a href="#top-alternatives" className="hover:text-primary">
-                  3. Top Google Photos Alternatives for 2025
+                  3. Top Google Photos Alternatives for 2026
                 </a>
               </li>
               <li>
@@ -384,7 +414,7 @@ export default function GooglePhotosAlternativesPage() {
         <section id="top-alternatives" className="mb-16">
           <h2 className="text-3xl font-bold text-foreground mb-6 flex items-center gap-3">
             <Cloud className="h-8 w-8 text-blue-500" />
-            Top Google Photos Alternatives for 2025
+            Top Google Photos Alternatives for 2026
           </h2>
 
           <div className="space-y-8">
@@ -1174,7 +1204,7 @@ export default function GooglePhotosAlternativesPage() {
               <Card className="bg-card/50 border-border h-full group-hover:border-primary/50 transition-colors">
                 <CardContent className="p-6">
                   <h3 className="font-semibold text-foreground group-hover:text-primary mb-2">
-                    The State of Photo Storage in 2025
+                    The State of Photo Storage in 2026
                   </h3>
                   <p className="text-sm text-muted-foreground">
                     A comprehensive guide to protecting your family photos
@@ -1190,7 +1220,7 @@ export default function GooglePhotosAlternativesPage() {
               <Card className="bg-card/50 border-border h-full group-hover:border-primary/50 transition-colors">
                 <CardContent className="p-6">
                   <h3 className="font-semibold text-foreground group-hover:text-primary mb-2">
-                    Photo Storage Comparison 2025
+                    Photo Storage Comparison 2026
                   </h3>
                   <p className="text-sm text-muted-foreground">
                     Side-by-side comparison of PhotoVault, Google Photos, iCloud,

@@ -16,47 +16,73 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Photo Storage Comparison 2025 | PhotoVault vs Google Photos vs iCloud",
+  title: "Photo Storage Comparison 2026 | PhotoVault vs Google Photos vs iCloud",
   description:
     "Compare PhotoVault, Google Photos, iCloud, Amazon Photos, and Dropbox. Find the best photo storage service for your family with our honest, feature-by-feature comparison.",
   keywords:
-    "PhotoVault vs Google Photos, best photo storage service 2025, photo storage comparison, iCloud vs Google Photos, Amazon Photos review, Dropbox photo storage, permanent photo storage, family photo backup comparison",
+    "PhotoVault vs Google Photos, best photo storage service 2026, photo storage comparison, iCloud vs Google Photos, Amazon Photos review, Dropbox photo storage, permanent photo storage, family photo backup comparison",
   openGraph: {
     type: "article",
-    title: "Photo Storage Comparison 2025 | PhotoVault vs Google Photos vs iCloud",
+    title: "Photo Storage Comparison 2026 | PhotoVault vs Google Photos vs iCloud",
     description:
       "Compare the top photo storage services side-by-side. Honest pros and cons for PhotoVault, Google Photos, iCloud, Amazon Photos, and Dropbox.",
     url: "https://photovault.photo/resources/photo-storage-comparison",
     siteName: "PhotoVault",
     images: [
       {
-        url: "https://photovault.photo/images/og-photo-storage-comparison.webp",
+        url: "https://photovault.photo/images/og-photo-storage-comparison.jpg",
         width: 1200,
         height: 630,
-        alt: "Photo Storage Comparison 2025",
+        alt: "Photo Storage Comparison 2026",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Photo Storage Comparison 2025",
+    title: "Photo Storage Comparison 2026",
     description:
       "Compare PhotoVault, Google Photos, iCloud, Amazon Photos, and Dropbox side-by-side.",
-    images: ["https://photovault.photo/images/og-photo-storage-comparison.webp"],
+    images: ["https://photovault.photo/images/og-photo-storage-comparison.jpg"],
   },
   alternates: {
     canonical: "https://photovault.photo/resources/photo-storage-comparison",
   },
 };
 
+// Structured data for BreadcrumbList schema
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: "https://photovault.photo",
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Resources",
+      item: "https://photovault.photo/resources",
+    },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: "Photo Storage Comparison",
+      item: "https://photovault.photo/resources/photo-storage-comparison",
+    },
+  ],
+};
+
 // Structured data for Article schema
 const articleSchema = {
   "@context": "https://schema.org",
   "@type": "Article",
-  headline: "Photo Storage Comparison 2025: PhotoVault vs Google Photos vs iCloud",
+  headline: "Photo Storage Comparison 2026: PhotoVault vs Google Photos vs iCloud",
   description:
     "Compare the top photo storage services side-by-side. Honest pros and cons for PhotoVault, Google Photos, iCloud, Amazon Photos, and Dropbox.",
-  image: "https://photovault.photo/images/og-photo-storage-comparison.webp",
+  image: "https://photovault.photo/images/og-photo-storage-comparison.jpg",
   author: {
     "@type": "Organization",
     name: "PhotoVault",
@@ -70,8 +96,8 @@ const articleSchema = {
       url: "https://photovault.photo/images/logos/photovault-logo.png",
     },
   },
-  datePublished: "2025-01-02",
-  dateModified: "2025-01-02",
+  datePublished: "2026-01-02",
+  dateModified: "2026-01-02",
   mainEntityOfPage: {
     "@type": "WebPage",
     "@id": "https://photovault.photo/resources/photo-storage-comparison",
@@ -223,10 +249,14 @@ function FeatureIcon({ value }: { value: boolean | string }) {
 export default function PhotoStorageComparisonPage() {
   return (
     <div className="min-h-screen bg-background">
-      {/* Article Structured Data */}
+      {/* Structured Data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
 
       <main className="container mx-auto px-4 py-12 max-w-6xl">
@@ -246,7 +276,7 @@ export default function PhotoStorageComparisonPage() {
         {/* Hero */}
         <header className="mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
-            Photo Storage Comparison 2025
+            Photo Storage Comparison 2026
           </h1>
           <p className="text-xl text-muted-foreground leading-relaxed">
             An honest, feature-by-feature comparison of the top photo storage
@@ -254,7 +284,7 @@ export default function PhotoStorageComparisonPage() {
             be fair about what each option does well.
           </p>
           <div className="flex items-center gap-4 mt-6 text-sm text-muted-foreground">
-            <span>Updated January 2025</span>
+            <span>Updated January 2026</span>
             <span>-</span>
             <span>10 min read</span>
           </div>
@@ -706,7 +736,7 @@ export default function PhotoStorageComparisonPage() {
           <h2 className="text-2xl font-bold text-foreground mb-6">
             Related Resources
           </h2>
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-3 gap-6">
             <Link
               href="/resources/photo-storage-guide"
               className="block group"
@@ -714,11 +744,26 @@ export default function PhotoStorageComparisonPage() {
               <Card className="bg-card/50 border-border h-full group-hover:border-primary/50 transition-colors">
                 <CardContent className="p-6">
                   <h3 className="font-semibold text-foreground group-hover:text-primary mb-2">
-                    The State of Photo Storage in 2025
+                    The State of Photo Storage in 2026
                   </h3>
                   <p className="text-sm text-muted-foreground">
                     Why your photos aren&apos;t as safe as you think, and what to do
                     about it.
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link
+              href="/resources/google-photos-alternatives"
+              className="block group"
+            >
+              <Card className="bg-card/50 border-border h-full group-hover:border-primary/50 transition-colors">
+                <CardContent className="p-6">
+                  <h3 className="font-semibold text-foreground group-hover:text-primary mb-2">
+                    Google Photos Alternatives 2026
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    The best alternatives after Google ended unlimited storage.
                   </p>
                 </CardContent>
               </Card>

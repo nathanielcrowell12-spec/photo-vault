@@ -16,47 +16,73 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "The State of Photo Storage in 2025 | Complete Guide",
+  title: "The State of Photo Storage in 2026 | Complete Guide",
   description:
     "Learn how to store photos long-term without losing them. Compare cloud storage, local drives, and managed services. Find the best photo storage solution for your family.",
   keywords:
-    "how to store photos long term, best way to preserve family photos, photo storage options 2025, permanent photo storage, cloud photo storage comparison, family photo backup",
+    "how to store photos long term, best way to preserve family photos, photo storage options 2026, permanent photo storage, cloud photo storage comparison, family photo backup",
   openGraph: {
     type: "article",
-    title: "The State of Photo Storage in 2025 | Complete Guide",
+    title: "The State of Photo Storage in 2026 | Complete Guide",
     description:
       "Why cloud storage isn't permanent and what families should know about protecting their photos forever.",
     url: "https://photovault.photo/resources/photo-storage-guide",
     siteName: "PhotoVault",
     images: [
       {
-        url: "https://photovault.photo/images/og-photo-storage-guide.webp",
+        url: "https://photovault.photo/images/og-photo-storage-guide.jpg",
         width: 1200,
         height: 630,
-        alt: "Photo Storage Guide 2025",
+        alt: "Photo Storage Guide 2026",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "The State of Photo Storage in 2025",
+    title: "The State of Photo Storage in 2026",
     description:
       "Why cloud storage isn't permanent and what families should know.",
-    images: ["https://photovault.photo/images/og-photo-storage-guide.webp"],
+    images: ["https://photovault.photo/images/og-photo-storage-guide.jpg"],
   },
   alternates: {
     canonical: "https://photovault.photo/resources/photo-storage-guide",
   },
 };
 
+// Structured data for BreadcrumbList schema
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: "https://photovault.photo",
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Resources",
+      item: "https://photovault.photo/resources",
+    },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: "Photo Storage Guide",
+      item: "https://photovault.photo/resources/photo-storage-guide",
+    },
+  ],
+};
+
 // Structured data for Article schema
 const articleSchema = {
   "@context": "https://schema.org",
   "@type": "Article",
-  headline: "The State of Photo Storage in 2025: A Complete Guide",
+  headline: "The State of Photo Storage in 2026: A Complete Guide",
   description:
     "Learn how to store photos long-term without losing them. Compare cloud storage, local drives, and managed services.",
-  image: "https://photovault.photo/images/og-photo-storage-guide.webp",
+  image: "https://photovault.photo/images/og-photo-storage-guide.jpg",
   author: {
     "@type": "Organization",
     name: "PhotoVault",
@@ -70,8 +96,8 @@ const articleSchema = {
       url: "https://photovault.photo/images/logos/photovault-logo.png",
     },
   },
-  datePublished: "2025-01-02",
-  dateModified: "2025-01-02",
+  datePublished: "2026-01-02",
+  dateModified: "2026-01-02",
   mainEntityOfPage: {
     "@type": "WebPage",
     "@id": "https://photovault.photo/resources/photo-storage-guide",
@@ -81,10 +107,14 @@ const articleSchema = {
 export default function PhotoStorageGuidePage() {
   return (
     <div className="min-h-screen bg-background">
-      {/* Article Structured Data */}
+      {/* Structured Data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(articleSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
 
       <main className="container mx-auto px-4 py-12 max-w-4xl">
@@ -104,7 +134,7 @@ export default function PhotoStorageGuidePage() {
         {/* Hero */}
         <header className="mb-12">
           <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6 leading-tight">
-            The State of Photo Storage in 2025
+            The State of Photo Storage in 2026
           </h1>
           <p className="text-xl text-muted-foreground leading-relaxed">
             Your photos aren&apos;t as safe as you think. Here&apos;s what every
@@ -112,7 +142,7 @@ export default function PhotoStorageGuidePage() {
             to actually keep them forever.
           </p>
           <div className="flex items-center gap-4 mt-6 text-sm text-muted-foreground">
-            <span>Updated January 2025</span>
+            <span>Updated January 2026</span>
             <span>•</span>
             <span>12 min read</span>
           </div>
@@ -659,7 +689,7 @@ export default function PhotoStorageGuidePage() {
           <h2 className="text-2xl font-bold text-foreground mb-6">
             Related Resources
           </h2>
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-3 gap-6">
             <Link
               href="/resources/photo-storage-comparison"
               className="block group"
@@ -667,11 +697,26 @@ export default function PhotoStorageGuidePage() {
               <Card className="bg-card/50 border-border h-full group-hover:border-primary/50 transition-colors">
                 <CardContent className="p-6">
                   <h3 className="font-semibold text-foreground group-hover:text-primary mb-2">
-                    Photo Storage Comparison 2025
+                    Photo Storage Comparison 2026
                   </h3>
                   <p className="text-sm text-muted-foreground">
                     Side-by-side comparison of PhotoVault, Google Photos, iCloud,
                     and more.
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link
+              href="/resources/google-photos-alternatives"
+              className="block group"
+            >
+              <Card className="bg-card/50 border-border h-full group-hover:border-primary/50 transition-colors">
+                <CardContent className="p-6">
+                  <h3 className="font-semibold text-foreground group-hover:text-primary mb-2">
+                    Google Photos Alternatives 2026
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    The best alternatives after Google ended unlimited storage.
                   </p>
                 </CardContent>
               </Card>
