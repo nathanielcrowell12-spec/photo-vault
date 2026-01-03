@@ -371,14 +371,14 @@ export default function MessagingPanel({ onClose, initialConversationId }: Messa
 
   if (loading) {
     return (
-      <Card className="w-full h-[85vh] max-h-[800px] min-h-[500px] flex items-center justify-center">
+      <Card className="w-full h-full max-h-[min(800px,calc(100vh-2rem))] min-h-[400px] flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </Card>
     )
   }
 
   return (
-    <Card className="w-full h-[85vh] max-h-[800px] min-h-[500px] flex flex-col overflow-hidden">
+    <Card className="w-full h-full max-h-[min(800px,calc(100vh-2rem))] min-h-[400px] flex flex-col overflow-hidden">
       <CardHeader className="border-b">
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">

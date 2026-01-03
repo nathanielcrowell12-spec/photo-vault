@@ -1,21 +1,20 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { MessageSquare } from 'lucide-react'
-import MessagingPanel from './MessagingPanel'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabaseBrowser } from '@/lib/supabase-browser'
 
 interface MessagesButtonProps {
   variant?: 'icon' | 'button'
   showLabel?: boolean
+  onClick?: () => void
 }
 
-export default function MessagesButton({ variant = 'icon', showLabel = false }: MessagesButtonProps) {
+export default function MessagesButton({ variant = 'icon', showLabel = false, onClick }: MessagesButtonProps) {
   const { user } = useAuth()
-  const [showMessages, setShowMessages] = useState(false)
   const [unreadCount, setUnreadCount] = useState(0)
 
   useEffect(() => {
@@ -73,59 +72,39 @@ export default function MessagesButton({ variant = 'icon', showLabel = false }: 
 
   if (variant === 'icon') {
     return (
-      <>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="relative"
-          onClick={() => setShowMessages(true)}
-          title="Messages"
-        >
-          <MessageSquare className="h-5 w-5" />
-          {unreadCount > 0 && (
-            <Badge
-              variant="destructive"
-              className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
-            >
-              {unreadCount > 9 ? '9+' : unreadCount}
-            </Badge>
-          )}
-        </Button>
-
-        {showMessages && (
-          <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="w-full max-w-4xl">
-              <MessagingPanel onClose={() => setShowMessages(false)} />
-            </div>
-          </div>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="relative"
+        onClick={onClick}
+        title="Messages"
+      >
+        <MessageSquare className="h-5 w-5" />
+        {unreadCount > 0 && (
+          <Badge
+            variant="destructive"
+            className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs"
+          >
+            {unreadCount > 9 ? '9+' : unreadCount}
+          </Badge>
         )}
-      </>
+      </Button>
     )
   }
 
   return (
-    <>
-      <Button
-        variant="outline"
-        onClick={() => setShowMessages(true)}
-        className="relative"
-      >
-        <MessageSquare className="h-4 w-4 mr-2" />
-        {showLabel && 'Messages'}
-        {unreadCount > 0 && (
-          <Badge variant="destructive" className="ml-2">
-            {unreadCount}
-          </Badge>
-        )}
-      </Button>
-
-      {showMessages && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="w-full max-w-4xl">
-            <MessagingPanel onClose={() => setShowMessages(false)} />
-          </div>
-        </div>
+    <Button
+      variant="outline"
+      onClick={onClick}
+      className="relative"
+    >
+      <MessageSquare className="h-4 w-4 mr-2" />
+      {showLabel && 'Messages'}
+      {unreadCount > 0 && (
+        <Badge variant="destructive" className="ml-2">
+          {unreadCount}
+        </Badge>
       )}
-    </>
+    </Button>
   )
 }

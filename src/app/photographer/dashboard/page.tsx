@@ -33,6 +33,7 @@ import Link from 'next/link'
 import AccessGuard from '@/components/AccessGuard'
 import GalleryGrid from '@/components/GalleryGrid'
 import MessagesButton from '@/components/MessagesButton'
+import MessagingPanel from '@/components/MessagingPanel'
 import { ThemeModeToggle } from '@/components/ThemeModeToggle'
 
 export default function PhotographerDashboardPage() {
@@ -47,6 +48,7 @@ export default function PhotographerDashboardPage() {
   const [statsLoading, setStatsLoading] = useState(true)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [showMessages, setShowMessages] = useState(false)
 
   useEffect(() => {
     if (!loading && !user) {
@@ -419,7 +421,7 @@ export default function PhotographerDashboardPage() {
                   </div>
                   <h3 className="text-xl font-medium text-foreground">Client Messages</h3>
                 </div>
-                <MessagesButton variant="button" showLabel />
+                <MessagesButton variant="button" showLabel onClick={() => setShowMessages(true)} />
               </div>
               <p className="text-muted-foreground text-sm">Click the button above to view and respond to client messages.</p>
             </section>
@@ -464,6 +466,22 @@ export default function PhotographerDashboardPage() {
             <span className="text-[10px] font-medium">Settings</span>
           </Link>
         </div>
+
+        {/* Messaging Panel Modal */}
+        {showMessages && (
+          <div
+            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setShowMessages(false)
+              }
+            }}
+          >
+            <div className="w-full max-w-4xl max-h-[calc(100vh-2rem)]">
+              <MessagingPanel onClose={() => setShowMessages(false)} />
+            </div>
+          </div>
+        )}
 
       </div>
     </AccessGuard>

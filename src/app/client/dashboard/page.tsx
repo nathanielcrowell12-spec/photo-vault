@@ -117,7 +117,7 @@ export default function ClientDashboardPage() {
                   Family Account
                 </Badge>
                 <ThemeModeToggle variant="icon" />
-                <MessagesButton variant="icon" />
+                <MessagesButton variant="icon" onClick={() => setShowMessages(true)} />
                 <Button variant="ghost" size="icon" asChild title="Settings">
                   <Link href="/client/settings">
                     <Settings className="h-5 w-5" />
@@ -278,8 +278,16 @@ export default function ClientDashboardPage() {
 
             {/* Messaging Panel Modal */}
             {showMessages && (
-              <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-                <div className="w-full max-w-4xl">
+              <div
+                className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+                onClick={(e) => {
+                  // Close when clicking the backdrop (not the panel itself)
+                  if (e.target === e.currentTarget) {
+                    setShowMessages(false)
+                  }
+                }}
+              >
+                <div className="w-full max-w-4xl max-h-[calc(100vh-2rem)]">
                   <MessagingPanel onClose={() => setShowMessages(false)} />
                 </div>
               </div>
