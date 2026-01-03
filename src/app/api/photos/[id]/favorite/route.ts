@@ -20,31 +20,59 @@ export async function POST(
       )
     }
 
-    // Get the photo and verify user has access
-    // Join clients table to check if the user is linked to the client record
-    const { data: photo, error: photoError } = await supabase
-      .from('gallery_photos')
+    // Try to find photo in both tables (photos = desktop uploader, gallery_photos = web imports)
+    let photo: { id: string; gallery_id: string; is_favorite: boolean } | null = null
+    let photoTable: 'photos' | 'gallery_photos' = 'photos'
+
+    // First try 'photos' table (canonical, used by desktop uploader)
+    const { data: photosData, error: photosError } = await supabase
+      .from('photos')
+      .select('id, gallery_id, is_favorite')
+      .eq('id', photoId)
+      .maybeSingle()
+
+    if (photosData) {
+      photo = photosData
+      photoTable = 'photos'
+    } else {
+      // Try 'gallery_photos' table (legacy, used by web imports)
+      const { data: galleryPhotosData, error: galleryPhotosError } = await supabase
+        .from('gallery_photos')
+        .select('id, gallery_id, is_favorite')
+        .eq('id', photoId)
+        .maybeSingle()
+
+      if (galleryPhotosData) {
+        photo = galleryPhotosData
+        photoTable = 'gallery_photos'
+      } else {
+        logger.error('[Favorite API] Photo not found in either table:', { photosError, galleryPhotosError })
+        return NextResponse.json(
+          { error: 'Photo not found' },
+          { status: 404 }
+        )
+      }
+    }
+
+    // Get gallery to verify access
+    const { data: gallery, error: galleryError } = await supabase
+      .from('photo_galleries')
       .select(`
         id,
-        gallery_id,
-        is_favorite,
-        photo_galleries!inner (
-          id,
-          client_id,
-          user_id,
-          photographer_id,
-          clients (
-            user_id
-          )
+        client_id,
+        user_id,
+        photographer_id,
+        clients (
+          user_id
         )
       `)
-      .eq('id', photoId)
+      .eq('id', photo.gallery_id)
       .single()
 
-    if (photoError || !photo) {
-      logger.error('[Favorite API] Photo not found:', photoError)
+    if (galleryError || !gallery) {
+      logger.error('[Favorite API] Gallery not found:', galleryError)
       return NextResponse.json(
-        { error: 'Photo not found' },
+        { error: 'Gallery not found' },
         { status: 404 }
       )
     }
@@ -55,27 +83,22 @@ export async function POST(
     // 2. User is the photographer
     // 3. User is linked to a client record that's assigned to this gallery
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const galleryData = photo.photo_galleries as any
-    const gallery = {
-      id: galleryData?.id as string,
-      client_id: galleryData?.client_id as string | null,
-      user_id: galleryData?.user_id as string | null,
-      photographer_id: galleryData?.photographer_id as string | null,
-      // clients comes back as array from Supabase join, take first element
-      clientUserId: (galleryData?.clients?.[0]?.user_id ?? galleryData?.clients?.user_id) as string | null
-    }
+    const clientData = (gallery as any).clients
+    const clientUserId = Array.isArray(clientData)
+      ? clientData[0]?.user_id
+      : clientData?.user_id
 
     const hasAccess =
       gallery.user_id === user.id ||
       gallery.photographer_id === user.id ||
-      gallery.clientUserId === user.id
+      clientUserId === user.id
 
     if (!hasAccess) {
       logger.error('[Favorite API] User does not have access to this photo:', {
         userId: user.id,
         galleryUserId: gallery.user_id,
         photographerId: gallery.photographer_id,
-        clientUserId: gallery.clientUserId
+        clientUserId
       })
       return NextResponse.json(
         { error: 'Access denied' },
@@ -83,11 +106,11 @@ export async function POST(
       )
     }
 
-    // Toggle the favorite status
+    // Toggle the favorite status in the correct table
     const newFavoriteStatus = !photo.is_favorite
 
     const { error: updateError } = await supabase
-      .from('gallery_photos')
+      .from(photoTable)
       .update({ is_favorite: newFavoriteStatus })
       .eq('id', photoId)
 
@@ -99,7 +122,7 @@ export async function POST(
       )
     }
 
-    logger.info(`[Favorite API] Photo ${photoId} is_favorite set to ${newFavoriteStatus}`)
+    logger.info(`[Favorite API] Photo ${photoId} in ${photoTable} is_favorite set to ${newFavoriteStatus}`)
 
     return NextResponse.json({
       success: true,
