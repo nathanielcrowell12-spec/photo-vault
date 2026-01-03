@@ -293,7 +293,7 @@ export default function SneakPeekSelectPage() {
         {/* What will happen notification */}
         <Alert className="mb-6 bg-blue-500/10 border-blue-500/30">
           <Send className="h-4 w-4 text-blue-400" />
-          <AlertDescription className="text-blue-100">
+          <AlertDescription className="text-foreground">
             This will send an email to{' '}
             <span className="font-medium">{gallery?.clients?.email}</span>
             {' '}with a link to view
@@ -308,7 +308,7 @@ export default function SneakPeekSelectPage() {
         <Card className="bg-slate-800/50 border-border mb-6">
           <CardHeader className="pb-3">
             <CardTitle className="text-foreground text-lg">{gallery?.gallery_name}</CardTitle>
-            <CardDescription className="text-muted-foreground">
+            <CardDescription className="text-slate-300">
               For: {gallery?.clients?.name || 'Unknown client'} ({gallery?.clients?.email})
             </CardDescription>
           </CardHeader>

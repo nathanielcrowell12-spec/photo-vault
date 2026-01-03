@@ -214,6 +214,7 @@ export default function GalleryUploadPage({ params }: { params: Promise<{ id: st
       console.log('[Upload] Photo records created successfully')
 
       // Update gallery photo count in photo_galleries (canonical table)
+      // Note: cover_image_url is set automatically by database trigger
       const { error: updateError } = await supabase
         .from('photo_galleries')
         .update({ photo_count: photos.length + files.length })
