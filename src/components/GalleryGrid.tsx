@@ -93,68 +93,108 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
       console.log('GalleryGrid: Supabase URL:', process.env.NEXT_PUBLIC_SUPABASE_URL)
       console.log('GalleryGrid: Using anon key:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY?.substring(0, 20) + '...')
       
-      // Fetch galleries from Supabase
-      // For photographers: fetch galleries where they are the photographer (photographer_id = userId)
-      // For clients: fetch galleries where they are the user (user_id = userId)
-      let query = supabase
-        .from('photo_galleries')
-        .select('*')
-      
       if (isPhotographer) {
         // Fetch galleries created by this photographer
-        query = query.eq('photographer_id', userId)
-      } else {
-        // For clients: show only self-uploaded galleries (photographer_id is null)
-        // This filters out old test data and photographer-assigned galleries
-        query = query.eq('user_id', userId).is('photographer_id', null)
-      }
-      
-      const { data: galleriesData, error } = await query.order('created_at', { ascending: false })
-      
-      console.log('GalleryGrid: Query response - data count:', galleriesData?.length, 'error:', error)
-      
-      if (error) {
-        console.error('GalleryGrid: Error fetching galleries:', error)
-        console.error('GalleryGrid: Error code:', error.code)
-        console.error('GalleryGrid: Error message:', error.message)
-        console.error('GalleryGrid: Error details:', error.details)
-        console.error('GalleryGrid: Error hint:', error.hint)
-        // If table doesn't exist yet, show empty state
-        if (error.message.includes('Could not find')) {
-          console.log('GalleryGrid: Galleries table not found - showing empty state')
+        const { data: galleriesData, error } = await supabase
+          .from('photo_galleries')
+          .select('*')
+          .eq('photographer_id', userId)
+          .order('created_at', { ascending: false })
+
+        if (error) {
+          console.error('GalleryGrid: Error fetching galleries:', error)
           setGalleries([])
           setLoading(false)
           return
         }
-        console.log('GalleryGrid: Setting empty galleries due to error')
-        setGalleries([])
+
+        // Map and set galleries
+        const mappedGalleries: Gallery[] = (galleriesData || []).map(g => ({
+          id: g.id,
+          gallery_name: g.gallery_name,
+          gallery_description: g.gallery_description,
+          cover_image_url: g.cover_image_url || '/images/placeholder-family.svg',
+          platform: g.platform,
+          photographer_name: g.photographer_name,
+          photographer_id: g.photographer_id,
+          session_date: g.session_date,
+          photo_count: g.photo_count || 0,
+          gallery_url: g.gallery_url,
+          created_at: g.created_at,
+          user_id: g.user_id,
+          client_id: g.client_id
+        }))
+
+        setGalleries(mappedGalleries)
+        setLoading(false)
+        return
+      } else {
+        // For clients: fetch galleries assigned to them via client_id OR self-uploaded
+        // Step 1: Get client records linked to this auth user
+        const { data: clientRecords } = await supabase
+          .from('clients')
+          .select('id')
+          .eq('user_id', userId)
+
+        const clientIds = clientRecords?.map(c => c.id) || []
+        console.log('GalleryGrid: Found client records:', clientIds.length, clientIds)
+
+        // Step 2: Query galleries where client_id matches OR user_id matches (self-uploaded)
+        let galleriesData: Record<string, unknown>[] = []
+        let error: { message: string; code?: string } | null = null
+
+        if (clientIds.length > 0) {
+          // Client has photographer relationships - show those galleries plus self-uploaded
+          const result = await supabase
+            .from('photo_galleries')
+            .select('*')
+            .or(`client_id.in.(${clientIds.join(',')}),user_id.eq.${userId}`)
+            .order('created_at', { ascending: false })
+
+          galleriesData = result.data || []
+          error = result.error
+        } else {
+          // No client records - only show self-uploaded galleries
+          const result = await supabase
+            .from('photo_galleries')
+            .select('*')
+            .eq('user_id', userId)
+            .is('photographer_id', null)
+            .order('created_at', { ascending: false })
+
+          galleriesData = result.data || []
+          error = result.error
+        }
+
+        if (error) {
+          console.error('GalleryGrid: Error fetching client galleries:', error)
+          setGalleries([])
+          setLoading(false)
+          return
+        }
+
+        // Map and set galleries
+        const mappedGalleries: Gallery[] = (galleriesData || []).map((g: Record<string, unknown>) => ({
+          id: g.id as string,
+          gallery_name: g.gallery_name as string,
+          gallery_description: g.gallery_description as string | undefined,
+          cover_image_url: (g.cover_image_url as string) || '/images/placeholder-family.svg',
+          platform: g.platform as string,
+          photographer_name: g.photographer_name as string | undefined,
+          photographer_id: g.photographer_id as string | undefined,
+          session_date: g.session_date as string | undefined,
+          photo_count: (g.photo_count as number) || 0,
+          gallery_url: g.gallery_url as string | undefined,
+          created_at: g.created_at as string,
+          user_id: g.user_id as string | undefined,
+          client_id: g.client_id as string | undefined
+        }))
+
+        console.log('GalleryGrid: Fetched client galleries:', mappedGalleries.length)
+        setGalleries(mappedGalleries)
         setLoading(false)
         return
       }
-      
-      console.log('GalleryGrid: Fetched galleries:', galleriesData?.length || 0)
-      console.log('GalleryGrid: Raw galleries data:', galleriesData)
-      
-      // Map database fields to Gallery interface
-      const mappedGalleries: Gallery[] = (galleriesData || []).map(g => ({
-        id: g.id,
-        gallery_name: g.gallery_name,
-        gallery_description: g.gallery_description,
-        cover_image_url: g.cover_image_url || '/images/placeholder-family.svg',
-        platform: g.platform,
-        photographer_name: g.photographer_name,
-        photographer_id: g.photographer_id,
-        session_date: g.session_date,
-        photo_count: g.photo_count || 0,
-        gallery_url: g.gallery_url,
-        created_at: g.created_at,
-        user_id: g.user_id,
-        client_id: g.client_id
-      }))
-      
-      console.log('GalleryGrid: Mapped galleries:', mappedGalleries)
-      setGalleries(mappedGalleries)
-      setLoading(false)
     } catch (error) {
       console.error('GalleryGrid: Catch block - Error fetching galleries:', error)
       setGalleries([])
@@ -273,7 +313,23 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
   }
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString('en-US', {
+    // Parse date string to avoid timezone shift issues
+    // For date-only strings like "1984-10-10", use UTC to prevent day shift
+    const date = new Date(dateString)
+
+    // Check if it's a date-only string (no time component)
+    if (dateString.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      // Use UTC methods to avoid timezone shift
+      return new Date(date.getTime() + date.getTimezoneOffset() * 60000)
+        .toLocaleDateString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        })
+    }
+
+    // For full timestamps, use normal formatting
+    return date.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric'

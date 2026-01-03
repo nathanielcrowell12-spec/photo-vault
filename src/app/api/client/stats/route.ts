@@ -16,18 +16,34 @@ export async function GET() {
       )
     }
 
+    // First, get the client record(s) linked to this auth user
+    // The clients table has user_id FK to auth.users
+    const { data: clientRecords } = await supabase
+      .from('clients')
+      .select('id')
+      .eq('user_id', user.id)
+
+    const clientIds = clientRecords?.map(c => c.id) || []
+
     // Get total galleries count for this client
-    const { count: galleriesCount } = await supabase
-      .from('photo_galleries')
-      .select('*', { count: 'exact', head: true })
-      .eq('client_id', user.id)
+    // photo_galleries.client_id references clients.id, NOT auth.users.id
+    let galleriesCount = 0
+    if (clientIds.length > 0) {
+      const { count } = await supabase
+        .from('photo_galleries')
+        .select('*', { count: 'exact', head: true })
+        .in('client_id', clientIds)
+      galleriesCount = count || 0
+    }
 
     // Get total photos count across all client's galleries
     // Using a subquery approach: get gallery IDs first, then count photos
-    const { data: clientGalleries } = await supabase
-      .from('photo_galleries')
-      .select('id')
-      .eq('client_id', user.id)
+    const { data: clientGalleries } = clientIds.length > 0
+      ? await supabase
+          .from('photo_galleries')
+          .select('id')
+          .in('client_id', clientIds)
+      : { data: [] }
 
     let photosCount = 0
     if (clientGalleries && clientGalleries.length > 0) {
@@ -53,18 +69,20 @@ export async function GET() {
     }
 
     // Get recent galleries for Recent Sessions section (limit 3)
-    const { data: recentGalleries } = await supabase
-      .from('photo_galleries')
-      .select(`
-        id,
-        gallery_name,
-        created_at,
-        cover_image_url,
-        photo_count
-      `)
-      .eq('client_id', user.id)
-      .order('created_at', { ascending: false })
-      .limit(3)
+    const { data: recentGalleries } = clientIds.length > 0
+      ? await supabase
+          .from('photo_galleries')
+          .select(`
+            id,
+            gallery_name,
+            created_at,
+            cover_image_url,
+            photo_count
+          `)
+          .in('client_id', clientIds)
+          .order('created_at', { ascending: false })
+          .limit(3)
+      : { data: [] }
 
     // Get favorites count from gallery_photos
     let favoritesCount = 0
