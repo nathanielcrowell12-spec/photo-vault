@@ -52,6 +52,10 @@ export async function middleware(req: NextRequest) {
     '/logout',
     '/login',
     '/reset-password',
+    '/sitemap.xml',
+    '/robots.txt',
+    '/llms.txt',
+    '/llms-full.txt',
   ]
 
   // Gallery pages are public (paywall handles access control)
@@ -63,6 +67,12 @@ export async function middleware(req: NextRequest) {
   // Directory pages are public (photographer/location discovery)
   if (pathname.startsWith('/directory')) {
     console.log('[Middleware] Public directory access:', pathname)
+    return res
+  }
+
+  // Resource pages are public (SEO/GEO content)
+  if (pathname.startsWith('/resources')) {
+    console.log('[Middleware] Public resource access:', pathname)
     return res
   }
 
