@@ -34,17 +34,34 @@ export default function RecentlyDeletedPage() {
     if (user) {
       const fetchDeletedGalleries = async () => {
         setIsLoading(true);
+
+        // First get client records for this user (FK chain: auth.uid -> clients.user_id -> clients.id)
+        const { data: clientRecords } = await supabase
+          .from('clients')
+          .select('id')
+          .eq('user_id', user.id);
+
+        const clientIds = clientRecords?.map(c => c.id) || [];
+
+        if (clientIds.length === 0) {
+          // No client records, so no galleries to show
+          setDeletedGalleries([]);
+          setIsLoading(false);
+          return;
+        }
+
+        // Query galleries by client_id (not user_id)
         const { data, error } = await supabase
           .from('photo_galleries')
           .select('id, gallery_name, deleted_at, photo_count')
-          .eq('user_id', user.id)
+          .in('client_id', clientIds)
           .eq('status', 'deleted')
           .order('deleted_at', { ascending: false });
 
         if (error) {
           console.error('Error fetching deleted galleries:', error);
         } else {
-          setDeletedGalleries(data);
+          setDeletedGalleries(data || []);
         }
         setIsLoading(false);
       };

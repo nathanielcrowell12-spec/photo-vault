@@ -45,27 +45,24 @@ export async function GET() {
           .in('client_id', clientIds)
       : { data: [] }
 
+    // Get total photos count from BOTH tables (photos = desktop, gallery_photos = web)
     let photosCount = 0
     if (clientGalleries && clientGalleries.length > 0) {
       const galleryIds = clientGalleries.map(g => g.id)
 
-      // Try gallery_photos table first (newer table)
-      const { count: galleryPhotosCount } = await supabase
-        .from('gallery_photos')
-        .select('*', { count: 'exact', head: true })
-        .in('gallery_id', galleryIds)
-
-      if (galleryPhotosCount !== null) {
-        photosCount = galleryPhotosCount
-      } else {
-        // Fallback to photos table if gallery_photos doesn't work
-        const { count: fallbackCount } = await supabase
+      // Query both tables in parallel
+      const [photosResult, galleryPhotosResult] = await Promise.all([
+        supabase
           .from('photos')
           .select('*', { count: 'exact', head: true })
+          .in('gallery_id', galleryIds),
+        supabase
+          .from('gallery_photos')
+          .select('*', { count: 'exact', head: true })
           .in('gallery_id', galleryIds)
+      ])
 
-        photosCount = fallbackCount || 0
-      }
+      photosCount = (photosResult.count || 0) + (galleryPhotosResult.count || 0)
     }
 
     // Get recent galleries for Recent Sessions section (limit 3)
@@ -84,18 +81,26 @@ export async function GET() {
           .limit(3)
       : { data: [] }
 
-    // Get favorites count from gallery_photos
+    // Get favorites count from BOTH tables (photos = desktop, gallery_photos = web)
     let favoritesCount = 0
     if (clientGalleries && clientGalleries.length > 0) {
       const galleryIds = clientGalleries.map(g => g.id)
 
-      const { count: favCount } = await supabase
-        .from('gallery_photos')
-        .select('*', { count: 'exact', head: true })
-        .in('gallery_id', galleryIds)
-        .eq('is_favorite', true)
+      // Query both tables in parallel
+      const [photosResult, galleryPhotosResult] = await Promise.all([
+        supabase
+          .from('photos')
+          .select('*', { count: 'exact', head: true })
+          .in('gallery_id', galleryIds)
+          .eq('is_favorite', true),
+        supabase
+          .from('gallery_photos')
+          .select('*', { count: 'exact', head: true })
+          .in('gallery_id', galleryIds)
+          .eq('is_favorite', true)
+      ])
 
-      favoritesCount = favCount || 0
+      favoritesCount = (photosResult.count || 0) + (galleryPhotosResult.count || 0)
     }
 
     // Map gallery_name to name for frontend compatibility

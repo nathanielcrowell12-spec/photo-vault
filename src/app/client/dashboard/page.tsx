@@ -20,6 +20,7 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import AccessGuard from '@/components/AccessGuard'
+import { supabaseBrowser } from '@/lib/supabase-browser'
 import GalleryGrid from '@/components/GalleryGrid'
 import MessagesButton from '@/components/MessagesButton'
 import MessagingPanel from '@/components/MessagingPanel'
@@ -39,6 +40,18 @@ interface RecentGallery {
   photo_count: number | null
 }
 
+interface RecentConversation {
+  id: string
+  other_user: {
+    id: string
+    name: string
+    user_type: string
+  }
+  last_message_at: string
+  last_message_preview: string | null
+  unread_count: number
+}
+
 export default function ClientDashboardPage() {
   const { user, loading, signOut } = useAuth()
   const router = useRouter()
@@ -46,6 +59,8 @@ export default function ClientDashboardPage() {
   const [stats, setStats] = useState<ClientStats>({ totalPhotos: 0, photoSessions: 0, favorites: 0 })
   const [statsLoading, setStatsLoading] = useState(true)
   const [recentGalleries, setRecentGalleries] = useState<RecentGallery[]>([])
+  const [recentConversations, setRecentConversations] = useState<RecentConversation[]>([])
+  const [conversationsLoading, setConversationsLoading] = useState(true)
 
   useEffect(() => {
     if (!loading && !user) {
@@ -77,6 +92,40 @@ export default function ClientDashboardPage() {
 
     if (user) {
       fetchStats()
+    }
+  }, [user])
+
+  // Fetch recent conversations
+  useEffect(() => {
+    async function fetchConversations() {
+      if (!user) return
+
+      try {
+        const session = await supabaseBrowser.auth.getSession()
+        const token = session.data.session?.access_token
+
+        if (!token) return
+
+        const response = await fetch('/api/conversations', {
+          headers: {
+            'Authorization': `Bearer ${token}`,
+          },
+        })
+
+        if (response.ok) {
+          const data = await response.json()
+          // Get most recent 3 conversations
+          setRecentConversations((data.conversations || []).slice(0, 3))
+        }
+      } catch (error) {
+        console.error('Failed to fetch conversations:', error)
+      } finally {
+        setConversationsLoading(false)
+      }
+    }
+
+    if (user) {
+      fetchConversations()
     }
   }, [user])
 
@@ -421,11 +470,69 @@ export default function ClientDashboardPage() {
                   <CardDescription className="text-muted-foreground">Updates from your photographer</CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-center py-8 text-muted-foreground">
-                    <MessageSquare className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
-                    <p>No messages found</p>
-                    <p className="text-sm text-muted-foreground/70">Messages from your photographer will appear here</p>
-                  </div>
+                  {conversationsLoading ? (
+                    <div className="space-y-4">
+                      {[1, 2, 3].map((i) => (
+                        <div key={i} className="flex items-center gap-4 p-3 rounded-lg bg-muted animate-pulse">
+                          <div className="w-10 h-10 bg-muted-foreground/20 rounded-full" />
+                          <div className="flex-1 space-y-2">
+                            <div className="h-4 bg-muted-foreground/20 rounded w-3/4" />
+                            <div className="h-3 bg-muted-foreground/20 rounded w-1/2" />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : recentConversations.length > 0 ? (
+                    <div className="space-y-4">
+                      {recentConversations.map((conv) => (
+                        <button
+                          key={conv.id}
+                          onClick={() => setShowMessages(true)}
+                          className="w-full flex items-center gap-4 p-3 rounded-lg bg-muted hover:bg-accent/20 transition-colors text-left"
+                        >
+                          <div className="w-10 h-10 bg-secondary rounded-full flex items-center justify-center flex-shrink-0">
+                            <Camera className="w-5 h-5 text-primary" />
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center justify-between">
+                              <p className="font-medium text-foreground truncate">{conv.other_user.name}</p>
+                              {conv.unread_count > 0 && (
+                                <Badge variant="default" className="text-xs ml-2">
+                                  {conv.unread_count}
+                                </Badge>
+                              )}
+                            </div>
+                            <p className="text-sm text-muted-foreground truncate">
+                              {conv.last_message_preview || 'No messages yet'}
+                            </p>
+                            <p className="text-xs text-muted-foreground/70">
+                              {new Date(conv.last_message_at).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </button>
+                      ))}
+                      <Button
+                        variant="ghost"
+                        className="w-full text-muted-foreground hover:text-foreground"
+                        onClick={() => setShowMessages(true)}
+                      >
+                        View all messages
+                      </Button>
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-muted-foreground">
+                      <MessageSquare className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
+                      <p>No messages yet</p>
+                      <p className="text-sm text-muted-foreground/70">Messages from your photographer will appear here</p>
+                      <Button
+                        variant="outline"
+                        className="mt-4"
+                        onClick={() => setShowMessages(true)}
+                      >
+                        Start a conversation
+                      </Button>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>

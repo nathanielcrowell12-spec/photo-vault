@@ -16,28 +16,38 @@ export async function GET() {
       )
     }
 
-    // First, get the client record ID from the user_id
+    // Get ALL client records for this user (clients can have multiple records)
     // FK chain: auth.users.id -> clients.user_id -> clients.id -> photo_galleries.client_id
-    const { data: clientRecord } = await supabase
+    logger.info('[Favorites] User ID:', user.id)
+
+    const { data: clientRecords, error: clientError } = await supabase
       .from('clients')
       .select('id')
       .eq('user_id', user.id)
-      .single()
 
-    if (!clientRecord) {
+    logger.info('[Favorites] Client records:', { clientRecords, clientError })
+
+    if (!clientRecords || clientRecords.length === 0) {
+      logger.info('[Favorites] No client records found, returning empty')
       return NextResponse.json({
         success: true,
         favorites: []
       })
     }
 
-    // Get all gallery IDs for this client
-    const { data: clientGalleries } = await supabase
+    const clientIds = clientRecords.map(c => c.id)
+    logger.info('[Favorites] Client IDs:', clientIds)
+
+    // Get all gallery IDs for ALL client records
+    const { data: clientGalleries, error: galleriesError } = await supabase
       .from('photo_galleries')
       .select('id, gallery_name')
-      .eq('client_id', clientRecord.id)
+      .in('client_id', clientIds)
+
+    logger.info('[Favorites] Galleries:', { clientGalleries, galleriesError })
 
     if (!clientGalleries || clientGalleries.length === 0) {
+      logger.info('[Favorites] No galleries found, returning empty')
       return NextResponse.json({
         success: true,
         favorites: []
@@ -45,33 +55,43 @@ export async function GET() {
     }
 
     const galleryIds = clientGalleries.map(g => g.id)
+    logger.info('[Favorites] Gallery IDs:', galleryIds)
     const galleryNameMap = new Map(clientGalleries.map(g => [g.id, g.gallery_name]))
 
-    // Fetch all favorited photos from these galleries
-    const { data: favorites, error: favError } = await supabase
-      .from('gallery_photos')
-      .select(`
-        id,
-        gallery_id,
-        thumbnail_url,
-        original_url,
-        filename,
-        created_at
-      `)
-      .in('gallery_id', galleryIds)
-      .eq('is_favorite', true)
-      .order('created_at', { ascending: false })
+    // Fetch favorited photos from BOTH tables (photos = desktop, gallery_photos = web)
+    const [photosResult, galleryPhotosResult] = await Promise.all([
+      supabase
+        .from('photos')
+        .select('id, gallery_id, thumbnail_url, original_url, filename, created_at')
+        .in('gallery_id', galleryIds)
+        .eq('is_favorite', true)
+        .order('created_at', { ascending: false }),
+      supabase
+        .from('gallery_photos')
+        .select('id, gallery_id, thumbnail_url, original_url, filename, created_at')
+        .in('gallery_id', galleryIds)
+        .eq('is_favorite', true)
+        .order('created_at', { ascending: false })
+    ])
 
-    if (favError) {
-      logger.error('[Favorites] Error:', favError)
-      return NextResponse.json(
-        { error: 'Failed to fetch favorites' },
-        { status: 500 }
-      )
+    logger.info('[Favorites] Photos result:', { data: photosResult.data?.length, error: photosResult.error })
+    logger.info('[Favorites] Gallery photos result:', { data: galleryPhotosResult.data?.length, error: galleryPhotosResult.error })
+
+    if (photosResult.error) {
+      logger.error('[Favorites] Error querying photos:', photosResult.error)
+    }
+    if (galleryPhotosResult.error) {
+      logger.error('[Favorites] Error querying gallery_photos:', galleryPhotosResult.error)
     }
 
+    // Combine results from both tables
+    const allFavorites = [
+      ...(photosResult.data || []),
+      ...(galleryPhotosResult.data || [])
+    ].sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
+
     // Add gallery name to each photo
-    const favoritesWithGallery = (favorites || []).map(photo => ({
+    const favoritesWithGallery = allFavorites.map(photo => ({
       ...photo,
       gallery_name: galleryNameMap.get(photo.gallery_id) || 'Unknown Gallery'
     }))
