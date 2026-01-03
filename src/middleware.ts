@@ -300,8 +300,8 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * - public folder (html, images, etc.)
+     * - public folder (html, images, xml, txt, etc.)
      */
-    '/((?!_next/static|_next/image|favicon.ico|api/test-email|.*\\.(?:html|svg|png|jpg|jpeg|gif|webp)$).*)',
+    '/((?!_next/static|_next/image|favicon.ico|api/test-email|.*\\.(?:html|svg|png|jpg|jpeg|gif|webp|xml|txt|ico)$).*)',
   ],
 }
