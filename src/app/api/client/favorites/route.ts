@@ -16,11 +16,26 @@ export async function GET() {
       )
     }
 
+    // First, get the client record ID from the user_id
+    // FK chain: auth.users.id -> clients.user_id -> clients.id -> photo_galleries.client_id
+    const { data: clientRecord } = await supabase
+      .from('clients')
+      .select('id')
+      .eq('user_id', user.id)
+      .single()
+
+    if (!clientRecord) {
+      return NextResponse.json({
+        success: true,
+        favorites: []
+      })
+    }
+
     // Get all gallery IDs for this client
     const { data: clientGalleries } = await supabase
       .from('photo_galleries')
       .select('id, gallery_name')
-      .eq('client_id', user.id)
+      .eq('client_id', clientRecord.id)
 
     if (!clientGalleries || clientGalleries.length === 0) {
       return NextResponse.json({

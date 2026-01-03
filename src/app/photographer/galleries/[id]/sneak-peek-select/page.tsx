@@ -188,7 +188,7 @@ export default function SneakPeekSelectPage() {
 
         // Show error to user based on error type
         if (data.code === 'PHOTOGRAPHER_STRIPE_MISSING') {
-          setError('Payment setup required: You must connect your Stripe account in Settings before sending gallery notifications to clients.')
+          setError('⚠️ Payment setup required: You must complete your Stripe Connect setup in Settings → Payments before you can send gallery notifications to clients.')
         } else if (data.code === 'EMAIL_ALREADY_SENT') {
           // Email was already sent - this is actually success
           setSuccess(true)
@@ -200,10 +200,7 @@ export default function SneakPeekSelectPage() {
           setError(data.error || data.message || 'Failed to send notification. Please try again.')
         }
 
-        // Redirect back to upload page after delay so user sees error
-        setTimeout(() => {
-          router.push(`/photographer/galleries/${galleryId}/upload`)
-        }, 3000)
+        // Stay on page so user sees error - don't redirect
         return
       }
 
@@ -284,9 +281,21 @@ export default function SneakPeekSelectPage() {
         </div>
 
         {error && (
-          <Alert className="mb-6 bg-red-500/10 border-red-500/30 text-red-400">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
+          <Alert className="mb-6 bg-red-500/20 border-red-500/50 text-red-300">
+            <AlertCircle className="h-5 w-5" />
+            <AlertDescription className="ml-2">
+              <span className="font-medium">{error}</span>
+              {error.includes('Stripe') && (
+                <div className="mt-2">
+                  <Link
+                    href="/photographers/settings"
+                    className="inline-flex items-center gap-1 text-amber-400 hover:text-amber-300 underline font-medium"
+                  >
+                    Go to Settings →
+                  </Link>
+                </div>
+              )}
+            </AlertDescription>
           </Alert>
         )}
 

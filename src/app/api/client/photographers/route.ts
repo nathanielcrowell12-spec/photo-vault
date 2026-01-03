@@ -37,39 +37,47 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Only clients can access this endpoint' }, { status: 403 })
     }
 
-    // Find photographers this client is associated with
-    // Method 1: Through the clients table
-    const { data: clientRecords, error: clientError } = await supabase
+    // Get ALL client records for this user (could be multiple if different photographers created them)
+    // FK chain: auth.users.id -> clients.user_id -> clients.id
+    const { data: clientRecords, error: clientLookupError } = await supabase
       .from('clients')
-      .select(`
-        photographer_id,
-        photographers (
-          id,
-          user_profiles (
-            id,
-            full_name,
-            business_name,
-            profile_image_url
-          )
-        )
-      `)
-      .eq('id', user.id)
+      .select('id, photographer_id')
+      .eq('user_id', user.id)
 
-    // Method 2: Through galleries (find photographers who have galleries assigned to this client)
-    const { data: galleries, error: galleryError } = await supabase
-      .from('photo_galleries')
-      .select('photographer_id')
-      .eq('client_id', user.id)
+    if (clientLookupError) {
+      logger.error('[ClientPhotographers] Error fetching client records:', clientLookupError)
+      return NextResponse.json({ photographers: [] })
+    }
 
-    // Combine both methods to get unique photographer IDs
+    if (!clientRecords || clientRecords.length === 0) {
+      logger.warn('[ClientPhotographers] No client records found for user_id:', user.id)
+      return NextResponse.json({ photographers: [] })
+    }
+
+    logger.info('[ClientPhotographers] Found client records:', {
+      userId: user.id,
+      clientCount: clientRecords.length,
+      clientIds: clientRecords.map(c => c.id)
+    })
+
+    const clientIds = clientRecords.map(c => c.id)
+
+    // Find photographers this client is associated with
+    // Method 1: Through the clients table (photographers who created client records)
     const photographerIds = new Set<string>()
-
-    clientRecords?.forEach((record: any) => {
-      if (record.photographer_id) {
-        photographerIds.add(record.photographer_id)
+    clientRecords.forEach(client => {
+      if (client.photographer_id) {
+        photographerIds.add(client.photographer_id)
       }
     })
 
+    // Method 2: Through galleries (find photographers who have galleries assigned to ANY of these client records)
+    const { data: galleries, error: galleryError } = await supabase
+      .from('photo_galleries')
+      .select('photographer_id')
+      .in('client_id', clientIds)
+
+    // Add photographer IDs from galleries
     galleries?.forEach((gallery) => {
       if (gallery.photographer_id) {
         photographerIds.add(gallery.photographer_id)

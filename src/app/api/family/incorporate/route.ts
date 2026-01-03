@@ -167,6 +167,23 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Get the client record ID from the user_id
+    // FK chain: auth.users.id -> clients.user_id -> clients.id -> photo_galleries.client_id
+    const { data: clientRecord } = await serviceSupabase
+      .from('clients')
+      .select('id')
+      .eq('user_id', user.id)
+      .single()
+
+    if (!clientRecord) {
+      return NextResponse.json(
+        { error: 'Client record not found' },
+        { status: 400 }
+      )
+    }
+
+    const clientId = clientRecord.id
+
     // Get accounts where user is an accepted secondary
     const { data: secondaryRecords } = await serviceSupabase
       .from('secondaries')
@@ -233,7 +250,7 @@ export async function POST(request: NextRequest) {
     const { data: userGalleries } = await serviceSupabase
       .from('photo_galleries')
       .select('photographer_id')
-      .eq('client_id', user.id)
+      .eq('client_id', clientId)
       .order('created_at', { ascending: false })
       .limit(1)
 
@@ -255,7 +272,7 @@ export async function POST(request: NextRequest) {
         platform: sourceGallery.platform,
         photographer_name: sourceGallery.photographer_name,
         photographer_id: userPhotographerId, // Commission goes to user's photographer
-        client_id: user.id, // New owner
+        client_id: clientId, // New owner (clients.id, not auth.users.id)
         client_name: userProfile.full_name,
         is_family_shared: false, // Not shared by default in new account
         incorporated_from_gallery_id: sourceGallery.id,
