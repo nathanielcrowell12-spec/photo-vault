@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
-import { Save, X, Calendar, User, MapPin, Users, UserCheck, Heart } from 'lucide-react'
+import { Save, X, Calendar, User, MapPin, Users, UserCheck, Heart, Tag, FileText } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 
@@ -20,6 +20,12 @@ interface Gallery {
   session_date?: string
   client_id?: string | null
   user_id?: string
+  // Top-level columns for full-text search
+  location?: string
+  people?: string[]
+  event_type?: string
+  notes?: string
+  // Legacy nested metadata (for backward compatibility)
   metadata?: {
     location?: string
     people?: string[]
@@ -48,6 +54,8 @@ export default function GalleryEditModal({ gallery, isOpen, onClose, onSave }: G
     session_date: '',
     location: '',
     people: '',
+    event_type: '',
+    notes: '',
     client_id: ''
   })
   const [clients, setClients] = useState<Client[]>([])
@@ -135,13 +143,21 @@ export default function GalleryEditModal({ gallery, isOpen, onClose, onSave }: G
   // Update form when gallery changes
   useEffect(() => {
     if (gallery) {
+      // Read from top-level columns first, fallback to metadata for backward compat
+      const location = gallery.location || gallery.metadata?.location || ''
+      const people = gallery.people?.length
+        ? gallery.people.join(', ')
+        : gallery.metadata?.people?.join(', ') || ''
+
       setFormData({
         gallery_name: gallery.gallery_name || '',
         gallery_description: gallery.gallery_description || '',
         photographer_name: gallery.photographer_name || '',
         session_date: gallery.session_date || '',
-        location: gallery.metadata?.location || '',
-        people: gallery.metadata?.people?.join(', ') || '',
+        location,
+        people,
+        event_type: gallery.event_type || '',
+        notes: gallery.notes || '',
         client_id: gallery.client_id || gallery.user_id || 'none'
       })
     }
@@ -159,17 +175,17 @@ export default function GalleryEditModal({ gallery, isOpen, onClose, onSave }: G
         ? formData.people.split(',').map(p => p.trim()).filter(p => p.length > 0)
         : []
 
-      // Prepare update data
+      // Prepare update data - write to TOP-LEVEL columns for full-text search
       const updateData: Record<string, unknown> = {
         gallery_name: formData.gallery_name,
         gallery_description: formData.gallery_description,
         photographer_name: formData.photographer_name,
         session_date: formData.session_date || null,
-        metadata: {
-          ...gallery.metadata,
-          location: formData.location,
-          people: peopleArray
-        },
+        // Top-level columns for search_vector trigger
+        location: formData.location || null,
+        people: peopleArray,
+        event_type: formData.event_type || null,
+        notes: formData.notes || null,
         updated_at: new Date().toISOString()
       }
 
@@ -363,6 +379,56 @@ export default function GalleryEditModal({ gallery, isOpen, onClose, onSave }: G
             />
             <p className="text-xs text-muted-foreground">
               Add names to make this gallery searchable by person
+            </p>
+          </div>
+
+          {/* Event Type */}
+          <div className="space-y-2">
+            <Label htmlFor="event_type">
+              <Tag className="h-4 w-4 inline mr-2" />
+              Event Type
+            </Label>
+            <Select
+              value={formData.event_type || 'none'}
+              onValueChange={(value) => setFormData(prev => ({ ...prev, event_type: value === 'none' ? '' : value }))}
+              disabled={saving}
+            >
+              <SelectTrigger id="event_type">
+                <SelectValue placeholder="Select event type (optional)" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="none">None</SelectItem>
+                <SelectItem value="wedding">Wedding</SelectItem>
+                <SelectItem value="engagement">Engagement</SelectItem>
+                <SelectItem value="family">Family</SelectItem>
+                <SelectItem value="portrait">Portrait</SelectItem>
+                <SelectItem value="newborn">Newborn</SelectItem>
+                <SelectItem value="maternity">Maternity</SelectItem>
+                <SelectItem value="graduation">Graduation</SelectItem>
+                <SelectItem value="birthday">Birthday</SelectItem>
+                <SelectItem value="corporate">Corporate</SelectItem>
+                <SelectItem value="event">Event</SelectItem>
+                <SelectItem value="other">Other</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+
+          {/* Notes */}
+          <div className="space-y-2">
+            <Label htmlFor="notes">
+              <FileText className="h-4 w-4 inline mr-2" />
+              Notes (searchable)
+            </Label>
+            <Textarea
+              id="notes"
+              value={formData.notes}
+              onChange={(e) => setFormData(prev => ({ ...prev, notes: e.target.value }))}
+              placeholder="Add searchable notes about this gallery..."
+              rows={2}
+              disabled={saving}
+            />
+            <p className="text-xs text-muted-foreground">
+              Notes are included in gallery search
             </p>
           </div>
 

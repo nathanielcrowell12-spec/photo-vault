@@ -33,9 +33,11 @@ const MONTH_NAMES = [
   'July', 'August', 'September', 'October', 'November', 'December'
 ]
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const supabase = await createServerSupabaseClient()
+    const { searchParams } = new URL(request.url)
+    const searchQuery = searchParams.get('q') || ''
 
     // Get authenticated user
     const { data: { user }, error: authError } = await supabase.auth.getUser()
@@ -47,36 +49,50 @@ export async function GET() {
       )
     }
 
-    // First, get the client record ID from the user_id
+    // Get ALL client records for this user (clients can have multiple records)
     // FK chain: auth.users.id -> clients.user_id -> clients.id -> photo_galleries.client_id
-    const { data: clientRecord } = await supabase
+    const { data: clientRecords } = await supabase
       .from('clients')
       .select('id')
       .eq('user_id', user.id)
-      .single()
 
-    if (!clientRecord) {
+    const clientIds = clientRecords?.map(c => c.id) || []
+
+    if (clientIds.length === 0) {
       return NextResponse.json({
         success: true,
         timeline: []
       })
     }
 
-    // Fetch all galleries for this client with photographer info
-    const { data: galleries, error: galleriesError } = await supabase
+    // Build query - use full-text search if search term provided
+    let query = supabase
       .from('photo_galleries')
       .select(`
         id,
         gallery_name,
+        gallery_description,
         created_at,
         photo_count,
         cover_image_url,
         photographer_id,
         location,
-        event_type
+        event_type,
+        people,
+        notes
       `)
-      .eq('client_id', clientRecord.id)
-      .order('created_at', { ascending: false })
+      .in('client_id', clientIds)
+
+    // Apply full-text search if query provided
+    if (searchQuery.trim()) {
+      // Use PostgreSQL full-text search on search_vector column
+      query = query.textSearch('search_vector', searchQuery, {
+        type: 'websearch',
+        config: 'english'
+      })
+    }
+
+    const { data: galleries, error: galleriesError } = await query.order('created_at', { ascending: false })
 
     if (galleriesError) {
       logger.error('[Timeline] Galleries error:', galleriesError)

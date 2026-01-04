@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
@@ -72,13 +72,34 @@ export default function PhotoTimelinePage() {
     }
   }, [userType])
 
+  // Debounced server-side search
+  useEffect(() => {
+    if (userType !== 'client') return
+
+    const timeoutId = setTimeout(() => {
+      if (filters.search) {
+        setLoading(true)
+        fetchTimelineData(filters.search)
+      } else {
+        // Re-fetch without search if cleared
+        setLoading(true)
+        fetchTimelineData()
+      }
+    }, 300) // 300ms debounce
+
+    return () => clearTimeout(timeoutId)
+  }, [filters.search, userType])
+
   useEffect(() => {
     applyFilters()
   }, [timelineData, filters])
 
-  const fetchTimelineData = async () => {
+  const fetchTimelineData = async (searchQuery?: string) => {
     try {
-      const response = await fetch('/api/client/timeline')
+      const url = searchQuery
+        ? `/api/client/timeline?q=${encodeURIComponent(searchQuery)}`
+        : '/api/client/timeline'
+      const response = await fetch(url)
       if (response.ok) {
         const data = await response.json()
         if (data.success) {
@@ -95,22 +116,8 @@ export default function PhotoTimelinePage() {
   const applyFilters = () => {
     let filtered = [...timelineData]
 
-    // Filter by search term
-    if (filters.search) {
-      const searchLower = filters.search.toLowerCase()
-      filtered = filtered.map(year => ({
-        ...year,
-        months: year.months.map(month => ({
-          ...month,
-          galleries: month.galleries.filter(gallery =>
-            gallery.name.toLowerCase().includes(searchLower) ||
-            gallery.photographer_name.toLowerCase().includes(searchLower) ||
-            gallery.location?.toLowerCase().includes(searchLower) ||
-            gallery.event_type?.toLowerCase().includes(searchLower)
-          )
-        })).filter(month => month.galleries.length > 0)
-      })).filter(year => year.months.length > 0)
-    }
+    // Search is now server-side via full-text search
+    // Only apply local filters for photographer and event_type dropdowns
 
     // Filter by photographer
     if (filters.photographer !== 'all') {
@@ -237,7 +244,7 @@ export default function PhotoTimelinePage() {
               <div className="flex flex-col lg:flex-row gap-4 items-center">
                 <div className="flex-1 w-full">
                   <Input
-                    placeholder="Search galleries, photographers, locations..."
+                    placeholder="Search by name, location, people, event type, notes..."
                     value={filters.search}
                     onChange={(e) => setFilters({...filters, search: e.target.value})}
                     className="w-full"

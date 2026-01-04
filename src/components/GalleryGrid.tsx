@@ -37,6 +37,11 @@ interface Gallery {
   created_at: string
   user_id?: string  // Owner for self-uploaded galleries
   client_id?: string
+  // Metadata fields for search
+  location?: string
+  event_type?: string
+  people?: string[]
+  notes?: string
 }
 
 interface Client {
@@ -122,7 +127,12 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
           gallery_url: g.gallery_url,
           created_at: g.created_at,
           user_id: g.user_id,
-          client_id: g.client_id
+          client_id: g.client_id,
+          // Metadata fields for search
+          location: g.location,
+          event_type: g.event_type,
+          people: g.people,
+          notes: g.notes
         }))
 
         setGalleries(mappedGalleries)
@@ -187,7 +197,12 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
           gallery_url: g.gallery_url as string | undefined,
           created_at: g.created_at as string,
           user_id: g.user_id as string | undefined,
-          client_id: g.client_id as string | undefined
+          client_id: g.client_id as string | undefined,
+          // Metadata fields for search
+          location: g.location as string | undefined,
+          event_type: g.event_type as string | undefined,
+          people: g.people as string[] | undefined,
+          notes: g.notes as string | undefined
         }))
 
         console.log('GalleryGrid: Fetched client galleries:', mappedGalleries.length)
@@ -205,12 +220,18 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
   const filterAndSortGalleries = useCallback(() => {
     let filtered = [...galleries]
 
-    // Apply search filter
+    // Apply search filter - includes all metadata fields
     if (searchTerm) {
+      const term = searchTerm.toLowerCase()
       filtered = filtered.filter(gallery =>
-        gallery.gallery_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        gallery.photographer_name?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        gallery.platform.toLowerCase().includes(searchTerm.toLowerCase())
+        gallery.gallery_name.toLowerCase().includes(term) ||
+        gallery.photographer_name?.toLowerCase().includes(term) ||
+        gallery.platform.toLowerCase().includes(term) ||
+        gallery.location?.toLowerCase().includes(term) ||
+        gallery.event_type?.toLowerCase().includes(term) ||
+        gallery.notes?.toLowerCase().includes(term) ||
+        gallery.gallery_description?.toLowerCase().includes(term) ||
+        gallery.people?.some(person => person.toLowerCase().includes(term))
       )
     }
 
@@ -399,7 +420,7 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
       <div className="flex flex-col sm:flex-row gap-4">
         <div className="flex-1">
           <Input
-            placeholder="Search galleries, photographers, or platforms..."
+            placeholder="Search by name, location, photographer, event type..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full"
