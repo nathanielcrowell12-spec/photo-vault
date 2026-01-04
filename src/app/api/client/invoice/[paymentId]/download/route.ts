@@ -192,7 +192,7 @@ function generateInvoicePDF(payment: PaymentData): jsPDF {
   doc.setFont('helvetica', 'normal')
   doc.setTextColor(128, 128, 128)
   doc.text('Thank you for using PhotoVault!', 20, 250)
-  doc.text('For support, contact us at support@photovault.com', 20, 256)
+  doc.text('For support, contact us at support@photovault.photo', 20, 256)
   doc.text('This invoice was generated automatically.', 20, 262)
   
   doc.setTextColor(0, 0, 0)

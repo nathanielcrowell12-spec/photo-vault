@@ -358,12 +358,12 @@ export default function SystemSettingsPage() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="primaryDomain">Primary Domain</Label>
-                  <Input id="primaryDomain" value="app.photovault.com" disabled />
+                  <Input id="primaryDomain" value="photovault.photo" disabled />
                   <p className="text-xs text-muted-foreground">Production domain for PhotoVault.</p>
                 </div>
                 <div className="space-y-2 md:col-span-2">
                   <Label htmlFor="supportEmail">Support Email</Label>
-                  <Input id="supportEmail" value="support@photovault.com" disabled />
+                  <Input id="supportEmail" value="support@photovault.photo" disabled />
                   <p className="text-xs text-muted-foreground">All automated support communications send from this address.</p>
                 </div>
               </CardContent>
@@ -419,7 +419,7 @@ export default function SystemSettingsPage() {
                 </div>
                 <div className="space-y-2">
                   <Label>Sender Email</Label>
-                  <Input value="noreply@photovault.com" disabled />
+                  <Input value="noreply@photovault.photo" disabled />
                 </div>
                 <div className="md:col-span-2 rounded-lg border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-muted-foreground">
                   Email template editing will be available once transactional email service is connected.

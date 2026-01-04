@@ -416,7 +416,7 @@ export default function TermsPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-muted-foreground dark:text-foreground">
-                    Email: legal@photovault.com
+                    Email: legal@photovault.photo
                   </p>
                   <p className="text-sm text-muted-foreground dark:text-foreground">
                     Last updated: {new Date().toLocaleDateString()}

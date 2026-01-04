@@ -163,11 +163,11 @@ async function sendPaymentReminder(client: ClientData, gallery: GalleryData, ema
             <p>To access your photos, simply complete your payment and you'll have unlimited access to download and share your memories.</p>
             
             <div style="text-align: center;">
-                <a href="https://photovault.com/client/payment" class="cta-button">Complete Payment & Access Gallery</a>
+                <a href="https://photovault.photo/client/payment" class="cta-button">Complete Payment & Access Gallery</a>
             </div>
             
             <div class="footer">
-                <p>Questions? Contact us at <a href="mailto:support@photovault.com">support@photovault.com</a></p>
+                <p>Questions? Contact us at <a href="mailto:support@photovault.photo">support@photovault.photo</a></p>
             </div>
         </div>
     </body>
@@ -177,11 +177,11 @@ async function sendPaymentReminder(client: ClientData, gallery: GalleryData, ema
   try {
     // For now, we'll just log the email content since we can't access the private transporter
     logger.info('Email would be sent:', {
-      from: '"PhotoVault Team" <noreply@photovault.com>',
+      from: '"PhotoVault Team" <noreply@photovault.photo>',
       to: client.email,
       subject,
       html: htmlContent,
-      text: `Hi ${client.name},\n\nYour photographer has uploaded your photos to PhotoVault! Complete your payment at https://photovault.com/client/payment to access your gallery.\n\nQuestions? Contact support@photovault.com`
+      text: `Hi ${client.name},\n\nYour photographer has uploaded your photos to PhotoVault! Complete your payment at https://photovault.photo/client/payment to access your gallery.\n\nQuestions? Contact support@photovault.photo`
     })
     return true
   } catch (error) {
@@ -227,7 +227,7 @@ async function sendPaymentConfirmation(client: ClientData, gallery: GalleryData,
             ` : ''}
             
             <div style="text-align: center;">
-                <a href="https://photovault.com/dashboard" class="cta-button">View Your Gallery</a>
+                <a href="https://photovault.photo/dashboard" class="cta-button">View Your Gallery</a>
             </div>
             
             <h3>What you can do now:</h3>
@@ -239,7 +239,7 @@ async function sendPaymentConfirmation(client: ClientData, gallery: GalleryData,
             </ul>
             
             <div class="footer">
-                <p>Need help? Contact us at <a href="mailto:support@photovault.com">support@photovault.com</a></p>
+                <p>Need help? Contact us at <a href="mailto:support@photovault.photo">support@photovault.photo</a></p>
             </div>
         </div>
     </body>
@@ -249,11 +249,11 @@ async function sendPaymentConfirmation(client: ClientData, gallery: GalleryData,
   try {
     // For now, we'll just log the email content since we can't access the private transporter
     logger.info('Email would be sent:', {
-      from: '"PhotoVault Team" <noreply@photovault.com>',
+      from: '"PhotoVault Team" <noreply@photovault.photo>',
       to: client.email,
       subject,
       html: htmlContent,
-      text: `Hi ${client.name},\n\nPayment confirmed! Your gallery is now unlocked at https://photovault.com/dashboard\n\nQuestions? Contact support@photovault.com`
+      text: `Hi ${client.name},\n\nPayment confirmed! Your gallery is now unlocked at https://photovault.photo/dashboard\n\nQuestions? Contact support@photovault.photo`
     })
     return true
   } catch (error) {
@@ -298,11 +298,11 @@ async function sendGalleryAccessNotification(client: ClientData, gallery: Galler
             ` : ''}
             
             <div style="text-align: center;">
-                <a href="https://photovault.com/dashboard" class="cta-button">View Your Galleries</a>
+                <a href="https://photovault.photo/dashboard" class="cta-button">View Your Galleries</a>
             </div>
             
             <div class="footer">
-                <p>Questions? Contact us at <a href="mailto:support@photovault.com">support@photovault.com</a></p>
+                <p>Questions? Contact us at <a href="mailto:support@photovault.photo">support@photovault.photo</a></p>
             </div>
         </div>
     </body>
@@ -312,11 +312,11 @@ async function sendGalleryAccessNotification(client: ClientData, gallery: Galler
   try {
     // For now, we'll just log the email content since we can't access the private transporter
     logger.info('Email would be sent:', {
-      from: '"PhotoVault Team" <noreply@photovault.com>',
+      from: '"PhotoVault Team" <noreply@photovault.photo>',
       to: client.email,
       subject,
       html: htmlContent,
-      text: `Hi ${client.name},\n\nYou have access to a new gallery! View it at https://photovault.com/dashboard\n\nQuestions? Contact support@photovault.com`
+      text: `Hi ${client.name},\n\nYou have access to a new gallery! View it at https://photovault.photo/dashboard\n\nQuestions? Contact support@photovault.photo`
     })
     return true
   } catch (error) {
@@ -362,11 +362,11 @@ async function sendAccessExpiringNotification(client: ClientData, gallery: Galle
             ` : ''}
             
             <div style="text-align: center;">
-                <a href="https://photovault.com/client/payment" class="cta-button">Extend Access</a>
+                <a href="https://photovault.photo/client/payment" class="cta-button">Extend Access</a>
             </div>
             
             <div class="footer">
-                <p>Questions? Contact us at <a href="mailto:support@photovault.com">support@photovault.com</a></p>
+                <p>Questions? Contact us at <a href="mailto:support@photovault.photo">support@photovault.photo</a></p>
             </div>
         </div>
     </body>
@@ -376,11 +376,11 @@ async function sendAccessExpiringNotification(client: ClientData, gallery: Galle
   try {
     // For now, we'll just log the email content since we can't access the private transporter
     logger.info('Email would be sent:', {
-      from: '"PhotoVault Team" <noreply@photovault.com>',
+      from: '"PhotoVault Team" <noreply@photovault.photo>',
       to: client.email,
       subject,
       html: htmlContent,
-      text: `Hi ${client.name},\n\nYour gallery access is expiring soon! Extend access at https://photovault.com/client/payment\n\nQuestions? Contact support@photovault.com`
+      text: `Hi ${client.name},\n\nYour gallery access is expiring soon! Extend access at https://photovault.photo/client/payment\n\nQuestions? Contact support@photovault.photo`
     })
     return true
   } catch (error) {
@@ -415,7 +415,7 @@ async function sendCustomNotification(client: ClientData, message: string, email
             <p>${message}</p>
             
             <div class="footer">
-                <p>Questions? Contact us at <a href="mailto:support@photovault.com">support@photovault.com</a></p>
+                <p>Questions? Contact us at <a href="mailto:support@photovault.photo">support@photovault.photo</a></p>
             </div>
         </div>
     </body>
@@ -425,11 +425,11 @@ async function sendCustomNotification(client: ClientData, message: string, email
   try {
     // For now, we'll just log the email content since we can't access the private transporter
     logger.info('Email would be sent:', {
-      from: '"PhotoVault Team" <noreply@photovault.com>',
+      from: '"PhotoVault Team" <noreply@photovault.photo>',
       to: client.email,
       subject,
       html: htmlContent,
-      text: `Hi ${client.name},\n\n${message}\n\nQuestions? Contact support@photovault.com`
+      text: `Hi ${client.name},\n\n${message}\n\nQuestions? Contact support@photovault.photo`
     })
     return true
   } catch (error) {

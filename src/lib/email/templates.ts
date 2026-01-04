@@ -264,7 +264,7 @@ export function getGalleryReadyEmailHTML(data: GalleryReadyEmailData): string {
 
             <div class="footer">
                 <p>This gallery was shared with you by ${data.photographerName}</p>
-                <p>Questions? Contact us at <a href="mailto:support@photovault.com">support@photovault.com</a></p>
+                <p>Questions? Contact us at <a href="mailto:support@photovault.photo">support@photovault.photo</a></p>
                 <p style="margin-top: 20px; font-size: 12px;">
                     © ${new Date().getFullYear()} PhotoVault. All rights reserved.
                 </p>
@@ -312,7 +312,7 @@ PhotoVault is Memory Insurance for your family photos—a digital safety deposit
 
 ---
 This gallery was shared with you by ${data.photographerName}
-Questions? Contact us at support@photovault.com
+Questions? Contact us at support@photovault.photo
 
 © ${new Date().getFullYear()} PhotoVault. All rights reserved.
   `.trim()
@@ -395,7 +395,7 @@ export function getWelcomeEmailHTML(data: WelcomeEmailData): string {
             </div>
 
             <div class="footer">
-                <p>Questions? Contact us at <a href="mailto:support@photovault.com">support@photovault.com</a></p>
+                <p>Questions? Contact us at <a href="mailto:support@photovault.photo">support@photovault.photo</a></p>
                 <p>© ${new Date().getFullYear()} PhotoVault. All rights reserved.</p>
             </div>
         </div>
@@ -421,7 +421,7 @@ Your account is ready. Your photos are now protected from hard drive crashes, ph
 
 Get started: ${dashboardLink}
 
-Questions? Contact us at support@photovault.com
+Questions? Contact us at support@photovault.photo
 
 © ${new Date().getFullYear()} PhotoVault. All rights reserved.
   `.trim()
@@ -566,7 +566,7 @@ export function getWelcomeEmailWithPasswordHTML(data: WelcomeEmailWithPasswordDa
             </p>
 
             <div class="footer">
-                <p>Questions? Contact us at <a href="mailto:support@photovault.com">support@photovault.com</a></p>
+                <p>Questions? Contact us at <a href="mailto:support@photovault.photo">support@photovault.photo</a></p>
                 <p>© ${new Date().getFullYear()} PhotoVault. All rights reserved.</p>
             </div>
         </div>
@@ -599,7 +599,7 @@ HOW TO GET STARTED:
 
 Or visit your gallery directly: ${data.galleryUrl}
 
-Questions? Contact us at support@photovault.com
+Questions? Contact us at support@photovault.photo
 
 © ${new Date().getFullYear()} PhotoVault. All rights reserved.
   `.trim()

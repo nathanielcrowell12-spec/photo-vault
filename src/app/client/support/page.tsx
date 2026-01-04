@@ -129,15 +129,25 @@ export default function ClientSupportPage() {
   const handleSupportSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setSubmitting(true)
-    
+
     try {
-      // Simulate support ticket submission
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      alert('Support ticket submitted successfully! We\'ll get back to you within 24 hours.')
+      const response = await fetch('/api/support', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(supportForm)
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to submit ticket')
+      }
+
+      alert('Support ticket submitted successfully! We\'ll get back to you within 24 hours. Check your email for confirmation.')
       setSupportForm({ subject: '', category: '', message: '', priority: 'normal' })
     } catch (error) {
       console.error('Support submission error:', error)
-      alert('Failed to submit support ticket. Please try again.')
+      alert(error instanceof Error ? error.message : 'Failed to submit support ticket. Please try again.')
     } finally {
       setSubmitting(false)
     }

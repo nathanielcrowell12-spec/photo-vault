@@ -57,9 +57,9 @@ const securityEvents = [
 ]
 
 const auditLog = [
-  { id: 'AUD-001', actor: 'admin@photovault.com', action: 'Updated system settings', timestamp: '—' },
-  { id: 'AUD-002', actor: 'admin@photovault.com', action: 'Reviewed gallery report', timestamp: '—' },
-  { id: 'AUD-003', actor: 'support@photovault.com', action: 'Reset client password', timestamp: '—' },
+  { id: 'AUD-001', actor: 'admin@photovault.photo', action: 'Updated system settings', timestamp: '—' },
+  { id: 'AUD-002', actor: 'admin@photovault.photo', action: 'Reviewed gallery report', timestamp: '—' },
+  { id: 'AUD-003', actor: 'support@photovault.photo', action: 'Reset client password', timestamp: '—' },
 ]
 
 export default function SecurityPage() {

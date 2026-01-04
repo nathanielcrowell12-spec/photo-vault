@@ -229,7 +229,7 @@ export default function PrivacyPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground dark:text-muted-foreground">
-                  PhotoVault is not intended for children under 13. We do not knowingly collect information from children under 13. If you believe we have collected information from a child under 13, please contact us immediately at privacy@photovault.com.
+                  PhotoVault is not intended for children under 13. We do not knowingly collect information from children under 13. If you believe we have collected information from a child under 13, please contact us immediately at privacy@photovault.photo.
                 </p>
               </CardContent>
             </Card>
@@ -258,7 +258,7 @@ export default function PrivacyPage() {
                     </Link>
                   </Button>
                   <Button asChild className="bg-blue-600 hover:bg-blue-700">
-                    <a href="mailto:privacy@photovault.com">
+                    <a href="mailto:privacy@photovault.photo">
                       Email Privacy Team
                     </a>
                   </Button>

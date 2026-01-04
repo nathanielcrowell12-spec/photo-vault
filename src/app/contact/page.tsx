@@ -202,8 +202,8 @@ export default function ContactPage() {
                     <Mail className="h-6 w-6 text-blue-600 mt-1" />
                     <div>
                       <h3 className="font-semibold mb-1">Email</h3>
-                      <a href="mailto:support@photovault.com" className="text-blue-600 hover:underline">
-                        support@photovault.com
+                      <a href="mailto:support@photovault.photo" className="text-blue-600 hover:underline">
+                        support@photovault.photo
                       </a>
                       <p className="text-sm text-muted-foreground dark:text-muted-foreground mt-1">
                         We respond within 24 hours

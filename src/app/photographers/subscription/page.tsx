@@ -414,7 +414,7 @@ export default function SubscriptionPage() {
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                       <Button
                         variant="outline"
-                        onClick={() => alert('Support system coming soon! For now, please email support@photovault.com')}
+                        onClick={() => alert('Support system coming soon! For now, please email support@photovault.photo')}
                       >
                         <Users className="h-4 w-4 mr-2" />
                         Contact Support
