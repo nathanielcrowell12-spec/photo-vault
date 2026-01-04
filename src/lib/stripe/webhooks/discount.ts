@@ -40,10 +40,10 @@ export async function handleDiscountCreated(
   }
 
   // Find user by Stripe customer ID
-  // stripe_customer_id is on user_profiles table
+  // Note: email is not in user_profiles, we get it from Stripe customer
   const { data: userProfile, error: userError } = await supabase
     .from('user_profiles')
-    .select('id, full_name, user_type, email')
+    .select('id, full_name, user_type')
     .eq('stripe_customer_id', stripeCustomerId)
     .single()
 
@@ -76,20 +76,14 @@ export async function handleDiscountCreated(
 
   logger.info(`[Webhook] Marked photographer ${userProfile.id} as beta tester`)
 
-  // Send welcome email (fire-and-forget)
-  const photographerEmail = userProfile.email
-  if (photographerEmail) {
-    sendBetaWelcomeEmailAsync(userProfile.full_name || 'Photographer', photographerEmail)
-  } else {
-    // Fallback: try to get email from Stripe customer
-    try {
-      const customer = await stripe.customers.retrieve(stripeCustomerId)
-      if (!('deleted' in customer) && customer.email) {
-        sendBetaWelcomeEmailAsync(userProfile.full_name || 'Photographer', customer.email)
-      }
-    } catch (stripeError) {
-      logger.warn('[Webhook] Could not retrieve customer email from Stripe:', stripeError)
+  // Send welcome email (fire-and-forget) - get email from Stripe customer
+  try {
+    const customer = await stripe.customers.retrieve(stripeCustomerId)
+    if (!('deleted' in customer) && customer.email) {
+      sendBetaWelcomeEmailAsync(userProfile.full_name || 'Photographer', customer.email)
     }
+  } catch (stripeError) {
+    logger.warn('[Webhook] Could not retrieve customer email from Stripe:', stripeError)
   }
 
   return {

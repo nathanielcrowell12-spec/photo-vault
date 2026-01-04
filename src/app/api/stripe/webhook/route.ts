@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import { getStripeClient, constructWebhookEvent, PHOTOGRAPHER_COMMISSION_RATE } from '@/lib/stripe'
-import { createServerSupabaseClient } from '@/lib/supabase-server'
+import { createServiceRoleClient } from '@/lib/supabase-server'
 import Stripe from 'stripe'
 import { logger } from '@/lib/logger'
 import { EmailService } from '@/lib/email/email-service'
@@ -55,7 +55,7 @@ export const dynamic = 'force-dynamic'
  * - account.updated (Stripe Connect)
  */
 export async function POST(request: NextRequest) {
-  const supabase = await createServerSupabaseClient()
+  const supabase = createServiceRoleClient()
   const stripe = getStripeClient()
 
   try {
@@ -152,7 +152,7 @@ export async function POST(request: NextRequest) {
  */
 async function handleCheckoutSessionCompleted(
   session: Stripe.Checkout.Session,
-  supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>,
+  supabase: ReturnType<typeof createServiceRoleClient>,
   stripe: Stripe
 ) {
   try {
@@ -259,7 +259,7 @@ async function handleCheckoutSessionCompleted(
  */
 async function handleSubscriptionUpdated(
   rawSubscription: Stripe.Subscription,
-  supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>
+  supabase: ReturnType<typeof createServiceRoleClient>
 ) {
   try {
     const subscription = rawSubscription as unknown as StripeSubscription
@@ -370,7 +370,7 @@ async function handleSubscriptionUpdated(
  */
 async function handleSubscriptionDeleted(
   subscription: Stripe.Subscription,
-  supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>
+  supabase: ReturnType<typeof createServiceRoleClient>
 ) {
   try {
     const metadata = subscription.metadata || {}
@@ -440,7 +440,7 @@ async function handleSubscriptionDeleted(
  */
 async function handleInvoicePaid(
   rawInvoice: Stripe.Invoice,
-  supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>,
+  supabase: ReturnType<typeof createServiceRoleClient>,
   stripe: Stripe
 ) {
   try {
@@ -529,7 +529,7 @@ async function handleInvoicePaid(
  */
 async function handleInvoicePaymentFailed(
   rawInvoice: Stripe.Invoice,
-  supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>,
+  supabase: ReturnType<typeof createServiceRoleClient>,
   stripe: Stripe
 ) {
   try {
@@ -609,7 +609,7 @@ async function handleInvoicePaymentFailed(
  */
 async function handlePaymentIntentSucceeded(
   paymentIntent: Stripe.PaymentIntent,
-  supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>,
+  supabase: ReturnType<typeof createServiceRoleClient>,
   stripe: Stripe
 ) {
   try {
@@ -775,7 +775,7 @@ async function handlePaymentIntentSucceeded(
  */
 async function handleAccountUpdated(
   account: Stripe.Account,
-  supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>
+  supabase: ReturnType<typeof createServiceRoleClient>
 ) {
   try {
     // Find photographer by Stripe Connect account ID
@@ -826,7 +826,7 @@ const BETA_LOCKED_PRICE = 22.0
 
 async function handleDiscountCreated(
   discount: Stripe.Discount,
-  supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>,
+  supabase: ReturnType<typeof createServiceRoleClient>,
   stripe: Stripe
 ) {
   try {
@@ -849,9 +849,10 @@ async function handleDiscountCreated(
     }
 
     // Find user by Stripe customer ID
+    // Note: email is not in user_profiles, we get it from Stripe customer
     const { data: userProfile, error: userError } = await supabase
       .from('user_profiles')
-      .select('id, full_name, user_type, email')
+      .select('id, full_name, user_type')
       .eq('stripe_customer_id', stripeCustomerId)
       .single()
 
@@ -883,31 +884,19 @@ async function handleDiscountCreated(
 
     logger.info(`[Webhook] Marked photographer ${userProfile.id} as beta tester`)
 
-    // Send welcome email (fire-and-forget)
-    const photographerEmail = userProfile.email
-    if (photographerEmail) {
-      // Fire async - don't block webhook
-      EmailService.sendBetaWelcomeEmail({
-        photographerName: userProfile.full_name || 'Photographer',
-        photographerEmail,
-      }).catch((err) => {
-        logger.error('[Webhook] Failed to send beta welcome email:', err)
-      })
-    } else {
-      // Fallback: try to get email from Stripe customer
-      try {
-        const customer = await stripe.customers.retrieve(stripeCustomerId)
-        if (!('deleted' in customer) && customer.email) {
-          EmailService.sendBetaWelcomeEmail({
-            photographerName: userProfile.full_name || 'Photographer',
-            photographerEmail: customer.email,
-          }).catch((err) => {
-            logger.error('[Webhook] Failed to send beta welcome email:', err)
-          })
-        }
-      } catch (stripeError) {
-        logger.warn('[Webhook] Could not retrieve customer email from Stripe:', stripeError)
+    // Send welcome email (fire-and-forget) - get email from Stripe customer
+    try {
+      const customer = await stripe.customers.retrieve(stripeCustomerId)
+      if (!('deleted' in customer) && customer.email) {
+        EmailService.sendBetaWelcomeEmail({
+          photographerName: userProfile.full_name || 'Photographer',
+          photographerEmail: customer.email,
+        }).catch((err) => {
+          logger.error('[Webhook] Failed to send beta welcome email:', err)
+        })
       }
+    } catch (stripeError) {
+      logger.warn('[Webhook] Could not retrieve customer email from Stripe:', stripeError)
     }
 
     logger.info(`[Webhook] Beta tester status applied to photographer ${userProfile.id}`)
