@@ -77,3 +77,4 @@ export type CheckoutSession = Stripe.Checkout.Session
 export type Subscription = Stripe.Subscription
 export type Invoice = Stripe.Invoice
 export type Payout = Stripe.Payout
+export type Discount = Stripe.Discount

@@ -4,6 +4,7 @@ import { getStripeClient, constructWebhookEvent, PHOTOGRAPHER_COMMISSION_RATE } 
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import Stripe from 'stripe'
 import { logger } from '@/lib/logger'
+import { EmailService } from '@/lib/email/email-service'
 
 // Type helpers for Stripe responses
 type StripeSubscription = {
@@ -125,6 +126,10 @@ export async function POST(request: NextRequest) {
 
       case 'account.updated':
         await handleAccountUpdated(event.data.object as Stripe.Account, supabase)
+        break
+
+      case 'customer.discount.created':
+        await handleDiscountCreated(event.data.object as Stripe.Discount, supabase, stripe)
         break
 
       default:
@@ -812,5 +817,102 @@ async function handleAccountUpdated(
   }
 }
 
+/**
+ * Handle discount created event (beta coupon application)
+ * Marks photographers as beta testers when PHOTOVAULT_BETA_2026 coupon is applied
+ */
+const BETA_COUPON_ID = 'PHOTOVAULT_BETA_2026'
+const BETA_LOCKED_PRICE = 22.0
 
+async function handleDiscountCreated(
+  discount: Stripe.Discount,
+  supabase: Awaited<ReturnType<typeof createServerSupabaseClient>>,
+  stripe: Stripe
+) {
+  try {
+    logger.info('[Webhook] Processing customer.discount.created', discount.id)
 
+    // In Stripe v19+, coupon is nested in source.coupon
+    const coupon = discount.source?.coupon
+    const couponId = typeof coupon === 'string' ? coupon : coupon?.id
+
+    // Only process our beta coupon
+    if (couponId !== BETA_COUPON_ID) {
+      logger.info(`[Webhook] Ignoring non-beta coupon: ${couponId}`)
+      return
+    }
+
+    const stripeCustomerId = discount.customer as string
+    if (!stripeCustomerId) {
+      logger.warn('[Webhook] No customer ID in discount event')
+      return
+    }
+
+    // Find user by Stripe customer ID
+    const { data: userProfile, error: userError } = await supabase
+      .from('user_profiles')
+      .select('id, full_name, user_type, email')
+      .eq('stripe_customer_id', stripeCustomerId)
+      .single()
+
+    if (userError || !userProfile) {
+      logger.warn(`[Webhook] No user found for Stripe customer: ${stripeCustomerId}`)
+      return
+    }
+
+    // Verify this is a photographer
+    if (userProfile.user_type !== 'photographer') {
+      logger.warn(`[Webhook] Beta coupon applied to non-photographer: ${userProfile.id}`)
+      return
+    }
+
+    // Update photographers table
+    const { error: updateError } = await supabase
+      .from('photographers')
+      .update({
+        is_beta_tester: true,
+        beta_start_date: new Date().toISOString(),
+        price_locked_at: BETA_LOCKED_PRICE,
+      })
+      .eq('id', userProfile.id)
+
+    if (updateError) {
+      logger.error('[Webhook] Failed to update photographer beta status:', updateError)
+      throw updateError
+    }
+
+    logger.info(`[Webhook] Marked photographer ${userProfile.id} as beta tester`)
+
+    // Send welcome email (fire-and-forget)
+    const photographerEmail = userProfile.email
+    if (photographerEmail) {
+      // Fire async - don't block webhook
+      EmailService.sendBetaWelcomeEmail({
+        photographerName: userProfile.full_name || 'Photographer',
+        photographerEmail,
+      }).catch((err) => {
+        logger.error('[Webhook] Failed to send beta welcome email:', err)
+      })
+    } else {
+      // Fallback: try to get email from Stripe customer
+      try {
+        const customer = await stripe.customers.retrieve(stripeCustomerId)
+        if (!('deleted' in customer) && customer.email) {
+          EmailService.sendBetaWelcomeEmail({
+            photographerName: userProfile.full_name || 'Photographer',
+            photographerEmail: customer.email,
+          }).catch((err) => {
+            logger.error('[Webhook] Failed to send beta welcome email:', err)
+          })
+        }
+      } catch (stripeError) {
+        logger.warn('[Webhook] Could not retrieve customer email from Stripe:', stripeError)
+      }
+    }
+
+    logger.info(`[Webhook] Beta tester status applied to photographer ${userProfile.id}`)
+  } catch (error) {
+    logger.error('[Webhook] Error handling customer.discount.created:', error)
+    throw error
+  }
+}

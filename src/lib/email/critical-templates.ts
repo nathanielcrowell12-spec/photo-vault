@@ -38,6 +38,11 @@ export interface PaymentSuccessfulEmailData {
   nextBillingDate?: string
 }
 
+export interface BetaWelcomeEmailData {
+  photographerName: string
+  photographerEmail: string
+}
+
 // ============================================================================
 // 1. CLIENT INVITATION EMAIL - HTML
 // ============================================================================
@@ -707,5 +712,236 @@ This payment confirmation was sent to ${data.customerEmail}
 Questions? Contact us at support@photovault.photo
 
 © ${new Date().getFullYear()} PhotoVault. All rights reserved.
+  `.trim()
+}
+
+// ============================================================================
+// 4. BETA WELCOME EMAIL - HTML (Founding Photographer)
+// ============================================================================
+
+export function getBetaWelcomeEmailHTML(data: BetaWelcomeEmailData): string {
+  const dashboardLink = `${process.env.NEXT_PUBLIC_APP_URL}/photographer/dashboard`
+
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome, Founding Photographer!</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .email-container {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .header {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 32px;
+            font-weight: 700;
+        }
+        .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 8px 16px;
+            border-radius: 20px;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        .content {
+            padding: 40px 30px;
+        }
+        .benefits-box {
+            background: #fffbeb;
+            border: 2px solid #f59e0b;
+            border-radius: 12px;
+            padding: 25px;
+            margin: 30px 0;
+        }
+        .benefits-box h3 {
+            margin-top: 0;
+            color: #92400e;
+        }
+        .benefit-item {
+            display: flex;
+            align-items: flex-start;
+            margin: 15px 0;
+        }
+        .benefit-check {
+            color: #10b981;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        .expectations-box {
+            background: #f0f9ff;
+            border-left: 4px solid #3b82f6;
+            padding: 20px;
+            margin: 30px 0;
+            border-radius: 6px;
+        }
+        .expectations-box h3 {
+            margin-top: 0;
+            color: #1e40af;
+        }
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            padding: 16px 40px;
+            text-decoration: none;
+            border-radius: 8px;
+            margin: 30px 0;
+            font-weight: 600;
+            font-size: 16px;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+        }
+        .cta-container {
+            text-align: center;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 30px;
+            border-top: 1px solid #e5e7eb;
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+        }
+        .ps-note {
+            background: #f3f4f6;
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            font-size: 14px;
+            color: #4b5563;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <h1>You're In!</h1>
+            <span class="badge">Founding Photographer</span>
+        </div>
+
+        <div class="content">
+            <h2>Hey ${data.photographerName}!</h2>
+
+            <p>Welcome to PhotoVault's founding photographer program. You're one of our first photographers getting early access.</p>
+
+            <div class="benefits-box">
+                <h3>What You Get:</h3>
+                <div class="benefit-item">
+                    <span class="benefit-check">✓</span>
+                    <span><strong>$0 platform fee</strong> for the next 12 months ($264 value)</span>
+                </div>
+                <div class="benefit-item">
+                    <span class="benefit-check">✓</span>
+                    <span><strong>$22/month locked forever</strong> - immune to future price increases</span>
+                </div>
+                <div class="benefit-item">
+                    <span class="benefit-check">✓</span>
+                    <span><strong>Founding Photographer badge</strong> on your profile</span>
+                </div>
+                <div class="benefit-item">
+                    <span class="benefit-check">✓</span>
+                    <span><strong>Direct line to founder</strong> for feedback and support</span>
+                </div>
+            </div>
+
+            <div class="expectations-box">
+                <h3>What I Need From You:</h3>
+                <ol>
+                    <li>Upload at least one real gallery</li>
+                    <li>Invite at least one real client (they'll pay real money)</li>
+                    <li>Reply to my check-in emails with honest feedback</li>
+                    <li>Report any bugs or issues you find</li>
+                </ol>
+            </div>
+
+            <p>Your feedback shapes what PhotoVault becomes. I'm not building this alone - I'm building it with you.</p>
+
+            <div class="cta-container">
+                <a href="${dashboardLink}" class="cta-button">Go to My Dashboard</a>
+            </div>
+
+            <p>Let's build this together,<br/>
+            <strong>Nate</strong><br/>
+            Founder, PhotoVault</p>
+
+            <div class="ps-note">
+                <strong>P.S.</strong> - As a bonus, I'm sending you our exclusive 100 Dane County Photo Locations guide. GPS coordinates, permit rules, insider tips for every spot. Keep an eye on your inbox!
+            </div>
+
+            <div class="footer">
+                <p>Questions? Contact us at <a href="mailto:support@photovault.photo">support@photovault.photo</a></p>
+                <p>&copy; ${new Date().getFullYear()} PhotoVault. All rights reserved.</p>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+  `.trim()
+}
+
+// ============================================================================
+// 4. BETA WELCOME EMAIL - TEXT (Founding Photographer)
+// ============================================================================
+
+export function getBetaWelcomeEmailText(data: BetaWelcomeEmailData): string {
+  const dashboardLink = `${process.env.NEXT_PUBLIC_APP_URL}/photographer/dashboard`
+
+  return `
+YOU'RE IN! - FOUNDING PHOTOGRAPHER
+
+Hey ${data.photographerName}!
+
+Welcome to PhotoVault's founding photographer program. You're one of our first photographers getting early access.
+
+WHAT YOU GET:
+
+* $0 platform fee for the next 12 months ($264 value)
+* $22/month locked forever - immune to future price increases
+* Founding Photographer badge on your profile
+* Direct line to founder for feedback and support
+
+WHAT I NEED FROM YOU:
+
+1. Upload at least one real gallery
+2. Invite at least one real client (they'll pay real money)
+3. Reply to my check-in emails with honest feedback
+4. Report any bugs or issues you find
+
+Your feedback shapes what PhotoVault becomes. I'm not building this alone - I'm building it with you.
+
+GO TO YOUR DASHBOARD:
+${dashboardLink}
+
+Let's build this together,
+Nate
+Founder, PhotoVault
+
+P.S. - As a bonus, I'm sending you our exclusive 100 Dane County Photo Locations guide. GPS coordinates, permit rules, insider tips for every spot. Keep an eye on your inbox!
+
+---
+Questions? Contact us at support@photovault.photo
+
+${new Date().getFullYear()} PhotoVault. All rights reserved.
   `.trim()
 }

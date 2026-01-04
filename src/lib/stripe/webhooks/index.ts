@@ -17,6 +17,7 @@ import {
 } from './subscription'
 import { handlePaymentSucceeded, handlePaymentFailed } from './invoice'
 import { handlePayoutCreated } from './payout'
+import { handleDiscountCreated } from './discount'
 import {
   getStripeClient,
   checkIdempotency,
@@ -24,7 +25,7 @@ import {
   logWebhookResult,
   logWebhookError,
 } from './helpers'
-import type { WebhookContext, HandlerResult } from './types'
+import type { WebhookContext, HandlerResult, Discount } from './types'
 import type Stripe from 'stripe'
 
 // Re-export helpers for route.ts
@@ -103,6 +104,10 @@ export async function processWebhookEvent(event: Stripe.Event): Promise<HandlerR
 
       case 'payout.created':
         result = await handlePayoutCreated(event.data.object as Stripe.Payout, ctx)
+        break
+
+      case 'customer.discount.created':
+        result = await handleDiscountCreated(event.data.object as Discount, ctx)
         break
 
       default:

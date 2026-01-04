@@ -32,9 +32,12 @@ import {
   getPhotographerWelcomeEmailText,
   getPaymentSuccessfulEmailHTML,
   getPaymentSuccessfulEmailText,
+  getBetaWelcomeEmailHTML,
+  getBetaWelcomeEmailText,
   type ClientInvitationEmailData,
   type PhotographerWelcomeEmailData,
   type PaymentSuccessfulEmailData,
+  type BetaWelcomeEmailData,
 } from './critical-templates'
 import {
   getSubscriptionExpiringEmailHTML,
@@ -312,6 +315,28 @@ Update payment method: ${process.env.NEXT_PUBLIC_APP_URL}/billing
       return { success: true }
     } catch (error: any) {
       logger.error('[Email] Error sending payment successful email:', error)
+      return { success: false, error: error.message }
+    }
+  }
+
+  /**
+   * Send beta welcome email to founding photographers
+   * Triggered when PHOTOVAULT_BETA_2026 coupon is applied
+   */
+  static async sendBetaWelcomeEmail(data: BetaWelcomeEmailData): Promise<{ success: boolean; error?: string }> {
+    try {
+      await (await getClient()).emails.send({
+        from: await getFromEmail(),
+        to: data.photographerEmail,
+        subject: "🌟 You're In! Welcome, Founding Photographer",
+        html: getBetaWelcomeEmailHTML(data),
+        text: getBetaWelcomeEmailText(data),
+      })
+
+      logger.info(`[Email] Beta welcome email sent to ${data.photographerEmail}`)
+      return { success: true }
+    } catch (error: any) {
+      logger.error('[Email] Error sending beta welcome email:', error)
       return { success: false, error: error.message }
     }
   }
