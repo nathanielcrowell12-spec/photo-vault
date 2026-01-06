@@ -189,7 +189,7 @@
   .fade-in-up {
     animation: fadeInUp 0.8s ease-out forwards;
   }
-  
+
   /* Cinematic image overlay */
   .image-overlay {
     @apply relative overflow-hidden;
@@ -264,5 +264,71 @@
   
   .image-card:hover .image-card-content {
     @apply translate-y-0;
+  }
+}
+
+/* =============================================
+   Image Effects Demo - Animations (root level)
+   ============================================= */
+
+/* Ken Burns continuous pan/zoom animation */
+@keyframes ken-burns {
+  0% { transform: scale(1) translate(0, 0); }
+  100% { transform: scale(1.15) translate(-3%, -3%); }
+}
+
+.animate-ken-burns {
+  animation: ken-burns 12s ease-in-out infinite alternate;
+  will-change: transform;
+}
+
+/* Zoom Pulse animation */
+@keyframes zoom-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.animate-zoom-pulse {
+  animation: zoom-pulse 2s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* Border glow effect */
+.border-glow-effect {
+  position: relative;
+  z-index: 0;
+}
+
+.border-glow-effect::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 12px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  background: linear-gradient(45deg, #00B3A4, #00D9C5);
+  filter: blur(8px);
+  z-index: -1;
+}
+
+.border-glow-effect:hover::before {
+  opacity: 1;
+}
+
+/* Blur to focus hover effect */
+.blur-to-focus {
+  filter: blur(4px);
+  transition: filter 0.5s ease;
+}
+
+.blur-to-focus:hover {
+  filter: blur(0);
+}
+
+/* Respect reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .animate-ken-burns,
+  .animate-zoom-pulse {
+    animation: none;
   }
 }

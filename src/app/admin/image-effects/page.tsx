@@ -1,11 +1,199 @@
 'use client'
 
+import { useState, useRef } from 'react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Sparkles, TrendingUp, Zap } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
+
+// 3D Tilt Effect Component
+function TiltCard({ children, className }: { children: React.ReactNode; className?: string }) {
+  const cardRef = useRef<HTMLDivElement>(null)
+  const [transform, setTransform] = useState('')
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return
+    const rect = cardRef.current.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+    const xAxis = ((x / rect.width) - 0.5) * 20
+    const yAxis = ((y / rect.height) - 0.5) * -20
+    setTransform(`perspective(1000px) rotateY(${xAxis}deg) rotateX(${yAxis}deg)`)
+  }
+
+  const handleMouseLeave = () => {
+    setTransform('')
+  }
+
+  return (
+    <div
+      ref={cardRef}
+      className={className}
+      style={{ transform, transition: 'transform 0.1s ease-out' }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+    >
+      {children}
+    </div>
+  )
+}
+
+// Flip Card Component
+function FlipCard({ front, back }: { front: React.ReactNode; back: React.ReactNode }) {
+  return (
+    <div className="relative h-48 w-full" style={{ perspective: '1000px' }}>
+      <div className="relative w-full h-full transition-transform duration-500 group-hover:[transform:rotateY(180deg)]" style={{ transformStyle: 'preserve-3d' }}>
+        <div className="absolute inset-0" style={{ backfaceVisibility: 'hidden' }}>
+          {front}
+        </div>
+        <div className="absolute inset-0 flex items-center justify-center bg-primary text-white rounded-lg" style={{ backfaceVisibility: 'hidden', transform: 'rotateY(180deg)' }}>
+          {back}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Effect type for the preview renderer
+type EffectItem = {
+  name: string
+  example: string
+  popularity: string
+  difficulty: string
+  description: string
+  useCases: string[]
+  code: string
+}
+
+// Render effect-specific preview for each effect type
+function EffectPreview({ effect }: { effect: EffectItem }) {
+  const baseImageClasses = "object-cover w-full h-full"
+
+  switch (effect.name) {
+    case 'Hover Zoom':
+      return (
+        <div className="relative h-48 rounded-lg overflow-hidden group cursor-pointer">
+          <Image
+            src={effect.example}
+            alt={effect.name}
+            fill
+            className={`${baseImageClasses} transition-transform duration-300 group-hover:scale-110`}
+          />
+        </div>
+      )
+
+    case 'Hover Slide-Up Text':
+      return (
+        <div className="relative h-48 rounded-lg overflow-hidden group cursor-pointer">
+          <Image src={effect.example} alt={effect.name} fill className={baseImageClasses} />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+          <div className="absolute bottom-0 left-0 right-0 p-4 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300">
+            <p className="font-semibold">Photo Title</p>
+            <p className="text-sm text-white/80">Sample description text</p>
+          </div>
+        </div>
+      )
+
+    case 'Grayscale to Color':
+      return (
+        <div className="relative h-48 rounded-lg overflow-hidden cursor-pointer">
+          <Image
+            src={effect.example}
+            alt={effect.name}
+            fill
+            className={`${baseImageClasses} grayscale hover:grayscale-0 transition-all duration-500`}
+          />
+        </div>
+      )
+
+    case 'Overlay Fade-In':
+      return (
+        <div className="relative h-48 rounded-lg overflow-hidden group cursor-pointer">
+          <Image src={effect.example} alt={effect.name} fill className={baseImageClasses} />
+          <div className="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <p className="text-white font-semibold">View Details</p>
+          </div>
+        </div>
+      )
+
+    case 'Parallax Scroll':
+      return (
+        <div className="relative h-48 rounded-lg overflow-hidden bg-secondary/30 flex items-center justify-center">
+          <Image src={effect.example} alt={effect.name} fill className={`${baseImageClasses} opacity-50`} />
+          <Badge variant="secondary" className="z-10">Scroll-based effect - see code</Badge>
+        </div>
+      )
+
+    case 'Ken Burns Effect':
+      return (
+        <div className="relative h-48 rounded-lg overflow-hidden">
+          <Image src={effect.example} alt={effect.name} fill className={`${baseImageClasses} animate-ken-burns`} />
+        </div>
+      )
+
+    case 'Blur to Focus':
+      return (
+        <div className="relative h-48 rounded-lg overflow-hidden cursor-pointer">
+          <Image
+            src={effect.example}
+            alt={effect.name}
+            fill
+            className={`${baseImageClasses} blur-to-focus`}
+          />
+        </div>
+      )
+
+    case '3D Tilt Effect':
+      return (
+        <TiltCard className="relative h-48 rounded-lg overflow-hidden cursor-pointer">
+          <Image src={effect.example} alt={effect.name} fill className={baseImageClasses} />
+        </TiltCard>
+      )
+
+    case 'Flip Card':
+      return (
+        <div className="group h-48">
+          <FlipCard
+            front={<Image src={effect.example} alt={effect.name} fill className={`${baseImageClasses} rounded-lg`} />}
+            back={<div className="text-center p-4"><p className="font-bold text-lg">Back Side</p><p className="text-sm opacity-80">Additional info here</p></div>}
+          />
+        </div>
+      )
+
+    case 'Border Glow':
+      return (
+        <div className="relative h-48 rounded-lg border-glow-effect cursor-pointer p-1">
+          <div className="relative w-full h-full rounded-lg overflow-hidden">
+            <Image src={effect.example} alt={effect.name} fill className={baseImageClasses} />
+          </div>
+        </div>
+      )
+
+    case 'Image Reveal Animation':
+      return (
+        <div className="relative h-48 rounded-lg overflow-hidden bg-secondary/30 flex items-center justify-center">
+          <Image src={effect.example} alt={effect.name} fill className={`${baseImageClasses} opacity-50`} />
+          <Badge variant="secondary" className="z-10">Scroll-triggered - see code</Badge>
+        </div>
+      )
+
+    case 'Zoom Pulse':
+      return (
+        <div className="relative h-48 rounded-lg overflow-hidden">
+          <Image src={effect.example} alt={effect.name} fill className={`${baseImageClasses} animate-zoom-pulse`} />
+        </div>
+      )
+
+    default:
+      return (
+        <div className="relative h-48 rounded-lg overflow-hidden bg-secondary/30">
+          <Image src={effect.example} alt={effect.name} fill className={baseImageClasses} />
+        </div>
+      )
+  }
+}
 
 export default function ImageEffectsPage() {
   const effects = [
@@ -280,20 +468,8 @@ element.addEventListener('mousemove', (e) => {
                 </div>
               </CardHeader>
               <CardContent className="space-y-4">
-                {/* Preview */}
-                <div className="relative h-48 rounded-lg overflow-hidden bg-secondary/30">
-                  <Image
-                    src={effect.example}
-                    alt={effect.name}
-                    fill
-                    className="object-cover"
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-                    <Badge className="bg-white/90 text-foreground">
-                      Hover to preview
-                    </Badge>
-                  </div>
-                </div>
+                {/* Preview - Interactive effect demo */}
+                <EffectPreview effect={effect} />
 
                 {/* Use Cases */}
                 <div>

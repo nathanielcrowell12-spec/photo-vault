@@ -13,7 +13,44 @@ import {
 } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
-import { Activity, BarChart3, Clock, LineChart, PieChart, Users } from 'lucide-react'
+import { Activity, BarChart3, Clock, LineChart as LineChartIcon, PieChart as PieChartIcon, Users, CheckCircle, AlertTriangle, XCircle } from 'lucide-react'
+import {
+  LineChart,
+  Line,
+  PieChart,
+  Pie,
+  Cell,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer
+} from 'recharts'
+
+type UserGrowthDataPoint = {
+  date: string
+  photographers: number
+  clients: number
+  total: number
+}
+
+type GalleryStatusBreakdown = {
+  status: string
+  count: number
+  percentage: number
+}
+
+type HealthCheckData = {
+  status: 'healthy' | 'degraded' | 'unhealthy'
+  queryLatencyMs: number
+  tableCounts: {
+    users: number
+    galleries: number
+    photos: number
+  }
+  lastChecked: string
+}
 
 type AnalyticsData = {
   metrics: {
@@ -28,6 +65,19 @@ type AnalyticsData = {
     description: string
     timestamp: string
   }>
+  userGrowth: UserGrowthDataPoint[]
+  galleryBreakdown: GalleryStatusBreakdown[]
+  healthCheck: HealthCheckData
+}
+
+// Chart colors matching globals.css
+const CHART_COLORS = {
+  photographers: '#00B3A4',  // chart-1 (primary teal)
+  clients: '#00D9C5',        // chart-2 (light teal)
+  Draft: '#008F84',          // chart-3
+  Ready: '#00B3A4',          // chart-1
+  Live: '#00D9C5',           // chart-2
+  Archived: '#00665D',       // chart-4
 }
 
 export default function AnalyticsPage() {
@@ -167,34 +217,108 @@ export default function AnalyticsPage() {
               <Card className="border-2 border-blue-100 shadow-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <LineChart className="h-5 w-5 text-blue-600" />
+                    <LineChartIcon className="h-5 w-5 text-blue-600" />
                     User Growth Chart
                   </CardTitle>
                   <CardDescription>
-                    Hook into analytics pipeline to plot signups and active user counts over time.
+                    Cumulative user counts over the last 6 months by user type.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex h-48 items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 text-sm text-muted-foreground">
-                    Line chart coming soon
-                  </div>
+                  {analyticsData?.userGrowth && analyticsData.userGrowth.length > 0 ? (
+                    <ResponsiveContainer width="100%" height={192}>
+                      <LineChart data={analyticsData.userGrowth}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+                        <XAxis
+                          dataKey="date"
+                          tick={{ fill: '#64748b', fontSize: 12 }}
+                          axisLine={{ stroke: '#e2e8f0' }}
+                        />
+                        <YAxis
+                          tick={{ fill: '#64748b', fontSize: 12 }}
+                          axisLine={{ stroke: '#e2e8f0' }}
+                        />
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            border: '1px solid #e2e8f0',
+                            borderRadius: '8px'
+                          }}
+                        />
+                        <Legend />
+                        <Line
+                          type="monotone"
+                          dataKey="photographers"
+                          name="Photographers"
+                          stroke={CHART_COLORS.photographers}
+                          strokeWidth={2}
+                          dot={{ fill: CHART_COLORS.photographers, strokeWidth: 2 }}
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="clients"
+                          name="Clients"
+                          stroke={CHART_COLORS.clients}
+                          strokeWidth={2}
+                          dot={{ fill: CHART_COLORS.clients, strokeWidth: 2 }}
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  ) : (
+                    <div className="flex h-48 items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 text-sm text-muted-foreground">
+                      {dataLoading ? 'Loading chart data...' : 'No user growth data available'}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
 
               <Card className="border-2 border-blue-100 shadow-sm">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
-                    <PieChart className="h-5 w-5 text-blue-600" />
-                    Platform Usage Breakdown
+                    <PieChartIcon className="h-5 w-5 text-blue-600" />
+                    Gallery Status Breakdown
                   </CardTitle>
                   <CardDescription>
-                    Display distribution of storage, gallery imports, and photo processing usage.
+                    Distribution of galleries by status across the platform.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex h-48 items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 text-sm text-muted-foreground">
-                    Pie chart coming soon
-                  </div>
+                  {analyticsData?.galleryBreakdown && analyticsData.galleryBreakdown.length > 0 ? (
+                    <ResponsiveContainer width="100%" height={192}>
+                      <PieChart>
+                        <Pie
+                          data={analyticsData.galleryBreakdown}
+                          dataKey="count"
+                          nameKey="status"
+                          cx="50%"
+                          cy="50%"
+                          outerRadius={70}
+                          label={({ percentage }) => `${percentage}%`}
+                          labelLine={{ stroke: '#64748b' }}
+                        >
+                          {analyticsData.galleryBreakdown.map((entry, index) => (
+                            <Cell
+                              key={`cell-${index}`}
+                              fill={CHART_COLORS[entry.status as keyof typeof CHART_COLORS] || '#00B3A4'}
+                            />
+                          ))}
+                        </Pie>
+                        <Tooltip
+                          contentStyle={{
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            border: '1px solid #e2e8f0',
+                            borderRadius: '8px'
+                          }}
+                          formatter={(value: number, name: string) => [`${value} galleries`, name]}
+                        />
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  ) : (
+                    <div className="flex h-48 items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 text-sm text-muted-foreground">
+                      {dataLoading ? 'Loading chart data...' : 'No gallery data available'}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>
@@ -241,25 +365,84 @@ export default function AnalyticsPage() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <Clock className="h-5 w-5 text-blue-600" />
-                  Performance Metrics
+                  Database Health Check
                 </CardTitle>
                 <CardDescription>
-                  Integrate with monitoring to track API response times, errors, and uptime trends.
+                  Real-time database connectivity and performance metrics.
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <div className="grid gap-4 md:grid-cols-3">
+                <div className="grid gap-4 md:grid-cols-4">
+                  {/* Health Status */}
                   <div className="rounded-lg border border-slate-200 bg-white p-4">
-                    <p className="text-sm text-muted-foreground">Average API Response</p>
-                    <p className="mt-2 text-xl font-semibold text-slate-900">—</p>
+                    <p className="text-sm text-muted-foreground">Status</p>
+                    <div className="mt-2 flex items-center gap-2">
+                      {analyticsData?.healthCheck?.status === 'healthy' && (
+                        <>
+                          <CheckCircle className="h-5 w-5 text-green-600" />
+                          <p className="text-xl font-semibold text-green-600">Healthy</p>
+                        </>
+                      )}
+                      {analyticsData?.healthCheck?.status === 'degraded' && (
+                        <>
+                          <AlertTriangle className="h-5 w-5 text-yellow-600" />
+                          <p className="text-xl font-semibold text-yellow-600">Degraded</p>
+                        </>
+                      )}
+                      {analyticsData?.healthCheck?.status === 'unhealthy' && (
+                        <>
+                          <XCircle className="h-5 w-5 text-red-600" />
+                          <p className="text-xl font-semibold text-red-600">Unhealthy</p>
+                        </>
+                      )}
+                      {!analyticsData?.healthCheck && (
+                        <p className="text-xl font-semibold text-slate-900">—</p>
+                      )}
+                    </div>
                   </div>
+                  {/* Query Latency */}
                   <div className="rounded-lg border border-slate-200 bg-white p-4">
-                    <p className="text-sm text-muted-foreground">Error Rate</p>
-                    <p className="mt-2 text-xl font-semibold text-slate-900">—</p>
+                    <p className="text-sm text-muted-foreground">Query Latency</p>
+                    <p className={`mt-2 text-xl font-semibold ${
+                      analyticsData?.healthCheck?.queryLatencyMs !== undefined
+                        ? analyticsData.healthCheck.queryLatencyMs < 500
+                          ? 'text-green-600'
+                          : analyticsData.healthCheck.queryLatencyMs < 1000
+                          ? 'text-yellow-600'
+                          : 'text-red-600'
+                        : 'text-slate-900'
+                    }`}>
+                      {analyticsData?.healthCheck?.queryLatencyMs !== undefined
+                        ? `${analyticsData.healthCheck.queryLatencyMs}ms`
+                        : '—'}
+                    </p>
                   </div>
+                  {/* Table Counts */}
                   <div className="rounded-lg border border-slate-200 bg-white p-4">
-                    <p className="text-sm text-muted-foreground">Uptime (30 days)</p>
-                    <p className="mt-2 text-xl font-semibold text-slate-900">—</p>
+                    <p className="text-sm text-muted-foreground">Total Records</p>
+                    <p className="mt-2 text-xl font-semibold text-slate-900">
+                      {analyticsData?.healthCheck?.tableCounts
+                        ? (analyticsData.healthCheck.tableCounts.users +
+                           analyticsData.healthCheck.tableCounts.galleries +
+                           analyticsData.healthCheck.tableCounts.photos).toLocaleString()
+                        : '—'}
+                    </p>
+                    {analyticsData?.healthCheck?.tableCounts && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        {analyticsData.healthCheck.tableCounts.users} users,{' '}
+                        {analyticsData.healthCheck.tableCounts.galleries} galleries,{' '}
+                        {analyticsData.healthCheck.tableCounts.photos} photos
+                      </p>
+                    )}
+                  </div>
+                  {/* Last Checked */}
+                  <div className="rounded-lg border border-slate-200 bg-white p-4">
+                    <p className="text-sm text-muted-foreground">Last Checked</p>
+                    <p className="mt-2 text-xl font-semibold text-slate-900">
+                      {analyticsData?.healthCheck?.lastChecked
+                        ? new Date(analyticsData.healthCheck.lastChecked).toLocaleTimeString()
+                        : '—'}
+                    </p>
                   </div>
                 </div>
               </CardContent>
