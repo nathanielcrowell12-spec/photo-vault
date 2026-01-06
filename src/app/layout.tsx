@@ -128,14 +128,14 @@ export default function RootLayout({
                 {/* Root-level error boundary - catches catastrophic errors */}
                 <ErrorBoundary level="root">
                   <div className="flex flex-col min-h-screen bg-background">
-                    <Navigation hideOnPaths={['/photographer/dashboard', '/login', '/signup', '/auth/signup', '/photographers/signup']} />
+                    <Navigation hideOnPaths={['/', '/photographer/dashboard', '/login', '/signup', '/auth/signup', '/photographers/signup']} />
                     {/* Route-level error boundary - preserves navigation on page errors */}
                     <main className="flex-1">
                       <RouteErrorBoundary>
                         {children}
                       </RouteErrorBoundary>
                     </main>
-                    <Footer hideOnPaths={['/photographer/dashboard', '/login', '/signup', '/auth/signup', '/photographers/signup']} />
+                    <Footer hideOnPaths={['/', '/photographer/dashboard', '/login', '/signup', '/auth/signup', '/photographers/signup']} />
                     <Toaster />
                   </div>
                 </ErrorBoundary>
