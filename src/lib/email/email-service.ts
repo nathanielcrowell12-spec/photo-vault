@@ -322,6 +322,7 @@ Update payment method: ${process.env.NEXT_PUBLIC_APP_URL}/billing
   /**
    * Send beta welcome email to founding photographers
    * Triggered when PHOTOVAULT_BETA_2026 coupon is applied
+   * Includes link to Madison Photography Guide PDF
    */
   static async sendBetaWelcomeEmail(data: BetaWelcomeEmailData): Promise<{ success: boolean; error?: string }> {
     try {

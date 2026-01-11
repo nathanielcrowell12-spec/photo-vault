@@ -886,7 +886,7 @@ export function getBetaWelcomeEmailHTML(data: BetaWelcomeEmailData): string {
             Founder, PhotoVault</p>
 
             <div class="ps-note">
-                <strong>P.S.</strong> - As a bonus, I'm sending you our exclusive 100 Dane County Photo Locations guide. GPS coordinates, permit rules, insider tips for every spot. Keep an eye on your inbox!
+                <strong>P.S.</strong> - As a bonus, here's our exclusive <a href="${process.env.NEXT_PUBLIC_APP_URL}/resources/MADISON-PHOTOGRAPHY-GUIDE-2026.pdf" style="color: #d97706; font-weight: 600;">Madison Photography Guide</a> - 50 verified locations with GPS coordinates, permit rules, and insider tips. It's yours to keep!
             </div>
 
             <div class="footer">
@@ -937,7 +937,8 @@ Let's build this together,
 Nate
 Founder, PhotoVault
 
-P.S. - As a bonus, I'm sending you our exclusive 100 Dane County Photo Locations guide. GPS coordinates, permit rules, insider tips for every spot. Keep an eye on your inbox!
+P.S. - As a bonus, here's our exclusive Madison Photography Guide - 50 verified locations with GPS coordinates, permit rules, and insider tips. It's yours to keep!
+Download: ${process.env.NEXT_PUBLIC_APP_URL}/resources/MADISON-PHOTOGRAPHY-GUIDE-2026.pdf
 
 ---
 Questions? Contact us at support@photovault.photo

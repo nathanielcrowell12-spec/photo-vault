@@ -300,6 +300,66 @@ export async function getTotalPhotographers(supabase: SupabaseClient): Promise<n
 }
 
 /**
+ * Count photographers created in date range
+ */
+export async function countNewPhotographers(
+  supabase: SupabaseClient,
+  startDate: string,
+  endDate: string
+): Promise<number> {
+  const { count, error } = await supabase
+    .from('photographers')
+    .select('*', { count: 'exact', head: true })
+    .gte('created_at', startDate)
+    .lt('created_at', endDate)
+
+  if (error) throw new Error(`Failed to count new photographers: ${error.message}`)
+  return count || 0
+}
+
+/**
+ * Count subscriptions that became active in date range
+ * Used as a proxy for MRR growth calculation
+ */
+export async function countNewActiveSubscriptions(
+  supabase: SupabaseClient,
+  startDate: string,
+  endDate: string
+): Promise<number> {
+  const { count, error } = await supabase
+    .from('subscriptions')
+    .select('*', { count: 'exact', head: true })
+    .eq('status', 'active')
+    .gte('created_at', startDate)
+    .lt('created_at', endDate)
+
+  if (error) throw new Error(`Failed to count new subscriptions: ${error.message}`)
+  return count || 0
+}
+
+/**
+ * Calculate MRR for a specific period
+ * Based on subscriptions that were active and created before the end of that period
+ */
+export async function calculateMRRForPeriod(
+  supabase: SupabaseClient,
+  endDate: string
+): Promise<number> {
+  const MONTHLY_PRICE_CENTS = 800 // $8.00
+
+  // Count subscriptions that are currently active AND were created before the period end
+  // This is an approximation since we don't have historical subscription status
+  const { count, error } = await supabase
+    .from('subscriptions')
+    .select('*', { count: 'exact', head: true })
+    .eq('status', 'active')
+    .lt('created_at', endDate)
+
+  if (error) throw new Error(`Failed to calculate MRR for period: ${error.message}`)
+  return (count || 0) * MONTHLY_PRICE_CENTS
+}
+
+/**
  * Get total client count
  */
 export async function getTotalClients(supabase: SupabaseClient): Promise<number> {

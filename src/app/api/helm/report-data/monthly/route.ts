@@ -10,6 +10,7 @@ import {
   getTotalGalleries,
   getTotalPhotos,
   calculateMRR,
+  calculateMRRForPeriod,
   getTotalRevenue,
   getSubscriptionBreakdown,
   countChurnedClients,
@@ -17,6 +18,7 @@ import {
   getCommissionSummary,
   calculateGrowth,
   countNewClients,
+  countNewPhotographers,
   countGalleries
 } from '@/lib/helm/queries'
 import { MonthlyReportData } from '@/lib/helm/types'
@@ -87,19 +89,27 @@ export async function GET(request: NextRequest) {
     // Previous month metrics for growth calculations
     const [
       prevClients,
-      prevGalleries
+      prevGalleries,
+      prevPhotographers,
+      prevMRR
     ] = await Promise.all([
       countNewClients(supabase, prev.start, prev.end),
-      countGalleries(supabase, prev.start, prev.end)
+      countGalleries(supabase, prev.start, prev.end),
+      countNewPhotographers(supabase, prev.start, prev.end),
+      calculateMRRForPeriod(supabase, prev.end)
     ])
 
     // Current month new counts for growth
     const [
       newClientsThisMonth,
-      newGalleriesThisMonth
+      newGalleriesThisMonth,
+      newPhotographersThisMonth,
+      currentMRR
     ] = await Promise.all([
       countNewClients(supabase, start, end),
-      countGalleries(supabase, start, end)
+      countGalleries(supabase, start, end),
+      countNewPhotographers(supabase, start, end),
+      calculateMRRForPeriod(supabase, end)
     ])
 
     // Format dates for response
@@ -128,8 +138,8 @@ export async function GET(request: NextRequest) {
       },
       subscriptionBreakdown,
       growth: {
-        mrrGrowth: 0, // Would need historical MRR data
-        photographerGrowth: 0, // Would need historical data
+        mrrGrowth: calculateGrowth(currentMRR, prevMRR),
+        photographerGrowth: calculateGrowth(newPhotographersThisMonth, prevPhotographers),
         clientGrowth: calculateGrowth(newClientsThisMonth, prevClients),
         galleryGrowth: calculateGrowth(newGalleriesThisMonth, prevGalleries)
       },
