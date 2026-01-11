@@ -39,7 +39,12 @@ export type AdminRevenueData = {
   failedPayments: FailedPayment[]
 }
 
-export async function fetchAdminRevenueData(): Promise<AdminRevenueData> {
+export type AdminRevenueParams = {
+  startDate?: string  // YYYY-MM-DD format
+  endDate?: string    // YYYY-MM-DD format
+}
+
+export async function fetchAdminRevenueData(params: AdminRevenueParams = {}): Promise<AdminRevenueData> {
   const supabase = createServiceRoleClient()
 
   try {
@@ -55,10 +60,20 @@ export async function fetchAdminRevenueData(): Promise<AdminRevenueData> {
     const totalRevenueCents = allCommissions?.reduce((sum, c) => sum + (c.photovault_commission_cents || 0), 0) || 0
     const totalRevenue = totalRevenueCents / 100  // Convert to dollars
 
-    // Fetch this month's revenue
+    // Fetch selected month's revenue (or current month if no params)
     const now = new Date()
-    const startOfMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0, 0))
-    const endOfMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 0, 23, 59, 59, 999))
+    let startOfMonth: Date
+    let endOfMonth: Date
+
+    if (params.startDate && params.endDate) {
+      // Use provided date range
+      startOfMonth = new Date(params.startDate + 'T00:00:00.000Z')
+      endOfMonth = new Date(params.endDate + 'T23:59:59.999Z')
+    } else {
+      // Default to current month
+      startOfMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), 1, 0, 0, 0, 0))
+      endOfMonth = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() + 1, 0, 23, 59, 59, 999))
+    }
 
     const { data: monthCommissions, error: monthError } = await supabase
       .from('commissions')
@@ -72,9 +87,10 @@ export async function fetchAdminRevenueData(): Promise<AdminRevenueData> {
     const thisMonthCents = monthCommissions?.reduce((sum, c) => sum + (c.photovault_commission_cents || 0), 0) || 0
     const thisMonth = thisMonthCents / 100  // Convert to dollars
 
-    // Fetch this year's revenue
-    const startOfYear = new Date(Date.UTC(now.getUTCFullYear(), 0, 1, 0, 0, 0, 0))
-    const endOfYear = new Date(Date.UTC(now.getUTCFullYear(), 11, 31, 23, 59, 59, 999))
+    // Fetch selected year's revenue (based on selected month's year, or current year)
+    const selectedYear = params.startDate ? new Date(params.startDate).getUTCFullYear() : now.getUTCFullYear()
+    const startOfYear = new Date(Date.UTC(selectedYear, 0, 1, 0, 0, 0, 0))
+    const endOfYear = new Date(Date.UTC(selectedYear, 11, 31, 23, 59, 59, 999))
 
     const { data: yearCommissions, error: yearError } = await supabase
       .from('commissions')

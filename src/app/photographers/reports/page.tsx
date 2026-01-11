@@ -47,11 +47,22 @@ export default function ReportsPage() {
   
   // Report generation form
   const [reportType, setReportType] = useState<'monthly' | 'quarterly' | 'yearly' | 'custom'>('monthly')
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth()) // 0-11
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
+  const [selectedQuarter, setSelectedQuarter] = useState(Math.floor(new Date().getMonth() / 3) + 1) // 1-4
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
   const [includeAnalytics, setIncludeAnalytics] = useState(true)
   const [includePDF, setIncludePDF] = useState(true)
   const [emailAddress, setEmailAddress] = useState('')
+
+  // Generate year options (current year back to 2024)
+  const yearOptions = Array.from({ length: new Date().getFullYear() - 2023 }, (_, i) => new Date().getFullYear() - i)
+
+  const monthNames = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ]
 
   useEffect(() => {
     if (userType !== 'photographer') {
@@ -59,9 +70,15 @@ export default function ReportsPage() {
       return
     }
     fetchReportHistory()
-    setDefaultDates()
+    updateDatesFromSelection()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userType])
+
+  // Update dates when month/year/quarter/type changes
+  useEffect(() => {
+    updateDatesFromSelection()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [reportType, selectedMonth, selectedYear, selectedQuarter])
 
   // Show loading or redirect if not photographer
   if (userType !== 'photographer') {
@@ -75,11 +92,32 @@ export default function ReportsPage() {
     )
   }
 
-  const setDefaultDates = () => {
-    const now = new Date()
-    const firstDay = new Date(now.getFullYear(), now.getMonth(), 1)
-    const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0)
-    
+  const updateDatesFromSelection = () => {
+    let firstDay: Date
+    let lastDay: Date
+
+    switch (reportType) {
+      case 'monthly':
+        firstDay = new Date(selectedYear, selectedMonth, 1)
+        lastDay = new Date(selectedYear, selectedMonth + 1, 0)
+        break
+      case 'quarterly':
+        const quarterStartMonth = (selectedQuarter - 1) * 3
+        firstDay = new Date(selectedYear, quarterStartMonth, 1)
+        lastDay = new Date(selectedYear, quarterStartMonth + 3, 0)
+        break
+      case 'yearly':
+        firstDay = new Date(selectedYear, 0, 1)
+        lastDay = new Date(selectedYear, 11, 31)
+        break
+      case 'custom':
+        // Don't auto-update for custom - let user pick
+        return
+      default:
+        firstDay = new Date(selectedYear, selectedMonth, 1)
+        lastDay = new Date(selectedYear, selectedMonth + 1, 0)
+    }
+
     setStartDate(firstDay.toISOString().split('T')[0])
     setEndDate(lastDay.toISOString().split('T')[0])
   }
@@ -270,26 +308,118 @@ export default function ReportsPage() {
                       </Select>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="start-date">Start Date</Label>
-                        <Input
-                          id="start-date"
-                          type="date"
-                          value={startDate}
-                          onChange={(e) => setStartDate(e.target.value)}
-                        />
+                    {/* Month/Quarter/Year Selectors based on report type */}
+                    {reportType === 'monthly' && (
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Month</Label>
+                          <Select value={selectedMonth.toString()} onValueChange={(value) => setSelectedMonth(parseInt(value))}>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {monthNames.map((month, index) => (
+                                <SelectItem key={index} value={index.toString()}>{month}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Year</Label>
+                          <Select value={selectedYear.toString()} onValueChange={(value) => setSelectedYear(parseInt(value))}>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {yearOptions.map((year) => (
+                                <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
                       </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="end-date">End Date</Label>
-                        <Input
-                          id="end-date"
-                          type="date"
-                          value={endDate}
-                          onChange={(e) => setEndDate(e.target.value)}
-                        />
+                    )}
+
+                    {reportType === 'quarterly' && (
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Quarter</Label>
+                          <Select value={selectedQuarter.toString()} onValueChange={(value) => setSelectedQuarter(parseInt(value))}>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="1">Q1 (Jan - Mar)</SelectItem>
+                              <SelectItem value="2">Q2 (Apr - Jun)</SelectItem>
+                              <SelectItem value="3">Q3 (Jul - Sep)</SelectItem>
+                              <SelectItem value="4">Q4 (Oct - Dec)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Year</Label>
+                          <Select value={selectedYear.toString()} onValueChange={(value) => setSelectedYear(parseInt(value))}>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {yearOptions.map((year) => (
+                                <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
                       </div>
-                    </div>
+                    )}
+
+                    {reportType === 'yearly' && (
+                      <div className="space-y-2">
+                        <Label>Year</Label>
+                        <Select value={selectedYear.toString()} onValueChange={(value) => setSelectedYear(parseInt(value))}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {yearOptions.map((year) => (
+                              <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
+
+                    {reportType === 'custom' && (
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="start-date">Start Date</Label>
+                          <Input
+                            id="start-date"
+                            type="date"
+                            value={startDate}
+                            onChange={(e) => setStartDate(e.target.value)}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="end-date">End Date</Label>
+                          <Input
+                            id="end-date"
+                            type="date"
+                            value={endDate}
+                            onChange={(e) => setEndDate(e.target.value)}
+                          />
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Show selected period */}
+                    {reportType !== 'custom' && startDate && endDate && (
+                      <div className="p-3 bg-muted rounded-lg">
+                        <p className="text-sm text-muted-foreground">
+                          <Calendar className="h-4 w-4 inline mr-2" />
+                          Report period: <span className="font-medium text-foreground">{formatDate(startDate)} - {formatDate(endDate)}</span>
+                        </p>
+                      </div>
+                    )}
 
                     <div className="space-y-4">
                       <div className="flex items-center space-x-2">
@@ -420,7 +550,7 @@ export default function ReportsPage() {
                     </p>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="email-report-type">Report Type</Label>
                       <Select value={reportType} onValueChange={(value: string) => setReportType(value as 'monthly' | 'quarterly' | 'yearly' | 'custom')}>
@@ -434,21 +564,96 @@ export default function ReportsPage() {
                         </SelectContent>
                       </Select>
                     </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="email-period">Period</Label>
-                      <div className="flex space-x-2">
-                        <Input
-                          type="date"
-                          value={startDate}
-                          onChange={(e) => setStartDate(e.target.value)}
-                        />
-                        <Input
-                          type="date"
-                          value={endDate}
-                          onChange={(e) => setEndDate(e.target.value)}
-                        />
+
+                    {/* Period Selectors based on report type */}
+                    {reportType === 'monthly' && (
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Month</Label>
+                          <Select value={selectedMonth.toString()} onValueChange={(value) => setSelectedMonth(parseInt(value))}>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {monthNames.map((month, index) => (
+                                <SelectItem key={index} value={index.toString()}>{month}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Year</Label>
+                          <Select value={selectedYear.toString()} onValueChange={(value) => setSelectedYear(parseInt(value))}>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {yearOptions.map((year) => (
+                                <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
                       </div>
-                    </div>
+                    )}
+
+                    {reportType === 'quarterly' && (
+                      <div className="grid grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label>Quarter</Label>
+                          <Select value={selectedQuarter.toString()} onValueChange={(value) => setSelectedQuarter(parseInt(value))}>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="1">Q1 (Jan - Mar)</SelectItem>
+                              <SelectItem value="2">Q2 (Apr - Jun)</SelectItem>
+                              <SelectItem value="3">Q3 (Jul - Sep)</SelectItem>
+                              <SelectItem value="4">Q4 (Oct - Dec)</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Year</Label>
+                          <Select value={selectedYear.toString()} onValueChange={(value) => setSelectedYear(parseInt(value))}>
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {yearOptions.map((year) => (
+                                <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    )}
+
+                    {reportType === 'yearly' && (
+                      <div className="space-y-2">
+                        <Label>Year</Label>
+                        <Select value={selectedYear.toString()} onValueChange={(value) => setSelectedYear(parseInt(value))}>
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {yearOptions.map((year) => (
+                              <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    )}
+
+                    {/* Show selected period */}
+                    {startDate && endDate && (
+                      <div className="p-3 bg-muted rounded-lg">
+                        <p className="text-sm text-muted-foreground">
+                          <Calendar className="h-4 w-4 inline mr-2" />
+                          Report period: <span className="font-medium text-foreground">{formatDate(startDate)} - {formatDate(endDate)}</span>
+                        </p>
+                      </div>
+                    )}
                   </div>
 
                   <div className="flex items-center space-x-2">

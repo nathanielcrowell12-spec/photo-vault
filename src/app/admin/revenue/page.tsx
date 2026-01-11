@@ -15,9 +15,18 @@ import {
 } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import {
   AlertTriangle,
   ArrowRight,
+  Calendar,
   DollarSign,
   RefreshCw,
   TrendingUp,
@@ -59,6 +68,18 @@ export default function RevenuePage() {
   const [dataLoading, setDataLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  // Date filtering state
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth()) // 0-11
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear())
+
+  // Generate year options (current year back to 2024)
+  const yearOptions = Array.from({ length: new Date().getFullYear() - 2023 }, (_, i) => new Date().getFullYear() - i)
+
+  const monthNames = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ]
+
   useEffect(() => {
     if (!loading && (!user || userType !== 'admin')) {
       router.push('/login')
@@ -70,7 +91,11 @@ export default function RevenuePage() {
     setDataLoading(true)
     setError(null)
     try {
-      const response = await fetch('/api/admin/revenue', { cache: 'no-store' })
+      // Calculate date range for selected month
+      const startDate = new Date(selectedYear, selectedMonth, 1).toISOString().split('T')[0]
+      const endDate = new Date(selectedYear, selectedMonth + 1, 0).toISOString().split('T')[0]
+
+      const response = await fetch(`/api/admin/revenue?startDate=${startDate}&endDate=${endDate}`, { cache: 'no-store' })
       const payload = await response.json()
       if (!response.ok || !payload.success) {
         throw new Error(payload.error || 'Failed to load revenue data')
@@ -82,7 +107,7 @@ export default function RevenuePage() {
     } finally {
       setDataLoading(false)
     }
-  }, [])
+  }, [selectedMonth, selectedYear])
 
   useEffect(() => {
     if (loading || !user || userType !== 'admin') {
@@ -111,27 +136,29 @@ export default function RevenuePage() {
     return null
   }
 
+  const selectedMonthLabel = `${monthNames[selectedMonth]} ${selectedYear}`
+
   const revenueStats = revenueData
     ? [
         { label: 'Total Revenue', value: formatCurrency(revenueData.stats.totalRevenue), subtext: 'All time', href: null },
         {
-          label: 'This Month',
+          label: selectedMonthLabel,
           value: formatCurrency(revenueData.stats.thisMonth),
-          subtext: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }),
-          href: '/admin/transactions?period=month',
+          subtext: 'Selected month',
+          href: null,
         },
         {
-          label: 'This Year',
+          label: `${selectedYear} YTD`,
           value: formatCurrency(revenueData.stats.thisYear),
-          subtext: new Date().getFullYear().toString(),
-          href: '/admin/transactions?period=year',
+          subtext: `Year to date`,
+          href: null,
         },
         { label: 'Average Order', value: formatCurrency(revenueData.stats.averageOrder), subtext: 'Per transaction', href: null },
       ]
     : [
         { label: 'Total Revenue', value: '$0.00', subtext: 'All time', href: null },
-        { label: 'This Month', value: '$0.00', subtext: new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' }), href: '/admin/transactions?period=month' },
-        { label: 'This Year', value: '$0.00', subtext: '2025', href: '/admin/transactions?period=year' },
+        { label: selectedMonthLabel, value: '$0.00', subtext: 'Selected month', href: null },
+        { label: `${selectedYear} YTD`, value: '$0.00', subtext: 'Year to date', href: null },
         { label: 'Average Order', value: '$0.00', subtext: 'Per transaction', href: null },
       ]
 
@@ -144,19 +171,53 @@ export default function RevenuePage() {
       <div className="min-h-screen bg-background">
         {/* Header */}
         <header className="border-b bg-white/95 backdrop-blur-sm">
-          <div className="container mx-auto px-4 py-6 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <DollarSign className="h-10 w-10 text-blue-600" />
-              <div>
-                <h1 className="text-2xl font-bold">Revenue Management</h1>
-                <p className="text-sm text-muted-foreground">
-                  Monitor revenue, payments, and financial metrics across PhotoVault.
-                </p>
+          <div className="container mx-auto px-4 py-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-4">
+                <DollarSign className="h-10 w-10 text-blue-600" />
+                <div>
+                  <h1 className="text-2xl font-bold">Revenue Management</h1>
+                  <p className="text-sm text-muted-foreground">
+                    Monitor revenue, payments, and financial metrics across PhotoVault.
+                  </p>
+                </div>
               </div>
+              <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
+                Admin Access
+              </Badge>
             </div>
-            <Badge variant="outline" className="bg-blue-50 text-blue-700 border-blue-200">
-              Admin Access
-            </Badge>
+
+            {/* Date Filter */}
+            <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-lg border">
+              <Calendar className="h-5 w-5 text-muted-foreground" />
+              <Label className="text-sm font-medium">View data for:</Label>
+              <div className="flex items-center gap-2">
+                <Select value={selectedMonth.toString()} onValueChange={(value) => setSelectedMonth(parseInt(value))}>
+                  <SelectTrigger className="w-[140px] bg-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {monthNames.map((month, index) => (
+                      <SelectItem key={index} value={index.toString()}>{month}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <Select value={selectedYear.toString()} onValueChange={(value) => setSelectedYear(parseInt(value))}>
+                  <SelectTrigger className="w-[100px] bg-white">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {yearOptions.map((year) => (
+                      <SelectItem key={year} value={year.toString()}>{year}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button variant="outline" size="sm" onClick={fetchData} disabled={dataLoading}>
+                <RefreshCw className={cn("mr-2 h-4 w-4", dataLoading && "animate-spin")} />
+                {dataLoading ? 'Loading...' : 'Refresh'}
+              </Button>
+            </div>
           </div>
         </header>
 
@@ -206,7 +267,7 @@ export default function RevenuePage() {
                     Payment Activity
                   </CardTitle>
                   <CardDescription>
-                    Transactions for {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+                    Transactions for {selectedMonthLabel}
                   </CardDescription>
                 </div>
                 <Button
