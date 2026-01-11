@@ -112,6 +112,8 @@ export async function middleware(req: NextRequest) {
       '/api/gallery/', // Public gallery API for paywall
       '/api/family/secondaries/accept', // Family invitation acceptance
       '/api/directory/', // Public directory API for locations and photographers
+      '/api/prompt', // Helm governance sync (prompt hash verification)
+      '/api/helm/', // Helm report data endpoints (own auth via x-helm-api-key)
     ]
 
     const isPublicApi = publicApiRoutes.some(route => pathname.startsWith(route))
