@@ -16,6 +16,13 @@ export async function GET() {
       )
     }
 
+    // Get photographer profile for beta tester status
+    const { data: photographerProfile } = await supabase
+      .from('photographers')
+      .select('is_beta_tester, beta_start_date, price_locked_at')
+      .eq('id', user.id)
+      .single()
+
     // Get active clients count
     const { count: clientsCount } = await supabase
       .from('clients')
@@ -83,7 +90,12 @@ export async function GET() {
         totalPhotos: photosCount || 0,
         clientRating: Math.round(clientRating * 10) / 10,
         ratingCount: ratingCount,
-      }
+      },
+      profile: {
+        isBetaTester: photographerProfile?.is_beta_tester || false,
+        betaStartDate: photographerProfile?.beta_start_date || null,
+        priceLockedAt: photographerProfile?.price_locked_at || null,
+      },
     })
   } catch (error) {
     logger.error('[PhotographerStats] Error fetching photographer stats:', error)

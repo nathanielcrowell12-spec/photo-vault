@@ -24,7 +24,8 @@ import {
   CreditCard,
   CheckCircle,
   Heart,
-  Link2
+  Link2,
+  Star
 } from 'lucide-react'
 import { supabaseBrowser as supabase } from '@/lib/supabase-browser'
 import Link from 'next/link'
@@ -1058,6 +1059,15 @@ export default function GalleryViewerPage() {
             </div>
 
             <div className="flex items-center space-x-2">
+              {/* Rate Experience button for gallery owners (not share link viewers) */}
+              {hasAccess && !shareAccess && userType === 'client' && (
+                <Button asChild variant="outline" size="sm">
+                  <Link href={`/client/rate/${gallery.id}`}>
+                    <Star className="h-4 w-4 mr-2" />
+                    Rate Experience
+                  </Link>
+                </Button>
+              )}
               {/* Hide download button for view-only share links */}
               {!(shareAccess && shareLink?.viewOnly) && (
                 <Button

@@ -383,6 +383,43 @@ Stop and reconsider if you see:
 
 ---
 
+## Skill Knowledge Integration
+
+**CRITICAL:** Before conducting research or creating project briefs, check for specialized project knowledge.
+
+### When to Load Skills
+
+Scan your research/analysis topic for these trigger words (from `core-config.yaml` skillIntegration):
+
+| Domain | Trigger Words |
+|--------|---------------|
+| **Database** | database, supabase, RLS, query, migration, schema, table, policy |
+| **Payments** | payment, stripe, checkout, subscription, webhook, commission, payout |
+| **UI/UX** | component, UI, page, modal, form, tailwind, shadcn, design |
+| **Email** | email, notification, resend, template |
+| **Desktop** | desktop, electron, upload, tus |
+| **Media** | image, thumbnail, zip, EXIF, sharp, photo |
+| **Analytics** | analytics, posthog, tracking, event, funnel |
+| **Backend** | API, middleware, server component, app router |
+
+### Workflow
+
+1. **Detect trigger words** in the research topic
+2. **Read** `.claude/SKILL-INDEX.md` to find the relevant skill file
+3. **Load the skill file** before conducting analysis
+4. **Ground your research** in PhotoVault's existing implementation
+
+### Why This Matters
+
+- Skills document what PhotoVault already has implemented
+- Research should build on existing capabilities, not duplicate them
+- Skills contain business rules (e.g., 50% commission) that affect analysis
+- Using skill knowledge produces actionable recommendations
+
+**Example:** If researching payment analytics features, load `stripe-skill.md` and `posthog-skill.md` first to understand what data is already available and what tracking exists.
+
+---
+
 ## Activation Behavior
 
 When this agent is active, you will:

@@ -489,8 +489,8 @@ export default function AdminDatabasePage() {
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {rlsPolicies.map((policy) => (
-                    <div key={policy.name} className="border border-slate-200 rounded-lg p-4 bg-white/70">
+                  {rlsPolicies.map((policy, index) => (
+                    <div key={`${policy.table}-${policy.name}-${index}`} className="border border-slate-200 rounded-lg p-4 bg-white/70">
                       <div className="flex items-center justify-between">
                         <div>
                           <h4 className="font-semibold text-slate-800">{policy.name}</h4>

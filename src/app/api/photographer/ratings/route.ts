@@ -13,10 +13,9 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    // Use service role to fetch ratings with client info
-    const serviceSupabase = createServiceRoleClient()
-
-    const { data: ratings, error: ratingsError } = await serviceSupabase
+    // Use authenticated client - RLS will filter to photographer's own ratings
+    // The RLS policy: photographer_id = auth.uid()
+    const { data: ratings, error: ratingsError } = await supabase
       .from('client_ratings')
       .select(`
         id,
@@ -37,10 +36,9 @@ export async function GET() {
         ),
         photo_galleries (
           id,
-          title
+          gallery_name
         )
       `)
-      .eq('photographer_id', user.id)
       .order('created_at', { ascending: false })
 
     if (ratingsError) {
@@ -48,7 +46,7 @@ export async function GET() {
       return NextResponse.json({ error: 'Failed to fetch ratings' }, { status: 500 })
     }
 
-    // Get client emails from auth
+    // Get client emails from auth (requires service role for admin API)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const clientUserIds = (ratings || [])
       .map((r: any) => r.clients?.user_id)
@@ -56,6 +54,7 @@ export async function GET() {
 
     const clientEmails: Record<string, string> = {}
     if (clientUserIds.length > 0) {
+      const serviceSupabase = createServiceRoleClient()
       const { data: authUsers } = await serviceSupabase.auth.admin.listUsers()
       authUsers?.users?.forEach(u => {
         if (clientUserIds.includes(u.id) && u.email) {
@@ -77,7 +76,7 @@ export async function GET() {
       photographerResponse: r.photographer_response,
       responseAt: r.response_at,
       createdAt: r.created_at,
-      galleryTitle: r.photo_galleries?.title || 'General Review',
+      galleryTitle: r.photo_galleries?.gallery_name || 'General Review',
       clientEmail: r.clients?.user_id ? clientEmails[r.clients.user_id] || 'Anonymous' : 'Anonymous',
     })) || []
 
@@ -144,21 +143,19 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing ratingId or response' }, { status: 400 })
     }
 
-    const serviceSupabase = createServiceRoleClient()
-
-    // Verify the rating belongs to this photographer
-    const { data: rating } = await serviceSupabase
+    // Verify the rating belongs to this photographer using RLS
+    const { data: rating, error: ratingError } = await supabase
       .from('client_ratings')
-      .select('photographer_id')
+      .select('id')
       .eq('id', ratingId)
       .single()
 
-    if (!rating || rating.photographer_id !== user.id) {
+    if (ratingError || !rating) {
       return NextResponse.json({ error: 'Rating not found' }, { status: 404 })
     }
 
-    // Update with response
-    const { error: updateError } = await serviceSupabase
+    // Update with response - RLS allows photographers to update their own ratings
+    const { error: updateError } = await supabase
       .from('client_ratings')
       .update({
         photographer_response: response,

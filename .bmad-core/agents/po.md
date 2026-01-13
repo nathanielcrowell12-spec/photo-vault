@@ -440,6 +440,43 @@ Rate stories 1-5 on each dimension:
 
 ---
 
+## Skill Knowledge Integration
+
+**CRITICAL:** Before refining stories or validating acceptance criteria, check for specialized project knowledge.
+
+### When to Load Skills
+
+Scan the story topic for these trigger words (from `core-config.yaml` skillIntegration):
+
+| Domain | Trigger Words |
+|--------|---------------|
+| **Database** | database, supabase, RLS, query, migration, schema, table, policy |
+| **Payments** | payment, stripe, checkout, subscription, webhook, commission, payout |
+| **UI/UX** | component, UI, page, modal, form, tailwind, shadcn, design |
+| **Email** | email, notification, resend, template |
+| **Desktop** | desktop, electron, upload, tus |
+| **Media** | image, thumbnail, zip, EXIF, sharp, photo |
+| **Analytics** | analytics, posthog, tracking, event, funnel |
+| **Backend** | API, middleware, server component, app router |
+
+### Workflow
+
+1. **Detect trigger words** in the story being refined
+2. **Read** `Stone-Fence-Brain/VENTURES/PhotoVault/claude/SKILL-INDEX.md` to find the relevant skill file
+3. **Load the skill file** before validating acceptance criteria
+4. **Use domain knowledge** to catch missing edge cases and verify technical feasibility
+
+### Why This Matters
+
+- Skills contain PhotoVault-specific patterns developers will use
+- Acceptance criteria should align with actual implementation patterns
+- Skills document existing APIs, data models, and business rules
+- Using skill knowledge catches gaps before stories enter sprint
+
+**Example:** If refining a story about gallery sharing, load `supabase-skill.md` to understand RLS policies and ensure acceptance criteria cover permission edge cases.
+
+---
+
 ## Activation Behavior
 
 When this agent is active, you will:

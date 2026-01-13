@@ -30,13 +30,13 @@ npm run dev -- -p 3002
 3. Report status to user, wait for direction
 
 ### When Trigger Words Detected
-1. Read skill index: `.claude/SKILL-INDEX.md`
+1. Read skill index: `Stone-Fence-Brain/VENTURES/PhotoVault/claude/SKILL-INDEX.md`
 2. Follow the workflow in that file
 
 ### Key Paths
 | What | Where |
 |------|-------|
-| **Skill Index** | `.claude/SKILL-INDEX.md` |
+| **Skill Index** | `Stone-Fence-Brain/VENTURES/PhotoVault/claude/SKILL-INDEX.md` |
 | **Current State** | `Stone-Fence-Brain/VENTURES/PhotoVault/CURRENT_STATE.md` |
 | **Work Plan** | `WORK_PLAN.md` (in this directory) |
 | **Skills** | `Stone-Fence-Brain/VENTURES/PhotoVault/claude/skills/` |
@@ -99,7 +99,7 @@ HALT and report to user if you cannot comply.
 2. Single-file edit under 10 lines
 3. No trigger words present
 
-Otherwise, read `.claude/SKILL-INDEX.md` and follow the workflow.
+Otherwise, read `Stone-Fence-Brain/VENTURES/PhotoVault/claude/SKILL-INDEX.md` and follow the workflow.
 
 ---
 
@@ -129,7 +129,7 @@ PHOTOVAULT SESSION HANDOFF - [DATE TIME]
 Before working, read:
 1. `photovault-hub/CLAUDE.md`
 2. `Stone-Fence-Brain/VENTURES/PhotoVault/CURRENT_STATE.md`
-3. `.claude/SKILL-INDEX.md`
+3. `Stone-Fence-Brain/VENTURES/PhotoVault/claude/SKILL-INDEX.md`
 
 Then say: "Context loaded. Ready to discuss next steps."
 
@@ -154,6 +154,33 @@ Then say: "Context loaded. Ready to discuss next steps."
 
 ---
 
+## Git Push Discipline (Added 2026-01-06)
+
+**Root Cause:** Session review found Claude pushing without permission.
+
+- The word "save" does NOT mean push
+- The word "commit" does NOT mean push
+- ONLY push if user says: "push", "push it", "push to remote", "push to origin"
+- If unsure, ASK: "Should I push these commits to the remote?"
+
+---
+
+## UI Change Routing (Added 2026-01-06)
+
+**Root Cause:** Session review found Claude editing UI directly without subagent.
+
+For ANY UI/visual changes (including "fixes"):
+1. Read Stone-Fence-Brain/VENTURES/PhotoVault/claude/SKILL-INDEX.md
+2. Spawn UI Expert subagent
+3. Create plan in docs/claude/plans/
+4. Get QA Critic review
+5. Get user approval
+6. THEN implement
+
+"Fix the effects" is an implementation task requiring the full workflow.
+
+---
+
 ## Documentation (Read On-Demand)
 
 | Topic | File |
@@ -165,4 +192,4 @@ Then say: "Context loaded. Ready to discuss next steps."
 
 ---
 
-*~100 lines. Context retrieved on-demand via SKILL-INDEX.md*
+*~100 lines. Context retrieved on-demand via Stone-Fence-Brain SKILL-INDEX.md*

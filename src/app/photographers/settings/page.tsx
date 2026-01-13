@@ -30,7 +30,8 @@ import {
   ExternalLink,
   AlertCircle,
   Banknote,
-  PartyPopper
+  PartyPopper,
+  Star
 } from 'lucide-react'
 import AccessGuard from '@/components/AccessGuard'
 import { PaymentMethodManager } from '@/components/stripe'
@@ -81,6 +82,13 @@ function PhotographerSettingsContent() {
   const [subscriptionLoading, setSubscriptionLoading] = useState(true)
   const [creatingSubscription, setCreatingSubscription] = useState(false)
 
+  // Beta tester profile state
+  const [betaProfile, setBetaProfile] = useState<{
+    isBetaTester: boolean
+    betaStartDate: string | null
+    priceLockedAt: number | null
+  } | null>(null)
+
   useEffect(() => {
     if (!loading && (!user || userType !== 'photographer')) {
       router.push('/login')
@@ -99,11 +107,12 @@ function PhotographerSettingsContent() {
     }
   }, [searchParams])
 
-  // Fetch Stripe Connect status
+  // Fetch Stripe Connect status and beta profile
   useEffect(() => {
     if (user && userType === 'photographer') {
       fetchStripeStatus()
       fetchSubscriptionStatus()
+      fetchBetaProfile()
     }
   }, [user, userType])
 
@@ -153,6 +162,18 @@ function PhotographerSettingsContent() {
       setSubscription(null)
     } finally {
       setSubscriptionLoading(false)
+    }
+  }
+
+  const fetchBetaProfile = async () => {
+    try {
+      const response = await fetch('/api/photographer/stats')
+      const data = await response.json()
+      if (data.success && data.profile) {
+        setBetaProfile(data.profile)
+      }
+    } catch {
+      // Beta profile fetch failed - status card won't show, but page continues to work
     }
   }
 
@@ -309,6 +330,88 @@ function PhotographerSettingsContent() {
                   <strong>Stripe account connected successfully!</strong> You can now receive commission payouts.
                 </AlertDescription>
               </Alert>
+            )}
+
+            {/* Founding Photographer Status */}
+            {betaProfile?.isBetaTester && (
+              <Card className="border-2 border-amber-200 shadow-sm bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 dark:border-amber-700">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-amber-800 dark:text-amber-200">
+                    <Star className="h-5 w-5 fill-amber-500 text-amber-500" />
+                    Founding Photographer Status
+                  </CardTitle>
+                  <CardDescription className="text-amber-700 dark:text-amber-300">
+                    You&apos;re one of our founding photographers! Here&apos;s what that means:
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="grid gap-3">
+                    <div className="flex items-start gap-3">
+                      <CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-medium text-foreground">Free Platform Access</p>
+                        <p className="text-sm text-muted-foreground">
+                          {betaProfile.betaStartDate ? (
+                            <>Platform fee waived until {(() => {
+                              const endDate = new Date(betaProfile.betaStartDate)
+                              endDate.setMonth(endDate.getMonth() + 12)
+                              return endDate.toLocaleDateString('en-US', {
+                                year: 'numeric',
+                                month: 'long',
+                                day: 'numeric'
+                              })
+                            })()}</>
+                          ) : (
+                            <>12 months of free platform access</>
+                          )}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-medium text-foreground">Lifetime Price Lock</p>
+                        <p className="text-sm text-muted-foreground">
+                          ${betaProfile.priceLockedAt || 22}/month forever - immune to future price increases
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-medium text-foreground">Direct Founder Access</p>
+                        <p className="text-sm text-muted-foreground">
+                          Priority support and direct line to the founder for feedback
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-start gap-3">
+                      <CheckCircle2 className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-medium text-foreground">Standard 50/50 Commission</p>
+                        <p className="text-sm text-muted-foreground">
+                          Earn 50% commission on all client payments
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {betaProfile.betaStartDate && (
+                    <div className="pt-2 border-t border-amber-200 dark:border-amber-700">
+                      <p className="text-xs text-amber-700 dark:text-amber-300">
+                        Member since {new Date(betaProfile.betaStartDate).toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric'
+                        })}
+                      </p>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
             )}
 
             {/* Stripe Connect - FIRST for visibility */}

@@ -423,6 +423,43 @@ When quality attributes conflict (they always do):
 
 ---
 
+## Skill Knowledge Integration
+
+**CRITICAL:** Before creating architecture documents, check for specialized project knowledge.
+
+### When to Load Skills
+
+Scan your document topic for these trigger words (from `core-config.yaml` skillIntegration):
+
+| Domain | Trigger Words |
+|--------|---------------|
+| **Database** | database, supabase, RLS, query, migration, schema, table, policy |
+| **Payments** | payment, stripe, checkout, subscription, webhook, commission, payout |
+| **UI/UX** | component, UI, page, modal, form, tailwind, shadcn, design |
+| **Email** | email, notification, resend, template |
+| **Desktop** | desktop, electron, upload, tus |
+| **Media** | image, thumbnail, zip, EXIF, sharp, photo |
+| **Analytics** | analytics, posthog, tracking, event, funnel |
+| **Backend** | API, middleware, server component, app router |
+
+### Workflow
+
+1. **Detect trigger words** in the architecture topic
+2. **Read** `Stone-Fence-Brain/VENTURES/PhotoVault/claude/SKILL-INDEX.md` to find the relevant skill file
+3. **Load the skill file** before designing architecture
+4. **Incorporate domain knowledge** into your technical decisions
+
+### Why This Matters
+
+- PhotoVault has specific patterns, APIs, and constraints documented in skills
+- Generic architecture leads to rework when developers discover project specifics
+- Skills contain learned lessons from previous implementations
+- Using skill knowledge produces architecture that actually fits the codebase
+
+**Example:** If designing Stripe integration architecture, load `stripe-skill.md` first to understand PhotoVault's commission structure, Connect setup, and webhook patterns.
+
+---
+
 ## Activation Behavior
 
 When this agent is active, you will:

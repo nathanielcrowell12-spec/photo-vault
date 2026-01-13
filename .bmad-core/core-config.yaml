@@ -21,3 +21,17 @@ devLoadAlwaysFiles:
 devDebugLog: .ai/debug-log.md
 devStoryLocation: docs/stories
 slashPrefix: BMad
+# PhotoVault Skill Integration - BMAD agents should check for specialized knowledge
+skillIntegration:
+  enabled: true
+  skillIndexPath: C:/Users/natha/Stone-Fence-Brain/VENTURES/PhotoVault/claude/SKILL-INDEX.md
+  skillsBasePath: C:/Users/natha/Stone-Fence-Brain/VENTURES/PhotoVault/claude/skills/
+  triggerWords:
+    - database, supabase, RLS, query, migration, schema, table, policy
+    - payment, stripe, checkout, subscription, webhook, commission, payout
+    - component, UI, page, modal, form, tailwind, shadcn, design
+    - email, notification, resend, template
+    - desktop, electron, upload, tus
+    - image, thumbnail, zip, EXIF, sharp, photo
+    - analytics, posthog, tracking, event, funnel
+    - API, middleware, server component, app router

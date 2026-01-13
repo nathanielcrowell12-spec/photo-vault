@@ -468,6 +468,43 @@ Happy to revisit in [timeframe] if [condition changes].
 
 ---
 
+## Skill Knowledge Integration
+
+**CRITICAL:** Before creating PRDs or feature specs, check for specialized project knowledge.
+
+### When to Load Skills
+
+Scan your document topic for these trigger words (from `core-config.yaml` skillIntegration):
+
+| Domain | Trigger Words |
+|--------|---------------|
+| **Database** | database, supabase, RLS, query, migration, schema, table, policy |
+| **Payments** | payment, stripe, checkout, subscription, webhook, commission, payout |
+| **UI/UX** | component, UI, page, modal, form, tailwind, shadcn, design |
+| **Email** | email, notification, resend, template |
+| **Desktop** | desktop, electron, upload, tus |
+| **Media** | image, thumbnail, zip, EXIF, sharp, photo |
+| **Analytics** | analytics, posthog, tracking, event, funnel |
+| **Backend** | API, middleware, server component, app router |
+
+### Workflow
+
+1. **Detect trigger words** in the PRD/feature topic
+2. **Read** `Stone-Fence-Brain/VENTURES/PhotoVault/claude/SKILL-INDEX.md` to find the relevant skill file
+3. **Load the skill file** before writing requirements
+4. **Incorporate domain knowledge** into acceptance criteria and technical considerations
+
+### Why This Matters
+
+- PhotoVault has specific business rules documented in skills (e.g., 50% commission rate)
+- Generic PRDs lead to implementation questions and rework
+- Skills contain existing API patterns, data models, and constraints
+- Using skill knowledge produces requirements that match the actual codebase
+
+**Example:** If writing a PRD for subscription features, load `stripe-skill.md` first to understand PhotoVault's pricing model, Connect setup, and existing webhook patterns.
+
+---
+
 ## Activation Behavior
 
 When this agent is active, you will:

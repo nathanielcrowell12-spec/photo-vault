@@ -35,6 +35,7 @@ import GalleryGrid from '@/components/GalleryGrid'
 import MessagesButton from '@/components/MessagesButton'
 import MessagingPanel from '@/components/MessagingPanel'
 import { ThemeModeToggle } from '@/components/ThemeModeToggle'
+import { FoundingPhotographerBadge } from '@/components/photographer/FoundingPhotographerBadge'
 
 export default function PhotographerDashboardPage() {
   const { user, userType, loading, signOut } = useAuth()
@@ -44,6 +45,15 @@ export default function PhotographerDashboardPage() {
     totalGalleries: 0,
     monthlyEarnings: 0,
     clientRating: 0
+  })
+  const [profile, setProfile] = useState<{
+    isBetaTester: boolean
+    betaStartDate: string | null
+    priceLockedAt: number | null
+  }>({
+    isBetaTester: false,
+    betaStartDate: null,
+    priceLockedAt: null,
   })
   const [statsLoading, setStatsLoading] = useState(true)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -64,9 +74,12 @@ export default function PhotographerDashboardPage() {
         const data = await response.json()
         if (data.success) {
           setStats(data.stats)
+          if (data.profile) {
+            setProfile(data.profile)
+          }
         }
-      } catch (error) {
-        console.error('Failed to fetch stats:', error)
+      } catch {
+        // Stats fetch failed - profile badge won't show, but page continues to work
       } finally {
         setStatsLoading(false)
       }
@@ -289,8 +302,11 @@ export default function PhotographerDashboardPage() {
 
               <div className="relative z-20 p-8 lg:p-12 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                 <div className="space-y-4 max-w-xl">
-                  <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs font-bold uppercase tracking-wider">
-                    <Star size={12} fill="currentColor" /> Premium Member
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-xs font-bold uppercase tracking-wider">
+                      <Star size={12} fill="currentColor" /> Premium Member
+                    </div>
+                    <FoundingPhotographerBadge isBetaTester={profile.isBetaTester} />
                   </div>
                   <h1 className="text-3xl lg:text-5xl font-bold text-foreground leading-tight">
                     {getGreeting()}, <br className="hidden lg:block"/>

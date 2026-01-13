@@ -21,12 +21,24 @@ export async function GET(request: Request) {
 
     const serviceSupabase = createServiceRoleClient()
 
-    // Get client record for this user
+    // Get gallery to find the photographer
+    const { data: gallery } = await serviceSupabase
+      .from('photo_galleries')
+      .select('photographer_id')
+      .eq('id', galleryId)
+      .single()
+
+    if (!gallery) {
+      return NextResponse.json({ hasRated: false, canRate: false })
+    }
+
+    // Get client record for this user with this photographer
     const { data: client } = await serviceSupabase
       .from('clients')
       .select('id')
       .eq('user_id', user.id)
-      .single()
+      .eq('photographer_id', gallery.photographer_id)
+      .maybeSingle()
 
     if (!client) {
       return NextResponse.json({ hasRated: false, canRate: false })
@@ -77,18 +89,7 @@ export async function POST(request: Request) {
 
     const serviceSupabase = createServiceRoleClient()
 
-    // Get client record
-    const { data: client } = await serviceSupabase
-      .from('clients')
-      .select('id, photographer_id')
-      .eq('user_id', user.id)
-      .single()
-
-    if (!client) {
-      return NextResponse.json({ error: 'Client record not found' }, { status: 404 })
-    }
-
-    // Get gallery to verify ownership and get photographer
+    // Get gallery first to find the photographer
     const { data: gallery } = await serviceSupabase
       .from('photo_galleries')
       .select('photographer_id')
@@ -97,6 +98,18 @@ export async function POST(request: Request) {
 
     if (!gallery) {
       return NextResponse.json({ error: 'Gallery not found' }, { status: 404 })
+    }
+
+    // Get client record for this user with this photographer
+    const { data: client } = await serviceSupabase
+      .from('clients')
+      .select('id, photographer_id')
+      .eq('user_id', user.id)
+      .eq('photographer_id', gallery.photographer_id)
+      .maybeSingle()
+
+    if (!client) {
+      return NextResponse.json({ error: 'Client record not found' }, { status: 404 })
     }
 
     // Check if already rated this gallery
