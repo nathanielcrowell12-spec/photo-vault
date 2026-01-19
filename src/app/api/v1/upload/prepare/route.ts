@@ -57,19 +57,44 @@ export async function POST(request: NextRequest) {
         payment_option_id: gallery.payment_option_id
       })
     } else {
-      // Create new gallery in database (backwards compatibility for old desktop versions)
+      // Create new gallery in database
       logger.info('[Upload Prepare] Creating new gallery (no galleryId provided)')
+
+      // Check if user is a photographer or client
+      // This allows anyone to upload galleries that admins can later assign
+      const { data: photographer } = await supabase
+        .from('photographers')
+        .select('id')
+        .eq('id', userId)
+        .single()
+
+      const { data: client } = await supabase
+        .from('clients')
+        .select('id')
+        .eq('id', userId)
+        .single()
+
+      // Only set IDs if user exists in respective table (FK constraint)
+      const photographerId = photographer ? userId : null
+      const effectiveClientId = clientId || (client ? userId : null)
+
+      logger.info('[Upload Prepare] User roles:', {
+        isPhotographer: !!photographer,
+        isClient: !!client,
+        photographerId,
+        effectiveClientId
+      })
 
       const { data: newGallery, error: galleryError } = await supabase
         .from('photo_galleries')
         .insert({
-          photographer_id: userId,
-          client_id: clientId || null,
+          photographer_id: photographerId,
+          client_id: effectiveClientId,
           platform: platform || 'photovault',
           gallery_name: galleryName,
           photo_count: 0,
           session_date: new Date().toISOString(),
-          is_imported: false
+          is_imported: !photographer // Mark as imported if uploaded by non-photographer
         })
         .select()
         .single()
