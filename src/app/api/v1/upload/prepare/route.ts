@@ -74,15 +74,35 @@ export async function POST(request: NextRequest) {
         .eq('id', userId)
         .single()
 
+      // If clientId is explicitly provided, validate it exists in clients table
+      // This prevents FK constraint errors from stale/invalid clientIds
+      let validatedClientId: string | null = null
+      if (clientId) {
+        const { data: clientExists } = await supabase
+          .from('clients')
+          .select('id')
+          .eq('id', clientId)
+          .single()
+
+        if (clientExists) {
+          validatedClientId = clientId
+        } else {
+          logger.warn('[Upload Prepare] Provided clientId does not exist in clients table, ignoring:', clientId)
+        }
+      }
+
       // Only set IDs if user exists in respective table (FK constraint)
       const photographerId = photographer ? userId : null
-      const effectiveClientId = clientId || (client ? userId : null)
+      // Use validated clientId if provided, otherwise check if current user is a client
+      const effectiveClientId = validatedClientId || (client ? userId : null)
 
       logger.info('[Upload Prepare] User roles:', {
         isPhotographer: !!photographer,
         isClient: !!client,
         photographerId,
-        effectiveClientId
+        effectiveClientId,
+        providedClientId: clientId,
+        clientIdValidated: !!validatedClientId
       })
 
       const { data: newGallery, error: galleryError } = await supabase
