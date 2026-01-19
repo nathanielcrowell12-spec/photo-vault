@@ -34,10 +34,13 @@ import {
   getPaymentSuccessfulEmailText,
   getBetaWelcomeEmailHTML,
   getBetaWelcomeEmailText,
+  getPhotographerGalleryAssignmentEmailHTML,
+  getPhotographerGalleryAssignmentEmailText,
   type ClientInvitationEmailData,
   type PhotographerWelcomeEmailData,
   type PaymentSuccessfulEmailData,
   type BetaWelcomeEmailData,
+  type PhotographerGalleryAssignmentEmailData,
 } from './critical-templates'
 import {
   getSubscriptionExpiringEmailHTML,
@@ -338,6 +341,33 @@ Update payment method: ${process.env.NEXT_PUBLIC_APP_URL}/billing
       return { success: true }
     } catch (error: any) {
       logger.error('[Email] Error sending beta welcome email:', error)
+      return { success: false, error: error.message }
+    }
+  }
+
+  /**
+   * Send photographer gallery assignment email
+   * Triggered when admin assigns an inactive photographer to a gallery
+   * Explains PhotoVault, commission model, and prompts Stripe Connect setup
+   */
+  static async sendPhotographerGalleryAssignmentEmail(
+    data: PhotographerGalleryAssignmentEmailData & { to: string }
+  ): Promise<{ success: boolean; error?: string }> {
+    try {
+      const { to, ...templateParams } = data
+
+      await (await getClient()).emails.send({
+        from: await getFromEmail(),
+        to,
+        subject: `📸 You've been assigned a gallery on PhotoVault`,
+        html: getPhotographerGalleryAssignmentEmailHTML(templateParams),
+        text: getPhotographerGalleryAssignmentEmailText(templateParams),
+      })
+
+      logger.info(`[Email] Photographer gallery assignment email sent to ${to}`)
+      return { success: true }
+    } catch (error: any) {
+      logger.error('[Email] Error sending photographer gallery assignment email:', error)
       return { success: false, error: error.message }
     }
   }

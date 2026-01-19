@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
-import { Save, X, Calendar, User, MapPin, Users, UserCheck, Heart, Tag, FileText } from 'lucide-react'
+import { Save, X, Calendar, User, MapPin, Users, UserCheck, Heart, Tag, FileText, AlertTriangle, Camera } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 
@@ -17,6 +17,7 @@ interface Gallery {
   gallery_name: string
   gallery_description?: string
   photographer_name?: string
+  photographer_id?: string | null
   session_date?: string
   client_id?: string | null
   user_id?: string
@@ -30,6 +31,12 @@ interface Gallery {
     location?: string
     people?: string[]
   }
+}
+
+interface PhotographerOption {
+  id: string
+  name: string
+  paymentStatus: string
 }
 
 interface Client {
@@ -63,6 +70,12 @@ export default function GalleryEditModal({ gallery, isOpen, onClose, onSave }: G
   const [error, setError] = useState<string | null>(null)
   const isPhotographer = userType === 'photographer'
   const isClient = userType === 'client'
+  const isAdmin = userType === 'admin'
+
+  // Photographer assignment state (admin only)
+  const [photographers, setPhotographers] = useState<PhotographerOption[]>([])
+  const [selectedPhotographer, setSelectedPhotographer] = useState<string | null>(null)
+  const [loadingPhotographers, setLoadingPhotographers] = useState(false)
 
   // Family sharing state
   const [isFamilyShared, setIsFamilyShared] = useState(false)
@@ -91,6 +104,46 @@ export default function GalleryEditModal({ gallery, isOpen, onClose, onSave }: G
       fetchClients()
     }
   }, [isOpen, isPhotographer, user?.id])
+
+  // Initialize selectedPhotographer from gallery
+  useEffect(() => {
+    if (gallery?.photographer_id) {
+      setSelectedPhotographer(gallery.photographer_id)
+    } else {
+      setSelectedPhotographer(null)
+    }
+  }, [gallery])
+
+  // Fetch photographers list (admin only)
+  useEffect(() => {
+    async function fetchPhotographers() {
+      setLoadingPhotographers(true)
+      try {
+        const response = await fetch('/api/admin/photographers')
+        const data = await response.json()
+        if (data.success && data.data?.photographers) {
+          setPhotographers(data.data.photographers.map((p: { id: string; name: string; paymentStatus: string }) => ({
+            id: p.id,
+            name: p.name,
+            paymentStatus: p.paymentStatus,
+          })))
+        }
+      } catch (err) {
+        console.error('Error fetching photographers:', err)
+      } finally {
+        setLoadingPhotographers(false)
+      }
+    }
+
+    if (isAdmin && isOpen) {
+      fetchPhotographers()
+    }
+  }, [isAdmin, isOpen])
+
+  // Check if selected photographer is inactive
+  const selectedPhotographerInactive = selectedPhotographer
+    ? photographers.find(p => p.id === selectedPhotographer)?.paymentStatus !== 'active'
+    : false
 
   // Fetch family sharing status for clients
   useEffect(() => {
@@ -206,6 +259,40 @@ export default function GalleryEditModal({ gallery, isOpen, onClose, onSave }: G
         throw updateError
       }
 
+      // If admin changed photographer assignment, call the assign API
+      if (isAdmin && selectedPhotographer !== gallery.photographer_id) {
+        try {
+          const assignResponse = await fetch(`/api/admin/galleries/${gallery.id}/assign-photographer`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ photographer_id: selectedPhotographer }),
+          })
+
+          const assignData = await assignResponse.json()
+
+          if (!assignResponse.ok) {
+            console.error('Photographer assignment failed:', assignData.error)
+            // Show warning but don't fail the save - gallery data was already saved
+            setError(`Gallery saved but photographer assignment failed: ${assignData.error}`)
+            // Still close and refresh since gallery data was saved
+            onSave()
+            onClose()
+            return
+          }
+
+          // If email was sent, log it
+          if (assignData.email_sent) {
+            console.log('Onboarding email sent to photographer')
+          }
+        } catch (assignErr) {
+          console.error('Error assigning photographer:', assignErr)
+          setError('Gallery saved but failed to update photographer assignment')
+          onSave()
+          onClose()
+          return
+        }
+      }
+
       // Notify parent component
       onSave()
       onClose()
@@ -278,6 +365,55 @@ export default function GalleryEditModal({ gallery, isOpen, onClose, onSave }: G
               <p className="text-xs text-muted-foreground">
                 Assign this gallery to a client to give them access
               </p>
+            </div>
+          )}
+
+          {/* Photographer Assignment (Admin Only) */}
+          {isAdmin && (
+            <div className="space-y-2">
+              <Label htmlFor="photographer">
+                <Camera className="h-4 w-4 inline mr-2" />
+                Assign Photographer
+              </Label>
+              <Select
+                value={selectedPhotographer || '__none__'}
+                onValueChange={(value) => setSelectedPhotographer(value === '__none__' ? null : value)}
+                disabled={saving || loadingPhotographers}
+              >
+                <SelectTrigger id="photographer">
+                  <SelectValue placeholder={loadingPhotographers ? 'Loading...' : 'Select a photographer...'} />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="__none__">
+                    <span className="text-muted-foreground">None (Unassign)</span>
+                  </SelectItem>
+                  {photographers.map((p) => (
+                    <SelectItem key={p.id} value={p.id}>
+                      <div className="flex items-center gap-2">
+                        <span>{p.name}</span>
+                        {p.paymentStatus !== 'active' && (
+                          <span className="text-xs px-1.5 py-0.5 bg-yellow-100 text-yellow-800 rounded">
+                            Inactive
+                          </span>
+                        )}
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+
+              {/* Warning for inactive photographer */}
+              {selectedPhotographerInactive && (
+                <div className="bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 rounded text-sm">
+                  <p className="flex items-center gap-2">
+                    <AlertTriangle className="h-4 w-4 flex-shrink-0" />
+                    <span>
+                      This photographer hasn&apos;t completed Stripe setup. Clients won&apos;t be able to pay until they do.
+                      An onboarding email will be sent when you save.
+                    </span>
+                  </p>
+                </div>
+              )}
             </div>
           )}
 

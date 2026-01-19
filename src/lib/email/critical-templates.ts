@@ -946,3 +946,193 @@ Questions? Contact us at support@photovault.photo
 ${new Date().getFullYear()} PhotoVault. All rights reserved.
   `.trim()
 }
+
+// ============================================================================
+// 5. PHOTOGRAPHER GALLERY ASSIGNMENT EMAIL - Types & Templates
+// ============================================================================
+
+export interface PhotographerGalleryAssignmentEmailData {
+  photographerName: string
+  galleryName: string
+  onboardingUrl: string
+}
+
+export function getPhotographerGalleryAssignmentEmailHTML(data: PhotographerGalleryAssignmentEmailData): string {
+  const { photographerName, galleryName, onboardingUrl } = data
+
+  return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>You've Been Assigned a Gallery on PhotoVault</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6;
+      color: #333;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #f5f5f5;
+    }
+    .email-container {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .header {
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      color: white;
+      padding: 40px 30px;
+      text-align: center;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 700;
+    }
+    .content {
+      padding: 40px 30px;
+    }
+    .gallery-box {
+      background: #f3f4f6;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+      text-align: center;
+    }
+    .gallery-name {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: #1f2937;
+    }
+    .info-section {
+      margin: 30px 0;
+    }
+    .info-section h3 {
+      color: #1f2937;
+      margin-bottom: 10px;
+    }
+    .info-section ul {
+      padding-left: 20px;
+      margin: 0;
+    }
+    .info-section li {
+      margin: 8px 0;
+      color: #4b5563;
+    }
+    .cta-container {
+      text-align: center;
+      margin: 30px 0;
+    }
+    .cta-button {
+      display: inline-block;
+      background: linear-gradient(135deg, #2563eb, #3b82f6);
+      color: white;
+      padding: 14px 28px;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 16px;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    }
+    .footer {
+      margin-top: 40px;
+      padding-top: 30px;
+      border-top: 1px solid #e5e7eb;
+      text-align: center;
+      color: #6b7280;
+      font-size: 14px;
+    }
+    .footer a {
+      color: #6b7280;
+    }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <div class="header">
+      <h1>PhotoVault</h1>
+      <p>Professional Photo Gallery Platform</p>
+    </div>
+
+    <div class="content">
+      <h2>Hi ${photographerName},</h2>
+
+      <p>Great news! You've been assigned to a new gallery on PhotoVault:</p>
+
+      <div class="gallery-box">
+        <p class="gallery-name">${galleryName}</p>
+      </div>
+
+      <div class="info-section">
+        <h3>What is PhotoVault?</h3>
+        <p>PhotoVault is a professional photo delivery platform where photographers share galleries with clients. When clients purchase access, you earn commissions automatically.</p>
+      </div>
+
+      <div class="info-section">
+        <h3>How You Earn</h3>
+        <ul>
+          <li><strong>Year 1:</strong> When a client pays $100 for gallery access, you receive <strong>$50</strong> (50% commission)</li>
+          <li><strong>Year 2+:</strong> When clients renew at $8/month, you receive <strong>$4/month</strong> passive income</li>
+        </ul>
+      </div>
+
+      <div class="info-section">
+        <h3>Complete Your Setup</h3>
+        <p>To receive payments, you need to complete a quick Stripe Connect setup (takes ~2 minutes). Until this is done, clients won't be able to pay for the gallery.</p>
+      </div>
+
+      <div class="cta-container">
+        <a href="${onboardingUrl}" class="cta-button">Complete Setup &rarr;</a>
+      </div>
+
+      <p style="color: #666; font-size: 14px;">
+        Questions? Reply to this email or contact support@photovault.photo
+      </p>
+
+      <div class="footer">
+        <p>PhotoVault - Professional Photo Galleries</p>
+        <p><a href="https://photovault.photo">photovault.photo</a></p>
+        <p>&copy; ${new Date().getFullYear()} PhotoVault. All rights reserved.</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+  `.trim()
+}
+
+export function getPhotographerGalleryAssignmentEmailText(data: PhotographerGalleryAssignmentEmailData): string {
+  const { photographerName, galleryName, onboardingUrl } = data
+
+  return `
+Hi ${photographerName},
+
+Great news! You've been assigned to a new gallery on PhotoVault:
+
+${galleryName}
+
+WHAT IS PHOTOVAULT?
+PhotoVault is a professional photo delivery platform where photographers share galleries with clients. When clients purchase access, you earn commissions automatically.
+
+HOW YOU EARN
+- Year 1: When a client pays $100 for gallery access, you receive $50 (50% commission)
+- Year 2+: When clients renew at $8/month, you receive $4/month passive income
+
+COMPLETE YOUR SETUP
+To receive payments, you need to complete a quick Stripe Connect setup (takes ~2 minutes). Until this is done, clients won't be able to pay for the gallery.
+
+Complete setup: ${onboardingUrl}
+
+Questions? Reply to this email or contact support@photovault.photo
+
+--
+PhotoVault - Professional Photo Galleries
+https://photovault.photo
+  `.trim()
+}
