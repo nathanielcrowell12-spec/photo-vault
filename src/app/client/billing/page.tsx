@@ -356,6 +356,29 @@ function ClientBillingContent() {
 
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-4xl mx-auto space-y-8">
+          {/* Getting Started Instructions - Only show when no active subscriptions */}
+          {subscriptions.length === 0 && (
+            <Card className="bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800">
+              <CardContent className="py-6">
+                <h2 className="text-lg font-semibold text-purple-900 dark:text-purple-100 mb-3">
+                  Getting Started
+                </h2>
+                <ol className="list-decimal list-inside space-y-2 text-purple-800 dark:text-purple-200">
+                  <li><strong>Register a payment method</strong> below to enable subscriptions</li>
+                  <li><strong>Subscribe</strong> to activate your PhotoVault account ($8/month)</li>
+                </ol>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Payment Methods - FIRST so users can add payment before subscribing */}
+          <section>
+            <PaymentMethodManager
+              title="Payment Methods"
+              description="Add a payment method to enable subscriptions"
+            />
+          </section>
+
           {/* Active Subscriptions */}
           <section>
             <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-foreground">
@@ -612,14 +635,6 @@ function ClientBillingContent() {
                 ))}
               </div>
             )}
-          </section>
-
-          {/* Payment Methods */}
-          <section>
-            <PaymentMethodManager
-              title="Payment Methods"
-              description="Manage payment methods for your gallery subscriptions"
-            />
           </section>
 
           {/* Payment History */}

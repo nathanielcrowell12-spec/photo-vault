@@ -23,7 +23,7 @@ export async function handleSubscriptionCreated(
 
   // Get user by Stripe customer ID
   const { data: user, error: userError } = await supabase
-    .from('users')
+    .from('user_profiles')
     .select('id')
     .eq('stripe_customer_id', customerId)
     .single()
