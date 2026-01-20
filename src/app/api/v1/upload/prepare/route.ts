@@ -110,6 +110,7 @@ export async function POST(request: NextRequest) {
         .insert({
           photographer_id: photographerId,
           client_id: effectiveClientId,
+          user_id: userId, // Set uploader's auth ID so client dashboard can find it
           platform: platform || 'photovault',
           gallery_name: galleryName,
           photo_count: 0,
