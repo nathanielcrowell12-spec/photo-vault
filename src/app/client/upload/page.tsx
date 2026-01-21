@@ -363,6 +363,9 @@ export default function PhotoImportPage() {
                     <Button className="w-full bg-blue-600 hover:bg-blue-700 text-foreground">
                       Launch Desktop App
                     </Button>
+                    <p className="text-xs text-blue-400 mt-2 text-center">
+                      First time? Click above to download the app
+                    </p>
                   </CardContent>
                 </Card>
 
@@ -676,7 +679,7 @@ export default function PhotoImportPage() {
                 <Button
                   className="flex-1 bg-blue-600 hover:bg-blue-700 text-foreground"
                   onClick={() => {
-                    window.open('https://photovault.photo/download', '_blank')
+                    window.open('https://github.com/nathanielcrowell12-spec/Photovault-Uploader/releases/download/v1.0.0/PhotoVault.Desktop.Setup.1.0.0.exe', '_blank')
                     setShowDesktopAppHelp(false)
                   }}
                 >
