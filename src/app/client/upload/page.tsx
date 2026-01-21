@@ -679,7 +679,7 @@ export default function PhotoImportPage() {
                 <Button
                   className="flex-1 bg-blue-600 hover:bg-blue-700 text-foreground"
                   onClick={() => {
-                    window.open('https://github.com/nathanielcrowell12-spec/Photovault-Uploader/releases/download/v1.0.0/PhotoVault.Desktop.Setup.1.0.0.exe', '_blank')
+                    window.open('https://github.com/nathanielcrowell12-spec/Photovault-Uploader/releases/download/v1.0.1/PhotoVault.Desktop.Setup.1.0.1.exe', '_blank')
                     setShowDesktopAppHelp(false)
                   }}
                 >
@@ -687,6 +687,9 @@ export default function PhotoImportPage() {
                   Download App
                 </Button>
               </div>
+              <p className="text-xs text-muted-foreground text-center">
+                If the download doesn&apos;t start, scroll to the bottom of the page and click &quot;PhotoVault.Desktop.Setup&quot;
+              </p>
             </CardContent>
           </Card>
         </div>
