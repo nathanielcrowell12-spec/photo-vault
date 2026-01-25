@@ -61,12 +61,12 @@ export function LandingHeader() {
         {/* Mobile Menu */}
         {mobileMenuOpen && (
           <div className="md:hidden pb-4">
-            <nav className="flex flex-col space-y-2">
+            <nav className="flex flex-col space-y-1">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-sm font-medium text-slate-300 hover:text-white transition-colors py-2"
+                  className="text-sm font-medium text-slate-300 hover:text-white hover:bg-slate-700 transition-colors min-h-[44px] flex items-center px-2 rounded-md"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   {link.label}
@@ -74,7 +74,7 @@ export function LandingHeader() {
               ))}
               <Button
                 asChild
-                className="bg-amber-500 hover:bg-amber-600 text-white mt-2"
+                className="bg-amber-500 hover:bg-amber-600 text-white mt-2 min-h-[44px]"
               >
                 <Link href="/auth/signup" onClick={() => setMobileMenuOpen(false)}>
                   Protect My Photos

@@ -32,7 +32,7 @@ export function PricingSection() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center max-w-2xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#1a365d]">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#1a365d]">
             Simple Pricing. Real Results.
           </h2>
           <p className="mt-3 text-lg text-gray-700">
@@ -41,12 +41,12 @@ export function PricingSection() {
         </div>
 
         {/* Pricing Card */}
-        <div className="mt-12 max-w-4xl mx-auto bg-white p-8 md:p-12 rounded-xl shadow-lg border border-slate-200">
+        <div className="mt-8 md:mt-12 max-w-4xl mx-auto bg-white p-4 sm:p-6 md:p-12 rounded-xl shadow-lg border border-slate-200">
           <div className="grid md:grid-cols-3 gap-8 md:gap-12">
             {/* Stats Badge */}
-            <div className="flex flex-col items-center justify-center text-center bg-amber-100 p-8 rounded-lg">
-              <p className="text-7xl font-bold text-amber-500">247</p>
-              <p className="mt-2 font-medium text-[#1a365d]">
+            <div className="flex flex-col items-center justify-center text-center bg-amber-100 p-6 md:p-8 rounded-lg">
+              <p className="text-4xl sm:text-5xl md:text-7xl font-bold text-amber-500">247</p>
+              <p className="mt-2 font-medium text-[#1a365d] text-sm md:text-base">
                 photographers earning passive income
               </p>
             </div>

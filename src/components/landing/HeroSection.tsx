@@ -8,7 +8,7 @@ export function HeroSection() {
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left Column - Main Message + Calculator */}
           <div className="text-center lg:text-left">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-[#1a365d] leading-tight text-balance">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-[#1a365d] leading-tight text-balance">
               Your memories deserve better than a failing hard drive.
             </h1>
             <p className="mt-4 text-lg text-gray-700 max-w-xl mx-auto lg:mx-0">
@@ -29,7 +29,7 @@ export function HeroSection() {
           {/* Right Column - Value Prop + Image + Risk/Solution */}
           <div className="flex flex-col gap-6">
             <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-[#1a365d]">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-[#1a365d]">
                 You&apos;re Not Just a Photographer. You&apos;re the Guardian of Their
                 Family History.
               </h2>

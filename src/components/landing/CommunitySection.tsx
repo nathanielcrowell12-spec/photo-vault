@@ -15,8 +15,8 @@ export function CommunitySection() {
   return (
     <section className="py-16 md:py-24 bg-gray-50" id="community">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-emerald-50 p-6 sm:p-8 rounded-lg">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#1a365d] text-balance">
+        <div className="bg-emerald-50 p-4 sm:p-6 md:p-8 rounded-lg">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#1a365d] text-balance">
             Stop Competing. Start Collaborating.
           </h2>
           <p className="mt-3 text-lg text-gray-700">
@@ -24,11 +24,11 @@ export function CommunitySection() {
           </p>
 
           {/* Feature Grid */}
-          <div className="mt-8 grid grid-cols-2 gap-4">
+          <div className="mt-6 md:mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
             {communityFeatures.map(({ icon: Icon, text }) => (
-              <div key={text} className="bg-white/50 p-4 rounded">
-                <Icon className="h-6 w-6 text-emerald-500" />
-                <p className="mt-2 font-semibold text-[#1a365d] text-sm">{text}</p>
+              <div key={text} className="bg-white/50 p-3 sm:p-4 rounded flex sm:block items-center gap-3">
+                <Icon className="h-5 w-5 sm:h-6 sm:w-6 text-emerald-500 flex-shrink-0" />
+                <p className="sm:mt-2 font-semibold text-[#1a365d] text-sm">{text}</p>
               </div>
             ))}
           </div>

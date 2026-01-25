@@ -151,18 +151,18 @@ export default function ClientDashboardPage() {
         <header className="border-b bg-card border-border backdrop-blur-sm">
           <div className="container mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2 sm:space-x-4">
                 <img
                   src="/images/logos/photovault logo.png"
                   alt="PhotoVault"
-                  className="h-10 w-auto"
+                  className="h-8 sm:h-10 w-auto"
                 />
-                <div>
+                <div className="hidden sm:block">
                   <p className="text-sm text-muted-foreground">Your Personal Photo Gallery</p>
                 </div>
               </div>
-              <div className="flex items-center space-x-4">
-                <Badge variant="outline" className="bg-secondary text-muted-foreground border-border">
+              <div className="flex items-center space-x-1 sm:space-x-2 md:space-x-4">
+                <Badge variant="outline" className="hidden md:inline-flex bg-secondary text-muted-foreground border-border">
                   Family Account
                 </Badge>
                 <ThemeModeToggle variant="icon" />
@@ -172,8 +172,11 @@ export default function ClientDashboardPage() {
                     <Settings className="h-5 w-5" />
                   </Link>
                 </Button>
-                <Button variant="outline" onClick={signOut}>
+                <Button variant="outline" size="sm" className="hidden sm:inline-flex" onClick={signOut}>
                   Sign Out
+                </Button>
+                <Button variant="outline" size="icon" className="sm:hidden" onClick={signOut} title="Sign Out">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" x2="9" y1="12" y2="12"/></svg>
                 </Button>
               </div>
             </div>
@@ -184,15 +187,15 @@ export default function ClientDashboardPage() {
           <div className="max-w-7xl mx-auto space-y-8">
             {/* Welcome Section */}
             <div className="text-center">
-              <h2 className="text-3xl font-bold mb-4 text-foreground">Welcome back, {user?.email}</h2>
-              <p className="text-lg text-muted-foreground">
+              <h2 className="text-xl sm:text-2xl md:text-3xl font-bold mb-4 text-foreground">Welcome back, {user?.email?.split('@')[0]}</h2>
+              <p className="text-base md:text-lg text-muted-foreground">
                 Access all your professional photos in one beautiful, organized place
               </p>
             </div>
 
             {/* Gallery Grid - Moved to top */}
             <Card id="galleries-section" className="bg-card border-border">
-              <CardHeader className="flex flex-row items-center justify-between">
+              <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
                   <CardTitle className="flex items-center gap-2 text-foreground">
                     <Camera className="h-5 w-5 text-primary" />
@@ -200,7 +203,7 @@ export default function ClientDashboardPage() {
                   </CardTitle>
                   <CardDescription className="text-muted-foreground">Browse and download all your professional photos</CardDescription>
                 </div>
-                <Button variant="outline" size="sm" asChild>
+                <Button variant="outline" size="sm" asChild className="w-full sm:w-auto">
                   <Link href="/client/deleted">
                     <Trash2 className="h-4 w-4 mr-2" />
                     Recently Deleted

@@ -294,11 +294,11 @@ export function Navigation({ hideOnPaths = [] }: NavigationProps) {
         )}
       </nav>
 
-      {/* Client Dashboard Navigation */}
+      {/* Client Dashboard Navigation - Hidden on mobile (shown in mobile menu) */}
       {userType === 'client' && pathname.startsWith('/client/') && (
-        <div className="border-b border-border bg-card/50">
+        <div className="hidden md:block border-b border-border bg-card/50">
           <div className="container mx-auto px-4">
-            <div className="flex items-center space-x-1 overflow-x-auto py-2">
+            <div className="flex items-center space-x-1 py-2">
               {clientLinks.map((link) => (
                 <Button
                   key={link.href}
@@ -317,11 +317,11 @@ export function Navigation({ hideOnPaths = [] }: NavigationProps) {
         </div>
       )}
 
-      {/* Photographer Dashboard Navigation */}
+      {/* Photographer Dashboard Navigation - Hidden on mobile (shown in mobile menu) */}
       {userType === 'photographer' && pathname.startsWith('/photographer/') && (
-        <div className="border-b border-border bg-card/50">
+        <div className="hidden md:block border-b border-border bg-card/50">
           <div className="container mx-auto px-4">
-            <div className="flex items-center space-x-1 overflow-x-auto py-2">
+            <div className="flex items-center space-x-1 py-2">
               {photographerLinks.map((link) => (
                 <Button
                   key={link.href}
@@ -340,11 +340,11 @@ export function Navigation({ hideOnPaths = [] }: NavigationProps) {
         </div>
       )}
 
-      {/* Admin Dashboard Navigation */}
+      {/* Admin Dashboard Navigation - Hidden on mobile (shown in mobile menu) */}
       {!loading && user && isActuallyAdmin && pathname.startsWith('/admin/') && (
-        <div className="border-b border-border bg-card/50">
+        <div className="hidden md:block border-b border-border bg-card/50">
           <div className="container mx-auto px-4">
-            <div className="flex items-center space-x-1 overflow-x-auto py-2">
+            <div className="flex items-center space-x-1 py-2">
               {adminLinks.map((link) => (
                 <Button
                   key={link.href}

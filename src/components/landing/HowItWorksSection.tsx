@@ -8,7 +8,7 @@ export function HowItWorksSection() {
     <section className="py-16 md:py-24 bg-gray-50" id="how-it-works">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="max-w-xl">
-          <h2 className="text-3xl md:text-4xl font-bold text-[#1a365d] text-balance">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#1a365d] text-balance">
             Get Your Nights and Weekends Back
           </h2>
           <p className="mt-3 text-lg text-gray-700">

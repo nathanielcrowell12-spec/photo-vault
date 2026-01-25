@@ -101,7 +101,7 @@ export default function PhotographerPortalLayout({
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
+                  className={`flex items-center space-x-3 px-3 min-h-[44px] rounded-lg transition-colors ${
                     active
                       ? 'bg-blue-50 text-blue-600 dark:bg-blue-900/20'
                       : 'text-foreground hover:bg-accent'

@@ -57,37 +57,37 @@ export function LandingFooter() {
           {/* Quick Links */}
           <div>
             <h4 className="font-semibold mb-4">Quick Links</h4>
-            <ul className="space-y-2 text-sm text-slate-300">
+            <ul className="space-y-1 text-sm text-slate-300">
               <li>
-                <Link href="#how-it-works" className="hover:text-white transition-colors">
+                <Link href="#how-it-works" className="hover:text-white transition-colors inline-flex items-center min-h-[44px]">
                   How It Works
                 </Link>
               </li>
               <li>
-                <Link href="#pricing" className="hover:text-white transition-colors">
+                <Link href="#pricing" className="hover:text-white transition-colors inline-flex items-center min-h-[44px]">
                   Pricing
                 </Link>
               </li>
               <li>
-                <Link href="#community" className="hover:text-white transition-colors">
+                <Link href="#community" className="hover:text-white transition-colors inline-flex items-center min-h-[44px]">
                   Community
                 </Link>
               </li>
               <li>
-                <Link href="/directory" className="hover:text-white transition-colors">
+                <Link href="/directory" className="hover:text-white transition-colors inline-flex items-center min-h-[44px]">
                   Photo Locations
                 </Link>
               </li>
               <li>
                 <Link
                   href="/photographers/signup"
-                  className="hover:text-white transition-colors"
+                  className="hover:text-white transition-colors inline-flex items-center min-h-[44px]"
                 >
                   Sign Up
                 </Link>
               </li>
               <li>
-                <Link href="/login" className="hover:text-white transition-colors">
+                <Link href="/login" className="hover:text-white transition-colors inline-flex items-center min-h-[44px]">
                   Login
                 </Link>
               </li>
@@ -97,24 +97,24 @@ export function LandingFooter() {
           {/* Legal & Security */}
           <div>
             <h4 className="font-semibold mb-4">Legal & Security</h4>
-            <ul className="space-y-2 text-sm text-slate-300">
+            <ul className="space-y-1 text-sm text-slate-300">
               <li>
-                <Link href="/privacy" className="hover:text-white transition-colors">
+                <Link href="/privacy" className="hover:text-white transition-colors inline-flex items-center min-h-[44px]">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="hover:text-white transition-colors">
+                <Link href="/terms" className="hover:text-white transition-colors inline-flex items-center min-h-[44px]">
                   Terms of Service
                 </Link>
               </li>
               <li>
-                <Link href="/cancellation" className="hover:text-white transition-colors">
+                <Link href="/cancellation" className="hover:text-white transition-colors inline-flex items-center min-h-[44px]">
                   Cancellation Policy
                 </Link>
               </li>
               <li className="pt-2">
-                <div className="flex items-center gap-2 text-xs">
+                <div className="flex items-center gap-2 text-xs min-h-[44px]">
                   <Lock className="h-4 w-4 text-green-500" />
                   <span>Secure payments via Stripe</span>
                 </div>

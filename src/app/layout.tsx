@@ -120,17 +120,17 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={`${inter.className} bg-background text-foreground`}>
+      <body className={`${inter.className} bg-background text-foreground overflow-x-hidden`}>
         <PostHogProvider>
           <ThemeProvider>
             <AuthProvider>
               <ViewProvider>
                 {/* Root-level error boundary - catches catastrophic errors */}
                 <ErrorBoundary level="root">
-                  <div className="flex flex-col min-h-screen bg-background">
+                  <div className="flex flex-col min-h-screen bg-background overflow-x-hidden">
                     <Navigation hideOnPaths={['/', '/photographer/dashboard', '/login', '/signup', '/auth/signup', '/photographers/signup']} />
                     {/* Route-level error boundary - preserves navigation on page errors */}
-                    <main className="flex-1">
+                    <main className="flex-1 overflow-x-hidden">
                       <RouteErrorBoundary>
                         {children}
                       </RouteErrorBoundary>
