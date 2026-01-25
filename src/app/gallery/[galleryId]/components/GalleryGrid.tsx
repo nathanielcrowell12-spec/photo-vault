@@ -3,6 +3,7 @@
 import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Heart, Maximize2 } from 'lucide-react'
+import { ImageWithFallback } from '@/components/ui/ImageWithFallback'
 
 interface Photo {
   id: string
@@ -38,14 +39,14 @@ export default function GalleryGrid({
           >
             {/* Photo */}
             <div
-              className="aspect-square relative bg-slate-100"
+              className="aspect-square relative bg-muted"
               onClick={() => onPhotoClick(index)}
             >
-              <img
+              <ImageWithFallback
                 src={photo.thumbnail}
                 alt={photo.title}
-                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                loading="lazy"
+                className="w-full h-full group-hover:scale-105 transition-transform duration-300"
+                priority={index < 4}
               />
 
               {/* Hover Overlay */}

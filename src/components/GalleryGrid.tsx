@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Input } from '@/components/ui/input'
-import { Calendar, Camera, User, ExternalLink, Grid3X3, List, Filter, Lock, AlertCircle, Edit, Share2, Trash2 } from 'lucide-react'
+import { Calendar, Camera, User, ExternalLink, Grid3X3, List, Lock, AlertCircle, Edit, Share2, Trash2 } from 'lucide-react'
+import { ImageWithFallback } from '@/components/ui/ImageWithFallback'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import { useToast } from '@/components/ui/use-toast'
@@ -501,27 +502,21 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
           ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
           : "space-y-4"
         }>
-          {filteredGalleries.map((gallery) => {
+          {filteredGalleries.map((gallery, index) => {
             const isLocked = isGalleryLocked()
             const inGracePeriod = isGalleryInGracePeriod()
-            
+
             return (
               <Card key={gallery.id} className={`group transition-shadow duration-200 ${isLocked ? 'opacity-50' : 'hover:shadow-lg'}`}>
                 <CardContent className="p-0">
                   {/* Cover Image */}
-                  <div className="relative aspect-[4/3] bg-gray-100 rounded-t-lg overflow-hidden">
-                    {gallery.cover_image_url ? (
-                      <img
-                        src={gallery.cover_image_url}
-                        alt={gallery.gallery_name}
-                        loading="lazy"
-                        className={`w-full h-full object-cover transition-transform duration-200 ${isLocked ? '' : 'group-hover:scale-105'}`}
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200">
-                        <Camera className="h-12 w-12 text-gray-400" />
-                      </div>
-                    )}
+                  <div className="relative aspect-[4/3] bg-muted rounded-t-lg overflow-hidden">
+                    <ImageWithFallback
+                      src={gallery.cover_image_url}
+                      alt={gallery.gallery_name}
+                      className={`w-full h-full transition-transform duration-200 ${isLocked ? '' : 'group-hover:scale-105'}`}
+                      priority={index < 6}
+                    />
                     
                     {/* Lock Overlay for expired accounts */}
                     {isLocked && (
