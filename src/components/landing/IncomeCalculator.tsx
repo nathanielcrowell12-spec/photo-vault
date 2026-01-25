@@ -10,14 +10,14 @@ export function IncomeCalculator() {
   const monthlyRevenue = clientCount * 4
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-sm border border-slate-200">
-      <p className="text-sm font-medium text-gray-700">INCOME POTENTIAL CALCULATOR</p>
+    <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-slate-200">
+      <p className="text-xs sm:text-sm font-medium text-gray-700">INCOME POTENTIAL CALCULATOR</p>
 
-      <div className="mt-2 mb-4">
-        <label htmlFor="clients-slider" className="text-sm text-gray-700 font-medium">
+      <div className="mt-2 mb-3 sm:mb-4">
+        <label htmlFor="clients-slider" className="text-xs sm:text-sm text-gray-700 font-medium">
           Number of paying clients:
         </label>
-        <div className="flex items-center gap-4 mt-2">
+        <div className="flex items-center gap-3 sm:gap-4 mt-2">
           <Slider
             id="clients-slider"
             min={0}
@@ -27,25 +27,25 @@ export function IncomeCalculator() {
             onValueChange={(value) => setClientCount(value[0])}
             className="flex-1"
           />
-          <span className="text-lg font-semibold text-[#1a365d] min-w-[3rem] text-right">
+          <span className="text-base sm:text-lg font-semibold text-[#1a365d] min-w-[2.5rem] sm:min-w-[3rem] text-right">
             {clientCount}
           </span>
         </div>
       </div>
 
-      <div className="mt-4 text-4xl font-bold text-amber-500">
+      <div className="mt-3 sm:mt-4 text-2xl sm:text-4xl font-bold text-amber-500">
         ${monthlyRevenue}
-        <span className="text-2xl text-gray-700">/month</span>
+        <span className="text-lg sm:text-2xl text-gray-700">/month</span>
       </div>
-      <p className="mt-1 text-sm text-slate-500">Passive recurring revenue</p>
+      <p className="mt-1 text-xs sm:text-sm text-slate-500">Passive recurring revenue</p>
 
-      <Button asChild className="mt-6 w-full bg-amber-500 hover:bg-amber-600 text-white px-6 py-4 h-auto text-lg font-semibold">
+      <Button asChild className="mt-4 sm:mt-6 w-full bg-amber-500 hover:bg-amber-600 text-white px-4 sm:px-6 py-3 sm:py-4 h-auto text-base sm:text-lg font-semibold">
         <Link href="/photographers/signup">
           Start Protecting Memories - $22/Month
         </Link>
       </Button>
 
-      <p className="mt-3 text-xs text-slate-500">
+      <p className="mt-2 sm:mt-3 text-xs text-slate-500">
         Based on an average of 42 sessions a year. Adjust the slider to see your potential.
       </p>
     </div>
