@@ -334,16 +334,24 @@ export function getPhotographerWelcomeEmailHTML(data: PhotographerWelcomeEmailDa
 <body>
     <div class="email-container">
         <div class="header">
-            <h1>Welcome, Guardian</h1>
-            <p>You're now protecting your clients' family history</p>
+            <h1>Welcome to PhotoVault</h1>
+            <p>Your past work is about to start paying you</p>
         </div>
 
         <div class="content">
             <div class="welcome-message">
                 <p>Hi ${data.photographerName}!</p>
-                <p>Welcome to PhotoVault${data.businessName ? `, representing ${data.businessName}` : ''}. You've just joined a community of photographers who understand something important:</p>
-                <p><strong>You're not just a photographer. You're the guardian of your clients' family history.</strong></p>
-                <p>Every wedding, every newborn session, every family portrait—these are irreplaceable moments. With PhotoVault, you'll deliver Memory Insurance that protects these photos while building passive income for your business.</p>
+                <p>Welcome to PhotoVault${data.businessName ? `, representing ${data.businessName}` : ''}. You just took the first step toward turning your completed photoshoots into recurring revenue.</p>
+                <p><strong>Here's how it works:</strong> You deliver galleries through PhotoVault. Your clients pay for access. You keep 100% of your shoot fees and 50% of storage fees. When prepaid plans end, monthly billing starts automatically. Built-in passive income.</p>
+            </div>
+
+            <div style="background: #ecfdf5; border: 2px solid #10b981; border-radius: 12px; padding: 25px; margin: 30px 0; text-align: center;">
+                <h3 style="margin-top: 0; color: #065f46;">Your Beta Offer: 12 Months Free</h3>
+                <p style="color: #047857; margin-bottom: 15px;">As a founding photographer, your first 12 months of the $22/month platform fee are on us. Use this code when you subscribe:</p>
+                <div style="background: white; border: 2px dashed #10b981; border-radius: 8px; padding: 15px; display: inline-block; margin: 10px 0;">
+                    <span style="font-family: monospace; font-size: 24px; font-weight: 700; color: #065f46; letter-spacing: 2px;">PHOTOVAULT_BETA_2026</span>
+                </div>
+                <p style="color: #6b7280; font-size: 13px; margin-bottom: 0;">Enter this code at checkout to activate your free year ($264 value).</p>
             </div>
 
             <div class="steps-container">
@@ -352,33 +360,33 @@ export function getPhotographerWelcomeEmailHTML(data: PhotographerWelcomeEmailDa
                 <div class="step">
                     <div>
                         <span class="step-number">1</span>
-                        <span class="step-title">Upload Your First Gallery</span>
+                        <span class="step-title">Connect Stripe for Payouts</span>
                     </div>
                     <p style="margin: 10px 0 0 38px; color: #6b7280; font-size: 14px;">
-                        Drag and drop your photos to create a beautiful gallery. We'll handle the rest.
+                        Link your Stripe account so you can receive payments directly. Takes about 5 minutes.
+                    </p>
+                    <a href="${stripeSetupLink}" class="cta-button" style="margin-left: 38px;">Connect Stripe →</a>
+                </div>
+
+                <div class="step">
+                    <div>
+                        <span class="step-number">2</span>
+                        <span class="step-title">Upload a Gallery</span>
+                    </div>
+                    <p style="margin: 10px 0 0 38px; color: #6b7280; font-size: 14px;">
+                        Upload your edited photos and choose a payment option for your client. Shoot fees and storage are bundled into one price.
                     </p>
                     <a href="${uploadLink}" class="cta-button" style="margin-left: 38px;">Upload Photos →</a>
                 </div>
 
                 <div class="step">
                     <div>
-                        <span class="step-number">2</span>
-                        <span class="step-title">Invite Your Client</span>
-                    </div>
-                    <p style="margin: 10px 0 0 38px; color: #6b7280; font-size: 14px;">
-                        Send a professional invitation email. Your client gets instant access to their photos.
-                    </p>
-                </div>
-
-                <div class="step">
-                    <div>
                         <span class="step-number">3</span>
-                        <span class="step-title">Connect Stripe for Payouts</span>
+                        <span class="step-title">Send the Delivery Email</span>
                     </div>
                     <p style="margin: 10px 0 0 38px; color: #6b7280; font-size: 14px;">
-                        Set up your Stripe account to receive automatic monthly payouts from client subscriptions.
+                        Your client receives a link, pays, and gets instant access. Their profile is created automatically.
                     </p>
-                    <a href="${stripeSetupLink}" class="cta-button" style="margin-left: 38px;">Connect Stripe →</a>
                 </div>
             </div>
 
@@ -386,18 +394,18 @@ export function getPhotographerWelcomeEmailHTML(data: PhotographerWelcomeEmailDa
                 <a href="${dashboardLink}" class="cta-button">Go to My Dashboard →</a>
             </div>
 
-            <h3>What You Get as a Guardian</h3>
+            <h3>What You Get</h3>
             <ul class="feature-list">
-                <li>✅ <strong>Memory Insurance for Clients</strong> - Protection they can't get from a hard drive</li>
-                <li>✅ <strong>Passive Income</strong> - Earn $4/month for every client who stays protected</li>
-                <li>✅ <strong>No More Zip Files</strong> - One-tap delivery to your clients' camera rolls</li>
-                <li>✅ <strong>Lifetime Archival</strong> - Photos stay safe even when hard drives fail</li>
-                <li>✅ <strong>Client Management</strong> - Track all your families in one place</li>
+                <li>✅ <strong>100% of Your Shoot Fees</strong> - We never touch your session pricing</li>
+                <li>✅ <strong>50% of Storage Fees</strong> - Passive income from every paying client</li>
+                <li>✅ <strong>We Cover Stripe Fees</strong> - No processing costs come out of your pocket</li>
+                <li>✅ <strong>Automatic Monthly Billing</strong> - After prepaid plans expire, monthly kicks in</li>
+                <li>✅ <strong>Desktop App for Large Uploads</strong> - No browser file size limits</li>
                 <li>✅ <strong>Professional Galleries</strong> - Beautiful presentation of your work</li>
             </ul>
 
             <div class="pro-tip">
-                <strong>The Reality:</strong> Hard drives have a 100% failure rate eventually. Professional data recovery costs $500-$5,000. You're now offering your clients real protection for their memories.
+                <strong>Quick Math:</strong> 20 clients paying $8/month = $80/month in passive recurring revenue for you. Most photographers shoot 30-50 clients per year. In 2-3 years, that adds up.
             </div>
 
             <div class="footer">
@@ -423,42 +431,50 @@ export function getPhotographerWelcomeEmailText(data: PhotographerWelcomeEmailDa
   const stripeSetupLink = `${process.env.NEXT_PUBLIC_APP_URL}/photographer/settings/payments`
 
   return `
-WELCOME, GUARDIAN
+WELCOME TO PHOTOVAULT
 
 Hi ${data.photographerName}!
 
-Welcome to PhotoVault${data.businessName ? `, representing ${data.businessName}` : ''}. You've just joined a community of photographers who understand something important:
+Welcome to PhotoVault${data.businessName ? `, representing ${data.businessName}` : ''}. You just took the first step toward turning your completed photoshoots into recurring revenue.
 
-You're not just a photographer. You're the guardian of your clients' family history.
+Here's how it works: You deliver galleries through PhotoVault. Your clients pay for access. You keep 100% of your shoot fees and 50% of storage fees. When prepaid plans end, monthly billing starts automatically. Built-in passive income.
 
-Every wedding, every newborn session, every family portrait—these are irreplaceable moments. With PhotoVault, you'll deliver Memory Insurance that protects these photos while building passive income for your business.
+YOUR BETA OFFER: 12 MONTHS FREE
+
+As a founding photographer, your first 12 months of the $22/month platform fee are on us. Use this code when you subscribe:
+
+    PHOTOVAULT_BETA_2026
+
+Enter this code at checkout to activate your free year ($264 value).
+
+---
 
 GETTING STARTED IN 3 EASY STEPS:
 
-1. UPLOAD YOUR FIRST GALLERY
-   Drag and drop your photos to create a beautiful gallery. We'll handle the rest.
+1. CONNECT STRIPE FOR PAYOUTS
+   Link your Stripe account so you can receive payments directly. Takes about 5 minutes.
+   → ${stripeSetupLink}
+
+2. UPLOAD A GALLERY
+   Upload your edited photos and choose a payment option for your client. Shoot fees and storage are bundled into one price.
    → ${uploadLink}
 
-2. INVITE YOUR CLIENT
-   Send a professional invitation email. Your client gets instant access to their photos.
-
-3. CONNECT STRIPE FOR PAYOUTS
-   Set up your Stripe account to receive automatic monthly payouts from client subscriptions.
-   → ${stripeSetupLink}
+3. SEND THE DELIVERY EMAIL
+   Your client receives a link, pays, and gets instant access. Their profile is created automatically.
 
 GO TO YOUR DASHBOARD:
 ${dashboardLink}
 
-WHAT YOU GET AS A GUARDIAN:
+WHAT YOU GET:
 
-✅ Memory Insurance for Clients - Protection they can't get from a hard drive
-✅ Passive Income - Earn $4/month for every client who stays protected
-✅ No More Zip Files - One-tap delivery to your clients' camera rolls
-✅ Lifetime Archival - Photos stay safe even when hard drives fail
-✅ Client Management - Track all your families in one place
+✅ 100% of Your Shoot Fees - We never touch your session pricing
+✅ 50% of Storage Fees - Passive income from every paying client
+✅ We Cover Stripe Fees - No processing costs come out of your pocket
+✅ Automatic Monthly Billing - After prepaid plans expire, monthly kicks in
+✅ Desktop App for Large Uploads - No browser file size limits
 ✅ Professional Galleries - Beautiful presentation of your work
 
-THE REALITY: Hard drives have a 100% failure rate eventually. Professional data recovery costs $500-$5,000. You're now offering your clients real protection for their memories.
+QUICK MATH: 20 clients paying $8/month = $80/month in passive recurring revenue for you. Most photographers shoot 30-50 clients per year. In 2-3 years, that adds up.
 
 ---
 NEED HELP GETTING STARTED?
