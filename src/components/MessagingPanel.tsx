@@ -17,6 +17,8 @@ import {
   X,
   Loader2,
   ChevronLeft,
+  Shield,
+  Lightbulb,
 } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 import { supabaseBrowser } from '@/lib/supabase-browser'
@@ -46,12 +48,12 @@ interface Message {
   created_at: string
 }
 
-interface Photographer {
+interface Contact {
   id: string
   name: string
   email: string
-  business_name?: string
-  profile_image_url?: string
+  user_type: string
+  is_admin: boolean
 }
 
 interface MessagingPanelProps {
@@ -70,9 +72,9 @@ export default function MessagingPanel({ onClose, initialConversationId }: Messa
   const [reporting, setReporting] = useState(false)
   const [reportMessageId, setReportMessageId] = useState<string | null>(null)
   const [reportReason, setReportReason] = useState('')
-  const [photographers, setPhotographers] = useState<Photographer[]>([])
+  const [contacts, setContacts] = useState<Contact[]>([])
   const [userType, setUserType] = useState<string>('')
-  const [showPhotographerList, setShowPhotographerList] = useState(false)
+  const [showContactList, setShowContactList] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const scrollToBottom = () => {
@@ -97,8 +99,8 @@ export default function MessagingPanel({ onClose, initialConversationId }: Messa
     }
   }, [user])
 
-  const fetchPhotographers = useCallback(async () => {
-    if (!user || userType !== 'client') return
+  const fetchContacts = useCallback(async () => {
+    if (!user || !userType) return
 
     try {
       const session = await supabaseBrowser.auth.getSession()
@@ -106,18 +108,18 @@ export default function MessagingPanel({ onClose, initialConversationId }: Messa
 
       if (!token) return
 
-      const response = await fetch('/api/client/photographers', {
+      const response = await fetch('/api/conversations/contacts', {
         headers: {
           'Authorization': `Bearer ${token}`,
         },
       })
 
-      if (!response.ok) throw new Error('Failed to fetch photographers')
+      if (!response.ok) throw new Error('Failed to fetch contacts')
 
       const data = await response.json()
-      setPhotographers(data.photographers || [])
+      setContacts(data.contacts || [])
     } catch (error) {
-      console.error('Error fetching photographers:', error)
+      console.error('Error fetching contacts:', error)
     }
   }, [user, userType])
 
@@ -179,7 +181,7 @@ export default function MessagingPanel({ onClose, initialConversationId }: Messa
     }
   }, [user])
 
-  const startConversationWithPhotographer = async (photographerId: string) => {
+  const startConversation = async (contactId: string) => {
     try {
       const session = await supabaseBrowser.auth.getSession()
       const token = session.data.session?.access_token
@@ -193,7 +195,7 @@ export default function MessagingPanel({ onClose, initialConversationId }: Messa
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ other_user_id: photographerId }),
+        body: JSON.stringify({ other_user_id: contactId }),
       })
 
       if (!response.ok) throw new Error('Failed to create conversation')
@@ -216,7 +218,7 @@ export default function MessagingPanel({ onClose, initialConversationId }: Messa
       }, 100)
     } catch (error) {
       console.error('Error starting conversation:', error)
-      alert('Failed to start conversation with photographer')
+      alert('Failed to start conversation')
     }
   }
 
@@ -334,9 +336,7 @@ export default function MessagingPanel({ onClose, initialConversationId }: Messa
   useEffect(() => {
     if (userType) {
       fetchConversations()
-      if (userType === 'client') {
-        fetchPhotographers()
-      }
+      fetchContacts()
     }
 
     // Subscribe to real-time updates
@@ -361,7 +361,7 @@ export default function MessagingPanel({ onClose, initialConversationId }: Messa
     return () => {
       supabaseBrowser.removeChannel(channel)
     }
-  }, [fetchConversations, fetchPhotographers, selectedConversation, fetchMessages, userType])
+  }, [fetchConversations, fetchContacts, selectedConversation, fetchMessages, userType])
 
   useEffect(() => {
     if (selectedConversation) {
@@ -383,7 +383,11 @@ export default function MessagingPanel({ onClose, initialConversationId }: Messa
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <MessageSquare className="h-5 w-5" />
-            {selectedConversation ? selectedConversation.other_user.name : 'Messages'}
+            {selectedConversation
+              ? (selectedConversation.other_user.user_type === 'admin'
+                  ? 'PhotoVault Support'
+                  : selectedConversation.other_user.name)
+              : 'Messages'}
           </CardTitle>
           {onClose && (
             <Button variant="ghost" size="sm" onClick={onClose}>
@@ -396,14 +400,26 @@ export default function MessagingPanel({ onClose, initialConversationId }: Messa
       <CardContent className="flex-1 p-0 flex overflow-hidden">
         {/* Conversation List */}
         <div className={`w-full md:w-80 border-r overflow-y-auto ${selectedConversation ? 'hidden md:block' : ''}`}>
-          {/* Start New Chat Button - only show for clients with conversations */}
-          {userType === 'client' && photographers.length > 0 && conversations.length > 0 && !showPhotographerList && (
+          {/* Beta Feedback Banner */}
+          {contacts.length > 0 && !showContactList && (
+            <div className="px-4 pt-3 pb-1">
+              <div className="flex items-start gap-2 rounded-md bg-primary/10 px-3 py-2">
+                <Lightbulb className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                <p className="text-xs text-primary">
+                  Beta Feedback? Message <span className="font-semibold">PhotoVault Support</span> with feature ideas!
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Start New Chat Button - show for ALL user types */}
+          {contacts.length > 0 && conversations.length > 0 && !showContactList && (
             <div className="p-4 border-b bg-muted/50">
               <Button
                 variant="outline"
                 size="sm"
                 className="w-full"
-                onClick={() => setShowPhotographerList(true)}
+                onClick={() => setShowContactList(true)}
               >
                 <User className="h-4 w-4 mr-2" />
                 Start New Chat
@@ -411,39 +427,63 @@ export default function MessagingPanel({ onClose, initialConversationId }: Messa
             </div>
           )}
 
-          {/* Show photographers for clients to message */}
-          {userType === 'client' && photographers.length > 0 && (conversations.length === 0 || showPhotographerList) && (
+          {/* Show contacts for user to message */}
+          {contacts.length > 0 && (conversations.length === 0 || showContactList) && (
             <div className="p-4 border-b bg-muted">
               <div className="flex items-center justify-between mb-2">
                 <h3 className="text-sm font-semibold text-foreground">
-                  {conversations.length === 0 ? 'Your Photographers' : 'Start New Chat'}
+                  {conversations.length === 0 ? 'Your Contacts' : 'Start New Chat'}
                 </h3>
                 {conversations.length > 0 && (
                   <button
-                    onClick={() => setShowPhotographerList(false)}
+                    onClick={() => setShowContactList(false)}
                     className="text-primary hover:text-primary/80 text-xs"
                   >
                     Cancel
                   </button>
                 )}
               </div>
+              {/* Beta banner inside contact list when no conversations exist */}
+              {conversations.length === 0 && (
+                <div className="flex items-start gap-2 rounded-md bg-primary/10 px-3 py-2 mb-3">
+                  <Lightbulb className="h-4 w-4 text-primary mt-0.5 flex-shrink-0" />
+                  <p className="text-xs text-primary">
+                    Beta Feedback? Message <span className="font-semibold">PhotoVault Support</span> with feature ideas!
+                  </p>
+                </div>
+              )}
               <div className="space-y-2">
-                {photographers.map((photographer) => (
+                {contacts.map((contact) => (
                   <button
-                    key={photographer.id}
+                    key={contact.id}
                     onClick={() => {
-                      startConversationWithPhotographer(photographer.id)
-                      setShowPhotographerList(false)
+                      startConversation(contact.id)
+                      setShowContactList(false)
                     }}
                     className="w-full p-3 bg-card rounded-lg hover:bg-accent transition-colors text-left"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center flex-shrink-0">
-                        <User className="h-5 w-5 text-primary" />
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                        contact.is_admin ? 'bg-primary/20' : 'bg-muted'
+                      }`}>
+                        {contact.is_admin ? (
+                          <Shield className="h-5 w-5 text-primary" />
+                        ) : (
+                          <User className="h-5 w-5 text-primary" />
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <h4 className="font-medium text-sm truncate">{photographer.name}</h4>
-                        <p className="text-xs text-muted-foreground truncate">{photographer.email}</p>
+                        <div className="flex items-center gap-2">
+                          <h4 className="font-medium text-sm truncate">{contact.name}</h4>
+                          {contact.is_admin && (
+                            <Badge variant="secondary" className="text-[10px] px-1.5 py-0">
+                              Support
+                            </Badge>
+                          )}
+                        </div>
+                        <p className="text-xs text-muted-foreground truncate">
+                          {contact.is_admin ? 'Feature requests & help' : contact.email}
+                        </p>
                       </div>
                     </div>
                   </button>
@@ -452,7 +492,7 @@ export default function MessagingPanel({ onClose, initialConversationId }: Messa
             </div>
           )}
 
-          {conversations.length === 0 && !(userType === 'client' && photographers.length > 0) ? (
+          {conversations.length === 0 && contacts.length === 0 ? (
             <div className="p-8 text-center text-muted-foreground">
               <MessageSquare className="h-12 w-12 mx-auto mb-4 text-muted-foreground/50" />
               <p>No messages yet</p>
@@ -469,14 +509,27 @@ export default function MessagingPanel({ onClose, initialConversationId }: Messa
                   onClick={() => setSelectedConversation(conv)}
                 >
                   <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 bg-muted rounded-full flex items-center justify-center flex-shrink-0">
-                      <User className="h-5 w-5 text-primary" />
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
+                      conv.other_user.user_type === 'admin' ? 'bg-primary/20' : 'bg-muted'
+                    }`}>
+                      {conv.other_user.user_type === 'admin' ? (
+                        <Shield className="h-5 w-5 text-primary" />
+                      ) : (
+                        <User className="h-5 w-5 text-primary" />
+                      )}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between mb-1">
-                        <h4 className="font-medium text-sm truncate">
-                          {conv.other_user.name}
-                        </h4>
+                        <div className="flex items-center gap-2 min-w-0">
+                          <h4 className="font-medium text-sm truncate">
+                            {conv.other_user.user_type === 'admin' ? 'PhotoVault Support' : conv.other_user.name}
+                          </h4>
+                          {conv.other_user.user_type === 'admin' && (
+                            <Badge variant="secondary" className="text-[10px] px-1.5 py-0 flex-shrink-0">
+                              Support
+                            </Badge>
+                          )}
+                        </div>
                         {conv.unread_count > 0 && (
                           <Badge variant="default" className="text-xs">
                             {conv.unread_count}
@@ -514,9 +567,15 @@ export default function MessagingPanel({ onClose, initialConversationId }: Messa
                     <ChevronLeft className="h-4 w-4" />
                   </Button>
                   <div>
-                    <h3 className="font-semibold">{selectedConversation.other_user.name}</h3>
+                    <h3 className="font-semibold">
+                      {selectedConversation.other_user.user_type === 'admin'
+                        ? 'PhotoVault Support'
+                        : selectedConversation.other_user.name}
+                    </h3>
                     <p className="text-xs text-muted-foreground capitalize">
-                      {selectedConversation.other_user.user_type}
+                      {selectedConversation.other_user.user_type === 'admin'
+                        ? 'Support'
+                        : selectedConversation.other_user.user_type}
                     </p>
                   </div>
                 </div>
