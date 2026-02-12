@@ -1,101 +1,88 @@
-import Image from 'next/image'
-import Link from 'next/link'
-import { XCircle, CheckCircle, Check } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Camera, Send, DollarSign, ArrowRight } from 'lucide-react'
+
+const steps = [
+  {
+    icon: Camera,
+    title: 'Shoot and edit as normal',
+    description:
+      'Nothing changes about your workflow. Shoot your sessions and edit your photos like you always do.',
+  },
+  {
+    icon: Send,
+    title: 'Deliver through PhotoVault',
+    description:
+      'Upload the gallery and send a delivery email. Your client\'s profile is created automatically. Choose the right payment option\u2014shoot fees and storage bundled into one price.',
+  },
+  {
+    icon: DollarSign,
+    title: 'Get paid upfront and ongoing',
+    description:
+      'You keep 100% of your shoot fees and 50% of storage fees\u2014we cover all Stripe processing costs. When prepaid plans end, monthly billing starts automatically. Built-in passive income.',
+  },
+]
 
 export function HowItWorksSection() {
   return (
-    <section className="py-16 md:py-24 bg-gray-50" id="how-it-works">
+    <section
+      id="how-it-works"
+      className="py-16 md:py-24 bg-secondary"
+      aria-label="How it works"
+    >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-xl">
-          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-[#1a365d] text-balance">
-            Get Your Nights and Weekends Back
+        {/* Header */}
+        <div className="text-center max-w-2xl mx-auto">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground">
+            How Photographers Earn with PhotoVault
           </h2>
-          <p className="mt-3 text-lg text-gray-700">
-            Stop worrying about your pipeline and start automating income.
+          <p className="mt-3 text-base sm:text-lg text-muted-foreground">
+            Three steps. Then the income runs itself.
           </p>
+        </div>
 
-          {/* Before/After Comparison */}
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-6 p-6 bg-white rounded-lg shadow-sm border border-slate-200">
-            <div>
-              <h3 className="font-semibold text-[#1a365d]">Before PhotoVault</h3>
-              <ul className="mt-4 space-y-3">
-                <li className="flex items-center text-gray-700">
-                  <XCircle className="h-5 w-5 text-red-500 mr-3 flex-shrink-0" />
-                  Lost revenue on past work
-                </li>
-                <li className="flex items-center text-gray-700">
-                  <XCircle className="h-5 w-5 text-red-500 mr-3 flex-shrink-0" />
-                  Manual client follow-ups
-                </li>
-                <li className="flex items-center text-gray-700">
-                  <XCircle className="h-5 w-5 text-red-500 mr-3 flex-shrink-0" />
-                  Inconsistent income
-                </li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold text-[#1a365d]">After PhotoVault</h3>
-              <ul className="mt-4 space-y-3">
-                <li className="flex items-center text-gray-700">
-                  <CheckCircle className="h-5 w-5 text-emerald-500 mr-3 flex-shrink-0" />
-                  Passive income activated
-                </li>
-                <li className="flex items-center text-gray-700">
-                  <CheckCircle className="h-5 w-5 text-emerald-500 mr-3 flex-shrink-0" />
-                  Automated client portals
-                </li>
-                <li className="flex items-center text-gray-700">
-                  <CheckCircle className="h-5 w-5 text-emerald-500 mr-3 flex-shrink-0" />
-                  Predictable cash flow
-                </li>
-              </ul>
-            </div>
-
-            {/* Feature Checklist */}
-            <div className="sm:col-span-2 grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 border-t border-slate-200">
-              {['Reloads', 'Releases', 'Renews', 'Forever'].map((feature) => (
-                <div key={feature} className="flex items-center text-sm text-gray-700">
-                  <Check className="h-4 w-4 text-emerald-500 mr-2 flex-shrink-0" />
-                  {feature}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Testimonial + CTA */}
-          <div className="mt-8">
-            <h3 className="text-xl font-bold text-[#1a365d]">
-              The Shift: Upload once. We handle storage...
-            </h3>
-            <div className="mt-4 flex flex-col sm:flex-row sm:items-center gap-6">
-              <div className="flex -space-x-4">
-                <Image
-                  src="/images/landing/avatar-testimonial-1.jpg"
-                  alt="Photographer testimonial"
-                  width={48}
-                  height={48}
-                  className="inline-block h-12 w-12 rounded-full ring-2 ring-white object-cover"
-                />
-                <Image
-                  src="/images/landing/avatar-testimonial-2.jpg"
-                  alt="Photographer testimonial"
-                  width={48}
-                  height={48}
-                  className="inline-block h-12 w-12 rounded-full ring-2 ring-white object-cover"
-                />
+        {/* Steps */}
+        <div className="mt-10 md:mt-16 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+          {steps.map((step, index) => (
+            <div
+              key={step.title}
+              className="bg-card rounded-lg border border-border p-6 sm:p-8 text-center"
+            >
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-primary/10 text-primary mb-4">
+                <step.icon className="h-6 w-6" aria-hidden="true" />
               </div>
-              <p className="text-sm text-gray-700 flex-1">
-                &quot;I used to spend hours managing old galleries. Now PhotoVault does it
-                for me and I get paid for it.&quot;
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">
+                Step {index + 1}
+              </p>
+              <h3 className="text-lg font-semibold text-foreground">
+                {step.title}
+              </h3>
+              <p className="mt-2 text-sm text-muted-foreground">
+                {step.description}
               </p>
             </div>
-            <Button
-              asChild
-              className="mt-6 w-full sm:w-auto bg-amber-500 hover:bg-amber-600 text-white px-6 py-3"
-            >
-              <Link href="#pricing">Start Protecting Memories - $22/Month</Link>
-            </Button>
+          ))}
+        </div>
+
+        {/* Money Flow Diagram */}
+        <div className="mt-10 md:mt-12 max-w-2xl mx-auto">
+          <div className="bg-card rounded-lg border border-border p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4 text-sm sm:text-base">
+              <span className="font-medium text-foreground whitespace-nowrap">
+                Client pays
+              </span>
+              <ArrowRight className="h-4 w-4 text-muted-foreground hidden sm:block" aria-hidden="true" />
+              <span className="text-muted-foreground sm:hidden" aria-hidden="true">&darr;</span>
+              <span className="bg-primary/10 text-primary font-semibold px-3 py-1 rounded-md whitespace-nowrap">
+                PhotoVault
+              </span>
+              <ArrowRight className="h-4 w-4 text-muted-foreground hidden sm:block" aria-hidden="true" />
+              <span className="text-muted-foreground sm:hidden" aria-hidden="true">&darr;</span>
+              <span className="font-medium text-foreground whitespace-nowrap">
+                50% to you via Stripe
+              </span>
+            </div>
+            <p className="mt-3 text-xs text-muted-foreground text-center">
+              Upfront and monthly &mdash; you earn on every payment your client makes.
+            </p>
           </div>
         </div>
       </div>

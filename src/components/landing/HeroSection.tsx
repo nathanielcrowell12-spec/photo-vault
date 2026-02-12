@@ -1,74 +1,41 @@
-import Image from 'next/image'
+import Link from 'next/link'
+import { Button } from '@/components/ui/button'
 import { IncomeCalculator } from './IncomeCalculator'
 
 export function HeroSection() {
   return (
-    <section className="py-8 sm:py-12 md:py-24 bg-white">
+    <section id="main-content" className="py-12 sm:py-16 md:py-24 bg-background" aria-label="Hero">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-16 items-center">
-          {/* Left Column - Main Message + Calculator */}
-          <div className="text-center lg:text-left">
-            <h1 className="text-xl sm:text-2xl md:text-4xl lg:text-5xl xl:text-6xl font-bold text-[#1a365d] leading-tight text-balance">
-              Your memories deserve better than a failing hard drive.
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-start">
+          {/* Left Column - Value Prop */}
+          <div className="lg:py-4">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight text-balance">
+              Your past work should still be paying you.
             </h1>
-            <p className="mt-3 sm:mt-4 text-base sm:text-lg text-gray-700 max-w-xl mx-auto lg:mx-0">
-              PhotoVault is <strong>Memory Insurance</strong>—professional-grade protection
-              for the photos that matter most. Photographers earn passive income. Families
-              never lose another memory.
+            <p className="mt-4 sm:mt-6 text-base sm:text-lg text-muted-foreground max-w-xl">
+              PhotoVault turns your completed photoshoots into monthly recurring revenue.
+              Clients pay $8/month to keep their galleries. You earn $4/month per client,
+              for as long as they subscribe.
             </p>
-            <p className="mt-2 sm:mt-3 text-sm text-red-600 font-medium">
-              Hard drives have a 100% failure rate eventually. It&apos;s not{' '}
-              <em>if</em>—it&apos;s <em>when</em>.
+            <p className="mt-2 sm:mt-3 text-sm text-muted-foreground">
+              No more one-and-done transactions. No more paying for storage that earns you nothing.
             </p>
 
-            <div className="mt-4 sm:mt-8">
-              <IncomeCalculator />
+            <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-start gap-3">
+              <Button asChild size="lg" className="min-h-[44px] text-base">
+                <Link href="/auth/signup">
+                  Join the Beta &mdash; It&apos;s Free for 12 Months
+                </Link>
+              </Button>
             </div>
+            <p className="mt-3 text-xs text-muted-foreground">
+              Currently accepting founding photographers. No credit card required.
+            </p>
           </div>
 
-          {/* Right Column - Value Prop + Image + Risk/Solution */}
-          <div className="flex flex-col gap-4 sm:gap-6">
-            <div>
-              <h2 className="text-lg sm:text-xl md:text-3xl font-bold text-[#1a365d]">
-                You&apos;re Not Just a Photographer. You&apos;re the Guardian of Their
-                Family History.
-              </h2>
-              <p className="mt-2 text-sm sm:text-base text-gray-700">
-                Turn every photoshoot into passive income. Your clients pay $8/month to
-                protect their memories—you earn $4/month forever.
-              </p>
-            </div>
-
-            <div className="relative">
-              <Image
-                src="/images/landing/photographer-hero.jpg"
-                alt="A professional photographer smiling while holding a camera"
-                width={1080}
-                height={720}
-                className="rounded-lg w-full h-auto object-cover"
-                priority
-              />
-            </div>
-
-            <div>
-              <p className="font-semibold text-[#1a365d]">The Fix:</p>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 mt-3 sm:mt-4">
-                <div className="bg-red-50 p-3 sm:p-4 rounded-lg border border-red-200">
-                  <p className="font-bold text-red-800 text-sm sm:text-base">The Risk</p>
-                  <p className="mt-1 text-xs sm:text-sm text-red-600">
-                    Hard drives fail. The cloud is someone else&apos;s computer.
-                    Professional data recovery costs $500-$5,000.
-                  </p>
-                </div>
-                <div className="bg-green-50 p-3 sm:p-4 rounded-lg border border-green-200">
-                  <p className="font-bold text-green-800 text-sm sm:text-base">The Solution</p>
-                  <p className="mt-1 text-xs sm:text-sm text-green-600">
-                    Memory Insurance for $8/month. A digital safety deposit box for the
-                    images that can&apos;t be replaced.
-                  </p>
-                </div>
-              </div>
-            </div>
+          {/* Right Column - Income Calculator */}
+          <div className="lg:py-4">
+            <IncomeCalculator />
           </div>
         </div>
       </div>

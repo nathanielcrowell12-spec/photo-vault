@@ -4,21 +4,26 @@ import {
   LandingFooter,
   HeroSection,
   HowItWorksSection,
-  CommunitySection,
+  ComparisonSection,
   PricingSection,
+  OrphanProtocolSection,
+  FounderStorySection,
+  BetaCTASection,
 } from '@/components/landing'
 
+const BETA_EMAIL = 'support@photovault.photo'
+
 export const metadata: Metadata = {
-  title: 'PhotoVault - Memory Insurance for Your Most Precious Photos',
+  title: 'PhotoVault - Turn Your Photography Into Recurring Revenue',
   description:
-    'Professional-grade photo protection for families. Photographers earn passive income while families never lose another memory. $8/month.',
+    'PhotoVault helps professional photographers earn passive income from completed work. Clients pay $8/month for photo storage. You earn $4/month per client. Join the beta free for 12 months.',
   keywords:
-    'photo storage, memory insurance, photographer income, photo backup, professional photos, family photos',
+    'photographer passive income, photo gallery platform, photography business, recurring revenue photographers, photo delivery platform',
   openGraph: {
     type: 'website',
-    title: 'PhotoVault - Memory Insurance for Your Most Precious Photos',
+    title: 'PhotoVault - Turn Your Photography Into Recurring Revenue',
     description:
-      'Professional-grade photo protection. Photographers earn passive income. Families never lose another memory.',
+      'Professional photographers earn $4/month per client in passive income. Clients pay for storage. You earn from work already done. Beta is free for 12 months.',
     url: 'https://photovault.photo',
     siteName: 'PhotoVault',
     images: [
@@ -26,15 +31,15 @@ export const metadata: Metadata = {
         url: 'https://photovault.photo/images/og-landing.webp',
         width: 1200,
         height: 630,
-        alt: 'PhotoVault - Memory Insurance for Your Photos',
+        alt: 'PhotoVault - Recurring Revenue for Photographers',
       },
     ],
     locale: 'en_US',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'PhotoVault - Memory Insurance for Your Most Precious Photos',
-    description: 'Professional-grade photo protection. Photographers earn passive income.',
+    title: 'PhotoVault - Turn Your Photography Into Recurring Revenue',
+    description: 'Earn $4/month per client in passive income. Beta is free for 12 months.',
     images: ['https://photovault.photo/images/og-landing.webp'],
   },
   alternates: {
@@ -42,15 +47,14 @@ export const metadata: Metadata = {
   },
 }
 
-// Structured data for rich search results
 const structuredData = {
   '@context': 'https://schema.org',
   '@type': ['WebSite', 'Service'],
   name: 'PhotoVault',
   url: 'https://photovault.photo/',
   description:
-    'PhotoVault helps families find, organize, and keep every professional photo in one secure dashboard.',
-  serviceType: 'Photo storage and protection platform',
+    'PhotoVault helps professional photographers turn completed work into recurring passive income through client photo storage subscriptions.',
+  serviceType: 'Photography business platform',
   provider: {
     '@type': 'Organization',
     name: 'PhotoVault LLC',
@@ -68,9 +72,9 @@ const structuredData = {
   offers: {
     '@type': 'Offer',
     priceCurrency: 'USD',
-    price: '8',
-    priceValidUntil: '2026-12-31',
-    description: 'Memory Insurance - protect your photos for $8/month',
+    price: '0',
+    priceValidUntil: '2027-02-28',
+    description: 'Beta program: 12 months free ($22/month platform fee waived)',
   },
   areaServed: 'United States',
 }
@@ -82,15 +86,18 @@ export default function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
-      <div className="flex flex-col min-h-screen bg-white text-gray-700 antialiased">
+      <div className="flex flex-col min-h-screen bg-background text-foreground antialiased">
         <LandingHeader />
         <main>
           <HeroSection />
           <HowItWorksSection />
-          <CommunitySection />
+          <ComparisonSection />
           <PricingSection />
+          <OrphanProtocolSection />
+          <FounderStorySection betaEmail={BETA_EMAIL} />
+          <BetaCTASection betaEmail={BETA_EMAIL} />
         </main>
-        <LandingFooter />
+        <LandingFooter betaEmail={BETA_EMAIL} />
       </div>
     </>
   )

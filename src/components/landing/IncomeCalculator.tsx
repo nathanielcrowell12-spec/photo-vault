@@ -1,20 +1,27 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
 import { Slider } from '@/components/ui/slider'
-import { Button } from '@/components/ui/button'
+
+const REFERENCE_POINTS = [
+  { clients: 10, income: 40 },
+  { clients: 25, income: 100 },
+  { clients: 50, income: 200 },
+  { clients: 100, income: 400 },
+]
 
 export function IncomeCalculator() {
   const [clientCount, setClientCount] = useState(20)
   const monthlyRevenue = clientCount * 4
 
   return (
-    <div className="bg-white p-4 sm:p-6 rounded-lg shadow-sm border border-slate-200">
-      <p className="text-xs sm:text-sm font-medium text-gray-700">INCOME POTENTIAL CALCULATOR</p>
+    <div className="bg-card p-4 sm:p-6 rounded-lg border border-border">
+      <p className="text-xs sm:text-sm font-medium text-muted-foreground uppercase tracking-wide">
+        Income Calculator
+      </p>
 
-      <div className="mt-2 mb-3 sm:mb-4">
-        <label htmlFor="clients-slider" className="text-xs sm:text-sm text-gray-700 font-medium">
+      <div className="mt-3 mb-3 sm:mb-4">
+        <label htmlFor="clients-slider" className="text-xs sm:text-sm text-foreground font-medium">
           Number of paying clients:
         </label>
         <div className="flex items-center gap-3 sm:gap-4 mt-2">
@@ -26,27 +33,33 @@ export function IncomeCalculator() {
             value={[clientCount]}
             onValueChange={(value) => setClientCount(value[0])}
             className="flex-1"
+            aria-label="Number of paying clients"
           />
-          <span className="text-base sm:text-lg font-semibold text-[#1a365d] min-w-[2.5rem] sm:min-w-[3rem] text-right">
+          <span className="text-base sm:text-lg font-semibold text-foreground min-w-[2.5rem] sm:min-w-[3rem] text-right">
             {clientCount}
           </span>
         </div>
       </div>
 
-      <div className="mt-3 sm:mt-4 text-2xl sm:text-4xl font-bold text-amber-500">
+      <div className="mt-3 sm:mt-4 text-2xl sm:text-4xl font-bold text-primary">
         ${monthlyRevenue}
-        <span className="text-lg sm:text-2xl text-gray-700">/month</span>
+        <span className="text-lg sm:text-2xl text-muted-foreground">/month</span>
       </div>
-      <p className="mt-1 text-xs sm:text-sm text-slate-500">Passive recurring revenue</p>
+      <p className="mt-1 text-xs sm:text-sm text-muted-foreground">
+        Passive recurring revenue
+      </p>
 
-      <Button asChild className="mt-4 sm:mt-6 w-full bg-amber-500 hover:bg-amber-600 text-white px-4 sm:px-6 py-3 sm:py-4 h-auto text-base sm:text-lg font-semibold">
-        <Link href="/photographers/signup">
-          Start Protecting Memories - $22/Month
-        </Link>
-      </Button>
+      {/* Reference points */}
+      <div className="mt-4 grid grid-cols-2 gap-2 text-xs text-muted-foreground">
+        {REFERENCE_POINTS.map(({ clients, income }) => (
+          <span key={clients}>
+            {clients} clients = ${income}/mo
+          </span>
+        ))}
+      </div>
 
-      <p className="mt-2 sm:mt-3 text-xs text-slate-500">
-        Based on an average of 42 sessions a year. Adjust the slider to see your potential.
+      <p className="mt-3 text-xs text-muted-foreground">
+        Most photographers shoot 30-50 clients per year. In 2-3 years, that&apos;s real income.
       </p>
     </div>
   )
