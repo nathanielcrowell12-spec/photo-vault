@@ -548,7 +548,7 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
                     </div>
 
                     {/* Photo Count */}
-                    <div className="absolute top-3 right-3 bg-black/70 text-foreground px-2 py-1 rounded text-xs">
+                    <div className="absolute top-3 right-3 bg-white/90 text-gray-800 px-2 py-1 rounded text-xs font-medium">
                       {gallery.photo_count} photos
                     </div>
 
