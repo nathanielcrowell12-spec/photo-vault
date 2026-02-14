@@ -31,6 +31,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Checkbox } from '@/components/ui/checkbox'
+// Note: getTransformedImageUrl removed — thumbnails are now pre-generated at upload time
 
 interface SharedGallery {
   id: string
@@ -523,9 +524,9 @@ export default function FamilyGalleriesPage() {
                       <p className="text-sm text-gray-500">{gallery.photo_count} photos</p>
                     </div>
                     {gallery.cover_image_url && (
-                      <img 
-                        src={gallery.cover_image_url} 
-                        alt="" 
+                      <img
+                        src={gallery.cover_image_url}
+                        alt=""
                         className="w-12 h-12 rounded object-cover"
                       />
                     )}

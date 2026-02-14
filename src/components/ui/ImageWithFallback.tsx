@@ -15,6 +15,8 @@ interface ImageWithFallbackProps {
   priority?: boolean
   /** Callback when image finishes loading */
   onLoad?: () => void
+  /** Optional fallback URL to try if primary src fails (e.g. original photo URL) */
+  fallbackSrc?: string
 }
 
 export function ImageWithFallback({
@@ -24,12 +26,18 @@ export function ImageWithFallback({
   fallbackIcon,
   onError,
   priority = false,
-  onLoad
+  onLoad,
+  fallbackSrc
 }: ImageWithFallbackProps) {
   const [hasError, setHasError] = useState(false)
   const [isLoaded, setIsLoaded] = useState(false)
   const [shouldLoad, setShouldLoad] = useState(priority)
+  // Track whether we've already retried with fallbackSrc after primary src failure
+  const [triedFallback, setTriedFallback] = useState(false)
   const containerRef = useRef<HTMLDivElement>(null)
+
+  // Use primary src first; if it failed and fallbackSrc is available, use that
+  const effectiveSrc = (triedFallback && fallbackSrc) ? fallbackSrc : src
 
   // Intersection Observer for lazy loading non-priority images
   useEffect(() => {
@@ -64,6 +72,11 @@ export function ImageWithFallback({
   }, [priority, src])
 
   const handleError = () => {
+    // If primary src failed and we have a different fallbackSrc, retry with it
+    if (fallbackSrc && fallbackSrc !== src && !triedFallback) {
+      setTriedFallback(true)
+      return
+    }
     setHasError(true)
     onError?.()
   }
@@ -73,7 +86,7 @@ export function ImageWithFallback({
     onLoad?.()
   }
 
-  // Show fallback if no src or error occurred
+  // Show fallback if no original src or error occurred on all attempts
   if (!src || hasError) {
     return (
       <div className={cn('w-full h-full flex items-center justify-center', className)}>
@@ -95,7 +108,7 @@ export function ImageWithFallback({
       {/* Only render img when shouldLoad is true */}
       {shouldLoad && (
         <img
-          src={src}
+          src={effectiveSrc}
           alt={alt}
           className={cn(
             'w-full h-full object-cover transition-opacity duration-300',

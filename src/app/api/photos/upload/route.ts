@@ -2,6 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { logger } from '@/lib/logger'
 import { generateRandomId } from '@/lib/api-constants'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
+import { processAndStoreThumbnails } from '@/lib/image/process-and-store-thumbnails'
+
+// Vercel Pro default is 15s — thumbnail generation needs more time (QA Critic C2)
+export const maxDuration = 60
 
 export async function POST(request: NextRequest) {
   try {
@@ -82,9 +86,17 @@ export async function POST(request: NextRequest) {
         .from('photos')
         .getPublicUrl(originalPath)
 
-      // TODO: Generate thumbnail
-      // For now, use the original photo as thumbnail
-      const thumbnailUrl = publicUrl
+      // Generate real thumbnails from the uploaded file buffer
+      const fileBuffer = Buffer.from(await file.arrayBuffer())
+      const thumbResult = await processAndStoreThumbnails(
+        fileBuffer,
+        supabase,
+        'photos',
+        `${user.id}/${gallery.id}`,
+        fileName,
+      )
+      const thumbnailUrl = thumbResult?.thumbnailUrl ?? publicUrl
+      const mediumUrl = thumbResult?.mediumUrl ?? null
 
       // Save to database - use verified gallery.id from database query
       const { data: photoData, error: photoError } = await supabase
@@ -93,6 +105,7 @@ export async function POST(request: NextRequest) {
           gallery_id: gallery.id,  // Use verified gallery ID, not form data
           photo_url: publicUrl,
           thumbnail_url: thumbnailUrl,
+          medium_url: mediumUrl,
           original_filename: file.name,
           file_size: file.size,
           is_favorite: false,
@@ -148,9 +161,4 @@ export async function POST(request: NextRequest) {
   }
 }
 
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-}
 

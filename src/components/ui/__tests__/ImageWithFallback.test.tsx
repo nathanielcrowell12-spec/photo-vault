@@ -313,4 +313,93 @@ describe('ImageWithFallback', () => {
       expect(screen.getByRole('img')).toBeInTheDocument()
     })
   })
+
+  describe('fallbackSrc prop (retry with alternate URL)', () => {
+    it('uses primary src initially', () => {
+      render(
+        <ImageWithFallback
+          src="https://example.com/thumbnail.jpg"
+          alt="Test image"
+          fallbackSrc="https://example.com/original.jpg"
+          priority={true}
+        />
+      )
+
+      const img = screen.getByRole('img')
+      expect(img.getAttribute('src')).toBe('https://example.com/thumbnail.jpg')
+    })
+
+    it('retries with fallbackSrc when primary src fails', async () => {
+      render(
+        <ImageWithFallback
+          src="https://example.com/thumbnail.jpg"
+          alt="Test image"
+          fallbackSrc="https://example.com/original.jpg"
+          priority={true}
+        />
+      )
+
+      const img = screen.getByRole('img')
+      fireEvent.error(img)
+
+      await waitFor(() => {
+        const imgAfterRetry = screen.getByRole('img')
+        expect(imgAfterRetry.getAttribute('src')).toBe('https://example.com/original.jpg')
+      })
+    })
+
+    it('shows fallback icon after both primary and fallbackSrc fail', async () => {
+      render(
+        <ImageWithFallback
+          src="https://example.com/thumbnail.jpg"
+          alt="Test image"
+          fallbackSrc="https://example.com/original.jpg"
+          priority={true}
+        />
+      )
+
+      // First error: primary src fails
+      const img = screen.getByRole('img')
+      fireEvent.error(img)
+
+      // Should retry with fallbackSrc
+      await waitFor(() => {
+        const imgRetry = screen.getByRole('img')
+        expect(imgRetry.getAttribute('src')).toBe('https://example.com/original.jpg')
+      })
+
+      // Second error: fallbackSrc also fails
+      const imgRetry = screen.getByRole('img')
+      fireEvent.error(imgRetry)
+
+      // Now should show fallback icon
+      await waitFor(() => {
+        expect(screen.queryByRole('img')).not.toBeInTheDocument()
+        const fallback = document.querySelector('.flex.items-center.justify-center')
+        expect(fallback).toBeInTheDocument()
+      })
+    })
+
+    it('does not retry when fallbackSrc is same as src', async () => {
+      const onError = vi.fn()
+      render(
+        <ImageWithFallback
+          src="https://example.com/image.jpg"
+          alt="Test image"
+          fallbackSrc="https://example.com/image.jpg"
+          priority={true}
+          onError={onError}
+        />
+      )
+
+      const img = screen.getByRole('img')
+      fireEvent.error(img)
+
+      // Should go straight to fallback icon (no retry since URLs are the same)
+      await waitFor(() => {
+        expect(screen.queryByRole('img')).not.toBeInTheDocument()
+        expect(onError).toHaveBeenCalledTimes(1)
+      })
+    })
+  })
 })

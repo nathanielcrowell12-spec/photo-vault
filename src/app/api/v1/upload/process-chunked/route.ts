@@ -2,6 +2,11 @@ import { NextRequest } from 'next/server'
 import { logger } from '@/lib/logger'
 import { createClient } from '@supabase/supabase-js'
 import JSZip from 'jszip'
+import pLimit from 'p-limit'
+import { processAndStoreThumbnails } from '@/lib/image/process-and-store-thumbnails'
+
+// Vercel Pro default is 15s — thumbnail generation needs more time (QA Critic C2)
+export const maxDuration = 60
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -100,6 +105,9 @@ export async function POST(request: NextRequest) {
         let uploadedCount = 0
         let firstPhotoUrl: string | null = null // Track first photo for cover image
         const batchSize = 10 // Process 10 photos at a time
+        // Limit Sharp processing to 3 concurrent photos (QA Critic S1)
+        // 3 photos x ~10MB x 10x Sharp overhead = ~300MB, safe under 1024MB
+        const sharpLimit = pLimit(3)
         
         for (let i = 0; i < imageFiles.length; i += batchSize) {
           const batch = imageFiles.slice(i, i + batchSize)
@@ -132,9 +140,20 @@ export async function POST(request: NextRequest) {
                   .from('photos')
                   .getPublicUrl(photoPath)
 
-                // Save first photo URL for cover image
+                // Generate thumbnails (concurrency-limited by sharpLimit)
+                const thumbResult = await sharpLimit(() =>
+                  processAndStoreThumbnails(
+                    buffer,
+                    supabase,
+                    'photos',
+                    `galleries/${galleryId}`,
+                    `${timestamp}-${randomSuffix}-${sanitizedName}`,
+                  )
+                )
+
+                // Save first photo's thumbnail URL for cover image
                 if (!firstPhotoUrl) {
-                  firstPhotoUrl = publicUrl
+                  firstPhotoUrl = thumbResult?.thumbnailUrl ?? publicUrl
                 }
 
                 // Create photo record in photos table
@@ -144,7 +163,8 @@ export async function POST(request: NextRequest) {
                     gallery_id: galleryId,
                     filename: sanitizedName,
                     original_url: publicUrl,
-                    thumbnail_url: publicUrl, // You can generate thumbnails later
+                    thumbnail_url: thumbResult?.thumbnailUrl ?? publicUrl,
+                    medium_url: thumbResult?.mediumUrl ?? null,
                     file_size: buffer.length
                   })
 

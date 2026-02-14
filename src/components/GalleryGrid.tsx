@@ -12,6 +12,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/contexts/AuthContext'
 import { useToast } from '@/components/ui/use-toast'
 import { useRouter } from 'next/navigation'
+// Note: getTransformedImageUrl removed — thumbnails are now pre-generated at upload time
 import {
   AlertDialog,
   AlertDialogAction,

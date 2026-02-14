@@ -25,6 +25,7 @@ import GalleryGrid from '@/components/GalleryGrid'
 import MessagesButton from '@/components/MessagesButton'
 import MessagingPanel from '@/components/MessagingPanel'
 import { ThemeModeToggle } from '@/components/ThemeModeToggle'
+// Note: getTransformedImageUrl removed — thumbnails are now pre-generated at upload time
 
 interface ClientStats {
   totalPhotos: number

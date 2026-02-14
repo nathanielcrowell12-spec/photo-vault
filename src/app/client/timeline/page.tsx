@@ -19,6 +19,7 @@ import {
   ExternalLink
 } from 'lucide-react'
 import Link from 'next/link'
+// Note: getTransformedImageUrl removed — thumbnails are now pre-generated at upload time
 
 interface TimelineGallery {
   id: string

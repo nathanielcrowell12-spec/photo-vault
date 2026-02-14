@@ -30,6 +30,7 @@ import {
 import { supabaseBrowser as supabase } from '@/lib/supabase-browser'
 import Link from 'next/link'
 import ManualPhotoUpload from '@/components/ManualPhotoUpload'
+// Note: getTransformedImageUrl removed — thumbnails are now pre-generated at upload time
 
 interface Gallery {
   id: string
@@ -60,6 +61,7 @@ interface Photo {
   id: string
   photo_url: string
   thumbnail_url?: string
+  medium_url?: string
   original_filename?: string
   width?: number
   height?: number
@@ -151,7 +153,7 @@ export default function GalleryViewerPage() {
           if (!photosData || photosData.length === 0) {
             const { data: altPhotosData, error: altPhotosError } = await supabase
               .from('photos')
-              .select('id, original_url, thumbnail_url, filename, created_at')
+              .select('id, original_url, thumbnail_url, medium_url, filename, created_at')
               .eq('gallery_id', galleryId)
               .order('created_at', { ascending: true })
 
@@ -167,6 +169,7 @@ export default function GalleryViewerPage() {
                 id: p.id,
                 photo_url: p.original_url,
                 thumbnail_url: p.thumbnail_url || p.original_url,
+                medium_url: p.medium_url || p.original_url,
                 original_filename: p.filename,
                 is_favorite: false
               }))
@@ -1269,7 +1272,7 @@ export default function GalleryViewerPage() {
             {/* Photo */}
             <div className="max-w-7xl max-h-screen p-8">
               <img
-                src={photos[selectedPhotoIndex].photo_url || photos[selectedPhotoIndex].thumbnail_url}
+                src={photos[selectedPhotoIndex].medium_url || photos[selectedPhotoIndex].photo_url}
                 alt={photos[selectedPhotoIndex].original_filename || `Photo ${selectedPhotoIndex + 1}`}
                 className="max-w-full max-h-[90vh] object-contain"
                 onError={(e) => {
