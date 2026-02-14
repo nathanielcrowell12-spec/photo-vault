@@ -2,7 +2,6 @@ import { NextRequest } from 'next/server'
 import { logger } from '@/lib/logger'
 import { createClient } from '@supabase/supabase-js'
 import JSZip from 'jszip'
-import pLimit from 'p-limit'
 import { processAndStoreThumbnails } from '@/lib/image/process-and-store-thumbnails'
 
 // Vercel Pro default is 15s — thumbnail generation needs more time (QA Critic C2)
@@ -104,10 +103,9 @@ export async function POST(request: NextRequest) {
         // Process and upload each photo
         let uploadedCount = 0
         let firstPhotoUrl: string | null = null // Track first photo for cover image
-        const batchSize = 10 // Process 10 photos at a time
-        // Limit Sharp processing to 3 concurrent photos (QA Critic S1)
+        // Process 3 photos at a time (controls Sharp concurrency without p-limit)
         // 3 photos x ~10MB x 10x Sharp overhead = ~300MB, safe under 1024MB
-        const sharpLimit = pLimit(3)
+        const batchSize = 3
         
         for (let i = 0; i < imageFiles.length; i += batchSize) {
           const batch = imageFiles.slice(i, i + batchSize)
@@ -140,15 +138,13 @@ export async function POST(request: NextRequest) {
                   .from('photos')
                   .getPublicUrl(photoPath)
 
-                // Generate thumbnails (concurrency-limited by sharpLimit)
-                const thumbResult = await sharpLimit(() =>
-                  processAndStoreThumbnails(
-                    buffer,
-                    supabase,
-                    'photos',
-                    `galleries/${galleryId}`,
-                    `${timestamp}-${randomSuffix}-${sanitizedName}`,
-                  )
+                // Generate thumbnails (concurrency controlled by batch size)
+                const thumbResult = await processAndStoreThumbnails(
+                  buffer,
+                  supabase,
+                  'photos',
+                  `galleries/${galleryId}`,
+                  `${timestamp}-${randomSuffix}-${sanitizedName}`,
                 )
 
                 // Save first photo's thumbnail URL for cover image
