@@ -22,6 +22,7 @@ import {
 import Link from 'next/link'
 import AccessGuard from '@/components/AccessGuard'
 import MessagesButton from '@/components/MessagesButton'
+import MessagingPanel from '@/components/MessagingPanel'
 import { ThemePicker } from '@/components/ThemePicker'
 
 type DashboardStatusResponse = {
@@ -86,6 +87,7 @@ export default function AdminDashboardPage() {
   const [statusLoading, setStatusLoading] = useState(true)
   const [statusError, setStatusError] = useState<string | null>(null)
   const [dashboardStatus, setDashboardStatus] = useState<DashboardStatusResponse | null>(null)
+  const [showMessages, setShowMessages] = useState(false)
 
   useEffect(() => {
     if (!loading && !user) {
@@ -244,7 +246,7 @@ export default function AdminDashboardPage() {
                 <Badge variant="outline" className="bg-primary/10 text-primary border-primary/30">
                   Admin Access
                 </Badge>
-                <MessagesButton variant="icon" />
+                <MessagesButton variant="icon" onClick={() => setShowMessages(true)} />
                 <Button variant="outline" onClick={signOut}>
                   Sign Out
                 </Button>
@@ -483,6 +485,22 @@ export default function AdminDashboardPage() {
             </div>
           </div>
         </main>
+
+        {/* Messaging Panel Modal */}
+        {showMessages && (
+          <div
+            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+            onClick={(e) => {
+              if (e.target === e.currentTarget) {
+                setShowMessages(false)
+              }
+            }}
+          >
+            <div className="w-full max-w-4xl max-h-[calc(100vh-2rem)]">
+              <MessagingPanel onClose={() => setShowMessages(false)} />
+            </div>
+          </div>
+        )}
       </div>
     </AccessGuard>
   )
