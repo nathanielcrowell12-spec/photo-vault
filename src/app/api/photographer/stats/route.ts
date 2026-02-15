@@ -30,11 +30,12 @@ export async function GET() {
       .eq('photographer_id', user.id)
       .eq('status', 'active')
 
-    // Get total galleries count
+    // Get total galleries count (exclude soft-deleted)
     const { count: galleriesCount } = await supabase
       .from('photo_galleries')
       .select('*', { count: 'exact', head: true })
       .eq('photographer_id', user.id)
+      .eq('is_deleted', false)
 
     // Get total earnings from commissions table (real data)
     const { data: allCommissions } = await supabase

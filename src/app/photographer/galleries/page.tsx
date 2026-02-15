@@ -174,6 +174,7 @@ export default function GalleriesPage() {
           client:clients(id, name, email)
         `)
         .eq('photographer_id', user.id)
+        .eq('is_deleted', false)
         .order('created_at', { ascending: false })
 
       if (error) throw error

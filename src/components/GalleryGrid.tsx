@@ -106,6 +106,7 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
           .from('photo_galleries')
           .select('*')
           .eq('photographer_id', userId)
+          .eq('is_deleted', false)
           .order('created_at', { ascending: false })
 
         if (error) {
@@ -161,6 +162,7 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
             .from('photo_galleries')
             .select('*')
             .or(`client_id.in.(${clientIds.join(',')}),user_id.eq.${userId}`)
+            .eq('is_deleted', false)
             .order('created_at', { ascending: false })
 
           galleriesData = result.data || []
@@ -172,6 +174,7 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
             .select('*')
             .eq('user_id', userId)
             .is('photographer_id', null)
+            .eq('is_deleted', false)
             .order('created_at', { ascending: false })
 
           galleriesData = result.data || []

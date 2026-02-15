@@ -43,23 +43,34 @@ export default function RecentlyDeletedPage() {
 
         const clientIds = clientRecords?.map(c => c.id) || [];
 
-        if (clientIds.length === 0) {
-          // No client records, so no galleries to show
-          setDeletedGalleries([]);
-          setIsLoading(false);
-          return;
+        // Match GalleryGrid query pattern: use client_id if available, fall back to user_id
+        let data: DeletedGallery[] | null = null;
+        let error: { message: string } | null = null;
+
+        if (clientIds.length > 0) {
+          // Client has photographer relationships - show those plus self-deleted
+          const result = await supabase
+            .from('photo_galleries')
+            .select('id, gallery_name, deleted_at, photo_count')
+            .or(`client_id.in.(${clientIds.join(',')}),user_id.eq.${user.id}`)
+            .eq('is_deleted', true)
+            .order('deleted_at', { ascending: false });
+          data = result.data;
+          error = result.error;
+        } else {
+          // No client records - show self-uploaded deleted galleries by user_id
+          const result = await supabase
+            .from('photo_galleries')
+            .select('id, gallery_name, deleted_at, photo_count')
+            .eq('user_id', user.id)
+            .eq('is_deleted', true)
+            .order('deleted_at', { ascending: false });
+          data = result.data;
+          error = result.error;
         }
 
-        // Query galleries by client_id (not user_id)
-        const { data, error } = await supabase
-          .from('photo_galleries')
-          .select('id, gallery_name, deleted_at, photo_count')
-          .in('client_id', clientIds)
-          .eq('status', 'deleted')
-          .order('deleted_at', { ascending: false });
-
         if (error) {
-          console.error('Error fetching deleted galleries:', error);
+          console.error('Error fetching deleted galleries:', JSON.stringify(error, null, 2));
         } else {
           setDeletedGalleries(data || []);
         }

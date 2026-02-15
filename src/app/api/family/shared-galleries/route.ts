@@ -110,6 +110,7 @@ export async function GET(request: NextRequest) {
       `)
       .in('client_id', accountIds)
       .eq('is_family_shared', true)
+      .eq('is_deleted', false)
 
     const { data: galleriesByUser, error: galleriesByUserError } = await serviceSupabase
       .from('photo_galleries')
@@ -128,6 +129,7 @@ export async function GET(request: NextRequest) {
       `)
       .in('user_id', accountIds)
       .eq('is_family_shared', true)
+      .eq('is_deleted', false)
 
     const galleriesError = galleriesByClientError || galleriesByUserError
 

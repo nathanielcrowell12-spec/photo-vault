@@ -82,6 +82,7 @@ export async function GET(request: Request) {
         notes
       `)
       .in('client_id', clientIds)
+      .eq('is_deleted', false)
 
     // Apply full-text search if query provided
     if (searchQuery.trim()) {

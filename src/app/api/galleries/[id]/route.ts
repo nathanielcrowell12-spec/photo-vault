@@ -18,32 +18,41 @@ export async function POST(
 
   const { id } = await params
 
-  // Restore the gallery
+  // First, verify the user owns this gallery (either as photographer or as client/user)
+  const { data: gallery, error: fetchError } = await supabase
+    .from('photo_galleries')
+    .select('id, photographer_id, user_id')
+    .eq('id', id)
+    .single();
+
+  if (fetchError || !gallery) {
+    logger.error('[Galleries] Gallery not found for restore:', fetchError);
+    return NextResponse.json({ error: 'Gallery not found' }, { status: 404 });
+  }
+
+  // Check ownership: user must be either the photographer OR the user_id owner
+  const isPhotographer = gallery.photographer_id === user.id;
+  const isOwner = gallery.user_id === user.id;
+
+  if (!isPhotographer && !isOwner) {
+    logger.error('[Galleries] Unauthorized restore attempt:', { userId: user.id, gallery });
+    return NextResponse.json({ error: 'You do not have permission to restore this gallery' }, { status: 403 });
+  }
+
+  // Restore the gallery (set is_deleted back to false, clear deleted_at)
+  // Note: Photos are NOT individually soft-deleted — they remain linked to the gallery.
+  // When gallery is restored, photos are automatically available again.
   const { error: galleryError } = await supabase
     .from('photo_galleries')
-    .update({ status: 'active', deleted_at: null })
-    .eq('id', id)
-    .eq('photographer_id', user.id);
+    .update({ is_deleted: false, deleted_at: null })
+    .eq('id', id);
 
   if (galleryError) {
     logger.error('[Galleries] Error restoring gallery:', galleryError);
     return NextResponse.json({ error: 'Failed to restore gallery' }, { status: 500 });
   }
 
-  // Restore the photos within the gallery
-  const { error: photosError } = await supabase
-    .from('gallery_photos')
-    .update({ status: 'active', deleted_at: null })
-    .eq('gallery_id', id);
-
-  if (photosError) {
-    // Note: At this point, the gallery is restored but photos are not.
-    // You might want to add more robust transaction handling here in a real-world scenario.
-    logger.error('[Galleries] Error restoring photos for gallery:', photosError);
-    return NextResponse.json({ error: 'Failed to restore photos' }, { status: 500 });
-  }
-
-  return NextResponse.json({ message: 'Gallery and photos restored.' });
+  return NextResponse.json({ message: 'Gallery restored.' });
 }
 
 export async function DELETE(
@@ -61,13 +70,33 @@ export async function DELETE(
 
   const { id } = await params
 
+  // First, verify the user owns this gallery (either as photographer or as client/user)
+  const { data: gallery, error: fetchError } = await supabase
+    .from('photo_galleries')
+    .select('id, photographer_id, user_id')
+    .eq('id', id)
+    .single();
+
+  if (fetchError || !gallery) {
+    logger.error('[Galleries] Gallery not found:', fetchError);
+    return NextResponse.json({ error: 'Gallery not found' }, { status: 404 });
+  }
+
+  // Check ownership: user must be either the photographer OR the user_id owner
+  const isPhotographer = gallery.photographer_id === user.id;
+  const isOwner = gallery.user_id === user.id;
+
+  if (!isPhotographer && !isOwner) {
+    logger.error('[Galleries] Unauthorized delete attempt:', { userId: user.id, gallery });
+    return NextResponse.json({ error: 'You do not have permission to delete this gallery' }, { status: 403 });
+  }
+
   // The trigger in the database will handle the soft delete.
   // We just need to execute a DELETE command, and the trigger will intercept it.
   const { error } = await supabase
     .from('photo_galleries')
     .delete()
-    .eq('id', id)
-    .eq('photographer_id', user.id); // Ensure photographers can only delete their own galleries
+    .eq('id', id);
 
   if (error) {
     logger.error('[Galleries] Error soft deleting gallery:', error);

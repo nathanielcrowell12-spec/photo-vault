@@ -33,6 +33,7 @@ export async function GET() {
         .from('photo_galleries')
         .select('*', { count: 'exact', head: true })
         .in('client_id', clientIds)
+        .eq('is_deleted', false)
       galleriesCount = count || 0
     }
 
@@ -43,6 +44,7 @@ export async function GET() {
           .from('photo_galleries')
           .select('id')
           .in('client_id', clientIds)
+          .eq('is_deleted', false)
       : { data: [] }
 
     // Get total photos count from BOTH tables (photos = desktop, gallery_photos = web)
@@ -77,6 +79,7 @@ export async function GET() {
             photo_count
           `)
           .in('client_id', clientIds)
+          .eq('is_deleted', false)
           .order('created_at', { ascending: false })
           .limit(3)
       : { data: [] }

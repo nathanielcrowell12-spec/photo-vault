@@ -16,6 +16,7 @@ export async function GET() {
       .from('photo_galleries')
       .select('event_date, location, people')
       .eq('photographer_id', user.id)
+      .eq('is_deleted', false)
 
     if (error) {
       logger.error('[FilterOptions] Database error:', error)
