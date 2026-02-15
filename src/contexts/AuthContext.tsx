@@ -349,6 +349,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             console.error('[AuthContext] Error tracking photographer signup:', trackError)
           }
 
+          // Send welcome email with beta coupon (fire-and-forget, don't block signup)
+          fetch('/api/email/photographer-welcome', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              photographerName: fullName || 'Photographer',
+              photographerEmail: email,
+              businessName: fullName,
+            }),
+          }).catch((err) => {
+            console.error('[AuthContext] Welcome email failed:', err)
+          })
+
           // Create platform subscription
           // Don't block signup if this fails - photographer can create subscription manually later
           try {
