@@ -8,11 +8,11 @@ export const metadata: Metadata = {
     type: "website",
     title: "Keep Clients Engaged Forever | PhotoVault for Photographers",
     description: "Permanent client galleries, automated reminders, and referral revenue for photographers.",
-    url: "https://photovault.com/photographers",
+    url: "https://photovault.photo/photographers",
     siteName: "PhotoVault for Photographers",
     images: [
       {
-        url: "https://photovault.com/images/og-photographer.webp",
+        url: "https://photovault.photo/images/og-photographer.webp",
         width: 1200,
         height: 630,
         alt: "PhotoVault for Photographers - Client Gallery Retention Platform",
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Keep Clients Engaged Forever | PhotoVault for Photographers",
     description: "Permanent client galleries, automated reminders, and referral revenue for photographers.",
-    images: ["https://photovault.com/images/og-photographer.webp"],
+    images: ["https://photovault.photo/images/og-photographer.webp"],
   },
   robots: {
     index: true,
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://photovault.com/photographers",
+    canonical: "https://photovault.photo/photographers",
   },
 };
 
@@ -53,17 +53,21 @@ export default function PhotographersLayout({
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
-            "@type": ["LocalBusiness", "Service"],
+            "@type": ["SoftwareApplication", "Service"],
             name: "PhotoVault",
-            url: "https://photovault.com/photographers",
-            description: "PhotoVault helps photographers retain clients with permanent galleries, automated engagement, and referral revenue.",
+            url: "https://photovault.photo/photographers",
+            description: "PhotoVault helps photographers earn passive income from completed work. Clients pay for photo storage, photographers earn 50% commission.",
+            applicationCategory: "BusinessApplication",
+            operatingSystem: "Web, Windows",
             areaServed: "United States",
-            serviceType: "Client photo storage and engagement platform",
+            serviceType: "Photo delivery and archival platform",
             offers: {
               "@type": "Offer",
               priceCurrency: "USD",
-              price: "40",
-              url: "https://photovault.com/photographers",
+              price: "22",
+              priceValidUntil: "2027-12-31",
+              url: "https://photovault.photo/photographers",
+              description: "Photographer platform subscription",
             },
             sameAs: [
               "https://www.instagram.com/PhotoVault",

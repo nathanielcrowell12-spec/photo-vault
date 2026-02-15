@@ -20,8 +20,14 @@ export async function generateMetadata({ params }: CityPageProps): Promise<Metad
     title: `Photography Locations in ${cityName} | PhotoVault Directory`,
     description: `Discover ${cityName}'s best photography locations with permit info, insider tips, seasonal guides, and more. Find the perfect spot for your next shoot.`,
     openGraph: {
-      title: `${cityName} Photography Locations`,
-      description: `Find the perfect spot for your next shoot in ${cityName}`,
+      type: 'website',
+      title: `Photography Locations in ${cityName} | PhotoVault Directory`,
+      description: `Find the perfect photography spot in ${cityName} with permit info and insider tips.`,
+      url: `https://photovault.photo/directory/${city}`,
+      siteName: 'PhotoVault',
+    },
+    alternates: {
+      canonical: `https://photovault.photo/directory/${city}`,
     },
   }
 }

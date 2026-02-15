@@ -1,5 +1,23 @@
 // src/app/directory/photographers/page.tsx
 import Link from 'next/link'
+import type { Metadata } from 'next'
+
+export const metadata: Metadata = {
+  title: 'Find a Photographer | PhotoVault Directory',
+  description:
+    'Browse professional photographers in our network. Find wedding, portrait, and family photographers near you with verified profiles and portfolio galleries.',
+  openGraph: {
+    type: 'website',
+    title: 'Find a Photographer | PhotoVault Directory',
+    description:
+      'Browse professional photographers with verified profiles and portfolio galleries.',
+    url: 'https://photovault.photo/directory/photographers',
+    siteName: 'PhotoVault',
+  },
+  alternates: {
+    canonical: 'https://photovault.photo/directory/photographers',
+  },
+}
 
 export default function PhotographersPage() {
   return (

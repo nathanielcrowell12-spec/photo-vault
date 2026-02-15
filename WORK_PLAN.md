@@ -1376,118 +1376,161 @@ Churn risk scoring based on behavioral signals.
 
 **Priority:** 🟢 PHASE 2 - Build immediately after beta stabilizes
 **Dependencies:** Beta launch successful, 10+ active photographers
-**Estimated Stories:** 6
+**Estimated Stories:** 6 (3 complete, 3 remaining)
 **Strategic Intent:** "Pre-Shoot vs Post-Shoot" - competitors only do Post-Shoot (gallery delivery). PhotoVault owns Pre-Shoot (location scouting, permits).
 **North Star:** "1/8 of photographers in 15 cities saying 'PhotoVault' once a week"
 
----
+### What's Already Built (as of Feb 2026)
 
-## Story 6.1: Directory Database & Schema
-**Size:** Medium (1 session)
+**Database (COMPLETE):**
+- 5 tables: `locations`, `location_attributes`, `location_business_intelligence`, `photographer_profiles`, `reviews`
+- RLS policies (public read, system write)
+- Performance indexes on city/state, attribute_type, username
+- Schema file: `database/directory-schema.sql`
 
-### Description
-Build the database foundation for the photographer directory with location data.
+**Routes & Pages (COMPLETE):**
+- `/directory` — Homepage with featured locations, city browsing, hero section
+- `/directory/[city]` — City-specific location listing with search + permit filters
+- `/directory/[city]/[location_slug]` — Full location detail with permits, tips, business intelligence
+- `/directory/photographers` — Photographer listing page (stub, needs UI)
+- `/directory/photographers/[username]` — Individual photographer profile page
 
-### Tasks
-- [ ] Create `directory_locations` table (GPS, permits, seasonal info)
-- [ ] Create `photographer_profiles` table (public profile data)
-- [ ] Create `location_reviews` table (photographer tips/ratings)
-- [ ] Add profile fields to existing photographer data
-- [ ] Set up RLS policies for public/private data
+**Components (11 BUILT):**
+DirectoryHeader, LocationGrid, LocationCard, LocationFilters, LocationSearch, LocationSkeleton, PermitBadge, PermitInfoBox, AttributeBadges, PhotographerCard, ProfileHeader
 
-### Acceptance Criteria
-- [ ] Database supports location-based queries
-- [ ] Photographers can have public vs private profile data
-- [ ] Location data includes permit requirements, seasonal guides
+**SEO (COMPLETE - Feb 2026):**
+- Metadata + OG + canonical on all directory pages
+- JSON-LD (Place + BreadcrumbList) on location pages
+- Dynamic generateMetadata on photographer profiles
+- All directory pages in sitemap with proper priorities
 
----
-
-## Story 6.2: Photographer Public Profiles
-**Size:** Medium (1 session)
-
-### Description
-Create public profile pages for photographers in the directory.
-
-### Tasks
-- [ ] Create public profile page `/directory/photographers/[slug]`
-- [ ] Display portfolio preview (selected galleries)
-- [ ] Show specialties, pricing ranges, service areas
-- [ ] Add contact/inquiry button (leads to sign-up funnel)
-- [ ] Mobile-responsive design
-
-### Acceptance Criteria
-- [ ] Photographers have SEO-friendly public profiles
-- [ ] Visitors can view portfolio and contact
-- [ ] Profile linked from directory search
+**Types:** `src/types/directory.ts` — Location, LocationAttribute, LocationBusinessIntelligence, LocationWithDetails, FilterState, PermitStatus
 
 ---
 
-## Story 6.3: Location Database - Wisconsin MVP
+## Story 7.1: Directory Database & Schema
 **Size:** Medium (1 session)
+**Status:** ✅ COMPLETE
 
-### Description
-Seed the location database with Wisconsin photo spots as MVP.
+### What Was Built
+- [x] Created `locations` table (name, slug, city, state, cover image)
+- [x] Created `location_attributes` table (type/value pairs for filtering)
+- [x] Created `location_business_intelligence` table (permits, costs, rules, seasonal info, insider tips)
+- [x] Created `photographer_profiles` table (username, business_name, bio, website, profile_image, founding/featured flags)
+- [x] Created `reviews` table (ratings 1-5, review text)
+- [x] Set up RLS policies (public read, system write)
+- [x] Added performance indexes
 
-### Tasks
-- [ ] Research top 50 Wisconsin photo locations
-- [ ] Add permit requirements and links for each
-- [ ] Add seasonal guides (fall colors, sunflowers, etc.)
-- [ ] Add accessibility info and parking
-- [ ] Add GPS coordinates for each location
-- [ ] Create location detail pages `/directory/locations/[slug]`
-
-### Acceptance Criteria
-- [ ] 50+ Wisconsin locations in database
-- [ ] Each has permit info, seasonal tips, accessibility
-- [ ] Photographers can add tips/ratings
+### Files Created
+- `database/directory-schema.sql`
+- `src/types/directory.ts`
 
 ---
 
-## Story 6.4: Directory Search & Filtering
+## Story 7.2: Directory Pages & Components
 **Size:** Medium (1 session)
+**Status:** ✅ COMPLETE
+
+### What Was Built
+- [x] Directory homepage `/directory` with featured locations + city browsing
+- [x] City pages `/directory/[city]` with search + permit filter
+- [x] Location detail pages `/directory/[city]/[location_slug]` with permit info, business intelligence, insider tips
+- [x] Photographer listing page `/directory/photographers` (stub)
+- [x] Photographer profile page `/directory/photographers/[username]`
+- [x] 11 reusable components (LocationGrid, LocationCard, PermitBadge, etc.)
+- [x] Mobile-responsive design
+
+### Files Created
+- `src/app/directory/page.tsx`
+- `src/app/directory/[city]/page.tsx`
+- `src/app/directory/[city]/[location_slug]/page.tsx`
+- `src/app/directory/photographers/page.tsx`
+- `src/app/directory/photographers/[username]/page.tsx`
+- `src/components/directory/*.tsx` (11 components)
+
+---
+
+## Story 7.3: Directory SEO & Structured Data
+**Size:** Medium (1 session)
+**Status:** ✅ COMPLETE (Feb 15, 2026)
+
+### What Was Built
+- [x] Metadata (title, description, OG) on all directory pages
+- [x] Canonical tags on city + location pages
+- [x] JSON-LD structured data: Place + BreadcrumbList on location pages
+- [x] Dynamic generateMetadata on photographer profiles (pulls from DB)
+- [x] All directory pages in sitemap.xml with proper priorities
+- [x] Fixed domain from photovault.com → photovault.photo in photographers layout
+- [x] Fixed schema type from LocalBusiness → SoftwareApplication on /photographers
+
+### Files Modified
+- `src/app/directory/[city]/page.tsx`
+- `src/app/directory/[city]/[location_slug]/page.tsx`
+- `src/app/directory/photographers/page.tsx`
+- `src/app/directory/photographers/[username]/page.tsx`
+- `src/app/photographers/layout.tsx`
+- `src/app/sitemap.ts`
+
+---
+
+## Story 7.4: Location Data Seeding - Wisconsin MVP
+**Size:** Medium (1 session)
+**Status:** 🔴 NOT STARTED
+**Blocking:** Directory pages exist but show empty results without seed data
 
 ### Description
-Build search and filtering for both photographers and locations.
+Seed the location database with Wisconsin photo spots. The infrastructure is complete — tables, pages, components, and SEO are all ready. This story is purely about populating data.
 
 ### Tasks
-- [ ] Create directory home page `/directory`
-- [ ] Add photographer search by name, specialty, location
-- [ ] Add location search by city, type (park, urban, beach)
-- [ ] Add specialty filters (wedding, portrait, event, etc.)
-- [ ] Add price range filters
-- [ ] Pagination and infinite scroll
-- [ ] Integrate simple map view for locations
+- [ ] Research top 50 Wisconsin photo locations (Madison, Milwaukee, Door County, etc.)
+- [ ] Create seed SQL file with location data + attributes + business intelligence
+- [ ] Add permit requirements and links for each location
+- [ ] Add seasonal guides (fall colors at Devil's Lake, sunflower fields, etc.)
+- [ ] Add cover images for featured locations
+- [ ] Run seed against Supabase production
+- [ ] Verify directory pages render with real data
 
 ### Acceptance Criteria
-- [ ] Users can find photographers by location/specialty
-- [ ] Users can discover photo locations
+- [ ] 50+ Wisconsin locations visible in directory
+- [ ] Each has permit info, seasonal tips, attributes
+- [ ] City pages (Madison, Milwaukee, etc.) show location counts
+- [ ] Featured locations appear on directory homepage
+
+### Files Likely Touched
+- `database/seed-directory-locations.sql` (NEW)
+
+---
+
+## Story 7.5: Photographer Directory Listing & Search
+**Size:** Medium (1 session)
+**Status:** 🔴 NOT STARTED
+
+### Description
+The photographer listing page (`/directory/photographers`) is currently a stub. Build out the full listing with search, filtering, and cards. The PhotographerCard component already exists.
+
+### Tasks
+- [ ] Build photographer listing UI on `/directory/photographers`
+- [ ] Add search by name, specialty, location
+- [ ] Add filters (specialty: wedding/portrait/event, city, featured)
+- [ ] Display PhotographerCard grid with pagination
+- [ ] Auto-populate `photographer_profiles` from existing `photographers` table on signup
+- [ ] Add "Claim Profile" or "Join Directory" CTA for photographers not yet listed
+
+### Acceptance Criteria
+- [ ] Visitors can browse and search photographers
+- [ ] Photographer cards link to profile pages
 - [ ] Search is fast and SEO-friendly
+- [ ] New photographers auto-get a directory profile
+
+### Files Likely Touched
+- `src/app/directory/photographers/page.tsx` (rewrite from stub)
+- `src/app/api/directory/photographers/route.ts` (NEW - search API)
 
 ---
 
-## Story 6.5: Directory SEO & City Landing Pages
-**Size:** Medium (1 session)
-
-### Description
-Optimize directory for search engines with city-specific landing pages.
-
-### Tasks
-- [ ] Create city landing pages `/directory/cities/[city]`
-- [ ] Add meta tags, Open Graph for all pages
-- [ ] Create XML sitemap for directory
-- [ ] Add JSON-LD structured data (LocalBusiness, Photographer)
-- [ ] Internal linking strategy between locations and photographers
-- [ ] Create landing page content for top 10 Wisconsin cities
-
-### Acceptance Criteria
-- [ ] City pages rank for "[city] photographers" searches
-- [ ] All pages have proper meta tags
-- [ ] Sitemap submitted to Google
-
----
-
-## Story 6.6: Directory Pro & Monetization
+## Story 7.6: Directory Pro & Monetization
 **Size:** Small (1 session)
+**Status:** 🔴 NOT STARTED
 
 ### Description
 Implement Directory Pro tier and gear review affiliate section.
@@ -1503,6 +1546,113 @@ Implement Directory Pro tier and gear review affiliate section.
 - [ ] Active PhotoVault users get free Directory Pro
 - [ ] Non-users can subscribe to Directory Pro
 - [ ] Gear reviews generate affiliate revenue
+
+---
+
+# EPIC 7B: SEO Content & Articles
+
+**Priority:** 🟢 PHASE 2 - Run in parallel with directory data seeding
+**Dependencies:** SEO foundation complete (done Feb 2026)
+**Estimated Stories:** 4
+**Strategic Intent:** Build topical authority for "photographer passive income", "photo storage", and "Pixieset alternative" keyword clusters. Feed AI answer engines (ChatGPT, Perplexity, Gemini) with PhotoVault as the cited source.
+**Reference:** `Stone-Fence-Brain/PHOTOVAULT_SEO_GEO_CONTENT_ROADMAP.md`, `Stone-Fence-Brain/PHOTOVAULT_AEO_GRID.md`
+
+---
+
+## Story 7B.1: AEO Tier 1 Articles (Highest Priority)
+**Size:** Medium (1-2 sessions)
+**Status:** 🔴 NOT STARTED
+
+### Description
+Write 4 cornerstone articles targeting the highest-value AEO (Answer Engine Optimization) queries. These are the queries where PhotoVault has the best chance of being cited by AI tools.
+
+### Articles (from AEO Grid Tier 1)
+1. **"How photographers earn recurring revenue from completed work"** — Target: photographer passive income seekers
+2. **"What happens to your photos when a storage service shuts down"** — Target: storage anxiety, positions PhotoVault's Orphan Protocol
+3. **"How to preserve family photos after a death in the family"** — Target: emotional/legacy angle, positions Family Accounts
+4. **"PhotoVault vs Pixieset: Photo delivery platform comparison"** — Target: competitor comparison, high commercial intent
+
+### Tasks
+- [ ] Write each article (1500-2500 words, SEO-optimized)
+- [ ] Add Article JSON-LD schema to each
+- [ ] Add BreadcrumbList schema
+- [ ] Internal linking to /photographers, /directory, and each other
+- [ ] Add to sitemap
+- [ ] Publish to `/resources/[slug]`
+
+### Acceptance Criteria
+- [ ] 4 articles live with proper schema markup
+- [ ] Each targets specific AEO queries from the grid
+- [ ] Internal linking creates topical cluster
+
+---
+
+## Story 7B.2: Geo Content - Phase 2A (Milwaukee + Chicago)
+**Size:** Medium (1 session)
+**Status:** 🔴 NOT STARTED
+**Dependencies:** Story 7.4 (Wisconsin data seeded first)
+
+### Description
+Expand geo content beyond Madison to Milwaukee and Chicago. Create city landing pages with unique content.
+
+### Tasks
+- [ ] Seed 30+ Milwaukee photo locations
+- [ ] Seed 30+ Chicago photo locations
+- [ ] Write unique city guide content for each (not just location listings)
+- [ ] Add photographer spotlights per city (when photographers join)
+- [ ] Cross-link between city pages and resource articles
+
+### Acceptance Criteria
+- [ ] 3 cities live with 30+ locations each
+- [ ] City pages have unique, useful content beyond location lists
+- [ ] Cross-linking between cities and articles
+
+---
+
+## Story 7B.3: Phase 2B Resource Articles
+**Size:** Medium (1-2 sessions)
+**Status:** 🔴 NOT STARTED
+
+### Description
+Write 3 resource articles targeting the "photo storage" and "photo delivery" keyword clusters.
+
+### Articles (from SEO Geo Content Roadmap Phase 2B)
+1. **"The Complete Guide to Wedding Photo Storage and Preservation"** — Target: wedding photo storage keywords
+2. **"How Professional Photo Delivery Works: A Client's Guide"** — Target: photo delivery platform keywords
+3. **"Why Permanent Photo Storage Matters: Beyond the Cloud"** — Target: permanent storage, Google Photos alternatives
+
+### Tasks
+- [ ] Write each article (1500-2500 words)
+- [ ] Add Article + FAQPage JSON-LD schema
+- [ ] Internal linking to existing resources and /photographers
+- [ ] Add to sitemap
+
+### Acceptance Criteria
+- [ ] 3 articles live (total 6 resource articles on site)
+- [ ] Schema markup on all articles
+- [ ] Internal linking forms content cluster with existing 3 articles
+
+---
+
+## Story 7B.4: Internal Linking Audit & Content Cluster
+**Size:** Small (1 session)
+**Status:** 🔴 NOT STARTED
+
+### Description
+Audit and strengthen internal linking between all content pages, directory pages, and landing pages. Create topical clusters that reinforce each other.
+
+### Tasks
+- [ ] Map all content pages and their current internal links
+- [ ] Add cross-links: articles ↔ directory ↔ /photographers ↔ homepage
+- [ ] Add "Related Articles" section to each resource page
+- [ ] Add "Nearby Locations" section to city pages
+- [ ] Submit updated sitemap to Google Search Console
+- [ ] Verify no orphan pages (pages with zero internal links)
+
+### Acceptance Criteria
+- [ ] Every content page has 3+ internal links to other pages
+- [ ] No orphan pages
+- [ ] Sitemap submitted to GSC
 
 ---
 
@@ -1916,10 +2066,11 @@ Implement Directory Pro tier and gear review affiliate section.
 | Epic | Stories | Complete | Status |
 |------|---------|----------|--------|
 | Epic 6: CIS Phase 2-4 | 7 | 0 | ⏸️ During/After Beta |
-| Epic 7: Directory | 6 | 0 | ⏸️ Phase 2 - FIRST PRIORITY |
+| Epic 7: Directory | 6 | 3 | 🟡 IN PROGRESS (7.1 ✅, 7.2 ✅, 7.3 ✅, 7.4 🔴, 7.5 🔴, 7.6 🔴) |
+| Epic 7B: SEO Content | 4 | 0 | 🔴 NOT STARTED (7B.1-7B.4) |
 | Epic 8: Phone Dump | 3 | 0 | ⏸️ Phase 2 |
 | Epic 9: Print Ordering | 3 | 0 | ⏸️ Phase 2 |
-| **TOTAL** | **19** | **0** | **⏸️ Future** |
+| **TOTAL** | **23** | **3** | **13% - Directory foundation complete** |
 
 ## Phase 3: Revenue Expansion
 
@@ -1998,6 +2149,7 @@ Implement Directory Pro tier and gear review affiliate section.
 - Story 5.1 ✅ (Dec 17, 2025) - Webhook Monitoring & Alerting (cron job)
 - Story 5.2 ✅ (Dec 17, 2025) - Support Documentation (3 guides + help pages)
 - Story 5.3 ✅ (Jan 4, 2026) - Beta Launch Checklist COMPLETE (Beta Tester System + outreach message)
+- Signup Bug Fixes ✅ (Feb 15, 2026) - Welcome email wired up (PHOTOVAULT_BETA_2026 coupon), removed false marketing copy, removed dead platform filter from client dashboard, cleaned Stripe key from git history
 
 ---
 
@@ -2016,4 +2168,4 @@ For detailed feature descriptions, revenue splits, and strategic context, see:
 
 ---
 
-**Last Updated:** January 4, 2026 (Story 2.4 + 5.3 COMPLETE! Epics 2 + 5 done. 🚀 READY FOR BETA LAUNCH. Phase 1 at 88% - only Epic 4 remaining.)
+**Last Updated:** February 15, 2026 (SEO audit complete — fixed domain, schema types, added metadata to 8 pages, JSON-LD on location pages, canonicals on all directory pages. Updated Epic 7 to reflect existing directory infrastructure. Added Epic 7B for SEO content/articles.)

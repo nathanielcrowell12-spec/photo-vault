@@ -53,12 +53,20 @@ export async function generateMetadata({ params }: LocationPageProps): Promise<M
     return { title: 'Location Not Found | PhotoVault Directory' }
   }
 
+  const citySlug = location.city.toLowerCase().replace(/ /g, '-')
+
   return {
     title: `${location.name} - Photography Location in ${location.city} | PhotoVault Directory`,
     description: location.description || `Photography location guide for ${location.name} in ${location.city}. Get permit info, insider tips, and more.`,
     openGraph: {
+      type: 'website',
       title: `${location.name} - ${location.city} Photography Location`,
       description: location.description || `Find everything you need to shoot at ${location.name}`,
+      url: `https://photovault.photo/directory/${citySlug}/${location_slug}`,
+      siteName: 'PhotoVault',
+    },
+    alternates: {
+      canonical: `https://photovault.photo/directory/${citySlug}/${location_slug}`,
     },
   }
 }
@@ -94,8 +102,54 @@ export default async function LocationPage({ params }: LocationPageProps) {
   const cityName = city.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
   const intel = location.location_business_intelligence
 
+  const structuredData = {
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Place',
+        name: location.name,
+        description: location.description || `Photography location in ${location.city}, ${location.state}`,
+        address: {
+          '@type': 'PostalAddress',
+          addressLocality: location.city,
+          addressRegion: location.state,
+          addressCountry: 'US',
+        },
+        ...(location.cover_image_url ? { image: location.cover_image_url } : {}),
+        url: `https://photovault.photo/directory/${city}/${location_slug}`,
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Directory',
+            item: 'https://photovault.photo/directory',
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: cityName,
+            item: `https://photovault.photo/directory/${city}`,
+          },
+          {
+            '@type': 'ListItem',
+            position: 3,
+            name: location.name,
+            item: `https://photovault.photo/directory/${city}/${location_slug}`,
+          },
+        ],
+      },
+    ],
+  }
+
   return (
     <div className="container mx-auto px-4 py-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
       {/* Breadcrumb */}
       <div className="mb-8">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
