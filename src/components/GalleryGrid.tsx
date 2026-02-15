@@ -63,8 +63,7 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
   const [filteredGalleries, setFilteredGalleries] = useState<Gallery[]>([])
   const [clients, setClients] = useState<Client[]>([])
   const [loading, setLoading] = useState(true)
-  const [sortBy, setSortBy] = useState<'date' | 'photographer' | 'platform' | 'name'>('date')
-  const [filterBy, setFilterBy] = useState<string>('all')
+  const [sortBy, setSortBy] = useState<'date' | 'photographer' | 'name'>('date')
   const [clientFilter, setClientFilter] = useState<string>('all')
   const [searchTerm, setSearchTerm] = useState('')
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
@@ -240,11 +239,6 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
       )
     }
 
-    // Apply platform filter
-    if (filterBy !== 'all') {
-      filtered = filtered.filter(gallery => gallery.platform === filterBy)
-    }
-
     // Apply client filter (for photographers)
     if (isPhotographer && clientFilter !== 'all') {
       if (clientFilter === 'unassigned') {
@@ -265,8 +259,6 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
           return new Date(b.session_date || b.created_at).getTime() - new Date(a.session_date || a.created_at).getTime()
         case 'photographer':
           return (a.photographer_name || '').localeCompare(b.photographer_name || '')
-        case 'platform':
-          return a.platform.localeCompare(b.platform)
         case 'name':
           return a.gallery_name.localeCompare(b.gallery_name)
         default:
@@ -275,7 +267,7 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
     })
 
     setFilteredGalleries(filtered)
-  }, [galleries, searchTerm, filterBy, isPhotographer, clientFilter, sortBy])
+  }, [galleries, searchTerm, isPhotographer, clientFilter, sortBy])
 
   useEffect(() => {
     fetchGalleries()
@@ -433,20 +425,6 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
         </div>
         
         <div className="flex gap-2 flex-wrap">
-          <Select value={filterBy} onValueChange={setFilterBy}>
-            <SelectTrigger className="w-[140px]">
-              <SelectValue placeholder="Platform" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Platforms</SelectItem>
-              <SelectItem value="Pixieset">Pixieset</SelectItem>
-              <SelectItem value="SmugMug">SmugMug</SelectItem>
-              <SelectItem value="ShootProof">ShootProof</SelectItem>
-              <SelectItem value="PhotoShelter">PhotoShelter</SelectItem>
-              <SelectItem value="Zenfolio">Zenfolio</SelectItem>
-            </SelectContent>
-          </Select>
-
           {isPhotographer && clients.length > 0 && (
             <Select value={clientFilter} onValueChange={setClientFilter}>
               <SelectTrigger className="w-[160px]">
@@ -464,14 +442,13 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
             </Select>
           )}
 
-          <Select value={sortBy} onValueChange={(value: 'date' | 'photographer' | 'platform' | 'name') => setSortBy(value)}>
+          <Select value={sortBy} onValueChange={(value: 'date' | 'photographer' | 'name') => setSortBy(value)}>
             <SelectTrigger className="w-[140px]">
               <SelectValue placeholder="Sort by" />
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="date">Date</SelectItem>
               <SelectItem value="photographer">Photographer</SelectItem>
-              <SelectItem value="platform">Platform</SelectItem>
               <SelectItem value="name">Name</SelectItem>
             </SelectContent>
           </Select>
@@ -484,14 +461,14 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
           <Camera className="h-12 w-12 text-gray-400 mx-auto mb-4" />
           <h3 className="text-lg font-medium text-gray-900 mb-2">No galleries found</h3>
           <p className="text-gray-600 mb-4">
-            {searchTerm || filterBy !== 'all' || clientFilter !== 'all'
+            {searchTerm || clientFilter !== 'all'
               ? 'Try adjusting your search or filters'
               : isPhotographer
               ? 'Upload your first gallery to get started'
               : 'Connect your first photo platform to get started'
             }
           </p>
-          {!searchTerm && filterBy === 'all' && clientFilter === 'all' && !isPhotographer && (
+          {!searchTerm && clientFilter === 'all' && !isPhotographer && (
             <Button onClick={() => {
               if (typeof window !== 'undefined') {
                 window.location.href = '/client/upload'

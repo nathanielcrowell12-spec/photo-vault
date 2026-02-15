@@ -262,13 +262,6 @@ export default function PhotographerSignupPage() {
                     <div className="flex items-start space-x-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                       <div>
-                        <div className="font-semibold text-foreground">One-Tap Camera Roll Delivery</div>
-                        <div className="text-sm text-muted-foreground">No more zip files. Full resolution, instant.</div>
-                      </div>
-                    </div>
-                    <div className="flex items-start space-x-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
-                      <div>
                         <div className="font-semibold text-foreground">$4/Month Passive Income Forever</div>
                         <div className="text-sm text-muted-foreground">Earn while families sleep soundly</div>
                       </div>
@@ -292,13 +285,6 @@ export default function PhotographerSignupPage() {
                       <div>
                         <div className="font-semibold text-foreground">Replace Pixieset & ShootProof</div>
                         <div className="text-sm text-muted-foreground">Same features, plus you earn more</div>
-                      </div>
-                    </div>
-                    <div className="flex items-start space-x-3">
-                      <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
-                      <div>
-                        <div className="font-semibold text-foreground">14-Day Free Trial</div>
-                        <div className="text-sm text-muted-foreground">No credit card required to start</div>
                       </div>
                     </div>
                   </div>
