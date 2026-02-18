@@ -534,15 +534,17 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
 
                     {/* Hover Overlay - Only show if not locked */}
                     {!isLocked && (
-                      <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200 flex items-center justify-center">
+                      <div
+                        className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200 flex items-center justify-center cursor-pointer"
+                        onClick={() => {
+                          if (typeof window !== 'undefined') {
+                            window.location.href = `/gallery/${gallery.id}`
+                          }
+                        }}
+                      >
                         <Button
                           size="sm"
-                          className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                          onClick={() => {
-                            if (typeof window !== 'undefined') {
-                              window.location.href = `/gallery/${gallery.id}`
-                            }
-                          }}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none"
                         >
                           <ExternalLink className="h-4 w-4 mr-2" />
                           View Gallery

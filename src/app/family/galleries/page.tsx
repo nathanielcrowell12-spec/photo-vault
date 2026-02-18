@@ -431,11 +431,13 @@ export default function FamilyGalleriesPage() {
                           </div>
 
                           {/* Hover Overlay */}
-                          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200 flex items-center justify-center">
+                          <div
+                            className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-200 flex items-center justify-center cursor-pointer"
+                            onClick={() => router.push(`/gallery/${gallery.id}`)}
+                          >
                             <Button
                               size="sm"
-                              className="opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                              onClick={() => router.push(`/gallery/${gallery.id}`)}
+                              className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none"
                             >
                               <ExternalLink className="h-4 w-4 mr-2" />
                               View Gallery
