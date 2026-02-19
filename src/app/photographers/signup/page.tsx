@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
-import { Camera, CheckCircle, ArrowRight, Mail, Lock, User, Phone, Building } from 'lucide-react'
+import { Camera, CheckCircle, ArrowRight, Mail, Lock, User, Phone, Building, Eye, EyeOff } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -17,27 +17,22 @@ export default function PhotographerSignupPage() {
   const { signUp } = useAuth()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  
+  const [showPassword, setShowPassword] = useState(false)
+
   const [formData, setFormData] = useState({
     businessName: '',
     fullName: '',
     email: '',
     phone: '',
     password: '',
-    confirmPassword: ''
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
 
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match')
-      return
-    }
-
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters')
+    if (formData.password.length < 8) {
+      setError('Password must be at least 8 characters')
       return
     }
 
@@ -86,12 +81,12 @@ export default function PhotographerSignupPage() {
             {/* Left Side - Signup Form */}
             <div>
               <div className="mb-8">
-                <Badge className="mb-4 bg-blue-100 text-blue-800">
-                  Become a Memory Guardian
+                <Badge className="mb-4 bg-green-100 text-green-800">
+                  Beta — Free for 12 Months
                 </Badge>
-                <h1 className="text-4xl font-bold mb-4 text-foreground">Protect Your Clients&apos; Memories</h1>
+                <h1 className="text-4xl font-bold mb-4 text-foreground">Start Earning Passive Income</h1>
                 <p className="text-lg text-muted-foreground">
-                  Give families Memory Insurance. Earn $4/month passive income forever.
+                  Deliver galleries. Earn $4/month per client, forever. Takes 30 seconds — no credit card required.
                 </p>
               </div>
 
@@ -99,7 +94,7 @@ export default function PhotographerSignupPage() {
                 <CardHeader>
                   <CardTitle className="text-foreground">Create Your Photographer Account</CardTitle>
                   <CardDescription className="text-muted-foreground">
-                    Free during beta • $22/month after launch
+                    Free for 12 months during beta. No credit card required.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -107,14 +102,13 @@ export default function PhotographerSignupPage() {
                     <div className="space-y-2">
                       <Label htmlFor="businessName">
                         <Building className="h-4 w-4 inline mr-2" />
-                        Business Name
+                        Business Name <span className="text-muted-foreground font-normal">(optional)</span>
                       </Label>
                       <Input
                         id="businessName"
                         placeholder="Your photography business name"
                         value={formData.businessName}
                         onChange={(e) => setFormData(prev => ({ ...prev, businessName: e.target.value }))}
-                        required
                       />
                     </div>
 
@@ -150,7 +144,7 @@ export default function PhotographerSignupPage() {
                     <div className="space-y-2">
                       <Label htmlFor="phone">
                         <Phone className="h-4 w-4 inline mr-2" />
-                        Phone Number
+                        Phone Number <span className="text-muted-foreground font-normal">(optional)</span>
                       </Label>
                       <Input
                         id="phone"
@@ -158,7 +152,6 @@ export default function PhotographerSignupPage() {
                         placeholder="(555) 123-4567"
                         value={formData.phone}
                         onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
-                        required
                       />
                     </div>
 
@@ -167,33 +160,29 @@ export default function PhotographerSignupPage() {
                         <Lock className="h-4 w-4 inline mr-2" />
                         Password
                       </Label>
-                      <Input
-                        id="password"
-                        type="password"
-                        placeholder="At least 6 characters"
-                        value={formData.password}
-                        onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                        required
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="confirmPassword">
-                        <Lock className="h-4 w-4 inline mr-2" />
-                        Confirm Password
-                      </Label>
-                      <Input
-                        id="confirmPassword"
-                        type="password"
-                        placeholder="Confirm your password"
-                        value={formData.confirmPassword}
-                        onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                        required
-                      />
+                      <div className="relative">
+                        <Input
+                          id="password"
+                          type={showPassword ? 'text' : 'password'}
+                          placeholder="At least 8 characters"
+                          value={formData.password}
+                          onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                          required
+                          className="pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                          tabIndex={-1}
+                        >
+                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                      </div>
                     </div>
 
                     {error && (
-                      <div className="bg-red-900/20 border border-red-800 text-red-400 p-3 rounded-lg text-sm">
+                      <div className="bg-destructive/10 border border-destructive/30 text-destructive p-3 rounded-lg text-sm">
                         {error}
                       </div>
                     )}
@@ -207,7 +196,7 @@ export default function PhotographerSignupPage() {
                         'Creating Account...'
                       ) : (
                         <>
-                          Start Protecting Memories
+                          Create Free Account
                           <ArrowRight className="ml-2 h-4 w-4" />
                         </>
                       )}
@@ -248,43 +237,43 @@ export default function PhotographerSignupPage() {
               <Card className="border border-border bg-card/50">
                 <CardContent className="pt-6">
                   <Badge className="mb-4 bg-green-100 text-green-800">
-                    Memory Guardian Benefits
+                    Why Photographers Switch
                   </Badge>
-                  <h2 className="text-2xl font-bold mb-4 text-foreground">What You&apos;ll Deliver to Clients</h2>
+                  <h2 className="text-2xl font-bold mb-4 text-foreground">What You Get</h2>
                   <div className="space-y-3">
                     <div className="flex items-start space-x-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                       <div>
-                        <div className="font-semibold text-foreground">Memory Insurance for Every Family</div>
-                        <div className="text-sm text-muted-foreground">Professional-grade protection for irreplaceable photos</div>
+                        <div className="font-semibold text-foreground">$4/Month Per Client, Forever</div>
+                        <div className="text-sm text-muted-foreground">Passive income from work you already did</div>
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                       <div>
-                        <div className="font-semibold text-foreground">$4/Month Passive Income Forever</div>
-                        <div className="text-sm text-muted-foreground">Earn while families sleep soundly</div>
+                        <div className="font-semibold text-foreground">$50 Upfront Per Gallery</div>
+                        <div className="text-sm text-muted-foreground">Client pays $100 for 12 months — you keep half</div>
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                       <div>
-                        <div className="font-semibold text-foreground">Digital Safety Deposit Box</div>
-                        <div className="text-sm text-muted-foreground">Survives hard drive crashes, phone losses, house fires</div>
+                        <div className="font-semibold text-foreground">Costs Don&apos;t Scale With Growth</div>
+                        <div className="text-sm text-muted-foreground">Clients pay for their own storage, not you</div>
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                       <div>
-                        <div className="font-semibold text-foreground">Your Branding, Their Peace of Mind</div>
-                        <div className="text-sm text-muted-foreground">Every photo protected under your name</div>
+                        <div className="font-semibold text-foreground">Professional Gallery Delivery</div>
+                        <div className="text-sm text-muted-foreground">Beautiful galleries with download controls and sharing</div>
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
                       <CheckCircle className="h-5 w-5 text-green-600 mt-0.5" />
                       <div>
                         <div className="font-semibold text-foreground">Replace Pixieset & ShootProof</div>
-                        <div className="text-sm text-muted-foreground">Same features, plus you earn more</div>
+                        <div className="text-sm text-muted-foreground">Same delivery features, plus you actually earn from it</div>
                       </div>
                     </div>
                   </div>

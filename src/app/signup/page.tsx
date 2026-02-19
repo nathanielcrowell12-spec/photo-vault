@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { Camera, Users, Heart, CheckCircle, ArrowRight, Mail, Lock, User, Phone } from 'lucide-react'
+import { Camera, Users, Heart, CheckCircle, ArrowRight, Mail, Lock, User, Phone, Eye, EyeOff } from 'lucide-react'
 import Link from 'next/link'
 
 export default function SignupPage() {
@@ -17,6 +17,7 @@ export default function SignupPage() {
   const { signUp, user, userType: currentUserType } = useAuth()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const userType = 'client' // Customer signup page - fixed to client
 
   const [formData, setFormData] = useState({
@@ -24,7 +25,6 @@ export default function SignupPage() {
     email: '',
     phone: '',
     password: '',
-    confirmPassword: ''
   })
 
   // Redirect if already logged in
@@ -40,13 +40,8 @@ export default function SignupPage() {
     e.preventDefault()
     setError('')
 
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match')
-      return
-    }
-
-    if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters')
+    if (formData.password.length < 8) {
+      setError('Password must be at least 8 characters')
       return
     }
 
@@ -97,19 +92,19 @@ export default function SignupPage() {
             <div>
               <div className="mb-8">
                 <Badge className="mb-4 bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200">
-                  Memory Insurance for Families
+                  All Your Photos, One Place
                 </Badge>
-                <h1 className="text-4xl font-bold mb-4">Protect Your Memories</h1>
+                <h1 className="text-4xl font-bold mb-4">Keep Your Photos Forever</h1>
                 <p className="text-lg text-muted-foreground dark:text-foreground">
-                  Your photos deserve better than a failing hard drive. Create your account and start protecting your irreplaceable memories.
+                  Every photographer, every session, one beautiful gallery. No more expired links or lost files.
                 </p>
               </div>
 
               <Card>
                 <CardHeader>
-                  <CardTitle>Create Your Memory Insurance Account</CardTitle>
+                  <CardTitle>Create Your Account</CardTitle>
                   <CardDescription>
-                    A digital safety deposit box for your family's irreplaceable photos
+                    Takes 30 seconds. Your photographer will send you photos here.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -164,33 +159,29 @@ export default function SignupPage() {
                         <Lock className="h-4 w-4 inline mr-2" />
                         Password
                       </Label>
-                      <Input
-                        id="password"
-                        type="password"
-                        placeholder="At least 6 characters"
-                        value={formData.password}
-                        onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                        required
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label htmlFor="confirmPassword">
-                        <Lock className="h-4 w-4 inline mr-2" />
-                        Confirm Password
-                      </Label>
-                      <Input
-                        id="confirmPassword"
-                        type="password"
-                        placeholder="Confirm your password"
-                        value={formData.confirmPassword}
-                        onChange={(e) => setFormData(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                        required
-                      />
+                      <div className="relative">
+                        <Input
+                          id="password"
+                          type={showPassword ? 'text' : 'password'}
+                          placeholder="At least 8 characters"
+                          value={formData.password}
+                          onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
+                          required
+                          className="pr-10"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+                          tabIndex={-1}
+                        >
+                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                      </div>
                     </div>
 
                     {error && (
-                      <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 p-3 rounded-lg text-sm">
+                      <div className="bg-destructive/10 border border-destructive/30 text-destructive p-3 rounded-lg text-sm">
                         {error}
                       </div>
                     )}
@@ -230,43 +221,36 @@ export default function SignupPage() {
               <Card className="border-2 border-pink-200 dark:border-pink-800">
                 <CardContent className="pt-6">
                   <Badge className="mb-4 bg-pink-100 text-pink-800 dark:bg-pink-900 dark:text-pink-200">
-                    Memory Insurance
+                    Why PhotoVault
                   </Badge>
-                  <h2 className="text-2xl font-bold mb-4">Your Photos Are Protected</h2>
+                  <h2 className="text-2xl font-bold mb-4">Your Photos, Always Available</h2>
                   <div className="space-y-3">
                     <div className="flex items-start space-x-3">
                       <CheckCircle className="h-5 w-5 text-primary mt-0.5" />
                       <div>
-                        <div className="font-semibold">Digital Safety Deposit Box</div>
-                        <div className="text-sm text-muted-foreground dark:text-muted-foreground">Protected from hard drive failures—which have a 100% failure rate eventually</div>
+                        <div className="font-semibold">Every Photographer, One Place</div>
+                        <div className="text-sm text-muted-foreground dark:text-muted-foreground">Wedding, family, newborn — all your sessions in one gallery</div>
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
                       <CheckCircle className="h-5 w-5 text-primary mt-0.5" />
                       <div>
-                        <div className="font-semibold">One Tap to Camera Roll</div>
-                        <div className="text-sm text-muted-foreground dark:text-muted-foreground">Full resolution downloads. No zip files to wrestle with on your phone.</div>
+                        <div className="font-semibold">No Expired Links</div>
+                        <div className="text-sm text-muted-foreground dark:text-muted-foreground">Your photos stay available. No scrambling for old download links.</div>
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
                       <CheckCircle className="h-5 w-5 text-primary mt-0.5" />
                       <div>
-                        <div className="font-semibold">Family Sharing</div>
-                        <div className="text-sm text-muted-foreground dark:text-muted-foreground">Share with family members you authorize</div>
+                        <div className="font-semibold">Full Resolution Downloads</div>
+                        <div className="text-sm text-muted-foreground dark:text-muted-foreground">Download any photo to your phone or computer, anytime</div>
                       </div>
                     </div>
                     <div className="flex items-start space-x-3">
                       <CheckCircle className="h-5 w-5 text-primary mt-0.5" />
                       <div>
-                        <div className="font-semibold">Lifetime Archival</div>
-                        <div className="text-sm text-muted-foreground dark:text-muted-foreground">No expiring download links or lost USB drives</div>
-                      </div>
-                    </div>
-                    <div className="flex items-start space-x-3">
-                      <CheckCircle className="h-5 w-5 text-primary mt-0.5" />
-                      <div>
-                        <div className="font-semibold">All Photographers, One Vault</div>
-                        <div className="text-sm text-muted-foreground dark:text-muted-foreground">Collect memories from every photographer in one protected place</div>
+                        <div className="font-semibold">Share With Family</div>
+                        <div className="text-sm text-muted-foreground dark:text-muted-foreground">Invite family members to view and download photos</div>
                       </div>
                     </div>
                   </div>
@@ -275,25 +259,23 @@ export default function SignupPage() {
 
               <Card className="bg-pink-50 dark:bg-pink-900/20 border-pink-200 dark:border-pink-800">
                 <CardContent className="pt-6">
-                  <h3 className="font-semibold mb-3">Memory Insurance Pricing</h3>
+                  <h3 className="font-semibold mb-3">Simple Pricing</h3>
                   <div className="text-sm space-y-2 text-muted-foreground dark:text-muted-foreground">
-                    <div>• First year included with photographer session</div>
-                    <div>• $8/month after first year—the price of one coffee</div>
-                    <div>• One family account, unlimited memories</div>
-                    <div>• Professional data recovery costs $500-$5,000. This costs $8.</div>
+                    <div>• First year included when your photographer sets up your gallery</div>
+                    <div>• $8/month after the first year to keep everything</div>
+                    <div>• One account for your whole family</div>
                   </div>
                 </CardContent>
               </Card>
 
               <Card>
                 <CardContent className="pt-6">
-                  <h3 className="font-semibold mb-3">How Memory Insurance Works</h3>
+                  <h3 className="font-semibold mb-3">How It Works</h3>
                   <div className="text-sm space-y-2 text-muted-foreground dark:text-muted-foreground">
-                    <div>1. Create your account—your digital safety deposit box</div>
-                    <div>2. Your photographer delivers protected memories</div>
-                    <div>3. One tap to download full resolution to your camera roll</div>
-                    <div>4. Share with family members you authorize</div>
-                    <div>5. Protected from hard drive failures, lost USB drives, expired links</div>
+                    <div>1. Your photographer creates a gallery for you</div>
+                    <div>2. You get an email with a link to view and download</div>
+                    <div>3. All your photos stay here — organized by session</div>
+                    <div>4. Share with family whenever you want</div>
                   </div>
                 </CardContent>
               </Card>
