@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { logger } from '@/lib/logger'
 import { createServerSupabaseClient } from '@/lib/supabase-server'
 import { EmailService } from '@/lib/email/email-service'
+import { enrollPhotographerDrip } from '@/lib/email/drip-enrollment'
 
 export const dynamic = 'force-dynamic'
 
@@ -39,6 +40,14 @@ export async function POST(request: NextRequest) {
       photographerName: photographerName || 'Photographer',
       photographerEmail,
       businessName,
+    })
+
+    // Enroll in post-signup drip sequence (non-blocking, idempotent)
+    enrollPhotographerDrip(user.id, {
+      photographerName: photographerName || 'Photographer',
+      photographerEmail,
+    }).catch((err) => {
+      logger.error('[Welcome Email] Drip enrollment failed (non-blocking):', err)
     })
 
     logger.info('[Welcome Email] Sent to', { email: photographerEmail })

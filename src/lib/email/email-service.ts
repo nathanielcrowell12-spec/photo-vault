@@ -62,6 +62,29 @@ import {
   type GalleryAccessRestoredEmailData,
 } from './engagement-templates'
 import {
+  getPhotographerStripeNudgeEmailHTML,
+  getPhotographerStripeNudgeEmailText,
+  getPhotographerGalleryNudgeEmailHTML,
+  getPhotographerGalleryNudgeEmailText,
+  getPhotographerPassiveIncomeMathEmailHTML,
+  getPhotographerPassiveIncomeMathEmailText,
+  getPhotographerFounderCheckinEmailHTML,
+  getPhotographerFounderCheckinEmailText,
+  getClientGettingStartedEmailHTML,
+  getClientGettingStartedEmailText,
+  getClientWhyStorageMattersEmailHTML,
+  getClientWhyStorageMattersEmailText,
+  getClientMorePhotographersEmailHTML,
+  getClientMorePhotographersEmailText,
+  type PhotographerStripeNudgeData,
+  type PhotographerGalleryNudgeData,
+  type PhotographerPassiveIncomeMathData,
+  type PhotographerFounderCheckinData,
+  type ClientGettingStartedData,
+  type ClientWhyStorageMattersData,
+  type ClientMorePhotographersData,
+} from './drip-templates'
+import {
   getSecondaryInvitationEmailHTML,
   getSecondaryInvitationEmailText,
   getGracePeriodAlertEmailHTML,
@@ -604,6 +627,193 @@ Update payment method: ${process.env.NEXT_PUBLIC_APP_URL}/billing
       return { success: true }
     } catch (error: any) {
       logger.error('[Email] Error sending secondary welcome email:', error)
+      return { success: false, error: error.message }
+    }
+  }
+
+  // ============================================================================
+  // DRIP SEQUENCE EMAILS (Post-Signup Nurture)
+  // ============================================================================
+
+  /**
+   * Photographer Day 1: Stripe Connect nudge
+   * Skipped by cron if Stripe is already connected
+   */
+  static async sendPhotographerStripeNudgeEmail(data: PhotographerStripeNudgeData): Promise<{ success: boolean; error?: string }> {
+    try {
+      const unsubscribeUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/email/unsubscribe?token=${data.unsubscribeToken}`
+      await (await getClient()).emails.send({
+        from: await getFromEmail(),
+        to: data.photographerEmail,
+        subject: "Your clients can't pay you yet",
+        html: getPhotographerStripeNudgeEmailHTML(data),
+        text: getPhotographerStripeNudgeEmailText(data),
+        headers: {
+          'List-Unsubscribe': `<${unsubscribeUrl}>`,
+          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+        },
+      })
+      logger.info(`[Email] Drip: Stripe nudge sent to ${data.photographerEmail}`)
+      return { success: true }
+    } catch (error: any) {
+      logger.error('[Email] Drip: Error sending Stripe nudge:', error)
+      return { success: false, error: error.message }
+    }
+  }
+
+  /**
+   * Photographer Day 3: Gallery upload nudge
+   * Skipped by cron if photographer has at least one gallery
+   */
+  static async sendPhotographerGalleryNudgeEmail(data: PhotographerGalleryNudgeData): Promise<{ success: boolean; error?: string }> {
+    try {
+      const unsubscribeUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/email/unsubscribe?token=${data.unsubscribeToken}`
+      await (await getClient()).emails.send({
+        from: await getFromEmail(),
+        to: data.photographerEmail,
+        subject: 'Your first gallery is 10 minutes away',
+        html: getPhotographerGalleryNudgeEmailHTML(data),
+        text: getPhotographerGalleryNudgeEmailText(data),
+        headers: {
+          'List-Unsubscribe': `<${unsubscribeUrl}>`,
+          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+        },
+      })
+      logger.info(`[Email] Drip: Gallery nudge sent to ${data.photographerEmail}`)
+      return { success: true }
+    } catch (error: any) {
+      logger.error('[Email] Drip: Error sending gallery nudge:', error)
+      return { success: false, error: error.message }
+    }
+  }
+
+  /**
+   * Photographer Day 7: Passive income math / vision email
+   * Always sends (dynamic content based on progress)
+   */
+  static async sendPhotographerPassiveIncomeMathEmail(data: PhotographerPassiveIncomeMathData): Promise<{ success: boolean; error?: string }> {
+    try {
+      const unsubscribeUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/email/unsubscribe?token=${data.unsubscribeToken}`
+      await (await getClient()).emails.send({
+        from: await getFromEmail(),
+        to: data.photographerEmail,
+        subject: 'What 50 clients looks like in year two',
+        html: getPhotographerPassiveIncomeMathEmailHTML(data),
+        text: getPhotographerPassiveIncomeMathEmailText(data),
+        headers: {
+          'List-Unsubscribe': `<${unsubscribeUrl}>`,
+          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+        },
+      })
+      logger.info(`[Email] Drip: Passive income math sent to ${data.photographerEmail}`)
+      return { success: true }
+    } catch (error: any) {
+      logger.error('[Email] Drip: Error sending passive income math:', error)
+      return { success: false, error: error.message }
+    }
+  }
+
+  /**
+   * Photographer Day 14: Founder check-in from Nate
+   * Always sends. Uses replyTo so replies go to support.
+   */
+  static async sendPhotographerFounderCheckinEmail(data: PhotographerFounderCheckinData): Promise<{ success: boolean; error?: string }> {
+    try {
+      const unsubscribeUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/email/unsubscribe?token=${data.unsubscribeToken}`
+      await (await getClient()).emails.send({
+        from: 'Nate from PhotoVault <noreply@photovault.photo>',
+        to: data.photographerEmail,
+        subject: 'Two weeks in -- a quick note from Nate',
+        html: getPhotographerFounderCheckinEmailHTML(data),
+        text: getPhotographerFounderCheckinEmailText(data),
+        replyTo: 'support@photovault.photo',
+        headers: {
+          'List-Unsubscribe': `<${unsubscribeUrl}>`,
+          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+        },
+      })
+      logger.info(`[Email] Drip: Founder check-in sent to ${data.photographerEmail}`)
+      return { success: true }
+    } catch (error: any) {
+      logger.error('[Email] Drip: Error sending founder check-in:', error)
+      return { success: false, error: error.message }
+    }
+  }
+
+  /**
+   * Client Day 1: Getting started guide
+   * Always sends after first payment
+   */
+  static async sendClientGettingStartedEmail(data: ClientGettingStartedData): Promise<{ success: boolean; error?: string }> {
+    try {
+      const unsubscribeUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/email/unsubscribe?token=${data.unsubscribeToken}`
+      await (await getClient()).emails.send({
+        from: await getFromEmail(),
+        to: data.clientEmail,
+        subject: 'Quick tip: save photos to your phone',
+        html: getClientGettingStartedEmailHTML(data),
+        text: getClientGettingStartedEmailText(data),
+        headers: {
+          'List-Unsubscribe': `<${unsubscribeUrl}>`,
+          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+        },
+      })
+      logger.info(`[Email] Drip: Getting started sent to ${data.clientEmail}`)
+      return { success: true }
+    } catch (error: any) {
+      logger.error('[Email] Drip: Error sending getting started:', error)
+      return { success: false, error: error.message }
+    }
+  }
+
+  /**
+   * Client Day 3: Why long-term storage matters
+   * Always sends
+   */
+  static async sendClientWhyStorageMattersEmail(data: ClientWhyStorageMattersData): Promise<{ success: boolean; error?: string }> {
+    try {
+      const unsubscribeUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/email/unsubscribe?token=${data.unsubscribeToken}`
+      await (await getClient()).emails.send({
+        from: await getFromEmail(),
+        to: data.clientEmail,
+        subject: 'The hard drive question nobody asks',
+        html: getClientWhyStorageMattersEmailHTML(data),
+        text: getClientWhyStorageMattersEmailText(data),
+        headers: {
+          'List-Unsubscribe': `<${unsubscribeUrl}>`,
+          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+        },
+      })
+      logger.info(`[Email] Drip: Why storage matters sent to ${data.clientEmail}`)
+      return { success: true }
+    } catch (error: any) {
+      logger.error('[Email] Drip: Error sending why storage matters:', error)
+      return { success: false, error: error.message }
+    }
+  }
+
+  /**
+   * Client Day 7: Platform stickiness / more photographers
+   * Always sends
+   */
+  static async sendClientMorePhotographersEmail(data: ClientMorePhotographersData): Promise<{ success: boolean; error?: string }> {
+    try {
+      const unsubscribeUrl = `${process.env.NEXT_PUBLIC_APP_URL}/api/email/unsubscribe?token=${data.unsubscribeToken}`
+      await (await getClient()).emails.send({
+        from: await getFromEmail(),
+        to: data.clientEmail,
+        subject: 'One vault, all your photographers',
+        html: getClientMorePhotographersEmailHTML(data),
+        text: getClientMorePhotographersEmailText(data),
+        headers: {
+          'List-Unsubscribe': `<${unsubscribeUrl}>`,
+          'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click',
+        },
+      })
+      logger.info(`[Email] Drip: More photographers sent to ${data.clientEmail}`)
+      return { success: true }
+    } catch (error: any) {
+      logger.error('[Email] Drip: Error sending more photographers:', error)
       return { success: false, error: error.message }
     }
   }

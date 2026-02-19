@@ -18,6 +18,8 @@ interface ResendClient {
       subject: string;
       html?: string;
       text?: string;
+      replyTo?: string;
+      headers?: Record<string, string>;
     }) => Promise<{ id: string; from: string; to: string[]; created_at: string }>;
   };
 }

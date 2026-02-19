@@ -249,6 +249,18 @@ export async function handlePaymentSucceeded(
         })
 
         logger.info(`[Webhook] Sent payment successful email to ${clientData.email}`)
+
+        // Enroll client in post-payment drip (only on first payment, idempotent)
+        if (invoice.billing_reason === 'subscription_create' && previousState?.user_id) {
+          const { enrollClientDrip } = await import('@/lib/email/drip-enrollment')
+          enrollClientDrip(previousState.user_id, {
+            clientName: clientData.full_name || 'Valued Customer',
+            clientEmail: clientData.email,
+            photographerName: (clientData as any).clients?.photographers?.users?.full_name || 'your photographer',
+          }).catch((err) => {
+            logger.error('[Webhook] Client drip enrollment failed (non-blocking):', err)
+          })
+        }
       }
     } catch (emailError) {
       logger.error('[Webhook] Error sending payment successful email:', emailError)
