@@ -1196,7 +1196,7 @@ export default function GooglePhotosAlternativesPage() {
           <h2 className="text-2xl font-bold text-foreground mb-6">
             Related Resources
           </h2>
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid md:grid-cols-3 gap-6">
             <Link
               href="/resources/photo-storage-guide"
               className="block group"
@@ -1225,6 +1225,22 @@ export default function GooglePhotosAlternativesPage() {
                   <p className="text-sm text-muted-foreground">
                     Side-by-side comparison of PhotoVault, Google Photos, iCloud,
                     and more.
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link
+              href="/resources/photovault-vs-pixieset"
+              className="block group"
+            >
+              <Card className="bg-card/50 border-border h-full group-hover:border-primary/50 transition-colors">
+                <CardContent className="p-6">
+                  <h3 className="font-semibold text-foreground group-hover:text-primary mb-2">
+                    PhotoVault vs Pixieset 2026
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Honest comparison of business models, features, and pricing
+                    for photographers.
                   </p>
                 </CardContent>
               </Card>

@@ -769,16 +769,17 @@ export default function PhotoStorageComparisonPage() {
               </Card>
             </Link>
             <Link
-              href="/resources/wedding-photo-storage"
+              href="/resources/photovault-vs-pixieset"
               className="block group"
             >
               <Card className="bg-card/50 border-border h-full group-hover:border-primary/50 transition-colors">
                 <CardContent className="p-6">
                   <h3 className="font-semibold text-foreground group-hover:text-primary mb-2">
-                    Wedding Photo Storage Guide
+                    PhotoVault vs Pixieset 2026
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    How to ensure your wedding photos last 50+ years.
+                    Honest comparison of business models, features, and pricing
+                    for photographers.
                   </p>
                 </CardContent>
               </Card>
