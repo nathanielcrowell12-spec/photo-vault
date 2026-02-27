@@ -327,6 +327,9 @@
 
 /* Respect reduced motion preferences */
 @media (prefers-reduced-motion: reduce) {
+  .parallax-bg {
+    background-attachment: scroll !important;
+  }
   .animate-ken-burns,
   .animate-zoom-pulse {
     animation: none;

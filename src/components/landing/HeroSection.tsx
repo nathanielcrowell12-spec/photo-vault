@@ -4,20 +4,20 @@ import { IncomeCalculator } from './IncomeCalculator'
 
 export function HeroSection() {
   return (
-    <section id="main-content" className="py-12 sm:py-16 md:py-24 bg-background" aria-label="Hero">
+    <section id="main-content" className="py-12 sm:py-16 md:py-24" aria-label="Hero">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-16 items-start">
           {/* Left Column - Value Prop */}
           <div className="lg:py-4">
-            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-foreground leading-tight text-balance">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white leading-tight text-balance">
               Your past work should still be paying you.
             </h1>
-            <p className="mt-4 sm:mt-6 text-base sm:text-lg text-muted-foreground max-w-xl">
+            <p className="mt-4 sm:mt-6 text-base sm:text-lg text-white/70 max-w-xl">
               PhotoVault turns your completed photoshoots into monthly recurring revenue.
               Clients pay $8/month to keep their galleries. You earn $4/month per client,
               for as long as they subscribe.
             </p>
-            <p className="mt-2 sm:mt-3 text-sm text-muted-foreground">
+            <p className="mt-2 sm:mt-3 text-sm text-white/70">
               No more one-and-done transactions. No more paying for storage that earns you nothing.
             </p>
 
@@ -28,7 +28,7 @@ export function HeroSection() {
                 </Link>
               </Button>
             </div>
-            <p className="mt-3 text-xs text-muted-foreground">
+            <p className="mt-3 text-xs text-white/70">
               Currently accepting founding photographers. No credit card required.
             </p>
           </div>

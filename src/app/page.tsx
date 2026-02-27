@@ -9,6 +9,7 @@ import {
   OrphanProtocolSection,
   FounderStorySection,
   BetaCTASection,
+  ParallaxSection,
 } from '@/components/landing'
 
 const BETA_EMAIL = 'support@photovault.photo'
@@ -89,13 +90,28 @@ export default function HomePage() {
       <div className="flex flex-col min-h-screen bg-background text-foreground antialiased">
         <LandingHeader />
         <main>
-          <HeroSection />
+          <ParallaxSection
+            imageSrc="/images/hero/waterfront-city-sunset.jpg"
+            imageAlt="Professional photographer shooting in natural light"
+          >
+            <HeroSection />
+          </ParallaxSection>
           <HowItWorksSection />
           <ComparisonSection />
           <PricingSection />
-          <OrphanProtocolSection />
+          <ParallaxSection
+            imageSrc="/images/hero/landscape-cloudy-sky.jpg"
+            imageAlt="Family photo album on a wooden shelf"
+          >
+            <OrphanProtocolSection />
+          </ParallaxSection>
           <FounderStorySection betaEmail={BETA_EMAIL} />
-          <BetaCTASection betaEmail={BETA_EMAIL} />
+          <ParallaxSection
+            imageSrc="/images/hero/city-dawn-aerial.jpg"
+            imageAlt="Camera gear on a photographer's desk"
+          >
+            <BetaCTASection betaEmail={BETA_EMAIL} />
+          </ParallaxSection>
         </main>
         <LandingFooter betaEmail={BETA_EMAIL} />
       </div>
