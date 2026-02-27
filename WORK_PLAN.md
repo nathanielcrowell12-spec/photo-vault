@@ -1830,9 +1830,9 @@ Audit and strengthen internal linking between all content pages, directory pages
 
 **Priority:** 🟢 PHASE 2 - High margin, low effort
 **Dependencies:** Gallery viewing stable
-**Estimated Stories:** 3
-**Revenue Split:** 100% to PhotoVault (photographer keeps subscription fee only)
-**Pricing:** Wholesale + 40% markup
+**Estimated Stories:** 5
+**Revenue Split:** Photographer sets their own markup on top of lab costs. PhotoVault takes a platform cut (percentage TBD — research Pic-Time's model and industry norms before deciding). Photographer keeps the rest. This makes prints a photographer revenue stream, not just a client convenience.
+**Pricing:** Lab wholesale cost + photographer markup + PhotoVault platform cut
 
 ---
 
@@ -1849,7 +1849,8 @@ Audit and strengthen internal linking between all content pages, directory pages
 ### Acceptance Criteria
 - [ ] Can create print orders via Pwinty API
 - [ ] Order tracking works
-- [ ] Products have correct pricing (wholesale + 40%)
+- [ ] Products have correct pricing (lab cost + photographer markup + platform cut)
+- [ ] Photographer can set their own markup per product
 
 ---
 
@@ -1877,7 +1878,9 @@ Audit and strengthen internal linking between all content pages, directory pages
 - [ ] Build order history view for clients
 - [ ] Create admin view for all orders
 - [ ] Handle refunds/issues
-- [ ] Track print revenue in dashboard
+- [ ] Track print revenue in dashboard (photographer markup + PhotoVault cut)
+- [ ] Photographer print earnings visible in commission dashboard
+- [ ] Stripe Connect payout for photographer's share of print markup
 
 ### Acceptance Criteria
 - [ ] Clients can view order history
@@ -2082,17 +2085,17 @@ Give each photographer a simple public booking page where potential clients can 
 
 ---
 
-# EPIC 10: AI Enhancement Suite (PHASE 3)
+# EPIC 10: AI Enhancement Suite + Gallery Search (PHASE 3)
 
 **Priority:** 🟢 PHASE 3 - After Phase 2 revenue flowing
 **Dependencies:** Platform stable, print ordering working
-**Estimated Stories:** 5
-**Pricing:** Minimum $1.29 per enhancement, or API cost x 1.50 (whichever higher)
-**Revenue Split:** 100% to PhotoVault
+**Estimated Stories:** 6
+**Pricing:** Enhancements: minimum $1.29 per enhancement, or API cost x 1.50 (whichever higher). Gallery search: included in subscription (value-add).
+**Revenue Split:** Enhancement revenue 100% to PhotoVault. Gallery search included in client subscription.
 
 ---
 
-## Story 9.1: AI Infrastructure Setup
+## Story 10.1: AI Infrastructure Setup
 **Size:** Medium (1 session)
 
 ### Tasks
@@ -2109,7 +2112,7 @@ Give each photographer a simple public booking page where potential clients can 
 
 ---
 
-## Story 9.2: Watermark Preview System
+## Story 10.2: Watermark Preview System
 **Size:** Medium (1 session)
 
 ### Tasks
@@ -2126,7 +2129,7 @@ Give each photographer a simple public booking page where potential clients can 
 
 ---
 
-## Story 9.3: Basic Enhancements (Color, Sharpening, Background)
+## Story 10.3: Basic Enhancements (Color, Sharpening, Background)
 **Size:** Medium (1 session)
 
 ### Tasks
@@ -2143,7 +2146,7 @@ Give each photographer a simple public booking page where potential clients can 
 
 ---
 
-## Story 9.4: Style Transfer & Collages
+## Story 10.4: Style Transfer & Collages
 **Size:** Medium (1 session)
 
 ### Tasks
@@ -2159,7 +2162,46 @@ Give each photographer a simple public booking page where potential clients can 
 
 ---
 
-## Story 9.5: AI Feature Polish & Batch Processing
+## Story 10.5: AI Gallery Search (Face Recognition + Semantic Search)
+**Size:** Large (2-3 sessions)
+**Status:** 🔴 NOT STARTED
+**Dependencies:** AI Infrastructure (Story 10.1)
+
+### Description
+AI-powered search within galleries so clients can find specific photos without scrolling through hundreds of images. Two capabilities:
+
+1. **Face recognition:** Clients/guests find photos of themselves or specific people. Group photos by person. Critical for weddings where guests want their own photos.
+2. **Semantic/free-text search:** Clients search by description ("first dance", "cake cutting", "group photo", "outdoor portraits"). Uses CLIP or similar vision-language model to match text queries to photo content.
+
+This is a major competitive feature — Pic-Time has it, Pixieset does not. Adds significant client-facing value and differentiates PhotoVault from basic gallery platforms.
+
+### Tasks
+- [ ] Choose face recognition provider (AWS Rekognition, Google Vision, or open-source like InsightFace)
+- [ ] Choose vision-language model for semantic search (CLIP, OpenCLIP, or managed API)
+- [ ] Build face indexing pipeline (run on gallery upload, store face embeddings)
+- [ ] Build semantic embedding pipeline (generate CLIP embeddings per photo on upload)
+- [ ] Create search UI in gallery view (search bar + face filter chips)
+- [ ] Face clustering: auto-group photos by detected person
+- [ ] "Find my photos" flow for wedding guests (upload selfie → find matching photos)
+- [ ] Handle privacy: opt-out for face recognition, data retention policies
+- [ ] Performance: index large galleries (500+ photos) without blocking upload
+
+### Acceptance Criteria
+- [ ] Clients can search gallery by text description and get relevant results
+- [ ] Clients can filter gallery by person (face recognition)
+- [ ] Wedding guests can find their own photos via selfie match
+- [ ] Search works on galleries with 500+ photos
+- [ ] Face data can be deleted on request (privacy compliance)
+- [ ] Indexing runs asynchronously and doesn't slow down gallery delivery
+
+### Revenue Impact
+- Included in base client subscription (increases perceived value, reduces churn)
+- Could be gated to premium tiers if we implement Epic 10 Premium Client Tiers
+- Key competitive differentiator in "PhotoVault vs Pic-Time" and "PhotoVault vs Pixieset" positioning
+
+---
+
+## Story 10.6: AI Feature Polish & Batch Processing
 **Size:** Small (1 session)
 
 ### Tasks
@@ -2386,7 +2428,7 @@ Give each photographer a simple public booking page where potential clients can 
 
 | Epic | Stories | Complete | Status |
 |------|---------|----------|--------|
-| Epic 10: AI Enhancements | 5 | 0 | ⏸️ Phase 3 |
+| Epic 10: AI Enhancements + Gallery Search | 6 | 0 | ⏸️ Phase 3 (added Story 9.5: AI Gallery Search) |
 | Epic 11: Premium Tiers | 2 | 0 | ⏸️ Phase 3 |
 | **TOTAL** | **7** | **0** | **⏸️ Future** |
 
@@ -2479,4 +2521,4 @@ For detailed feature descriptions, revenue splits, and strategic context, see:
 
 ---
 
-**Last Updated:** February 18, 2026 (Added Story 1.8: Prepaid Time Accumulation & Stacking — packages queue sequentially, multi-photographer commissions handled. Added Story 3.4: Milestone Reminder Photos & Automated Re-booking Emails — photographer selects 1-4 standout photos during gallery creation for month 3/6/9/12 reminder emails. Added 9-month & 18-month package tiers to Parked backlog. Pulled mobile gallery click fix from phone session (PR #1, commit dd6e57c).)
+**Last Updated:** February 27, 2026 (Epic 9 Print Ordering: changed revenue model from "100% to PhotoVault" to photographer-sets-markup with platform cut — photographers earn from print sales like Pic-Time. Fixed story count to 5. Epic 10: Added Story 10.5 AI Gallery Search — face recognition + semantic free-text search, competitive parity with Pic-Time. Renumbered all Epic 10 stories from 9.x → 10.x to match epic number. Updated summary table.)

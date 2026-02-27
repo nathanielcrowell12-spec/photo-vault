@@ -346,8 +346,8 @@ export function getPhotographerWelcomeEmailHTML(data: PhotographerWelcomeEmailDa
             </div>
 
             <div style="background: #ecfdf5; border: 2px solid #10b981; border-radius: 12px; padding: 25px; margin: 30px 0; text-align: center;">
-                <h3 style="margin-top: 0; color: #065f46;">Your Beta Offer: 12 Months Free</h3>
-                <p style="color: #047857; margin-bottom: 15px;">As a founding photographer, your first 12 months of the $22/month platform fee are on us. Use this code when you subscribe:</p>
+                <h3 style="margin-top: 0; color: #065f46;">Your Beta Offer: 12 Months Free + Price Locked Forever</h3>
+                <p style="color: #047857; margin-bottom: 15px;">As a founding photographer, your first 12 months of the $22/month platform fee are on us — and that $22/month rate is locked in forever, immune to future price increases. Use this code when you subscribe:</p>
                 <div style="background: white; border: 2px dashed #10b981; border-radius: 8px; padding: 15px; display: inline-block; margin: 10px 0;">
                     <span style="font-family: monospace; font-size: 24px; font-weight: 700; color: #065f46; letter-spacing: 2px;">PHOTOVAULT_BETA_2026</span>
                 </div>
@@ -439,9 +439,9 @@ Welcome to PhotoVault${data.businessName ? `, representing ${data.businessName}`
 
 Here's how it works: You deliver galleries through PhotoVault. Your clients pay for access. You keep 100% of your shoot fees and 50% of storage fees. When prepaid plans end, monthly billing starts automatically. Built-in passive income.
 
-YOUR BETA OFFER: 12 MONTHS FREE
+YOUR BETA OFFER: 12 MONTHS FREE + PRICE LOCKED FOREVER
 
-As a founding photographer, your first 12 months of the $22/month platform fee are on us. Use this code when you subscribe:
+As a founding photographer, your first 12 months of the $22/month platform fee are on us — and that $22/month rate is locked in forever, immune to future price increases. Use this code when you subscribe:
 
     PHOTOVAULT_BETA_2026
 

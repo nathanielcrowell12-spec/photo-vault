@@ -49,6 +49,9 @@ export function PricingSection() {
               <span className="text-xl sm:text-2xl font-bold text-primary ml-2">$0</span>
               <span className="text-sm text-muted-foreground">for 12 months</span>
             </div>
+            <p className="mt-2 text-xs font-medium text-primary">
+              Beta testers lock in $22/month forever — immune to future price increases.
+            </p>
 
             <ul className="mt-6 space-y-3" role="list">
               {platformFeatures.map((feature) => (
@@ -105,7 +108,7 @@ export function PricingSection() {
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-center text-sm">
               <div>
                 <p className="text-muted-foreground">Your cost</p>
-                <p className="font-semibold text-foreground">$22/mo <span className="text-primary text-xs">(free during beta)</span></p>
+                <p className="font-semibold text-foreground">$22/mo <span className="text-primary text-xs">(free during beta, locked forever)</span></p>
               </div>
               <div>
                 <p className="text-muted-foreground">Your earnings</p>

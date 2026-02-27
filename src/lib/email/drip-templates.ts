@@ -333,7 +333,7 @@ export function getPhotographerFounderCheckinEmailHTML(data: PhotographerFounder
 
     <p><strong>One ask:</strong> If you know another photographer who'd benefit from passive income on their past work, send them our way. We're growing through word of mouth right now, and a recommendation from you means more than any ad we could run.</p>
 
-    <p>They can sign up at <a href="${APP_URL}/photographers/signup">photovault.photo/photographers/signup</a> and use beta code <strong>PHOTOVAULT_BETA_2026</strong> for 12 months free.</p>
+    <p>They can sign up at <a href="${APP_URL}/photographers/signup">photovault.photo/photographers/signup</a> and use beta code <strong>PHOTOVAULT_BETA_2026</strong> for 12 months free — plus the $22/month rate locked in forever, immune to future price increases.</p>
 
     <p>Thanks for being here early.</p>
 
@@ -358,7 +358,7 @@ We're still early. You're one of the first photographers on the platform, which 
 
 One ask: If you know another photographer who'd benefit from passive income on their past work, send them our way. We're growing through word of mouth right now, and a recommendation from you means more than any ad we could run.
 
-They can sign up at ${APP_URL}/photographers/signup and use beta code PHOTOVAULT_BETA_2026 for 12 months free.
+They can sign up at ${APP_URL}/photographers/signup and use beta code PHOTOVAULT_BETA_2026 for 12 months free — plus the $22/month rate locked in forever, immune to future price increases.
 
 Thanks for being here early.
 

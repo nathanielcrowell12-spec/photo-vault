@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button'
 
 const betaBenefits = [
   '12 months free ($22/month waived)',
+  '$22/month price locked in forever — immune to future increases',
   'Direct access to the founder for feedback',
   'Priority feature requests',
   'Founding Photographer badge on your profile',

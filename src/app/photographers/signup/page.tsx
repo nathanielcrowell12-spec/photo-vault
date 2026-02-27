@@ -82,7 +82,7 @@ export default function PhotographerSignupPage() {
             <div>
               <div className="mb-8">
                 <Badge className="mb-4 bg-green-100 text-green-800">
-                  Beta — Free for 12 Months
+                  Beta — Free for 12 Months, Price Locked Forever
                 </Badge>
                 <h1 className="text-4xl font-bold mb-4 text-foreground">Start Earning Passive Income</h1>
                 <p className="text-lg text-muted-foreground">
@@ -94,7 +94,7 @@ export default function PhotographerSignupPage() {
                 <CardHeader>
                   <CardTitle className="text-foreground">Create Your Photographer Account</CardTitle>
                   <CardDescription className="text-muted-foreground">
-                    Free for 12 months during beta. No credit card required.
+                    Free for 12 months during beta. $22/month locked in forever. No credit card required.
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
@@ -284,6 +284,9 @@ export default function PhotographerSignupPage() {
                 <CardContent className="pt-6">
                   <h3 className="font-semibold mb-3 text-foreground">Platform Pricing</h3>
                   <div className="text-3xl font-bold text-green-600 mb-2">$22/month</div>
+                  <p className="text-xs font-medium text-green-600 mb-2">
+                    Waived 12 months for beta testers. This rate is locked in forever.
+                  </p>
                   <div className="text-sm text-muted-foreground space-y-1">
                     <div>✓ Unlimited clients & galleries</div>
                     <div>✓ Full commission tracking</div>

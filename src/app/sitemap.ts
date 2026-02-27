@@ -83,6 +83,52 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly',
       priority: 0.8,
     },
+    {
+      url: `${baseUrl}/resources/photovault-vs-pixieset`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/resources/photovault-vs-pictime`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+  ]
+
+  // Conversion pages
+  const conversionPages: MetadataRoute.Sitemap = [
+    {
+      url: `${baseUrl}/photographers/signup`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
+    {
+      url: `${baseUrl}/how-it-works`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/features`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/pricing`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/faq`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.7,
+    },
   ]
 
   // Fetch all locations from database
@@ -121,5 +167,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8, // High priority - these are our long-tail SEO targets
   })) || []
 
-  return [...staticPages, ...resourcePages, ...cityPages, ...locationPages]
+  return [...staticPages, ...resourcePages, ...conversionPages, ...cityPages, ...locationPages]
 }

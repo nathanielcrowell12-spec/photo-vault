@@ -9,6 +9,11 @@ Disallow: /admin/
 Disallow: /api/
 Disallow: /auth/
 Disallow: /_next/
+Disallow: /signup/payment
+Disallow: /debug/
+Disallow: /dev-dashboard
+Disallow: /test-dashboard
+Disallow: /financial-model
 
 # Sitemap
 Sitemap: https://photovault.photo/sitemap.xml

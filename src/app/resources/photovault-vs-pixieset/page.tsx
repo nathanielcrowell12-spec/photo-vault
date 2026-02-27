@@ -139,7 +139,7 @@ const faqSchema = {
       name: "Is PhotoVault ready for professional use?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "PhotoVault is currently in beta. Core functionality (gallery delivery, client access, Stripe payments, desktop uploads) is working. Founding photographers get free access during the beta period. The platform is newer than Pixieset and has a more focused feature set — it does not include a website builder, CRM, or print store.",
+        text: "PhotoVault is currently in beta. Core functionality (gallery delivery, client access, Stripe payments, desktop uploads) is working. Founding photographers get 12 months free and the $22/month rate locked in forever. The platform is newer than Pixieset and has a more focused feature set — it does not include a website builder, CRM, or print store.",
       },
     },
   ],
@@ -232,8 +232,8 @@ export default function PhotoVaultVsPixiesetPage() {
               </p>
               <p className="text-sm text-muted-foreground">
                 PhotoVault is currently in beta — founding photographers get
-                free platform access during the beta period. The comparison
-                below uses standard pricing for both platforms.
+                12 months free and the $22/month rate locked in forever. The
+                comparison below uses standard pricing for both platforms.
               </p>
             </CardContent>
           </Card>
@@ -304,7 +304,7 @@ export default function PhotoVaultVsPixiesetPage() {
                   <td className="py-3 px-4 text-foreground">
                     $22/month flat*
                     <span className="block text-xs text-primary mt-1">
-                      *Free during beta
+                      *Free during beta, rate locked forever
                     </span>
                   </td>
                   <td className="py-3 px-4 text-foreground">
@@ -634,7 +634,8 @@ export default function PhotoVaultVsPixiesetPage() {
             </p>
             <p className="text-muted-foreground mb-4">
               PhotoVault has one photographer price: $22/month (currently free
-              during beta). No tiers, no storage limits that increase your cost.
+              during beta, rate locked forever for founding photographers). No
+              tiers, no storage limits that increase your cost.
               The client pays separately — $8/month, $100/year, or a $50
               six-month trial. Payment processing fees apply to client
               transactions through Stripe Connect.
@@ -888,10 +889,11 @@ export default function PhotoVaultVsPixiesetPage() {
               <p className="text-muted-foreground">
                 PhotoVault is currently in beta. Core functionality — gallery
                 delivery, client access, Stripe payments, and desktop uploads
-                for large files — is working. Founding photographers get free
-                access during the beta period. The platform is newer than
-                Pixieset and has a more focused feature set. It does not
-                include a website builder, CRM, or print store.
+                for large files — is working. Founding photographers get 12
+                months free and the $22/month rate locked in forever. The
+                platform is newer than Pixieset and has a more focused feature
+                set. It does not include a website builder, CRM, or print
+                store.
               </p>
             </div>
           </div>
@@ -903,7 +905,8 @@ export default function PhotoVaultVsPixiesetPage() {
             Ready to Earn From Every Photoshoot?
           </h2>
           <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-            PhotoVault is free during beta. Join as a founding photographer and
+            PhotoVault is free for 12 months during beta, and your $22/month
+            rate is locked in forever. Join as a founding photographer and
             start turning past work into passive income — no credit card
             required.
           </p>
