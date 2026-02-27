@@ -7,15 +7,13 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import { CheckCircle, CreditCard, Shield, Lock, AlertCircle, Crown } from 'lucide-react'
+import { CheckCircle, CreditCard, Shield, Lock, AlertCircle } from 'lucide-react'
 import Link from 'next/link'
-import { supabase } from '@/lib/supabase'
 
 export default function PaymentPage() {
   const router = useRouter()
   const { user, loading } = useAuth()
   const [processingPayment, setProcessingPayment] = useState(false)
-  const [bypassingPayment, setBypassingPayment] = useState(false)
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -25,65 +23,31 @@ export default function PaymentPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, loading])
 
-  const handleAdminBypass = async () => {
-    if (!user) return
-    
-    setBypassingPayment(true)
-    setError('')
-
-    try {
-      // Update user profile to admin_bypass status
-      const { error: updateError } = await supabase
-        .from('user_profiles')
-        .update({
-          payment_status: 'admin_bypass',
-          subscription_start_date: new Date().toISOString(),
-          last_payment_date: new Date().toISOString()
-        })
-        .eq('id', user.id)
-
-      if (updateError) {
-        console.error('Error updating payment status:', updateError)
-        setError('Failed to update payment status')
-        return
-      }
-
-      // Success! Redirect to dashboard
-      setTimeout(() => {
-        router.push('/dashboard')
-      }, 1000)
-
-    } catch (err) {
-      setError('An unexpected error occurred')
-    } finally {
-      setBypassingPayment(false)
-    }
-  }
-
   const handleStripePayment = async () => {
     setProcessingPayment(true)
     setError('')
 
     try {
-      // TODO: Implement Stripe checkout
-      // For now, simulate payment processing
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      
-      // Update payment status
-      if (user) {
-        await supabase
-          .from('user_profiles')
-          .update({
-            payment_status: 'active',
-            subscription_start_date: new Date().toISOString(),
-            last_payment_date: new Date().toISOString()
-          })
-          .eq('id', user.id)
+      const response = await fetch('/api/stripe/create-direct-subscription', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setError(data.error || 'Failed to start checkout. Please try again.')
+        return
       }
 
-      router.push('/dashboard')
+      // Redirect to Stripe Checkout
+      if (data.url) {
+        window.location.href = data.url
+      } else {
+        setError('Unable to create checkout session. Please try again.')
+      }
     } catch (err) {
-      setError('Payment failed. Please try again.')
+      setError('Something went wrong. Please try again.')
     } finally {
       setProcessingPayment(false)
     }
@@ -180,14 +144,14 @@ export default function PaymentPage() {
                   {/* Payment Button */}
                   <Button
                     onClick={handleStripePayment}
-                    disabled={processingPayment || bypassingPayment}
+                    disabled={processingPayment}
                     className="w-full btn-primary py-6 text-lg"
                     size="lg"
                   >
                     {processingPayment ? (
                       <>
                         <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-3"></div>
-                        Processing Payment...
+                        Redirecting to checkout...
                       </>
                     ) : (
                       <>
@@ -198,39 +162,8 @@ export default function PaymentPage() {
                   </Button>
 
                   <p className="text-xs text-center text-muted-foreground mt-4">
-                    🔒 Secure payment powered by Stripe. Cancel anytime.
+                    Secure payment powered by Stripe. Cancel anytime.
                   </p>
-
-                  {/* Admin Bypass Button (Development Only) */}
-                  <div className="mt-8 pt-8 border-t border-border">
-                    <Alert className="mb-4 bg-amber-50 border-amber-200 dark:bg-amber-900/20 dark:border-amber-800">
-                      <Crown className="h-4 w-4 text-amber-600" />
-                      <AlertDescription className="text-amber-800 dark:text-amber-200">
-                        <strong>Admin/Testing Only:</strong> Bypass payment for development and testing
-                      </AlertDescription>
-                    </Alert>
-                    <Button
-                      onClick={handleAdminBypass}
-                      disabled={processingPayment || bypassingPayment}
-                      variant="outline"
-                      className="w-full border-amber-300 text-amber-700 hover:bg-amber-50 dark:border-amber-700 dark:text-amber-400"
-                    >
-                      {bypassingPayment ? (
-                        <>
-                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-amber-600 mr-2"></div>
-                          Activating Account...
-                        </>
-                      ) : (
-                        <>
-                          <Crown className="h-4 w-4 mr-2" />
-                          Mark as Paid (Admin Bypass)
-                        </>
-                      )}
-                    </Button>
-                    <p className="text-xs text-center text-muted-foreground mt-2">
-                      This button will be removed in production
-                    </p>
-                  </div>
                 </CardContent>
               </Card>
             </div>

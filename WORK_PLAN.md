@@ -437,6 +437,49 @@ See: `docs/FAMILY-ACCOUNTS-SPEC-V2.md`
 
 ---
 
+## Story 1.8: Prepaid Time Accumulation & Stacking
+**Size:** Medium (1-2 sessions)
+**Files:** 5-8 files
+**Status:** 🔴 NOT STARTED
+
+### Description
+When a client purchases multiple packages (or books sessions with multiple photographers), prepaid time must **stack sequentially** — not reset or overlap. This ensures clients receive the full value of every package purchased.
+
+### Business Rules
+1. **Sequential stacking:** If a client has 12 months prepaid and buys a 6-month package at month 3, the 6 months are held in reserve. Client receives 18 months total prepaid time (12 original + 6 reserved).
+2. **Multi-photographer sessions:** If a client has active coverage and books with a different photographer, the new photographer still gets paid their commission, PhotoVault still gets paid, but the new prepaid time accumulates onto the existing coverage period.
+3. **Reserve queue:** New packages enter a queue and activate only when the current prepaid period expires.
+4. **No double-billing:** Monthly $8/month billing only starts after ALL prepaid time (including reserves) is exhausted.
+
+### Edge Cases
+- Client buys 12-month, then buys another 12-month at month 1 → 24 months total prepaid
+- Client has 6-month package from Photographer A, books with Photographer B (12-month) at month 2 → 4 months remaining from A + 12 months from B = 16 months total
+- Client buys package while in grace period → new prepaid time starts immediately (resets grace)
+- Multiple reserves queued → FIFO order (first purchased activates first)
+
+### Tasks
+- [ ] Design `prepaid_reserves` table (or extend `client_subscriptions`) to track queued packages
+- [ ] Update checkout webhook to detect existing active coverage and queue new packages
+- [ ] Update subscription expiry logic to check for and activate reserves
+- [ ] Update client billing UI to show current coverage + queued reserves
+- [ ] Update photographer dashboard to show multi-session client status
+- [ ] Add cron job or webhook trigger to activate reserved packages on expiry
+- [ ] Handle commission correctly for multi-photographer scenarios
+
+### Acceptance Criteria
+- [ ] Buying a new package during active coverage queues it, doesn't reset
+- [ ] Total prepaid time equals sum of all purchased periods
+- [ ] Monthly billing starts only after all prepaid time exhausted
+- [ ] Client billing page shows remaining prepaid time including reserves
+- [ ] Multi-photographer commissions paid correctly at point of sale
+
+### Notes
+- This is a billing infrastructure change — get it right before scaling
+- Current `payment-models.ts` assumes one active package per client; needs extension
+- Consider impact on grace period logic (6-month grace starts after ALL prepaid expires)
+
+---
+
 # EPIC 2: Dashboard Fixes & Data Cleanup
 
 **Priority:** 🟠 HIGH - User experience critical
@@ -832,6 +875,57 @@ Test all email templates and verify delivery rates.
 
 ### Files Likely Touched
 - Testing only - possibly minor template fixes
+
+---
+
+## Story 3.4: Milestone Reminder Photos & Automated Re-booking Emails
+**Size:** Medium (1-2 sessions)
+**Files:** 6-10 files
+**Status:** 🔴 NOT STARTED
+
+### Description
+During gallery creation (directly after the sneak peek selection step), photographers select 1-4 **standout photos** from the gallery. These photos are used in automated reminder emails sent to the client at months 3, 6, 9, and 12. Each email features one of the selected photos and encourages the client to book another session with their photographer.
+
+### Business Rules
+1. **Photo selection:** Photographer picks 1-4 photos during gallery creation, immediately after sneak peek selection. Same UI pattern as sneak peeks.
+2. **Email schedule:** Automated emails at months 3, 6, 9, 12 after gallery creation date.
+3. **Photo rotation:** Each email uses a different photo (photo 1 at month 3, photo 2 at month 6, etc.). If fewer than 4 photos selected, cycle through them.
+4. **Email tone:** Nostalgic/emotional. Example: "6 months ago, so beautiful! Time to schedule another session with {photographerName}."
+5. **Photographer attribution:** Each email names the photographer and links to their booking (when booking page exists, per Epic 9C).
+6. **Opt-out:** Client can unsubscribe from reminder emails without affecting billing emails.
+
+### Tasks
+- [ ] Add `is_milestone_photo` column to `gallery_photos` table (or `milestone_photos` array on `photo_galleries`)
+- [ ] Create milestone photo selection UI step in gallery creation flow (after sneak peek step)
+- [ ] Create `/api/gallery/[galleryId]/milestone-photos` endpoint
+- [ ] Design 4 milestone email templates (months 3, 6, 9, 12) with photo embed
+- [ ] Create `/api/cron/milestone-reminders` cron job to check and send emails on schedule
+- [ ] Add milestone email tracking (sent dates, opened) to prevent duplicates
+- [ ] Add email preference toggle for clients (opt-out of reminders)
+- [ ] Update gallery creation flow to include milestone step after sneak peek
+
+### Acceptance Criteria
+- [ ] Photographer can select 1-4 milestone photos during gallery creation
+- [ ] UI matches sneak peek selection pattern (same component, different label)
+- [ ] Emails sent automatically at correct intervals (3, 6, 9, 12 months)
+- [ ] Each email contains one milestone photo and photographer name
+- [ ] Client can opt out of reminder emails
+- [ ] No duplicate emails sent
+
+### Email Copy Direction
+- Month 3: "It's been 3 months since your session with {photographer}. Remember this moment? 📸"
+- Month 6: "6 months ago, so beautiful! Time to schedule another session with {photographer}."
+- Month 9: "Almost a year since {photographer} captured this. How much has changed?"
+- Month 12: "One year ago today. Time for an anniversary session with {photographer}? 🎉"
+
+### Files Likely Touched
+- `src/app/photographer/galleries/create/page.tsx` or new step page
+- `src/app/photographer/galleries/[id]/milestone-select/page.tsx` (NEW - similar to sneak-peek-select)
+- `src/lib/email/milestone-templates.ts` (NEW)
+- `src/app/api/cron/milestone-reminders/route.ts` (NEW)
+- `src/app/api/gallery/[galleryId]/milestone-photos/route.ts` (NEW)
+- `vercel.json` (add cron schedule)
+- Database migration for milestone photo tracking
 
 ---
 
@@ -1474,30 +1568,48 @@ DirectoryHeader, LocationGrid, LocationCard, LocationFilters, LocationSearch, Lo
 ---
 
 ## Story 7.4: Location Data Seeding - Wisconsin MVP
-**Size:** Medium (1 session)
-**Status:** 🔴 NOT STARTED
-**Blocking:** Directory pages exist but show empty results without seed data
+**Size:** Large (2-3 sessions — expanded with data accuracy fixes + page redesign)
+**Status:** ✅ COMPLETE (2026-02-23)
+**Blocking:** None — directory pages now render with real data
 
 ### Description
-Seed the location database with Wisconsin photo spots. The infrastructure is complete — tables, pages, components, and SEO are all ready. This story is purely about populating data.
+Seed the location database with Wisconsin photo spots + fix data accuracy + redesign location detail pages. Extended from original scope to include data corrections from Claude Desktop review and full page template redesign.
 
 ### Tasks
-- [ ] Research top 50 Wisconsin photo locations (Madison, Milwaukee, Door County, etc.)
-- [ ] Create seed SQL file with location data + attributes + business intelligence
-- [ ] Add permit requirements and links for each location
-- [ ] Add seasonal guides (fall colors at Devil's Lake, sunflower fields, etc.)
-- [ ] Add cover images for featured locations
-- [ ] Run seed against Supabase production
-- [ ] Verify directory pages render with real data
+- [x] Create seed data module with 30 Madison-area locations (scripts/seed-madison-locations-data.ts)
+- [x] Fix critical data inaccuracies (Arboretum, Olbrich, Pope Farm, Picnic Point, Memorial Union Terrace, James Madison Park)
+- [x] Add 11 new intelligence fields (crowd_level, accessibility, parking, drone_policy, amenities, permit_personal, permit_pro, admission_notes, booking_info, last_verified_at, nearby_location_slugs)
+- [x] Apply Supabase migration for new columns
+- [x] Update TypeScript types + add Prohibited permit status
+- [x] Build 4 new components (QuickStatsBar, IntelCards, NearbyLocations, PhotoVaultCTA)
+- [x] Redesign location detail page template with semantic tokens
+- [x] Write 28 tests (TDD — all passing)
+- [x] Run seed against Supabase production (30/30 success)
+- [x] Add safety guards to seed script (--dry-run, --confirm-production)
+- [x] Add Directory link to landing page header, public nav, and footers
+- [ ] Add cover images for featured locations (deferred — no images yet)
 
 ### Acceptance Criteria
-- [ ] 50+ Wisconsin locations visible in directory
-- [ ] Each has permit info, seasonal tips, attributes
-- [ ] City pages (Madison, Milwaukee, etc.) show location counts
-- [ ] Featured locations appear on directory homepage
+- [x] 30 Madison-area locations visible in directory with accurate data
+- [x] Each has permit info, seasonal tips, quick stats, nearby locations
+- [x] Location detail pages fully redesigned with new layout
+- [ ] 50+ Wisconsin locations (Milwaukee, Door County pending — Story 7.7)
 
-### Files Likely Touched
-- `database/seed-directory-locations.sql` (NEW)
+### Files Touched
+- `scripts/seed-madison-locations-data.ts` (NEW — pure data module)
+- `scripts/seed-madison-locations.ts` (MODIFIED — imports data, safety guards)
+- `src/types/directory.ts` (MODIFIED — new fields, Prohibited status)
+- `src/app/directory/[city]/[location_slug]/page.tsx` (REWRITTEN — full redesign)
+- `src/components/directory/QuickStatsBar.tsx` (NEW)
+- `src/components/directory/IntelCards.tsx` (NEW)
+- `src/components/directory/NearbyLocations.tsx` (NEW)
+- `src/components/directory/PhotoVaultCTA.tsx` (NEW)
+- `src/components/directory/PermitBadge.tsx` (MODIFIED — Prohibited status)
+- `src/components/directory/AttributeBadges.tsx` (MODIFIED — highlight variant)
+- `src/components/landing/LandingHeader.tsx` (MODIFIED — Directory nav link)
+- `src/components/navigation.tsx` (MODIFIED — Directory links)
+- `vitest.config.ts` (MODIFIED — react plugin)
+- 5 test files (NEW)
 
 ---
 
@@ -1771,6 +1883,202 @@ Audit and strengthen internal linking between all content pages, directory pages
 - [ ] Clients can view order history
 - [ ] Admin can manage orders
 - [ ] Revenue tracked separately
+
+---
+
+## Story 8.4: Album Design Tool
+**Size:** Medium (1-2 sessions)
+**Status:** 🔴 NOT STARTED
+**Dependencies:** Print store working (Story 8.1-8.3)
+
+### Description
+Built-in album design tool where photographers create album layouts and send to clients for approval. Albums are fulfilled through print store labs. Pixieset has this and photographers use it to drive print revenue with minimal effort.
+
+### Tasks
+- [ ] Build album layout editor (5-8 preset templates: spread, collage, single-image)
+- [ ] Photo drag-and-drop into album slots
+- [ ] Client album approval flow (share link, client approves/requests changes)
+- [ ] Integrate with print fulfillment (Pwinty or lab partner)
+- [ ] Album pricing (photographer sets markup)
+
+### Acceptance Criteria
+- [ ] Photographer can design album from gallery photos
+- [ ] Client can review and approve album
+- [ ] Approved album can be ordered through print store
+- [ ] Revenue tracked in photographer dashboard
+
+---
+
+## Story 8.5: Discount Codes for Print Store
+**Size:** Small (1 session)
+**Status:** 🔴 NOT STARTED
+**Dependencies:** Print store working (Story 8.1-8.3)
+
+### Description
+Allow photographers to create promo codes for their print store — percentage or dollar discounts, expiration dates, usage limits. Standard e-commerce feature.
+
+### Tasks
+- [ ] Create `discount_codes` table (code, type, value, expiry, max_uses, photographer_id)
+- [ ] Build discount code management UI for photographers
+- [ ] Add promo code input to print checkout flow
+- [ ] Validate and apply discounts at checkout
+- [ ] Track discount usage
+
+### Acceptance Criteria
+- [ ] Photographers can create/manage discount codes
+- [ ] Clients can enter codes at print checkout
+- [ ] Discounts applied correctly to order total
+
+---
+
+# EPIC 9B: Gallery Experience Enhancement (PHASE 2-3)
+
+**Priority:** 🟢 PHASE 2-3 — Client proofing is the #1 feature gap vs Pixieset
+**Dependencies:** Gallery viewing stable
+**Estimated Stories:** 2
+**Strategic Intent:** Close the gallery experience gap with Pixieset. Client proofing and video hosting are the two most-asked-about missing features.
+
+---
+
+## Story 9B.1: Client Proofing & Photo Comments
+**Size:** Large (2-3 sessions)
+**Status:** 🔴 NOT STARTED
+
+### Description
+Add a proofing workflow to galleries. Clients can leave comments on individual photos, create selection lists, and approve final selections. This is table stakes for delivery platforms — Pixieset, Pic-Time, and ShootProof all have it.
+
+### Tasks
+- [ ] Create `photo_comments` table (photo_id, user_id, comment_text, created_at)
+- [ ] Create `selection_lists` table (gallery_id, user_id, name, status)
+- [ ] Create `selection_list_photos` table (list_id, photo_id)
+- [ ] Add comment bubble icon on gallery photos (click to add/view comments)
+- [ ] Build selection list creation UI ("Create Favorites List" / "Create Selection")
+- [ ] Add photographer view: see all client comments + selections per gallery
+- [ ] Email notification when client submits a selection or comments
+- [ ] Download selected photos as ZIP
+- [ ] RLS policies: clients comment on their galleries, photographers see all comments on their galleries
+
+### Acceptance Criteria
+- [ ] Client can comment on individual photos
+- [ ] Client can create named selection lists and add photos
+- [ ] Photographer sees comments and selections in dashboard
+- [ ] Photographer notified when client submits selections
+- [ ] Selected photos downloadable as ZIP
+
+---
+
+## Story 9B.2: Basic Video Hosting
+**Size:** Medium (1-2 sessions)
+**Status:** 🔴 NOT STARTED
+
+### Description
+Support video files in galleries. Wedding and portrait photographers increasingly deliver highlight reels and behind-the-scenes clips alongside photos. Pixieset offers 30 min to 5 hours of video by tier.
+
+### Tasks
+- [ ] Add video file support to upload pipeline (MP4, MOV — max 2GB per file)
+- [ ] Create video player component for gallery view (HTML5 video with controls)
+- [ ] Generate video thumbnails for gallery grid view
+- [ ] Update storage tracking to include video size
+- [ ] Set reasonable video limits (e.g., 1 hour per gallery, 5 hours per photographer account)
+- [ ] Update desktop app to handle video uploads
+
+### Acceptance Criteria
+- [ ] Photographers can upload video files alongside photos
+- [ ] Videos play inline in gallery view
+- [ ] Video thumbnails appear in gallery grid
+- [ ] Storage usage accounts for video size
+- [ ] Desktop app handles video upload
+
+---
+
+# EPIC 9C: Photographer Workflow Tools (PHASE 2)
+
+**Priority:** 🟢 PHASE 2 — Lightroom plugin is the #1 workflow gap vs competitors
+**Dependencies:** Upload API stable
+**Estimated Stories:** 3
+**Strategic Intent:** Reduce friction in the photographer's delivery workflow. Every competitor has a Lightroom plugin. Questionnaires and booking are lighter CRM features that don't require the full White-Label CRM investment.
+
+---
+
+## Story 9C.1: Lightroom Publish Service Plugin
+**Size:** Medium (2 sessions)
+**Status:** 🔴 NOT STARTED
+
+### Description
+Build an Adobe Lightroom Classic plugin that lets photographers publish photos directly from Lightroom to PhotoVault galleries. Uses the Adobe Lightroom SDK (Lua). Every competitor (Pixieset, Pic-Time, ShootProof, CloudSpot) has one.
+
+### Tasks
+- [ ] Set up Lightroom SDK development environment (Lua)
+- [ ] Implement OAuth authentication flow (LR plugin → PhotoVault API)
+- [ ] Build Publish Service provider (list galleries, create gallery, upload photos)
+- [ ] Extend `/api/v1/upload/` endpoints for single-photo uploads (currently ZIP-only for desktop)
+- [ ] Handle metadata sync (title, caption, keywords from LR → PhotoVault)
+- [ ] Build plugin settings dialog (API key, account info, default gallery)
+- [ ] Package as .lrplugin for distribution
+- [ ] Test with Lightroom Classic (latest version)
+- [ ] Create download page on photovault.photo/resources/lightroom-plugin
+
+### Acceptance Criteria
+- [ ] Photographer installs plugin in Lightroom Classic
+- [ ] Can authenticate with PhotoVault account
+- [ ] Can select photos in LR and publish to existing or new gallery
+- [ ] Metadata (title, caption) syncs to PhotoVault
+- [ ] Plugin available for download from PhotoVault website
+
+### Technical Notes
+- Lightroom SDK uses Lua scripting language
+- Plugin type: Publish Service (appears in Library module)
+- API: Extend existing `/api/v1/upload/` or create `/api/v1/lightroom/` endpoints
+- Auth: API key or OAuth token stored in plugin preferences
+- Distribution: Direct download (.lrplugin) + potentially Adobe Exchange marketplace
+
+---
+
+## Story 9C.2: Pre-Shoot Client Questionnaires
+**Size:** Small-Medium (1 session)
+**Status:** 🔴 NOT STARTED
+
+### Description
+Let photographers create and send pre-shoot questionnaires to clients. Lighter than full CRM — just forms that collect info before a session. Common questions: location preferences, outfit plans, must-have shots, family member names, timeline.
+
+### Tasks
+- [ ] Create `questionnaire_templates` table (photographer_id, name, questions JSON)
+- [ ] Create `questionnaire_responses` table (template_id, client_id, responses JSON, submitted_at)
+- [ ] Build template builder UI (add/remove questions, question types: text, select, multi-select, date)
+- [ ] Build client-facing questionnaire page (public link, no login required)
+- [ ] Email notification when client submits response
+- [ ] Photographer can view responses in dashboard
+- [ ] 3-5 pre-built templates (Wedding, Portrait, Newborn, Family, Senior)
+
+### Acceptance Criteria
+- [ ] Photographer can create questionnaire templates
+- [ ] Client receives link and fills out questionnaire (no login needed)
+- [ ] Photographer sees responses in dashboard
+- [ ] Pre-built templates available as starting points
+
+---
+
+## Story 9C.3: Booking Page & Lead Capture
+**Size:** Medium (1-2 sessions)
+**Status:** 🔴 NOT STARTED
+
+### Description
+Give each photographer a simple public booking page where potential clients can see services, check availability, and submit inquiries. Lighter than full CRM — a lead capture form with optional calendar integration. Pixieset has this in their Studio Manager.
+
+### Tasks
+- [ ] Create `/photographer/[username]/book` public page
+- [ ] Build service listing (photographer defines packages: name, description, price, duration)
+- [ ] Create `booking_inquiries` table (photographer_id, client_name, email, phone, service, preferred_date, message)
+- [ ] Build inquiry form (name, email, service interest, preferred date, message)
+- [ ] Email notification to photographer on new inquiry
+- [ ] Inquiry management UI in photographer dashboard (new, responded, booked, archived)
+- [ ] Optional: Embed inquiry form on external website via iframe or script tag
+
+### Acceptance Criteria
+- [ ] Photographer has a public booking page
+- [ ] Potential clients can submit booking inquiries
+- [ ] Photographer receives email + dashboard notification
+- [ ] Can manage inquiry status (respond, book, archive)
 
 ---
 
@@ -2053,13 +2361,13 @@ Audit and strengthen internal linking between all content pages, directory pages
 
 | Epic | Stories | Complete | Status |
 |------|---------|----------|--------|
-| Epic 1: Payments | 7 | 7 | ✅ COMPLETE (1.1 ✅, 1.2 ⚠️ Obsolete, 1.3 ✅, 1.4 ✅, 1.5 ✅, 1.6 ✅, 1.7 ✅) |
+| Epic 1: Payments | 8 | 7 | 🟡 7/8 (1.1 ✅, 1.2 ⚠️ Obsolete, 1.3 ✅, 1.4 ✅, 1.5 ✅, 1.6 ✅, 1.7 ✅, 1.8 🔴 Prepaid Stacking) |
 | Epic 2: Dashboards | 5 | 5 | ✅ COMPLETE (2.1 ✅, 2.2 ✅, 2.3 ✅, 2.3b ✅, 2.4 ✅) |
-| Epic 3: Emails | 3 | 3 | ✅ Complete (Nov 30) |
+| Epic 3: Emails | 4 | 3 | 🟡 3/4 (3.1 ✅, 3.2 ✅, 3.3 ⏸️, 3.4 🔴 Milestone Reminder Emails) |
 | Epic 4: Onboarding | 3 | 0 | ⏸️ NEEDS REVIEW (onboarding changes + beta PDF offer) |
 | Epic 5: Beta Prep | 3 | 3 | ✅ COMPLETE (5.1 ✅, 5.2 ✅, 5.3 ✅) |
 | Epic 6: CIS Phase 1 | 3 | 3 | ✅ COMPLETE (Dec 14-16, 2025) |
-| **TOTAL** | **24** | **21** | **88%** |
+| **TOTAL** | **26** | **21** | **81%** |
 
 ## Phase 2: Post-Beta Expansion (After Beta Stabilizes)
 
@@ -2069,8 +2377,10 @@ Audit and strengthen internal linking between all content pages, directory pages
 | Epic 7: Directory | 6 | 3 | 🟡 IN PROGRESS (7.1 ✅, 7.2 ✅, 7.3 ✅, 7.4 🔴, 7.5 🔴, 7.6 🔴) |
 | Epic 7B: SEO Content | 4 | 0 | 🔴 NOT STARTED (7B.1-7B.4) |
 | Epic 8: Phone Dump | 3 | 0 | ⏸️ Phase 2 |
-| Epic 9: Print Ordering | 3 | 0 | ⏸️ Phase 2 |
-| **TOTAL** | **23** | **3** | **13% - Directory foundation complete** |
+| Epic 9: Print Ordering | 5 | 0 | ⏸️ Phase 2 (added album design + discount codes) |
+| Epic 9B: Gallery Experience | 2 | 0 | ⏸️ Phase 2-3 (client proofing + video hosting) |
+| Epic 9C: Photographer Workflow | 3 | 0 | ⏸️ Phase 2 (LR plugin + questionnaires + booking) |
+| **TOTAL** | **33** | **3** | **9% - Directory foundation complete, feature parity gaps mapped** |
 
 ## Phase 3: Revenue Expansion
 
@@ -2106,6 +2416,7 @@ Audit and strengthen internal linking between all content pages, directory pages
 
 | Feature | Revisit When |
 |---------|--------------|
+| 9-Month & 18-Month Package Tiers | When photographers request more flexibility for repeat clients. Add to `payment-models.ts` alongside existing 6-month and 12-month packages. Pricing TBD ($75 for 9-month? $150 for 18-month?). |
 | White-Label CRM | After $50K MRR |
 | Website Hosting | Q3 2026 |
 | Google AI Stack | After basic AI working |
@@ -2168,4 +2479,4 @@ For detailed feature descriptions, revenue splits, and strategic context, see:
 
 ---
 
-**Last Updated:** February 15, 2026 (SEO audit complete — fixed domain, schema types, added metadata to 8 pages, JSON-LD on location pages, canonicals on all directory pages. Updated Epic 7 to reflect existing directory infrastructure. Added Epic 7B for SEO content/articles.)
+**Last Updated:** February 18, 2026 (Added Story 1.8: Prepaid Time Accumulation & Stacking — packages queue sequentially, multi-photographer commissions handled. Added Story 3.4: Milestone Reminder Photos & Automated Re-booking Emails — photographer selects 1-4 standout photos during gallery creation for month 3/6/9/12 reminder emails. Added 9-month & 18-month package tiers to Parked backlog. Pulled mobile gallery click fix from phone session (PR #1, commit dd6e57c).)

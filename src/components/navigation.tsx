@@ -31,6 +31,7 @@ import {
   Heart,
   Info,
   ImageIcon,
+  MapPin,
   Wand2
 } from 'lucide-react'
 
@@ -90,6 +91,7 @@ export function Navigation({ hideOnPaths = [] }: NavigationProps) {
 
   const publicLinks = [
     { href: '/', icon: Home, label: 'Home' },
+    { href: '/directory', icon: MapPin, label: 'Directory' },
     { href: '/about', icon: Info, label: 'About' },
     { href: '/photographers', icon: Camera, label: 'For Photographers' },
     { href: '/terms', icon: FileText, label: 'Terms & Pricing' }
@@ -397,6 +399,11 @@ export function Footer({ hideOnPaths = [] }: NavigationProps) {
               <h3 className="font-semibold mb-4 text-foreground">For Families</h3>
               <ul className="space-y-2 text-sm">
                 <li>
+                  <Link href="/directory" className="text-muted-foreground hover:text-primary transition-colors">
+                    Photo Location Directory
+                  </Link>
+                </li>
+                <li>
                   <Link href="/client/timeline" className="text-muted-foreground hover:text-primary transition-colors">
                     Photo Timeline
                   </Link>
@@ -493,6 +500,11 @@ export function Footer({ hideOnPaths = [] }: NavigationProps) {
           <div>
             <h3 className="font-semibold mb-4">Company</h3>
             <ul className="space-y-2 text-sm">
+              <li>
+                <Link href="/directory" className="text-muted-foreground hover:text-primary transition-colors">
+                  Photo Location Directory
+                </Link>
+              </li>
               <li>
                 <Link href="/about" className="text-muted-foreground hover:text-primary transition-colors">
                   About Us
