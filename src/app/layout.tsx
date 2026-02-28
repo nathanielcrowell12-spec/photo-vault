@@ -20,7 +20,6 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Find and Keep Your Photos Forever | PhotoVault",
   description: "PhotoVault helps you find, organize, and save every professional photo ever taken — all in one secure family gallery.",
-  keywords: "find my photos, photo storage, photo gallery login, family photo vault, organize photos online, download professional photos",
   openGraph: {
     type: "website",
     title: "Find and Keep Every Photo You Love — Forever | PhotoVault",
@@ -53,9 +52,6 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  alternates: {
-    canonical: "https://photovault.photo",
-  },
 };
 
 export default function RootLayout({
@@ -65,61 +61,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <head>
-        <link rel="canonical" href="https://photovault.photo/" />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify({
-              "@context": "https://schema.org",
-              "@type": ["WebSite", "Service"],
-              name: "PhotoVault",
-              url: "https://photovault.photo/",
-              description: "PhotoVault helps families find, organize, and keep every professional photo in one secure dashboard.",
-              serviceType: "Photo retrieval and storage platform",
-              offers: {
-                "@type": "Offer",
-                priceCurrency: "USD",
-                price: "0",
-              },
-              areaServed: "United States",
-              sameAs: [
-                "https://www.facebook.com/PhotoVault",
-                "https://www.instagram.com/PhotoVault",
-              ],
-              mainEntityOfPage: {
-                "@type": "FAQPage",
-                mainEntity: [
-                  {
-                    "@type": "Question",
-                    name: "Is PhotoVault free?",
-                    acceptedAnswer: {
-                      "@type": "Answer",
-                      text: "Yes. You can start for free and add storage later if needed.",
-                    },
-                  },
-                  {
-                    "@type": "Question",
-                    name: "Can I upload my own photos?",
-                    acceptedAnswer: {
-                      "@type": "Answer",
-                      text: "Yes. You can import photos from your device or connect existing galleries.",
-                    },
-                  },
-                  {
-                    "@type": "Question",
-                    name: "How secure is my data?",
-                    acceptedAnswer: {
-                      "@type": "Answer",
-                      text: "PhotoVault uses encrypted cloud storage and never sells or shares your images.",
-                    },
-                  },
-                ],
-              },
-            }),
-          }}
-        />
-      </head>
+      <head />
       <body className={`${inter.className} bg-background text-foreground overflow-x-hidden`}>
         <PostHogProvider>
           <ThemeProvider>
