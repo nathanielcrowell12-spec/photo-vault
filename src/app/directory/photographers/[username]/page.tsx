@@ -43,10 +43,10 @@ export async function generateMetadata({ params }: PhotographerProfileProps): Pr
       type: 'profile',
       title: `${name} | PhotoVault Photographer`,
       description: profile.bio || `Professional photographer${locationSuffix}`,
-      url: `https://photovault.photo/directory/photographers/${username}`,
+      url: `https://www.photovault.photo/directory/photographers/${username}`,
     },
     alternates: {
-      canonical: `https://photovault.photo/directory/photographers/${username}`,
+      canonical: `https://www.photovault.photo/directory/photographers/${username}`,
     },
   };
 }

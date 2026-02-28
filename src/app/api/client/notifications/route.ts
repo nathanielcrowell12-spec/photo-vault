@@ -163,7 +163,7 @@ async function sendPaymentReminder(client: ClientData, gallery: GalleryData, ema
             <p>To access your photos, simply complete your payment and you'll have unlimited access to download and share your memories.</p>
             
             <div style="text-align: center;">
-                <a href="https://photovault.photo/client/payment" class="cta-button">Complete Payment & Access Gallery</a>
+                <a href="https://www.photovault.photo/client/payment" class="cta-button">Complete Payment & Access Gallery</a>
             </div>
             
             <div class="footer">
@@ -181,7 +181,7 @@ async function sendPaymentReminder(client: ClientData, gallery: GalleryData, ema
       to: client.email,
       subject,
       html: htmlContent,
-      text: `Hi ${client.name},\n\nYour photographer has uploaded your photos to PhotoVault! Complete your payment at https://photovault.photo/client/payment to access your gallery.\n\nQuestions? Contact support@photovault.photo`
+      text: `Hi ${client.name},\n\nYour photographer has uploaded your photos to PhotoVault! Complete your payment at https://www.photovault.photo/client/payment to access your gallery.\n\nQuestions? Contact support@photovault.photo`
     })
     return true
   } catch (error) {
@@ -227,7 +227,7 @@ async function sendPaymentConfirmation(client: ClientData, gallery: GalleryData,
             ` : ''}
             
             <div style="text-align: center;">
-                <a href="https://photovault.photo/dashboard" class="cta-button">View Your Gallery</a>
+                <a href="https://www.photovault.photo/dashboard" class="cta-button">View Your Gallery</a>
             </div>
             
             <h3>What you can do now:</h3>
@@ -253,7 +253,7 @@ async function sendPaymentConfirmation(client: ClientData, gallery: GalleryData,
       to: client.email,
       subject,
       html: htmlContent,
-      text: `Hi ${client.name},\n\nPayment confirmed! Your gallery is now unlocked at https://photovault.photo/dashboard\n\nQuestions? Contact support@photovault.photo`
+      text: `Hi ${client.name},\n\nPayment confirmed! Your gallery is now unlocked at https://www.photovault.photo/dashboard\n\nQuestions? Contact support@photovault.photo`
     })
     return true
   } catch (error) {
@@ -298,7 +298,7 @@ async function sendGalleryAccessNotification(client: ClientData, gallery: Galler
             ` : ''}
             
             <div style="text-align: center;">
-                <a href="https://photovault.photo/dashboard" class="cta-button">View Your Galleries</a>
+                <a href="https://www.photovault.photo/dashboard" class="cta-button">View Your Galleries</a>
             </div>
             
             <div class="footer">
@@ -316,7 +316,7 @@ async function sendGalleryAccessNotification(client: ClientData, gallery: Galler
       to: client.email,
       subject,
       html: htmlContent,
-      text: `Hi ${client.name},\n\nYou have access to a new gallery! View it at https://photovault.photo/dashboard\n\nQuestions? Contact support@photovault.photo`
+      text: `Hi ${client.name},\n\nYou have access to a new gallery! View it at https://www.photovault.photo/dashboard\n\nQuestions? Contact support@photovault.photo`
     })
     return true
   } catch (error) {
@@ -362,7 +362,7 @@ async function sendAccessExpiringNotification(client: ClientData, gallery: Galle
             ` : ''}
             
             <div style="text-align: center;">
-                <a href="https://photovault.photo/client/payment" class="cta-button">Extend Access</a>
+                <a href="https://www.photovault.photo/client/payment" class="cta-button">Extend Access</a>
             </div>
             
             <div class="footer">
@@ -380,7 +380,7 @@ async function sendAccessExpiringNotification(client: ClientData, gallery: Galle
       to: client.email,
       subject,
       html: htmlContent,
-      text: `Hi ${client.name},\n\nYour gallery access is expiring soon! Extend access at https://photovault.photo/client/payment\n\nQuestions? Contact support@photovault.photo`
+      text: `Hi ${client.name},\n\nYour gallery access is expiring soon! Extend access at https://www.photovault.photo/client/payment\n\nQuestions? Contact support@photovault.photo`
     })
     return true
   } catch (error) {

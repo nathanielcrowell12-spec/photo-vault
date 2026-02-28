@@ -11,11 +11,11 @@ export const metadata: Metadata = {
     title: 'Find a Photographer | PhotoVault Directory',
     description:
       'Browse professional photographers with verified profiles and portfolio galleries.',
-    url: 'https://photovault.photo/directory/photographers',
+    url: 'https://www.photovault.photo/directory/photographers',
     siteName: 'PhotoVault',
   },
   alternates: {
-    canonical: 'https://photovault.photo/directory/photographers',
+    canonical: 'https://www.photovault.photo/directory/photographers',
   },
 }
 

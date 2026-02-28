@@ -179,7 +179,7 @@ function renderUnsubscribePage(status: 'success' | 'already' | 'invalid' | 'miss
 <body>
     <h1>${msg.title}</h1>
     <p>${msg.body}</p>
-    <p style="margin-top: 32px;"><a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://photovault.photo'}">Back to PhotoVault</a></p>
+    <p style="margin-top: 32px;"><a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://www.photovault.photo'}">Back to PhotoVault</a></p>
 </body>
 </html>`
 }

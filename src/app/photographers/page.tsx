@@ -29,11 +29,11 @@ export const metadata: Metadata = {
     type: "website",
     title: "PhotoVault for Photographers | Earn Passive Income",
     description: "Turn every photoshoot into $4/month passive income. Give clients permanent photo storage while building recurring revenue.",
-    url: "https://photovault.photo/photographers",
+    url: "https://www.photovault.photo/photographers",
     siteName: "PhotoVault",
     images: [
       {
-        url: "https://photovault.photo/images/og-photographers.webp",
+        url: "https://www.photovault.photo/images/og-photographers.webp",
         width: 1200,
         height: 630,
         alt: "PhotoVault for Photographers - Memory Insurance Platform",
@@ -44,10 +44,10 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "PhotoVault for Photographers | Earn Passive Income",
     description: "Turn every photoshoot into $4/month passive income. Give clients permanent photo storage.",
-    images: ["https://photovault.photo/images/og-photographers.webp"],
+    images: ["https://www.photovault.photo/images/og-photographers.webp"],
   },
   alternates: {
-    canonical: "https://photovault.photo/photographers",
+    canonical: "https://www.photovault.photo/photographers",
   },
 };
 

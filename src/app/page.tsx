@@ -25,11 +25,11 @@ export const metadata: Metadata = {
     title: 'PhotoVault - Turn Your Photography Into Recurring Revenue',
     description:
       'Professional photographers earn $4/month per client in passive income. Clients pay for storage. You earn from work already done. Beta is free for 12 months.',
-    url: 'https://photovault.photo',
+    url: 'https://www.photovault.photo',
     siteName: 'PhotoVault',
     images: [
       {
-        url: 'https://photovault.photo/images/og-landing.webp',
+        url: 'https://www.photovault.photo/images/og-landing.webp',
         width: 1200,
         height: 630,
         alt: 'PhotoVault - Recurring Revenue for Photographers',
@@ -41,10 +41,10 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'PhotoVault - Turn Your Photography Into Recurring Revenue',
     description: 'Earn $4/month per client in passive income. Beta is free for 12 months.',
-    images: ['https://photovault.photo/images/og-landing.webp'],
+    images: ['https://www.photovault.photo/images/og-landing.webp'],
   },
   alternates: {
-    canonical: 'https://photovault.photo',
+    canonical: 'https://www.photovault.photo',
   },
 }
 
@@ -52,7 +52,7 @@ const structuredData = {
   '@context': 'https://schema.org',
   '@type': ['WebSite', 'Service'],
   name: 'PhotoVault',
-  url: 'https://photovault.photo/',
+  url: 'https://www.photovault.photo/',
   description:
     'PhotoVault helps professional photographers turn completed work into recurring passive income through client photo storage subscriptions.',
   serviceType: 'Photography business platform',

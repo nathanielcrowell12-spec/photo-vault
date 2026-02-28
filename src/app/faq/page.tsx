@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     title: 'PhotoVault FAQ — Common Questions',
     description:
       'Everything you need to know about PhotoVault: pricing, passive income for photographers, client gallery access, and the founding photographer beta program.',
-    url: 'https://photovault.photo/faq',
+    url: 'https://www.photovault.photo/faq',
     siteName: 'PhotoVault',
   },
   twitter: {
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
       'Common questions about PhotoVault — the gallery delivery platform that pays photographers passive income.',
   },
   alternates: {
-    canonical: 'https://photovault.photo/faq',
+    canonical: 'https://www.photovault.photo/faq',
   },
 }
 
@@ -148,8 +148,8 @@ const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://photovault.photo' },
-    { '@type': 'ListItem', position: 2, name: 'FAQ', item: 'https://photovault.photo/faq' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.photovault.photo' },
+    { '@type': 'ListItem', position: 2, name: 'FAQ', item: 'https://www.photovault.photo/faq' },
   ],
 }
 

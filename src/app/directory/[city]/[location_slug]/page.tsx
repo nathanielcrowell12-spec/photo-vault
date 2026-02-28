@@ -57,11 +57,11 @@ export async function generateMetadata({ params }: LocationPageProps): Promise<M
       type: 'website',
       title: `${location.name} - ${location.city} Photography Location`,
       description: location.description || `Find everything you need to shoot at ${location.name}`,
-      url: `https://photovault.photo/directory/${citySlug}/${location_slug}`,
+      url: `https://www.photovault.photo/directory/${citySlug}/${location_slug}`,
       siteName: 'PhotoVault',
     },
     alternates: {
-      canonical: `https://photovault.photo/directory/${citySlug}/${location_slug}`,
+      canonical: `https://www.photovault.photo/directory/${citySlug}/${location_slug}`,
     },
   }
 }
@@ -132,7 +132,7 @@ export default async function LocationPage({ params }: LocationPageProps) {
           addressCountry: 'US',
         },
         ...(location.cover_image_url ? { image: location.cover_image_url } : {}),
-        url: `https://photovault.photo/directory/${city}/${location_slug}`,
+        url: `https://www.photovault.photo/directory/${city}/${location_slug}`,
       },
       {
         '@type': 'BreadcrumbList',
@@ -141,19 +141,19 @@ export default async function LocationPage({ params }: LocationPageProps) {
             '@type': 'ListItem',
             position: 1,
             name: 'Directory',
-            item: 'https://photovault.photo/directory',
+            item: 'https://www.photovault.photo/directory',
           },
           {
             '@type': 'ListItem',
             position: 2,
             name: cityName,
-            item: `https://photovault.photo/directory/${city}`,
+            item: `https://www.photovault.photo/directory/${city}`,
           },
           {
             '@type': 'ListItem',
             position: 3,
             name: location.name,
-            item: `https://photovault.photo/directory/${city}/${location_slug}`,
+            item: `https://www.photovault.photo/directory/${city}/${location_slug}`,
           },
         ],
       },

@@ -31,7 +31,7 @@ export const metadata: Metadata = {
       "PhotoVault vs Pic-Time 2026 | Honest Comparison for Photographers",
     description:
       "Compare PhotoVault and Pic-Time side-by-side. Pricing, business models, features, and which platform fits your photography business.",
-    url: "https://photovault.photo/resources/photovault-vs-pictime",
+    url: "https://www.photovault.photo/resources/photovault-vs-pictime",
     siteName: "PhotoVault",
   },
   twitter: {
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
       "Honest comparison for photographers. Different business models, different strengths.",
   },
   alternates: {
-    canonical: "https://photovault.photo/resources/photovault-vs-pictime",
+    canonical: "https://www.photovault.photo/resources/photovault-vs-pictime",
   },
 };
 
@@ -53,19 +53,19 @@ const breadcrumbSchema = {
       "@type": "ListItem",
       position: 1,
       name: "Home",
-      item: "https://photovault.photo",
+      item: "https://www.photovault.photo",
     },
     {
       "@type": "ListItem",
       position: 2,
       name: "Resources",
-      item: "https://photovault.photo/resources",
+      item: "https://www.photovault.photo/resources",
     },
     {
       "@type": "ListItem",
       position: 3,
       name: "PhotoVault vs Pic-Time",
-      item: "https://photovault.photo/resources/photovault-vs-pictime",
+      item: "https://www.photovault.photo/resources/photovault-vs-pictime",
     },
   ],
 };
@@ -80,21 +80,21 @@ const articleSchema = {
   author: {
     "@type": "Organization",
     name: "PhotoVault",
-    url: "https://photovault.photo",
+    url: "https://www.photovault.photo",
   },
   publisher: {
     "@type": "Organization",
     name: "PhotoVault",
     logo: {
       "@type": "ImageObject",
-      url: "https://photovault.photo/images/logos/photovault-logo.png",
+      url: "https://www.photovault.photo/images/logos/photovault-logo.png",
     },
   },
   datePublished: "2026-02-27",
   dateModified: "2026-02-27",
   mainEntityOfPage: {
     "@type": "WebPage",
-    "@id": "https://photovault.photo/resources/photovault-vs-pictime",
+    "@id": "https://www.photovault.photo/resources/photovault-vs-pictime",
   },
 };
 

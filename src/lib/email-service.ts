@@ -167,7 +167,7 @@ export class EmailReportService {
             </ul>
 
             <div style="text-align: center;">
-                <a href="https://photovault.photo/photographers/revenue" class="cta-button">View Detailed Dashboard</a>
+                <a href="https://www.photovault.photo/photographers/revenue" class="cta-button">View Detailed Dashboard</a>
             </div>
 
             <div class="footer">
@@ -241,7 +241,7 @@ export class EmailReportService {
             </ul>
 
             <div style="text-align: center;">
-                <a href="https://photovault.photo/photographers/analytics" class="cta-button">View Analytics Dashboard</a>
+                <a href="https://www.photovault.photo/photographers/analytics" class="cta-button">View Analytics Dashboard</a>
             </div>
 
             <div class="footer">
@@ -315,7 +315,7 @@ export class EmailReportService {
             </ul>
 
             <div style="text-align: center;">
-                <a href="https://photovault.photo/photographers/analytics" class="cta-button">View Full Analytics</a>
+                <a href="https://www.photovault.photo/photographers/analytics" class="cta-button">View Full Analytics</a>
             </div>
 
             <div class="footer">
@@ -346,7 +346,7 @@ KEY HIGHLIGHTS:
 • $${this.formatCurrency(data.summary.monthlyRecurring)} in monthly recurring passive income
 • ${data.summary.growth >= 0 ? '+' : ''}${data.summary.growth.toFixed(1)}% growth compared to last month
 
-View your detailed dashboard: https://photovault.photo/photographers/revenue
+View your detailed dashboard: https://www.photovault.photo/photographers/revenue
 
 Questions? Contact us at support@photovault.photo
 
@@ -373,7 +373,7 @@ QUARTER HIGHLIGHTS:
 • $${this.formatCurrency(data.summary.monthlyRecurring)} monthly recurring passive income
 • ${data.summary.growth >= 0 ? '+' : ''}${data.summary.growth.toFixed(1)}% growth compared to last quarter
 
-View your analytics dashboard: https://photovault.photo/photographers/analytics
+View your analytics dashboard: https://www.photovault.photo/photographers/analytics
 
 Questions? Contact us at support@photovault.photo
 
@@ -400,7 +400,7 @@ YEAR HIGHLIGHTS:
 • $${this.formatCurrency(data.summary.monthlyRecurring)} monthly recurring passive income
 • ${data.summary.growth >= 0 ? '+' : ''}${data.summary.growth.toFixed(1)}% growth compared to last year
 
-View your full analytics: https://photovault.photo/photographers/analytics
+View your full analytics: https://www.photovault.photo/photographers/analytics
 
 Thank you for using PhotoVault this year!
 

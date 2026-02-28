@@ -1113,7 +1113,7 @@ export function getPhotographerGalleryAssignmentEmailHTML(data: PhotographerGall
 
       <div class="footer">
         <p>PhotoVault - Professional Photo Galleries</p>
-        <p><a href="https://photovault.photo">photovault.photo</a></p>
+        <p><a href="https://www.photovault.photo">photovault.photo</a></p>
         <p>&copy; ${new Date().getFullYear()} PhotoVault. All rights reserved.</p>
       </div>
     </div>
@@ -1149,6 +1149,6 @@ Questions? Reply to this email or contact support@photovault.photo
 
 --
 PhotoVault - Professional Photo Galleries
-https://photovault.photo
+https://www.photovault.photo
   `.trim()
 }

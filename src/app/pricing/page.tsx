@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     title: 'PhotoVault Pricing — $22/month, Free During Beta',
     description:
       'One flat price. No storage tiers. Photographers earn 50% of every client payment. Free for 12 months during beta.',
-    url: 'https://photovault.photo/pricing',
+    url: 'https://www.photovault.photo/pricing',
     siteName: 'PhotoVault',
   },
   twitter: {
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
       '$22/month for photographers. Clients pay $8/month. You earn $4/month per client. Free during beta.',
   },
   alternates: {
-    canonical: 'https://photovault.photo/pricing',
+    canonical: 'https://www.photovault.photo/pricing',
   },
 }
 
@@ -39,8 +39,8 @@ const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://photovault.photo' },
-    { '@type': 'ListItem', position: 2, name: 'Pricing', item: 'https://photovault.photo/pricing' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.photovault.photo' },
+    { '@type': 'ListItem', position: 2, name: 'Pricing', item: 'https://www.photovault.photo/pricing' },
   ],
 }
 

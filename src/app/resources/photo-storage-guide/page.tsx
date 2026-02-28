@@ -26,11 +26,11 @@ export const metadata: Metadata = {
     title: "The State of Photo Storage in 2026 | Complete Guide",
     description:
       "Why cloud storage isn't permanent and what families should know about protecting their photos forever.",
-    url: "https://photovault.photo/resources/photo-storage-guide",
+    url: "https://www.photovault.photo/resources/photo-storage-guide",
     siteName: "PhotoVault",
     images: [
       {
-        url: "https://photovault.photo/images/og-photo-storage-guide.jpg",
+        url: "https://www.photovault.photo/images/og-photo-storage-guide.jpg",
         width: 1200,
         height: 630,
         alt: "Photo Storage Guide 2026",
@@ -42,10 +42,10 @@ export const metadata: Metadata = {
     title: "The State of Photo Storage in 2026",
     description:
       "Why cloud storage isn't permanent and what families should know.",
-    images: ["https://photovault.photo/images/og-photo-storage-guide.jpg"],
+    images: ["https://www.photovault.photo/images/og-photo-storage-guide.jpg"],
   },
   alternates: {
-    canonical: "https://photovault.photo/resources/photo-storage-guide",
+    canonical: "https://www.photovault.photo/resources/photo-storage-guide",
   },
 };
 
@@ -58,19 +58,19 @@ const breadcrumbSchema = {
       "@type": "ListItem",
       position: 1,
       name: "Home",
-      item: "https://photovault.photo",
+      item: "https://www.photovault.photo",
     },
     {
       "@type": "ListItem",
       position: 2,
       name: "Resources",
-      item: "https://photovault.photo/resources",
+      item: "https://www.photovault.photo/resources",
     },
     {
       "@type": "ListItem",
       position: 3,
       name: "Photo Storage Guide",
-      item: "https://photovault.photo/resources/photo-storage-guide",
+      item: "https://www.photovault.photo/resources/photo-storage-guide",
     },
   ],
 };
@@ -82,25 +82,25 @@ const articleSchema = {
   headline: "The State of Photo Storage in 2026: A Complete Guide",
   description:
     "Learn how to store photos long-term without losing them. Compare cloud storage, local drives, and managed services.",
-  image: "https://photovault.photo/images/og-photo-storage-guide.jpg",
+  image: "https://www.photovault.photo/images/og-photo-storage-guide.jpg",
   author: {
     "@type": "Organization",
     name: "PhotoVault",
-    url: "https://photovault.photo",
+    url: "https://www.photovault.photo",
   },
   publisher: {
     "@type": "Organization",
     name: "PhotoVault",
     logo: {
       "@type": "ImageObject",
-      url: "https://photovault.photo/images/logos/photovault-logo.png",
+      url: "https://www.photovault.photo/images/logos/photovault-logo.png",
     },
   },
   datePublished: "2026-01-02",
   dateModified: "2026-01-02",
   mainEntityOfPage: {
     "@type": "WebPage",
-    "@id": "https://photovault.photo/resources/photo-storage-guide",
+    "@id": "https://www.photovault.photo/resources/photo-storage-guide",
   },
 };
 

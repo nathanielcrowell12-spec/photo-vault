@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next'
 import { createServiceRoleClient } from '@/lib/supabase-server'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://photovault.photo'
+  const baseUrl = 'https://www.photovault.photo'
   const supabase = createServiceRoleClient()
 
   // Static pages

@@ -17,7 +17,7 @@ import { NextRequest } from 'next/server'
 // MOCK SETUP - Must be before any imports that use these modules
 // ============================================================================
 
-vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://photovault.photo')
+vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://www.photovault.photo')
 
 // Create mock functions
 const mockFromResult = {
@@ -322,7 +322,7 @@ describe('PATCH /api/admin/galleries/[galleryId]/assign-photographer', () => {
         to: 'photographer@example.com',
         photographerName: 'Test Photographer',
         galleryName: 'Wedding Photos 2026',
-        onboardingUrl: 'https://photovault.photo/photographer/onboarding',
+        onboardingUrl: 'https://www.photovault.photo/photographer/onboarding',
       })
     })
 

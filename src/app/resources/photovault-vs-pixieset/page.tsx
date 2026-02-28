@@ -31,7 +31,7 @@ export const metadata: Metadata = {
       "PhotoVault vs Pixieset 2026 | Honest Comparison for Photographers",
     description:
       "Compare PhotoVault and Pixieset side-by-side. Pricing, business models, features, and which platform fits your photography business.",
-    url: "https://photovault.photo/resources/photovault-vs-pixieset",
+    url: "https://www.photovault.photo/resources/photovault-vs-pixieset",
     siteName: "PhotoVault",
   },
   twitter: {
@@ -41,7 +41,7 @@ export const metadata: Metadata = {
       "Honest comparison for photographers. Different business models, different strengths.",
   },
   alternates: {
-    canonical: "https://photovault.photo/resources/photovault-vs-pixieset",
+    canonical: "https://www.photovault.photo/resources/photovault-vs-pixieset",
   },
 };
 
@@ -53,19 +53,19 @@ const breadcrumbSchema = {
       "@type": "ListItem",
       position: 1,
       name: "Home",
-      item: "https://photovault.photo",
+      item: "https://www.photovault.photo",
     },
     {
       "@type": "ListItem",
       position: 2,
       name: "Resources",
-      item: "https://photovault.photo/resources",
+      item: "https://www.photovault.photo/resources",
     },
     {
       "@type": "ListItem",
       position: 3,
       name: "PhotoVault vs Pixieset",
-      item: "https://photovault.photo/resources/photovault-vs-pixieset",
+      item: "https://www.photovault.photo/resources/photovault-vs-pixieset",
     },
   ],
 };
@@ -80,21 +80,21 @@ const articleSchema = {
   author: {
     "@type": "Organization",
     name: "PhotoVault",
-    url: "https://photovault.photo",
+    url: "https://www.photovault.photo",
   },
   publisher: {
     "@type": "Organization",
     name: "PhotoVault",
     logo: {
       "@type": "ImageObject",
-      url: "https://photovault.photo/images/logos/photovault-logo.png",
+      url: "https://www.photovault.photo/images/logos/photovault-logo.png",
     },
   },
   datePublished: "2026-02-16",
   dateModified: "2026-02-16",
   mainEntityOfPage: {
     "@type": "WebPage",
-    "@id": "https://photovault.photo/resources/photovault-vs-pixieset",
+    "@id": "https://www.photovault.photo/resources/photovault-vs-pixieset",
   },
 };
 

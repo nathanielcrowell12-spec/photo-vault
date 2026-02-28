@@ -26,11 +26,11 @@ export const metadata: Metadata = {
     title: "Photo Storage Comparison 2026 | PhotoVault vs Google Photos vs iCloud",
     description:
       "Compare the top photo storage services side-by-side. Honest pros and cons for PhotoVault, Google Photos, iCloud, Amazon Photos, and Dropbox.",
-    url: "https://photovault.photo/resources/photo-storage-comparison",
+    url: "https://www.photovault.photo/resources/photo-storage-comparison",
     siteName: "PhotoVault",
     images: [
       {
-        url: "https://photovault.photo/images/og-photo-storage-comparison.jpg",
+        url: "https://www.photovault.photo/images/og-photo-storage-comparison.jpg",
         width: 1200,
         height: 630,
         alt: "Photo Storage Comparison 2026",
@@ -42,10 +42,10 @@ export const metadata: Metadata = {
     title: "Photo Storage Comparison 2026",
     description:
       "Compare PhotoVault, Google Photos, iCloud, Amazon Photos, and Dropbox side-by-side.",
-    images: ["https://photovault.photo/images/og-photo-storage-comparison.jpg"],
+    images: ["https://www.photovault.photo/images/og-photo-storage-comparison.jpg"],
   },
   alternates: {
-    canonical: "https://photovault.photo/resources/photo-storage-comparison",
+    canonical: "https://www.photovault.photo/resources/photo-storage-comparison",
   },
 };
 
@@ -58,19 +58,19 @@ const breadcrumbSchema = {
       "@type": "ListItem",
       position: 1,
       name: "Home",
-      item: "https://photovault.photo",
+      item: "https://www.photovault.photo",
     },
     {
       "@type": "ListItem",
       position: 2,
       name: "Resources",
-      item: "https://photovault.photo/resources",
+      item: "https://www.photovault.photo/resources",
     },
     {
       "@type": "ListItem",
       position: 3,
       name: "Photo Storage Comparison",
-      item: "https://photovault.photo/resources/photo-storage-comparison",
+      item: "https://www.photovault.photo/resources/photo-storage-comparison",
     },
   ],
 };
@@ -82,25 +82,25 @@ const articleSchema = {
   headline: "Photo Storage Comparison 2026: PhotoVault vs Google Photos vs iCloud",
   description:
     "Compare the top photo storage services side-by-side. Honest pros and cons for PhotoVault, Google Photos, iCloud, Amazon Photos, and Dropbox.",
-  image: "https://photovault.photo/images/og-photo-storage-comparison.jpg",
+  image: "https://www.photovault.photo/images/og-photo-storage-comparison.jpg",
   author: {
     "@type": "Organization",
     name: "PhotoVault",
-    url: "https://photovault.photo",
+    url: "https://www.photovault.photo",
   },
   publisher: {
     "@type": "Organization",
     name: "PhotoVault",
     logo: {
       "@type": "ImageObject",
-      url: "https://photovault.photo/images/logos/photovault-logo.png",
+      url: "https://www.photovault.photo/images/logos/photovault-logo.png",
     },
   },
   datePublished: "2026-01-02",
   dateModified: "2026-01-02",
   mainEntityOfPage: {
     "@type": "WebPage",
-    "@id": "https://photovault.photo/resources/photo-storage-comparison",
+    "@id": "https://www.photovault.photo/resources/photo-storage-comparison",
   },
 };
 

@@ -9,11 +9,11 @@ export const metadata: Metadata = {
     title: "Terms of Service | PhotoVault",
     description:
       "PhotoVault terms covering subscriptions, photo storage, and photographer agreements.",
-    url: "https://photovault.photo/terms",
+    url: "https://www.photovault.photo/terms",
     siteName: "PhotoVault",
   },
   alternates: {
-    canonical: "https://photovault.photo/terms",
+    canonical: "https://www.photovault.photo/terms",
   },
 };
 

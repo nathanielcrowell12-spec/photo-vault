@@ -6,7 +6,7 @@
  * Nurture emails perform better when they look like personal emails, not marketing.
  */
 
-const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://photovault.photo'
+const APP_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://www.photovault.photo'
 
 // Shared email wrapper for drip emails — clean, personal, mobile-first
 function wrapDripEmail(content: string, unsubscribeUrl: string): string {

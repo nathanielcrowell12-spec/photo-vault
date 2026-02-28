@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     title: 'PhotoVault Features — Gallery Delivery + Passive Income',
     description:
       'Gallery delivery, client subscriptions, 50% commission, desktop uploads, analytics, and more. See every feature.',
-    url: 'https://photovault.photo/features',
+    url: 'https://www.photovault.photo/features',
     siteName: 'PhotoVault',
   },
   twitter: {
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
       'Gallery delivery, passive income, desktop uploads, analytics. Everything photographers need.',
   },
   alternates: {
-    canonical: 'https://photovault.photo/features',
+    canonical: 'https://www.photovault.photo/features',
   },
 }
 
@@ -46,8 +46,8 @@ const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://photovault.photo' },
-    { '@type': 'ListItem', position: 2, name: 'Features', item: 'https://photovault.photo/features' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.photovault.photo' },
+    { '@type': 'ListItem', position: 2, name: 'Features', item: 'https://www.photovault.photo/features' },
   ],
 }
 

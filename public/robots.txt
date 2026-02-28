@@ -16,7 +16,7 @@ Disallow: /test-dashboard
 Disallow: /financial-model
 
 # Sitemap
-Sitemap: https://photovault.photo/sitemap.xml
+Sitemap: https://www.photovault.photo/sitemap.xml
 
 # AI Search Crawlers - Explicitly Allowed
 User-agent: GPTBot

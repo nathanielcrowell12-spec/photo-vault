@@ -30,11 +30,11 @@ export const metadata: Metadata = {
     title: "Best Google Photos Alternatives 2026 | Permanent Photo Storage",
     description:
       "Compare the best Google Photos alternatives for permanent photo storage. Find the right solution after Google's 2021 policy changes.",
-    url: "https://photovault.photo/resources/google-photos-alternatives",
+    url: "https://www.photovault.photo/resources/google-photos-alternatives",
     siteName: "PhotoVault",
     images: [
       {
-        url: "https://photovault.photo/images/og-google-photos-alternatives.jpg",
+        url: "https://www.photovault.photo/images/og-google-photos-alternatives.jpg",
         width: 1200,
         height: 630,
         alt: "Google Photos Alternatives 2026",
@@ -46,10 +46,10 @@ export const metadata: Metadata = {
     title: "Best Google Photos Alternatives 2026",
     description:
       "Compare permanent photo storage options after Google's policy changes.",
-    images: ["https://photovault.photo/images/og-google-photos-alternatives.jpg"],
+    images: ["https://www.photovault.photo/images/og-google-photos-alternatives.jpg"],
   },
   alternates: {
-    canonical: "https://photovault.photo/resources/google-photos-alternatives",
+    canonical: "https://www.photovault.photo/resources/google-photos-alternatives",
   },
 };
 
@@ -62,19 +62,19 @@ const breadcrumbSchema = {
       "@type": "ListItem",
       position: 1,
       name: "Home",
-      item: "https://photovault.photo",
+      item: "https://www.photovault.photo",
     },
     {
       "@type": "ListItem",
       position: 2,
       name: "Resources",
-      item: "https://photovault.photo/resources",
+      item: "https://www.photovault.photo/resources",
     },
     {
       "@type": "ListItem",
       position: 3,
       name: "Google Photos Alternatives",
-      item: "https://photovault.photo/resources/google-photos-alternatives",
+      item: "https://www.photovault.photo/resources/google-photos-alternatives",
     },
   ],
 };
@@ -86,25 +86,25 @@ const articleSchema = {
   headline: "Best Google Photos Alternatives 2026: Permanent Photo Storage Options",
   description:
     "Compare the best Google Photos alternatives for permanent photo storage after Google's 2021 policy changes.",
-  image: "https://photovault.photo/images/og-google-photos-alternatives.jpg",
+  image: "https://www.photovault.photo/images/og-google-photos-alternatives.jpg",
   author: {
     "@type": "Organization",
     name: "PhotoVault",
-    url: "https://photovault.photo",
+    url: "https://www.photovault.photo",
   },
   publisher: {
     "@type": "Organization",
     name: "PhotoVault",
     logo: {
       "@type": "ImageObject",
-      url: "https://photovault.photo/images/logos/photovault-logo.png",
+      url: "https://www.photovault.photo/images/logos/photovault-logo.png",
     },
   },
   datePublished: "2026-01-02",
   dateModified: "2026-01-02",
   mainEntityOfPage: {
     "@type": "WebPage",
-    "@id": "https://photovault.photo/resources/google-photos-alternatives",
+    "@id": "https://www.photovault.photo/resources/google-photos-alternatives",
   },
 };
 

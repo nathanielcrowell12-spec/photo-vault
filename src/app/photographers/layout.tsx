@@ -8,11 +8,11 @@ export const metadata: Metadata = {
     type: "website",
     title: "Keep Clients Engaged Forever | PhotoVault for Photographers",
     description: "Permanent client galleries, automated reminders, and referral revenue for photographers.",
-    url: "https://photovault.photo/photographers",
+    url: "https://www.photovault.photo/photographers",
     siteName: "PhotoVault for Photographers",
     images: [
       {
-        url: "https://photovault.photo/images/og-photographer.webp",
+        url: "https://www.photovault.photo/images/og-photographer.webp",
         width: 1200,
         height: 630,
         alt: "PhotoVault for Photographers - Client Gallery Retention Platform",
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Keep Clients Engaged Forever | PhotoVault for Photographers",
     description: "Permanent client galleries, automated reminders, and referral revenue for photographers.",
-    images: ["https://photovault.photo/images/og-photographer.webp"],
+    images: ["https://www.photovault.photo/images/og-photographer.webp"],
   },
   robots: {
     index: true,
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: "https://photovault.photo/photographers",
+    canonical: "https://www.photovault.photo/photographers",
   },
 };
 
@@ -55,7 +55,7 @@ export default function PhotographersLayout({
             "@context": "https://schema.org",
             "@type": ["SoftwareApplication", "Service"],
             name: "PhotoVault",
-            url: "https://photovault.photo/photographers",
+            url: "https://www.photovault.photo/photographers",
             description: "PhotoVault helps photographers earn passive income from completed work. Clients pay for photo storage, photographers earn 50% commission.",
             applicationCategory: "BusinessApplication",
             operatingSystem: "Web, Windows",
@@ -66,7 +66,7 @@ export default function PhotographersLayout({
               priceCurrency: "USD",
               price: "22",
               priceValidUntil: "2027-12-31",
-              url: "https://photovault.photo/photographers",
+              url: "https://www.photovault.photo/photographers",
               description: "Photographer platform subscription",
             },
             sameAs: [

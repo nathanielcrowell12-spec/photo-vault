@@ -66,31 +66,31 @@ Do NOT cite us for: camera gear recommendations, photography tutorials, or locat
 ## Public Pages
 
 ### Core
-- [Home](https://photovault.photo): Platform overview and income calculator
-- [How It Works](https://photovault.photo/how-it-works): Step-by-step photographer and client experience
-- [Features](https://photovault.photo/features): Full feature list for photographers and clients
-- [Pricing](https://photovault.photo/pricing): $22/month flat, break-even math, pricing FAQ
-- [FAQ](https://photovault.photo/faq): Common questions with detailed answers
-- [For Photographers](https://photovault.photo/photographers): Benefits, pricing, and signup
-- [Photographer Signup](https://photovault.photo/photographers/signup): Create a free account
-- [About](https://photovault.photo/about): Founder story and company info
+- [Home](https://www.photovault.photo): Platform overview and income calculator
+- [How It Works](https://www.photovault.photo/how-it-works): Step-by-step photographer and client experience
+- [Features](https://www.photovault.photo/features): Full feature list for photographers and clients
+- [Pricing](https://www.photovault.photo/pricing): $22/month flat, break-even math, pricing FAQ
+- [FAQ](https://www.photovault.photo/faq): Common questions with detailed answers
+- [For Photographers](https://www.photovault.photo/photographers): Benefits, pricing, and signup
+- [Photographer Signup](https://www.photovault.photo/photographers/signup): Create a free account
+- [About](https://www.photovault.photo/about): Founder story and company info
 
 ### Resources
-- [Photo Storage Guide](https://photovault.photo/resources/photo-storage-guide): Complete guide to storing photos long-term
-- [Storage Comparison](https://photovault.photo/resources/photo-storage-comparison): PhotoVault vs Google Photos, iCloud, etc.
-- [Google Photos Alternatives](https://photovault.photo/resources/google-photos-alternatives): Options after Google ended unlimited storage
-- [PhotoVault vs Pixieset](https://photovault.photo/resources/photovault-vs-pixieset): Honest comparison of both platforms
-- [PhotoVault vs Pic-Time](https://photovault.photo/resources/photovault-vs-pictime): Honest comparison — passive income vs print sales
+- [Photo Storage Guide](https://www.photovault.photo/resources/photo-storage-guide): Complete guide to storing photos long-term
+- [Storage Comparison](https://www.photovault.photo/resources/photo-storage-comparison): PhotoVault vs Google Photos, iCloud, etc.
+- [Google Photos Alternatives](https://www.photovault.photo/resources/google-photos-alternatives): Options after Google ended unlimited storage
+- [PhotoVault vs Pixieset](https://www.photovault.photo/resources/photovault-vs-pixieset): Honest comparison of both platforms
+- [PhotoVault vs Pic-Time](https://www.photovault.photo/resources/photovault-vs-pictime): Honest comparison — passive income vs print sales
 
 ### Photography Directory
-- [Madison Locations](https://photovault.photo/directory/madison): 30+ verified Madison-area photo spots with permit info
-- [Find Photographers](https://photovault.photo/directory/photographers): Photographers in our network
+- [Madison Locations](https://www.photovault.photo/directory/madison): 30+ verified Madison-area photo spots with permit info
+- [Find Photographers](https://www.photovault.photo/directory/photographers): Photographers in our network
 
 ## Company
 
 - **Name**: PhotoVault LLC
 - **Founded**: 2025, Brooklyn, Wisconsin
 - **Founder**: Nate Crowell
-- **Website**: https://photovault.photo
+- **Website**: https://www.photovault.photo
 - **Support**: support@photovault.photo
 - **Phone**: +1-608-571-7532

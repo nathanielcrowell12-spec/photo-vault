@@ -9,11 +9,11 @@ export const metadata: Metadata = {
     title: "Contact PhotoVault",
     description:
       "Get in touch with the PhotoVault team for support, partnerships, or questions about our photo storage platform.",
-    url: "https://photovault.photo/contact",
+    url: "https://www.photovault.photo/contact",
     siteName: "PhotoVault",
   },
   alternates: {
-    canonical: "https://photovault.photo/contact",
+    canonical: "https://www.photovault.photo/contact",
   },
 };
 

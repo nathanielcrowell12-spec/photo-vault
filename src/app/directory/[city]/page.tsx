@@ -23,11 +23,11 @@ export async function generateMetadata({ params }: CityPageProps): Promise<Metad
       type: 'website',
       title: `Photography Locations in ${cityName} | PhotoVault Directory`,
       description: `Find the perfect photography spot in ${cityName} with permit info and insider tips.`,
-      url: `https://photovault.photo/directory/${city}`,
+      url: `https://www.photovault.photo/directory/${city}`,
       siteName: 'PhotoVault',
     },
     alternates: {
-      canonical: `https://photovault.photo/directory/${city}`,
+      canonical: `https://www.photovault.photo/directory/${city}`,
     },
   }
 }

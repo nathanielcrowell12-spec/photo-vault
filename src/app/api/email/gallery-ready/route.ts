@@ -140,7 +140,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Build gallery URL
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://photovault.photo'
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.photovault.photo'
     const galleryUrl = `${siteUrl}/gallery/${galleryId}`
 
     // Format price

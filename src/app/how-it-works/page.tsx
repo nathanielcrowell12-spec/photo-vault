@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     title: 'How PhotoVault Works — Step-by-Step',
     description:
       'Upload galleries. Deliver to clients. Earn 50% of every payment. See the full photographer and client experience.',
-    url: 'https://photovault.photo/how-it-works',
+    url: 'https://www.photovault.photo/how-it-works',
     siteName: 'PhotoVault',
   },
   twitter: {
@@ -37,7 +37,7 @@ export const metadata: Metadata = {
       'Step-by-step guide: upload galleries, deliver to clients, earn passive income.',
   },
   alternates: {
-    canonical: 'https://photovault.photo/how-it-works',
+    canonical: 'https://www.photovault.photo/how-it-works',
   },
 }
 
@@ -75,8 +75,8 @@ const breadcrumbSchema = {
   '@context': 'https://schema.org',
   '@type': 'BreadcrumbList',
   itemListElement: [
-    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://photovault.photo' },
-    { '@type': 'ListItem', position: 2, name: 'How It Works', item: 'https://photovault.photo/how-it-works' },
+    { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://www.photovault.photo' },
+    { '@type': 'ListItem', position: 2, name: 'How It Works', item: 'https://www.photovault.photo/how-it-works' },
   ],
 }
 

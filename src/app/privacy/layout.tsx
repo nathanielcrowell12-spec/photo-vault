@@ -9,11 +9,11 @@ export const metadata: Metadata = {
     title: "Privacy Policy | PhotoVault",
     description:
       "How PhotoVault protects your photos and personal data.",
-    url: "https://photovault.photo/privacy",
+    url: "https://www.photovault.photo/privacy",
     siteName: "PhotoVault",
   },
   alternates: {
-    canonical: "https://photovault.photo/privacy",
+    canonical: "https://www.photovault.photo/privacy",
   },
 };
 

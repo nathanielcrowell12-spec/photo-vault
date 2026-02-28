@@ -9,11 +9,11 @@ export const metadata: Metadata = {
     title: "About PhotoVault | Memory Insurance for Families",
     description:
       "The only platform combining professional photo delivery, long-term family archival, and photographer passive income.",
-    url: "https://photovault.photo/about",
+    url: "https://www.photovault.photo/about",
     siteName: "PhotoVault",
   },
   alternates: {
-    canonical: "https://photovault.photo/about",
+    canonical: "https://www.photovault.photo/about",
   },
 };
 

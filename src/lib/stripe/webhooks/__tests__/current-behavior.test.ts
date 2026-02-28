@@ -26,7 +26,7 @@ import type Stripe from 'stripe'
 // Mock environment variables
 vi.stubEnv('STRIPE_SECRET_KEY', 'sk_test_fake')
 vi.stubEnv('STRIPE_WEBHOOK_SECRET', 'whsec_test_fake')
-vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://photovault.photo')
+vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://www.photovault.photo')
 
 // Create mock functions that will be configured per-test
 const mockFromResult = {

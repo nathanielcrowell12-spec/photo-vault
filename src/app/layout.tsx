@@ -24,11 +24,11 @@ export const metadata: Metadata = {
     type: "website",
     title: "Find and Keep Every Photo You Love — Forever | PhotoVault",
     description: "All your photographer galleries, together in one private dashboard. Simple. Secure. Free to start.",
-    url: "https://photovault.photo",
+    url: "https://www.photovault.photo",
     siteName: "PhotoVault",
     images: [
       {
-        url: "https://photovault.photo/images/og-consumer.webp",
+        url: "https://www.photovault.photo/images/og-consumer.webp",
         width: 1200,
         height: 630,
         alt: "PhotoVault - Find and Keep Your Photos Forever",
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Find and Keep Every Photo You Love — Forever | PhotoVault",
     description: "All your photographer galleries, together in one private dashboard. Simple. Secure. Free to start.",
-    images: ["https://photovault.photo/images/og-consumer.webp"],
+    images: ["https://www.photovault.photo/images/og-consumer.webp"],
   },
   robots: {
     index: true,

@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description:
     'PhotoVault cancellation policy. Cancel at any time with a six month grace period after cancellation.',
   alternates: {
-    canonical: 'https://photovault.photo/cancellation',
+    canonical: 'https://www.photovault.photo/cancellation',
   },
 }
 
