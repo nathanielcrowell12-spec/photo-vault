@@ -9,11 +9,11 @@ export function LandingHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const navLinks = [
-    { href: '#how-it-works', label: 'How It Works' },
-    { href: '#pricing', label: 'Pricing' },
+    { href: '/how-it-works', label: 'How It Works' },
+    { href: '/features', label: 'Features' },
+    { href: '/pricing', label: 'Pricing' },
+    { href: '/faq', label: 'FAQ' },
     { href: '/directory', label: 'Directory' },
-    { href: '#beta-program', label: 'Beta Program' },
-    { href: '/login', label: 'Log In' },
   ]
 
   return (

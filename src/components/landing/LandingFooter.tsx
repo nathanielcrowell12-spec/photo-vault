@@ -9,9 +9,9 @@ export function LandingFooter({ betaEmail }: LandingFooterProps) {
   return (
     <footer className="bg-card border-t border-border text-foreground">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8">
           {/* Company Info & Contact */}
-          <div className="md:col-span-2">
+          <div className="lg:col-span-2">
             <div className="flex items-center mb-6">
               <Camera className="h-8 w-8 text-primary mr-2" aria-hidden="true" />
               <span className="font-bold text-xl">PhotoVault</span>
@@ -69,41 +69,78 @@ export function LandingFooter({ betaEmail }: LandingFooterProps) {
             </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Platform */}
           <div>
-            <h4 className="font-semibold mb-4">Quick Links</h4>
+            <h4 className="font-semibold mb-4">Platform</h4>
             <ul className="space-y-1 text-sm text-muted-foreground">
               <li>
-                <Link href="#how-it-works" className="hover:text-foreground transition-colors inline-flex items-center min-h-[44px]">
+                <Link href="/how-it-works" className="hover:text-foreground transition-colors inline-flex items-center min-h-[44px]">
                   How It Works
                 </Link>
               </li>
               <li>
-                <Link href="#pricing" className="hover:text-foreground transition-colors inline-flex items-center min-h-[44px]">
+                <Link href="/features" className="hover:text-foreground transition-colors inline-flex items-center min-h-[44px]">
+                  Features
+                </Link>
+              </li>
+              <li>
+                <Link href="/pricing" className="hover:text-foreground transition-colors inline-flex items-center min-h-[44px]">
                   Pricing
                 </Link>
               </li>
               <li>
-                <Link href="#beta-program" className="hover:text-foreground transition-colors inline-flex items-center min-h-[44px]">
-                  Beta Program
+                <Link href="/faq" className="hover:text-foreground transition-colors inline-flex items-center min-h-[44px]">
+                  FAQ
                 </Link>
               </li>
               <li>
-                <Link href="/auth/signup" className="hover:text-foreground transition-colors inline-flex items-center min-h-[44px]">
-                  Sign Up
+                <Link href="/photographers" className="hover:text-foreground transition-colors inline-flex items-center min-h-[44px]">
+                  For Photographers
                 </Link>
               </li>
               <li>
-                <Link href="/login" className="hover:text-foreground transition-colors inline-flex items-center min-h-[44px]">
-                  Log In
+                <Link href="/directory" className="hover:text-foreground transition-colors inline-flex items-center min-h-[44px]">
+                  Photo Directory
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Legal & Security */}
+          {/* Resources */}
           <div>
-            <h4 className="font-semibold mb-4">Legal &amp; Security</h4>
+            <h4 className="font-semibold mb-4">Resources</h4>
+            <ul className="space-y-1 text-sm text-muted-foreground">
+              <li>
+                <Link href="/resources/photo-storage-guide" className="hover:text-foreground transition-colors inline-flex items-center min-h-[44px]">
+                  Photo Storage Guide
+                </Link>
+              </li>
+              <li>
+                <Link href="/resources/google-photos-alternatives" className="hover:text-foreground transition-colors inline-flex items-center min-h-[44px]">
+                  Google Photos Alternatives
+                </Link>
+              </li>
+              <li>
+                <Link href="/resources/photo-storage-comparison" className="hover:text-foreground transition-colors inline-flex items-center min-h-[44px]">
+                  Storage Comparison
+                </Link>
+              </li>
+              <li>
+                <Link href="/resources/photovault-vs-pixieset" className="hover:text-foreground transition-colors inline-flex items-center min-h-[44px]">
+                  PhotoVault vs Pixieset
+                </Link>
+              </li>
+              <li>
+                <Link href="/resources/photovault-vs-pictime" className="hover:text-foreground transition-colors inline-flex items-center min-h-[44px]">
+                  PhotoVault vs Pic-Time
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Legal & Account */}
+          <div>
+            <h4 className="font-semibold mb-4">Legal &amp; Account</h4>
             <ul className="space-y-1 text-sm text-muted-foreground">
               <li>
                 <Link href="/privacy" className="hover:text-foreground transition-colors inline-flex items-center min-h-[44px]">
@@ -118,6 +155,26 @@ export function LandingFooter({ betaEmail }: LandingFooterProps) {
               <li>
                 <Link href="/cancellation" className="hover:text-foreground transition-colors inline-flex items-center min-h-[44px]">
                   Cancellation Policy
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="hover:text-foreground transition-colors inline-flex items-center min-h-[44px]">
+                  Contact Us
+                </Link>
+              </li>
+              <li>
+                <Link href="/about" className="hover:text-foreground transition-colors inline-flex items-center min-h-[44px]">
+                  About
+                </Link>
+              </li>
+              <li>
+                <Link href="/auth/signup" className="hover:text-foreground transition-colors inline-flex items-center min-h-[44px]">
+                  Sign Up
+                </Link>
+              </li>
+              <li>
+                <Link href="/login" className="hover:text-foreground transition-colors inline-flex items-center min-h-[44px]">
+                  Log In
                 </Link>
               </li>
               <li className="pt-2">
