@@ -84,9 +84,11 @@ const articleSchema = {
     "Compare the top photo storage services side-by-side. Honest pros and cons for PhotoVault, Google Photos, iCloud, Amazon Photos, and Dropbox.",
   image: "https://www.photovault.photo/images/og-photo-storage-comparison.jpg",
   author: {
-    "@type": "Organization",
-    name: "PhotoVault",
-    url: "https://www.photovault.photo",
+    "@type": "Person",
+    name: "Nate Crowell",
+    jobTitle: "Founder",
+    worksFor: { "@type": "Organization", name: "PhotoVault LLC" },
+    url: "https://www.photovault.photo/about",
   },
   publisher: {
     "@type": "Organization",

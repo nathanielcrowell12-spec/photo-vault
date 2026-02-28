@@ -30,9 +30,18 @@ export const metadata: Metadata = {
       'Gallery delivery, client subscriptions, 50% commission, desktop uploads, analytics, and more. See every feature.',
     url: 'https://www.photovault.photo/features',
     siteName: 'PhotoVault',
+    images: [
+      {
+        url: 'https://www.photovault.photo/images/og-landing.webp',
+        width: 1200,
+        height: 630,
+        alt: 'PhotoVault Features — Gallery Delivery + Passive Income',
+      },
+    ],
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
+    images: ['https://www.photovault.photo/images/og-landing.webp'],
     title: 'PhotoVault Features',
     description:
       'Gallery delivery, passive income, desktop uploads, analytics. Everything photographers need.',

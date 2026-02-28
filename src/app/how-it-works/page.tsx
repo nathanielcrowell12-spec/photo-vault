@@ -29,9 +29,18 @@ export const metadata: Metadata = {
       'Upload galleries. Deliver to clients. Earn 50% of every payment. See the full photographer and client experience.',
     url: 'https://www.photovault.photo/how-it-works',
     siteName: 'PhotoVault',
+    images: [
+      {
+        url: 'https://www.photovault.photo/images/og-landing.webp',
+        width: 1200,
+        height: 630,
+        alt: 'How PhotoVault Works — Step-by-Step Guide',
+      },
+    ],
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
+    images: ['https://www.photovault.photo/images/og-landing.webp'],
     title: 'How PhotoVault Works',
     description:
       'Step-by-step guide: upload galleries, deliver to clients, earn passive income.',

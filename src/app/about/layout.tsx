@@ -11,6 +11,20 @@ export const metadata: Metadata = {
       "The only platform combining professional photo delivery, long-term family archival, and photographer passive income.",
     url: "https://www.photovault.photo/about",
     siteName: "PhotoVault",
+    images: [
+      {
+        url: "https://www.photovault.photo/images/og-landing.webp",
+        width: 1200,
+        height: 630,
+        alt: "About PhotoVault — Memory Insurance for Families",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About PhotoVault | Memory Insurance for Families",
+    description: "The only platform combining professional photo delivery, long-term family archival, and photographer passive income.",
+    images: ["https://www.photovault.photo/images/og-landing.webp"],
   },
   alternates: {
     canonical: "https://www.photovault.photo/about",

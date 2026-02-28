@@ -88,9 +88,11 @@ const articleSchema = {
     "Compare the best Google Photos alternatives for permanent photo storage after Google's 2021 policy changes.",
   image: "https://www.photovault.photo/images/og-google-photos-alternatives.jpg",
   author: {
-    "@type": "Organization",
-    name: "PhotoVault",
-    url: "https://www.photovault.photo",
+    "@type": "Person",
+    name: "Nate Crowell",
+    jobTitle: "Founder",
+    worksFor: { "@type": "Organization", name: "PhotoVault LLC" },
+    url: "https://www.photovault.photo/about",
   },
   publisher: {
     "@type": "Organization",

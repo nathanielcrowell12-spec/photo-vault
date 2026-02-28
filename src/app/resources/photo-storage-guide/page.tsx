@@ -84,9 +84,11 @@ const articleSchema = {
     "Learn how to store photos long-term without losing them. Compare cloud storage, local drives, and managed services.",
   image: "https://www.photovault.photo/images/og-photo-storage-guide.jpg",
   author: {
-    "@type": "Organization",
-    name: "PhotoVault",
-    url: "https://www.photovault.photo",
+    "@type": "Person",
+    name: "Nate Crowell",
+    jobTitle: "Founder",
+    worksFor: { "@type": "Organization", name: "PhotoVault LLC" },
+    url: "https://www.photovault.photo/about",
   },
   publisher: {
     "@type": "Organization",

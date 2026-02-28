@@ -16,9 +16,18 @@ export const metadata: Metadata = {
       'Everything you need to know about PhotoVault: pricing, passive income for photographers, client gallery access, and the founding photographer beta program.',
     url: 'https://www.photovault.photo/faq',
     siteName: 'PhotoVault',
+    images: [
+      {
+        url: 'https://www.photovault.photo/images/og-landing.webp',
+        width: 1200,
+        height: 630,
+        alt: 'PhotoVault FAQ — Common Questions About the Platform',
+      },
+    ],
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
+    images: ['https://www.photovault.photo/images/og-landing.webp'],
     title: 'PhotoVault FAQ',
     description:
       'Common questions about PhotoVault — the gallery delivery platform that pays photographers passive income.',

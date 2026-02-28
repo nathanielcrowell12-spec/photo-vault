@@ -23,9 +23,18 @@ export const metadata: Metadata = {
       'One flat price. No storage tiers. Photographers earn 50% of every client payment. Free for 12 months during beta.',
     url: 'https://www.photovault.photo/pricing',
     siteName: 'PhotoVault',
+    images: [
+      {
+        url: 'https://www.photovault.photo/images/og-landing.webp',
+        width: 1200,
+        height: 630,
+        alt: 'PhotoVault Pricing — $22/month, Free During Beta',
+      },
+    ],
   },
   twitter: {
-    card: 'summary',
+    card: 'summary_large_image',
+    images: ['https://www.photovault.photo/images/og-landing.webp'],
     title: 'PhotoVault Pricing',
     description:
       '$22/month for photographers. Clients pay $8/month. You earn $4/month per client. Free during beta.',

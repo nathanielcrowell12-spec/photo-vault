@@ -78,9 +78,11 @@ const articleSchema = {
   description:
     "Detailed comparison of PhotoVault and Pic-Time for professional photographers. Compare pricing, business models, and features.",
   author: {
-    "@type": "Organization",
-    name: "PhotoVault",
-    url: "https://www.photovault.photo",
+    "@type": "Person",
+    name: "Nate Crowell",
+    jobTitle: "Founder",
+    worksFor: { "@type": "Organization", name: "PhotoVault LLC" },
+    url: "https://www.photovault.photo/about",
   },
   publisher: {
     "@type": "Organization",

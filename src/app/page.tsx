@@ -80,12 +80,46 @@ const structuredData = {
   areaServed: 'United States',
 }
 
+const softwareAppSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'PhotoVault',
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Web, Windows, macOS',
+  description:
+    'Gallery delivery platform for professional photographers that generates recurring passive income from client photo storage subscriptions.',
+  url: 'https://www.photovault.photo',
+  offers: {
+    '@type': 'Offer',
+    price: '0',
+    priceCurrency: 'USD',
+    description: 'Free for 12 months during beta. Then $22/month.',
+  },
+  provider: {
+    '@type': 'Organization',
+    name: 'PhotoVault LLC',
+  },
+  featureList: [
+    'Gallery delivery with client subscriptions',
+    '50% commission on every client payment',
+    'Stripe Connect direct deposit',
+    'Desktop app for large uploads',
+    'Orphan Protocol — galleries survive photographer cancellation',
+    'Family sharing for clients',
+    'Analytics and revenue tracking',
+  ],
+}
+
 export default function HomePage() {
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareAppSchema) }}
       />
       <div className="flex flex-col min-h-screen bg-background text-foreground antialiased">
         <LandingHeader />
