@@ -71,7 +71,7 @@ const faqs = [
   },
   {
     question: "What's included in the $22/month fee?",
-    answer: "Unlimited galleries, advanced analytics, commission tracking, PDF reports, client invitations, and professional CMS integration."
+    answer: "Unlimited galleries, advanced analytics, commission tracking, PDF reports, client invitations, full Stripe payment integration with processing fees covered by PhotoVault, and professional CMS integration. No hidden losses — just passive revenue."
   }
 ];
 
@@ -535,53 +535,6 @@ export default function PhotographersPage() {
         </section>
       </main>
 
-      {/* Footer */}
-      <footer className="border-t border-border bg-background mt-16">
-        <div className="container mx-auto px-4 py-12">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <Camera className="h-6 w-6 text-blue-600" />
-                <span className="text-xl font-bold text-foreground">PhotoVault</span>
-              </div>
-              <p className="text-muted-foreground">
-                Memory Insurance for families. Passive income for photographers.
-              </p>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-4 text-foreground">For Photographers</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="/photographers/benefits" className="hover:text-blue-600">Benefits</Link></li>
-                <li><Link href="/photographers/pricing" className="hover:text-blue-600">Pricing</Link></li>
-                <li><Link href="/photographers/integration" className="hover:text-blue-600">Integration</Link></li>
-                <li><Link href="/photographers/support" className="hover:text-blue-600">Support</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-4 text-foreground">Resources</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="/photographers/case-studies" className="hover:text-blue-600">Case Studies</Link></li>
-                <li><Link href="/photographers/blog" className="hover:text-blue-600">Blog</Link></li>
-                <li><Link href="/photographers/webinars" className="hover:text-blue-600">Webinars</Link></li>
-                <li><Link href="/photographers/help" className="hover:text-blue-600">Help Center</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="font-semibold mb-4 text-foreground">Company</h3>
-              <ul className="space-y-2 text-sm text-muted-foreground">
-                <li><Link href="/about" className="hover:text-blue-600">About</Link></li>
-                <li><Link href="/privacy" className="hover:text-blue-600">Privacy</Link></li>
-                <li><Link href="/terms" className="hover:text-blue-600">Terms</Link></li>
-                <li><Link href="/contact" className="hover:text-blue-600">Contact</Link></li>
-              </ul>
-            </div>
-          </div>
-          <Separator className="my-8 bg-white/10" />
-          <div className="text-center text-sm text-muted-foreground">
-            © 2024 PhotoVault. Grow your photography business with lifetime client access.
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

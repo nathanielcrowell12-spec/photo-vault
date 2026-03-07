@@ -56,17 +56,28 @@ export default function TermsPage() {
                 <span>PhotoVault Business Model</span>
               </CardTitle>
               <CardDescription>
-                How PhotoVault replaces existing photo sharing software
+                Three packages, one flat platform fee &mdash; pick what fits your business
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
                 <h3 className="font-semibold text-green-800 dark:text-green-200 mb-2">
-                  💰 Revenue Model: $22/month platform + $50 upfront + $4/month commission
+                  💰 Three Storage Packages &mdash; Pick What Fits Your Business
                 </h3>
-                <div className="space-y-4">
+                <p className="text-sm text-green-700 dark:text-green-300 mb-4">
+                  Every photographer runs their business differently. PhotoVault gives you three commission-earning
+                  packages to offer clients &mdash; from a full year of prepaid storage down to a low-commitment
+                  trial. You always earn 50%. All three transition to $8/month after the prepaid period
+                  (except the trial, which simply expires).
+                </p>
+
+                {/* Year Package */}
+                <div className="mb-4">
+                  <h4 className="font-semibold text-green-800 dark:text-green-200 mb-2 text-sm uppercase tracking-wide">
+                    Year Package &mdash; Best Value
+                  </h4>
                   <div className="grid md:grid-cols-3 gap-4 text-sm text-green-700 dark:text-green-300">
-                    <div className="text-center border rounded-lg p-3">
+                    <div className="text-center border border-green-300 dark:border-green-700 rounded-lg p-3">
                       <div className="text-lg font-bold">Platform Fee</div>
                       <div className="text-2xl font-bold">$22/month</div>
                       <p>Photographer pays</p>
@@ -76,7 +87,7 @@ export default function TermsPage() {
                         <p>Commission tracking</p>
                       </div>
                     </div>
-                    <div className="text-center border rounded-lg p-3">
+                    <div className="text-center border border-green-300 dark:border-green-700 rounded-lg p-3">
                       <div className="text-lg font-bold">Year 1</div>
                       <div className="text-2xl font-bold">$100</div>
                       <p>Client pays upfront</p>
@@ -85,7 +96,7 @@ export default function TermsPage() {
                         <p>PhotoVault: $50</p>
                       </div>
                     </div>
-                    <div className="text-center border rounded-lg p-3">
+                    <div className="text-center border border-green-300 dark:border-green-700 rounded-lg p-3">
                       <div className="text-lg font-bold">Year 2+</div>
                       <div className="text-2xl font-bold">$8/month</div>
                       <p>Client pays ongoing</p>
@@ -95,9 +106,87 @@ export default function TermsPage() {
                       </div>
                     </div>
                   </div>
-                  <div className="text-center text-xs text-green-600 dark:text-green-400">
-                    Photographers earn $50 upfront + $4/month passive income
+                  <p className="text-center text-xs text-green-600 dark:text-green-400 mt-2">
+                    You earn $50 upfront + $4/month passive income after the first year
+                  </p>
+                </div>
+
+                {/* 6-Month Package */}
+                <div className="mb-4">
+                  <h4 className="font-semibold text-green-800 dark:text-green-200 mb-2 text-sm uppercase tracking-wide">
+                    6-Month Package &mdash; Lower Entry Point
+                  </h4>
+                  <div className="grid md:grid-cols-3 gap-4 text-sm text-green-700 dark:text-green-300">
+                    <div className="text-center border border-green-300 dark:border-green-700 rounded-lg p-3">
+                      <div className="text-lg font-bold">Platform Fee</div>
+                      <div className="text-2xl font-bold">$22/month</div>
+                      <p>Photographer pays</p>
+                      <div className="mt-2 text-xs">
+                        <p>Same platform access</p>
+                        <p>Same features</p>
+                      </div>
+                    </div>
+                    <div className="text-center border border-green-300 dark:border-green-700 rounded-lg p-3">
+                      <div className="text-lg font-bold">First 6 Months</div>
+                      <div className="text-2xl font-bold">$50</div>
+                      <p>Client pays upfront</p>
+                      <div className="mt-2 text-xs">
+                        <p>Photographer: $25</p>
+                        <p>PhotoVault: $25</p>
+                      </div>
+                    </div>
+                    <div className="text-center border border-green-300 dark:border-green-700 rounded-lg p-3">
+                      <div className="text-lg font-bold">Month 7+</div>
+                      <div className="text-2xl font-bold">$8/month</div>
+                      <p>Client pays ongoing</p>
+                      <div className="mt-2 text-xs">
+                        <p>Photographer: $4/month</p>
+                        <p>PhotoVault: $4/month</p>
+                      </div>
+                    </div>
                   </div>
+                  <p className="text-center text-xs text-green-600 dark:text-green-400 mt-2">
+                    You earn $25 upfront + $4/month passive income after six months
+                  </p>
+                </div>
+
+                {/* 6-Month Trial */}
+                <div>
+                  <h4 className="font-semibold text-green-800 dark:text-green-200 mb-2 text-sm uppercase tracking-wide">
+                    6-Month Trial &mdash; Lowest Commitment
+                  </h4>
+                  <div className="grid md:grid-cols-3 gap-4 text-sm text-green-700 dark:text-green-300">
+                    <div className="text-center border border-green-300 dark:border-green-700 rounded-lg p-3">
+                      <div className="text-lg font-bold">Platform Fee</div>
+                      <div className="text-2xl font-bold">$22/month</div>
+                      <p>Photographer pays</p>
+                      <div className="mt-2 text-xs">
+                        <p>Same platform access</p>
+                        <p>Same features</p>
+                      </div>
+                    </div>
+                    <div className="text-center border border-green-300 dark:border-green-700 rounded-lg p-3">
+                      <div className="text-lg font-bold">6 Months</div>
+                      <div className="text-2xl font-bold">$20</div>
+                      <p>Client pays one-time</p>
+                      <div className="mt-2 text-xs">
+                        <p>Photographer: $10</p>
+                        <p>PhotoVault: $10</p>
+                      </div>
+                    </div>
+                    <div className="text-center border border-green-300 dark:border-green-700 rounded-lg p-3">
+                      <div className="text-lg font-bold">After 6 Months</div>
+                      <div className="text-2xl font-bold">Expires</div>
+                      <p>No auto-billing</p>
+                      <div className="mt-2 text-xs">
+                        <p>Client can upgrade anytime</p>
+                        <p>or download and go</p>
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-center text-xs text-green-600 dark:text-green-400 mt-2">
+                    You earn $10 &mdash; ideal for price-sensitive clients who want to try before they commit
+                  </p>
                 </div>
               </div>
 

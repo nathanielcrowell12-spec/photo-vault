@@ -399,23 +399,23 @@ export function Footer({ hideOnPaths = [] }: NavigationProps) {
               <h3 className="font-semibold mb-4 text-foreground">For Families</h3>
               <ul className="space-y-2 text-sm">
                 <li>
+                  <Link href="/resources/gallery-fatigue" className="text-muted-foreground hover:text-primary transition-colors">
+                    Why PhotoVault?
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/resources/photo-storage-guide" className="text-muted-foreground hover:text-primary transition-colors">
+                    Photo Storage Guide
+                  </Link>
+                </li>
+                <li>
                   <Link href="/directory" className="text-muted-foreground hover:text-primary transition-colors">
                     Photo Location Directory
                   </Link>
                 </li>
                 <li>
-                  <Link href="/client/timeline" className="text-muted-foreground hover:text-primary transition-colors">
-                    Photo Timeline
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/client/upload" className="text-muted-foreground hover:text-primary transition-colors">
-                    Upload Photos
-                  </Link>
-                </li>
-                <li>
-                  <Link href="/client/support" className="text-muted-foreground hover:text-primary transition-colors">
-                    Help Center
+                  <Link href="/about" className="text-muted-foreground hover:text-primary transition-colors">
+                    About Us
                   </Link>
                 </li>
                 <li>
@@ -443,32 +443,11 @@ export function Footer({ hideOnPaths = [] }: NavigationProps) {
           <div>
             <div className="flex items-center space-x-2 mb-4">
               <Camera className="h-6 w-6 text-primary" />
-              <span className="text-lg font-bold">PhotoVault Pro</span>
+              <span className="text-lg font-bold">PhotoVault</span>
             </div>
             <p className="text-sm text-muted-foreground dark:text-muted-foreground">
-              Your local photo network. Access all your memories from every photographer in one place.
+              Memory insurance for families. Passive income for photographers.
             </p>
-          </div>
-
-          <div>
-            <h3 className="font-semibold mb-4">For Clients</h3>
-            <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/client/timeline" className="text-muted-foreground hover:text-primary transition-colors">
-                  Photo Timeline
-                </Link>
-              </li>
-              <li>
-                <Link href="/client/upload" className="text-muted-foreground hover:text-primary transition-colors">
-                  Upload Photos
-                </Link>
-              </li>
-              <li>
-                <Link href="/client/support" className="text-muted-foreground hover:text-primary transition-colors">
-                  Support
-                </Link>
-              </li>
-            </ul>
           </div>
 
           <div>
@@ -476,22 +455,48 @@ export function Footer({ hideOnPaths = [] }: NavigationProps) {
             <ul className="space-y-2 text-sm">
               <li>
                 <Link href="/photographers" className="text-muted-foreground hover:text-primary transition-colors">
-                  Pricing & Commission
+                  Pricing &amp; Commission
                 </Link>
               </li>
               <li>
-                <Link href="/photographers/revenue" className="text-muted-foreground hover:text-primary transition-colors">
-                  Revenue Dashboard
+                <Link href="/photographers/signup" className="text-muted-foreground hover:text-primary transition-colors">
+                  Join the Beta
                 </Link>
               </li>
               <li>
-                <Link href="/photographers/reports" className="text-muted-foreground hover:text-primary transition-colors">
-                  Reports & Analytics
+                <Link href="/photographer/dashboard" className="text-muted-foreground hover:text-primary transition-colors">
+                  Dashboard
                 </Link>
               </li>
               <li>
                 <Link href="/terms" className="text-muted-foreground hover:text-primary transition-colors">
-                  Terms & Conditions
+                  Terms &amp; Commission Structure
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="font-semibold mb-4">Resources</h3>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link href="/resources/photographer-recurring-revenue" className="text-muted-foreground hover:text-primary transition-colors">
+                  Recurring Revenue Guide
+                </Link>
+              </li>
+              <li>
+                <Link href="/resources/photovault-vs-shootproof" className="text-muted-foreground hover:text-primary transition-colors">
+                  PhotoVault vs ShootProof
+                </Link>
+              </li>
+              <li>
+                <Link href="/resources/photovault-vs-pixieset" className="text-muted-foreground hover:text-primary transition-colors">
+                  PhotoVault vs Pixieset
+                </Link>
+              </li>
+              <li>
+                <Link href="/resources/madison-photography-guide" className="text-muted-foreground hover:text-primary transition-colors">
+                  Madison Photography Guide
                 </Link>
               </li>
             </ul>
@@ -500,11 +505,6 @@ export function Footer({ hideOnPaths = [] }: NavigationProps) {
           <div>
             <h3 className="font-semibold mb-4">Company</h3>
             <ul className="space-y-2 text-sm">
-              <li>
-                <Link href="/directory" className="text-muted-foreground hover:text-primary transition-colors">
-                  Photo Location Directory
-                </Link>
-              </li>
               <li>
                 <Link href="/about" className="text-muted-foreground hover:text-primary transition-colors">
                   About Us
@@ -521,8 +521,8 @@ export function Footer({ hideOnPaths = [] }: NavigationProps) {
                 </Link>
               </li>
               <li>
-                <Link href="/terms" className="text-muted-foreground hover:text-primary transition-colors">
-                  Terms of Service
+                <Link href="/directory" className="text-muted-foreground hover:text-primary transition-colors">
+                  Photo Location Directory
                 </Link>
               </li>
             </ul>
