@@ -953,6 +953,62 @@ export default function PhotoVaultVsPicTimePage() {
             </Button>
           </div>
         </section>
+
+        {/* Related Resources */}
+        <section className="mt-16">
+          <h2 className="text-2xl font-bold text-foreground mb-6">
+            Related Resources
+          </h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            <Link
+              href="/resources/photovault-vs-shootproof"
+              className="block group"
+            >
+              <Card className="bg-card/50 border-border h-full group-hover:border-primary/50 transition-colors">
+                <CardContent className="p-6">
+                  <h3 className="font-semibold text-foreground group-hover:text-primary mb-2">
+                    PhotoVault vs ShootProof 2026
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    The comparison no one else is having. Who pays, who earns,
+                    and what happens to your clients.
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link
+              href="/resources/photographer-recurring-revenue"
+              className="block group"
+            >
+              <Card className="bg-card/50 border-border h-full group-hover:border-primary/50 transition-colors">
+                <CardContent className="p-6">
+                  <h3 className="font-semibold text-foreground group-hover:text-primary mb-2">
+                    Recurring Revenue for Photographers
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    How to create passive income without booking more sessions.
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
+            <Link
+              href="/resources/photovault-vs-pixieset"
+              className="block group"
+            >
+              <Card className="bg-card/50 border-border h-full group-hover:border-primary/50 transition-colors">
+                <CardContent className="p-6">
+                  <h3 className="font-semibold text-foreground group-hover:text-primary mb-2">
+                    PhotoVault vs Pixieset 2026
+                  </h3>
+                  <p className="text-sm text-muted-foreground">
+                    Honest comparison of business models, features, and pricing
+                    for photographers.
+                  </p>
+                </CardContent>
+              </Card>
+            </Link>
+          </div>
+        </section>
       </main>
     </div>
   );

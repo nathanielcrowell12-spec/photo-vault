@@ -724,16 +724,17 @@ export default function PhotoStorageGuidePage() {
               </Card>
             </Link>
             <Link
-              href="/resources/wedding-photo-storage"
+              href="/resources/gallery-fatigue"
               className="block group"
             >
               <Card className="bg-card/50 border-border h-full group-hover:border-primary/50 transition-colors">
                 <CardContent className="p-6">
                   <h3 className="font-semibold text-foreground group-hover:text-primary mb-2">
-                    Wedding Photo Storage Guide
+                    Gallery Fatigue: 5 Logins, 5 Photographers
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    How to ensure your wedding photos last 50+ years.
+                    Why your family photos are scattered across platforms and
+                    what to do about it.
                   </p>
                 </CardContent>
               </Card>

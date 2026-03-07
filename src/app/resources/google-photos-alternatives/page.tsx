@@ -1232,17 +1232,17 @@ export default function GooglePhotosAlternativesPage() {
               </Card>
             </Link>
             <Link
-              href="/resources/photovault-vs-pixieset"
+              href="/resources/gallery-fatigue"
               className="block group"
             >
               <Card className="bg-card/50 border-border h-full group-hover:border-primary/50 transition-colors">
                 <CardContent className="p-6">
                   <h3 className="font-semibold text-foreground group-hover:text-primary mb-2">
-                    PhotoVault vs Pixieset 2026
+                    Gallery Fatigue: 5 Logins, 5 Photographers
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    Honest comparison of business models, features, and pricing
-                    for photographers.
+                    Why your family photos are scattered across platforms and
+                    what to do about it.
                   </p>
                 </CardContent>
               </Card>

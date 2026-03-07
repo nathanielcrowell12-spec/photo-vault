@@ -963,17 +963,17 @@ export default function PhotoVaultVsPixiesetPage() {
               </Card>
             </Link>
             <Link
-              href="/resources/photo-storage-guide"
+              href="/resources/photovault-vs-shootproof"
               className="block group"
             >
               <Card className="bg-card/50 border-border h-full group-hover:border-primary/50 transition-colors">
                 <CardContent className="p-6">
                   <h3 className="font-semibold text-foreground group-hover:text-primary mb-2">
-                    The State of Photo Storage in 2026
+                    PhotoVault vs ShootProof 2026
                   </h3>
                   <p className="text-sm text-muted-foreground">
-                    Why your photos aren&apos;t as safe as you think, and what
-                    to do about it.
+                    The comparison no one else is having. Who pays, who earns,
+                    and what happens to your clients.
                   </p>
                 </CardContent>
               </Card>
