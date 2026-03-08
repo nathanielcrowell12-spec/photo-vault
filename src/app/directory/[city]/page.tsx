@@ -6,10 +6,26 @@ import Link from 'next/link'
 import type { Metadata } from 'next'
 import type { LocationWithDetails } from '@/types/directory'
 
+export const revalidate = 3600 // Revalidate every hour for ISR
+
 type CityPageProps = {
   params: Promise<{
     city: string
   }>
+}
+
+export async function generateStaticParams() {
+  const supabase = createServerSupabaseClient()
+  const { data: locations } = await supabase
+    .from('locations')
+    .select('city')
+
+  // Get unique city slugs
+  const cities = new Set(
+    locations?.map((l) => l.city.toLowerCase().replace(/ /g, '-')) || []
+  )
+
+  return Array.from(cities).map((city) => ({ city }))
 }
 
 export async function generateMetadata({ params }: CityPageProps): Promise<Metadata> {

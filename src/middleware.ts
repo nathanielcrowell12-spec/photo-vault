@@ -12,6 +12,12 @@ export async function middleware(req: NextRequest) {
 
   const { pathname } = req.nextUrl
 
+  // Return 404 for ghost URLs that waste crawl budget
+  const ghostPages = ['/landing-page', '/landing-page.html']
+  if (ghostPages.includes(pathname)) {
+    return new NextResponse('Not Found', { status: 404 })
+  }
+
   // === PUBLIC ROUTE CHECKS (no Supabase call needed) ===
 
   // Public page routes that don't require authentication
