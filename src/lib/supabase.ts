@@ -13,9 +13,15 @@ import { createClient } from '@supabase/supabase-js'
 // Re-export createClient for use in other files
 export { createClient }
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://gqmycgopitxpjkxzrnyv.supabase.co'
-const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdxbXljZ29waXR4cGpreHpybnl2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjA5OTk2NjIsImV4cCI6MjA3NjU3NTY2Mn0.mUgIQ7V9CmquKalZduYTbD__1ETt-zfaHRZVp0xdwLQ'
-const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdxbXljZ29waXR4cGpreHpybnl2Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc2MDk5OTY2MywiZXhwIjoyMDc2NTc1NjYzfQ.RzwmEr6SvpJmMJA2NTWNVT5ogQ7HYW65OS1gg6PUtCI'
+function requireEnv(name: string): string {
+  const value = process.env[name]
+  if (!value) throw new Error(`${name} environment variable is required`)
+  return value
+}
+
+const supabaseUrl = requireEnv('NEXT_PUBLIC_SUPABASE_URL')
+const supabaseAnonKey = requireEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY')
+const serviceRoleKey = requireEnv('SUPABASE_SERVICE_ROLE_KEY')
 
 /**
  * DEPRECATED: Server-side client with service role - bypasses RLS!

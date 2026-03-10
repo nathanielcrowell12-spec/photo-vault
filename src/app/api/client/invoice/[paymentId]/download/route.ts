@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { createServerSupabaseClient } from '@/lib/supabase-server'
 import jsPDF from 'jspdf'
 import { logger } from '@/lib/logger'
 
@@ -8,6 +8,17 @@ export async function GET(
   { params }: { params: Promise<{ paymentId: string }> }
 ) {
   try {
+    const supabase = await createServerSupabaseClient()
+
+    // Authenticate the user
+    const { data: { user }, error: authError } = await supabase.auth.getUser()
+    if (authError || !user) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      )
+    }
+
     const { paymentId } = await params
 
     if (!paymentId) {
@@ -26,12 +37,15 @@ export async function GET(
           name,
           email,
           phone,
-          billing_address
+          billing_address,
+          user_id
         ),
         galleries:gallery_id (
           name,
+          photographer_id,
           photographers:photographer_id (
             business_name,
+            user_id,
             users:user_id (
               name,
               email,
@@ -49,6 +63,16 @@ export async function GET(
       .single()
 
     if (paymentError || !payment) {
+      return NextResponse.json(
+        { error: 'Payment not found' },
+        { status: 404 }
+      )
+    }
+
+    // Authorization: only the client who made the payment or the gallery's photographer can download
+    const clientUserId = payment.clients?.user_id
+    const photographerUserId = payment.galleries?.photographers?.user_id
+    if (user.id !== clientUserId && user.id !== photographerUserId) {
       return NextResponse.json(
         { error: 'Payment not found' },
         { status: 404 }
@@ -91,11 +115,14 @@ interface PaymentData {
     email: string
     phone?: string
     billing_address?: string
+    user_id: string
   }
   galleries?: {
     name: string
+    photographer_id: string
     photographers?: {
       business_name: string
+      user_id: string
       users?: {
         name: string
         email: string

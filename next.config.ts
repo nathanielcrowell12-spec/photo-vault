@@ -25,6 +25,23 @@ const nextConfig: NextConfig = {
   
   // Security headers (MBP v4.3 requirement)
   async headers() {
+    const isDev = process.env.NODE_ENV === 'development'
+
+    // Content-Security-Policy: restrict resource loading to trusted domains
+    const cspDirectives = [
+      "default-src 'self'",
+      // Next.js requires unsafe-inline for styles; dev needs unsafe-eval for HMR
+      `script-src 'self' https://js.stripe.com${isDev ? " 'unsafe-eval'" : ''}`,
+      "style-src 'self' 'unsafe-inline' https://unpkg.com",
+      "img-src 'self' https://images.unsplash.com https://*.supabase.co https://tile.openstreetmap.org https://via.placeholder.com data: blob:",
+      "font-src 'self'",
+      `connect-src 'self' https://api.stripe.com https://*.supabase.co https://app.posthog.com https://us.i.posthog.com${isDev ? ' ws://localhost:* http://localhost:*' : ''}`,
+      "frame-src 'self' https://js.stripe.com https://hooks.stripe.com",
+      "frame-ancestors 'none'",
+      "base-uri 'self'",
+      "form-action 'self'",
+    ].join('; ')
+
     return [
       {
         source: '/(.*)',
@@ -44,6 +61,14 @@ const nextConfig: NextConfig = {
           {
             key: 'Strict-Transport-Security',
             value: 'max-age=31536000; includeSubDomains',
+          },
+          {
+            key: 'Content-Security-Policy',
+            value: cspDirectives,
+          },
+          {
+            key: 'Permissions-Policy',
+            value: 'camera=(), microphone=(), geolocation=(), browsing-topics=()',
           },
         ],
       },

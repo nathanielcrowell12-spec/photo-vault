@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { headers } from 'next/headers'
 import { getStripeClient, constructWebhookEvent, PHOTOGRAPHER_COMMISSION_RATE } from '@/lib/stripe'
 import { createServiceRoleClient } from '@/lib/supabase-server'
+import { checkIdempotency, markProcessed } from '@/lib/stripe/webhooks/helpers'
 import Stripe from 'stripe'
 import { logger } from '@/lib/logger'
 import { EmailService } from '@/lib/email/email-service'
@@ -97,6 +98,13 @@ export async function POST(request: NextRequest) {
 
     logger.info(`[Webhook] Received event: ${event.type} (id: ${event.id})`)
 
+    // Idempotency check — skip if already processed
+    const alreadyProcessed = await checkIdempotency(supabase, event.id)
+    if (alreadyProcessed) {
+      logger.info(`[Webhook] Event ${event.id} already processed, skipping`)
+      return NextResponse.json({ received: true, message: 'Already processed' })
+    }
+
     // Handle different event types
     switch (event.type) {
       case 'checkout.session.completed':
@@ -135,6 +143,9 @@ export async function POST(request: NextRequest) {
       default:
         logger.info(`[Webhook] Unhandled event type: ${event.type}`)
     }
+
+    // Mark as processed after successful handling
+    await markProcessed(supabase, event.id, event.type)
 
     return NextResponse.json({ received: true })
   } catch (error) {
@@ -627,11 +638,18 @@ async function handlePaymentIntentSucceeded(
     const billingMode = metadata.billingMode
     const paymentOptionId = metadata.paymentOptionId
 
-    // Parse amounts from metadata
-    const shootFeeCents = parseInt(metadata.shootFeeCents || '0', 10)
-    const storageFeeCents = parseInt(metadata.storageFeeCents || '0', 10)
-    const photographerPayoutCents = parseInt(metadata.photographerPayoutCents || '0', 10)
-    const photovaultRevenueCents = parseInt(metadata.photovaultRevenueCents || '0', 10)
+    // Re-calculate commission from DB — never trust metadata for financial amounts
+    const { data: gallery } = await supabase
+      .from('photo_galleries')
+      .select('shoot_fee, storage_fee, total_amount')
+      .eq('id', galleryId)
+      .single()
+
+    const shootFeeCents = gallery?.shoot_fee || 0
+    const storageFeeCents = gallery?.storage_fee || 0
+    const storageCommissionCents = Math.round(storageFeeCents * PHOTOGRAPHER_COMMISSION_RATE)
+    const photographerPayoutCents = shootFeeCents + storageCommissionCents
+    const photovaultRevenueCents = storageFeeCents - storageCommissionCents
 
     logger.info(`[Webhook] Gallery payment succeeded for gallery ${galleryId}`, {
       totalAmount: paymentIntent.amount,
@@ -639,6 +657,7 @@ async function handlePaymentIntentSucceeded(
       storageFee: storageFeeCents,
       photographerPayout: photographerPayoutCents,
       photovaultRevenue: photovaultRevenueCents,
+      source: 'recalculated_from_db',
     })
 
     // 1. Update gallery payment status

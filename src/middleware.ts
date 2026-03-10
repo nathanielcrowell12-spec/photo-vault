@@ -1,6 +1,24 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { getRateLimiter } from './lib/rate-limit'
+
+// Allowed origins for CSRF protection (H4)
+const ALLOWED_ORIGINS = [
+  'https://photovault.photo',
+  'https://www.photovault.photo',
+  'http://localhost:3002',
+  'http://localhost:3000',
+]
+
+// Auth endpoints to rate limit (H3)
+const RATE_LIMITED_PATHS = [
+  '/login',
+  '/signup',
+  '/auth/signup',
+  '/reset-password',
+  '/api/auth/',
+]
 
 export async function middleware(req: NextRequest) {
   // eslint-disable-next-line prefer-const
@@ -11,11 +29,47 @@ export async function middleware(req: NextRequest) {
   })
 
   const { pathname } = req.nextUrl
+  const method = req.method
 
   // Return 404 for ghost URLs that waste crawl budget
   const ghostPages = ['/landing-page', '/landing-page.html']
   if (ghostPages.includes(pathname)) {
     return new NextResponse('Not Found', { status: 404 })
+  }
+
+  // === H4: CSRF Protection — Origin header check on mutating requests ===
+  if (method !== 'GET' && method !== 'HEAD' && method !== 'OPTIONS') {
+    // Exempt webhook routes (Stripe sends from their servers, no Origin header)
+    const isWebhook = pathname.startsWith('/api/webhooks') || pathname.startsWith('/api/stripe/webhook')
+    // Exempt desktop app API routes (use Bearer token auth, not cookies)
+    const isDesktopApi = pathname.startsWith('/api/v1/')
+    // Exempt cron and external service callbacks
+    const isExternalCallback = pathname.startsWith('/api/cron') || pathname.startsWith('/api/helm/')
+
+    if (!isWebhook && !isDesktopApi && !isExternalCallback) {
+      const origin = req.headers.get('origin')
+      if (origin && !ALLOWED_ORIGINS.includes(origin)) {
+        console.warn('[CSRF] Blocked request from disallowed origin:', origin, 'to:', pathname)
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
+      }
+    }
+  }
+
+  // === H3: Rate limiting on auth endpoints ===
+  const isRateLimited = RATE_LIMITED_PATHS.some(path => pathname.startsWith(path))
+  if (isRateLimited && method === 'POST') {
+    const rateLimiter = getRateLimiter()
+    if (rateLimiter) {
+      const ip = req.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ?? req.headers.get('x-real-ip') ?? '127.0.0.1'
+      const { success, remaining } = await rateLimiter.limit(ip)
+      if (!success) {
+        console.warn('[RateLimit] Blocked:', ip, 'on:', pathname)
+        return NextResponse.json(
+          { error: 'Too many requests. Please try again later.' },
+          { status: 429, headers: { 'Retry-After': '60', 'X-RateLimit-Remaining': String(remaining) } }
+        )
+      }
+    }
   }
 
   // === PUBLIC ROUTE CHECKS (no Supabase call needed) ===
@@ -86,8 +140,6 @@ export async function middleware(req: NextRequest) {
   if (pathname.startsWith('/api')) {
     const publicApiRoutes = [
       '/api/health',
-      '/api/test-env',
-      '/api/test-supabase',
       '/api/webhooks', // Legacy webhooks
       '/api/stripe/webhook', // Stripe webhooks
       '/api/stripe/public-checkout', // Public checkout (no auth required)

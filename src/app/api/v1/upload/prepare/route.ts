@@ -9,13 +9,28 @@ const supabase = createClient(
 
 export async function POST(request: NextRequest) {
   try {
+    // Authenticate the caller via Bearer token
+    const authHeader = request.headers.get('Authorization')
+    if (!authHeader?.startsWith('Bearer ')) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const token = authHeader.slice(7)
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token)
+    if (authError || !user) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
     const body = await request.json()
-    const { fileName, fileSize, userId, galleryName, platform, clientId, galleryId } = body
+    const { fileName, fileSize, galleryName, platform, clientId, galleryId } = body
+
+    // Use authenticated user's ID — never trust userId from the request body
+    const userId = user.id
 
     logger.info('[Upload Prepare] Request:', { fileName, fileSize, userId, galleryName, platform, clientId, galleryId })
 
     // Validate inputs
-    if (!fileName || !fileSize || !userId) {
+    if (!fileName || !fileSize) {
       return NextResponse.json({
         error: 'Missing required fields'
       }, { status: 400 })

@@ -90,7 +90,7 @@ export async function GET(
 
     const { data: gallery, error } = await supabase
       .from('photo_galleries')
-      .select('id, event_date, location, people, event_type, photographer_name, notes, metadata')
+      .select('id, event_date, location, people, event_type, photographer_name, notes, metadata, photographer_id, client_id, user_id')
       .eq('id', galleryId)
       .single()
 
@@ -98,9 +98,17 @@ export async function GET(
       return NextResponse.json({ error: 'Gallery not found' }, { status: 404 })
     }
 
+    // Authorization: only the gallery owner (photographer, client, or uploader) can view metadata
+    if (gallery.photographer_id !== user.id && gallery.client_id !== user.id && gallery.user_id !== user.id) {
+      return NextResponse.json({ error: 'Gallery not found' }, { status: 404 })
+    }
+
+    // Strip internal IDs from response
+    const { photographer_id, client_id, user_id, ...publicGallery } = gallery
+
     return NextResponse.json({
       success: true,
-      gallery
+      gallery: publicGallery
     })
   } catch (error) {
     logger.error('[Metadata] Unexpected error:', error)
