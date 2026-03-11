@@ -30,8 +30,8 @@ const nextConfig: NextConfig = {
     // Content-Security-Policy: restrict resource loading to trusted domains
     const cspDirectives = [
       "default-src 'self'",
-      // Next.js requires unsafe-inline for styles; dev needs unsafe-eval for HMR
-      `script-src 'self' https://js.stripe.com${isDev ? " 'unsafe-eval'" : ''}`,
+      // Next.js requires unsafe-inline for hydration scripts; dev needs unsafe-eval for HMR
+      `script-src 'self' 'unsafe-inline' https://js.stripe.com${isDev ? " 'unsafe-eval'" : ''}`,
       "style-src 'self' 'unsafe-inline' https://unpkg.com",
       "img-src 'self' https://images.unsplash.com https://*.supabase.co https://tile.openstreetmap.org https://via.placeholder.com data: blob:",
       "font-src 'self'",
