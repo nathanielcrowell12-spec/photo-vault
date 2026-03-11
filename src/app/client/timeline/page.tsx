@@ -239,6 +239,18 @@ export default function PhotoTimelinePage() {
 
       <main className="container mx-auto px-4 py-8">
         <div className="max-w-7xl mx-auto">
+          {/* How It Works */}
+          <Card className="mb-6 bg-purple-50/50 dark:bg-purple-950/20 border-purple-200/50 dark:border-purple-800/30">
+            <CardContent className="p-4">
+              <div className="flex items-start gap-3">
+                <Calendar className="h-5 w-5 text-purple-600 mt-0.5 flex-shrink-0" />
+                <div className="text-sm text-muted-foreground">
+                  <span className="font-medium text-foreground">Your Photo Timeline</span> organizes all your galleries chronologically — by year and month. Galleries appear here automatically when your photographer delivers them. Use the search bar to find galleries by name, location, or event type.
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Filters */}
           <Card className="mb-8 bg-card/50 border-border">
             <CardContent className="p-6">
@@ -400,26 +412,32 @@ export default function PhotoTimelinePage() {
             <Card className="text-center py-12 bg-card/50 border-border">
               <CardContent>
                 <Camera className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2 text-foreground">
-                  {timelineData.length === 0 ? 'No photos yet' : 'No matching galleries'}
-                </h3>
-                <p className="text-muted-foreground mb-4">
-                  {timelineData.length === 0
-                    ? 'Your photo galleries will appear here once they\'re created.'
-                    : 'Try adjusting your search or filters to find what you\'re looking for.'
-                  }
-                </p>
-                {filters.search || filters.photographer !== 'all' || filters.event_type !== 'all' ? (
-                  <Button
-                    variant="outline"
-                    onClick={() => setFilters({ search: '', photographer: 'all', event_type: 'all' })}
-                  >
-                    Clear Filters
-                  </Button>
+                {timelineData.length === 0 ? (
+                  <>
+                    <h3 className="text-lg font-semibold mb-2 text-foreground">Your timeline is empty</h3>
+                    <p className="text-muted-foreground mb-2 max-w-md mx-auto">
+                      When your photographer uploads a gallery and assigns it to you, it will appear here organized by date.
+                    </p>
+                    <p className="text-sm text-muted-foreground mb-6 max-w-md mx-auto">
+                      Check your <Link href="/client/dashboard" className="text-primary hover:underline">dashboard</Link> to see if you have any galleries waiting.
+                    </p>
+                    <Button asChild>
+                      <Link href="/client/dashboard">Back to Dashboard</Link>
+                    </Button>
+                  </>
                 ) : (
-                  <Button asChild>
-                    <Link href="/client/dashboard">Back to Dashboard</Link>
-                  </Button>
+                  <>
+                    <h3 className="text-lg font-semibold mb-2 text-foreground">No matching galleries</h3>
+                    <p className="text-muted-foreground mb-4">
+                      Try adjusting your search or filters to find what you&apos;re looking for.
+                    </p>
+                    <Button
+                      variant="outline"
+                      onClick={() => setFilters({ search: '', photographer: 'all', event_type: 'all' })}
+                    >
+                      Clear Filters
+                    </Button>
+                  </>
                 )}
               </CardContent>
             </Card>

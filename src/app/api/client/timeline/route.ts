@@ -58,14 +58,8 @@ export async function GET(request: Request) {
 
     const clientIds = clientRecords?.map(c => c.id) || []
 
-    if (clientIds.length === 0) {
-      return NextResponse.json({
-        success: true,
-        timeline: []
-      })
-    }
-
-    // Build query - use full-text search if search term provided
+    // Build query - match galleries by client_id OR user_id (self-uploaded)
+    // This mirrors the same logic used by GalleryGrid on the dashboard
     let query = supabase
       .from('photo_galleries')
       .select(`
@@ -73,6 +67,7 @@ export async function GET(request: Request) {
         gallery_name,
         gallery_description,
         created_at,
+        session_date,
         photo_count,
         cover_image_url,
         photographer_id,
@@ -81,8 +76,13 @@ export async function GET(request: Request) {
         people,
         notes
       `)
-      .in('client_id', clientIds)
       .eq('is_deleted', false)
+
+    if (clientIds.length > 0) {
+      query = query.or(`client_id.in.(${clientIds.join(',')}),user_id.eq.${user.id}`)
+    } else {
+      query = query.eq('user_id', user.id)
+    }
 
     // Apply full-text search if query provided
     if (searchQuery.trim()) {
@@ -93,7 +93,8 @@ export async function GET(request: Request) {
       })
     }
 
-    const { data: galleries, error: galleriesError } = await query.order('created_at', { ascending: false })
+    // Sort by session_date first (the actual photo date), fall back to created_at
+    const { data: galleries, error: galleriesError } = await query.order('session_date', { ascending: false, nullsFirst: false }).order('created_at', { ascending: false })
 
     if (galleriesError) {
       logger.error('[Timeline] Galleries error:', galleriesError)
@@ -127,7 +128,9 @@ export async function GET(request: Request) {
     const yearMap = new Map<number, Map<number, TimelineGallery[]>>()
 
     for (const gallery of galleries) {
-      const date = new Date(gallery.created_at)
+      // Use session_date (when the photos were taken) if available, otherwise fall back to created_at
+      const dateStr = gallery.session_date || gallery.created_at
+      const date = new Date(dateStr)
       const year = date.getFullYear()
       const month = date.getMonth()
 
@@ -145,7 +148,7 @@ export async function GET(request: Request) {
       monthMap.get(month)!.push({
         id: gallery.id,
         name: gallery.gallery_name || 'Untitled Gallery',
-        created_at: gallery.created_at,
+        created_at: gallery.session_date || gallery.created_at,
         photo_count: gallery.photo_count || 0,
         cover_image_url: gallery.cover_image_url,
         photographer_name: photographer?.name || 'Your Photographer',

@@ -31,11 +31,11 @@ const nextConfig: NextConfig = {
     const cspDirectives = [
       "default-src 'self'",
       // Next.js requires unsafe-inline for hydration scripts; dev needs unsafe-eval for HMR
-      `script-src 'self' 'unsafe-inline' https://js.stripe.com${isDev ? " 'unsafe-eval'" : ''}`,
+      `script-src 'self' 'unsafe-inline' https://js.stripe.com https://us-assets.i.posthog.com${isDev ? " 'unsafe-eval'" : ''}`,
       "style-src 'self' 'unsafe-inline' https://unpkg.com",
       "img-src 'self' https://images.unsplash.com https://*.supabase.co https://tile.openstreetmap.org https://via.placeholder.com data: blob:",
       "font-src 'self'",
-      `connect-src 'self' https://api.stripe.com https://*.supabase.co https://app.posthog.com https://us.i.posthog.com${isDev ? ' ws://localhost:* http://localhost:*' : ''}`,
+      `connect-src 'self' https://api.stripe.com https://*.supabase.co wss://*.supabase.co https://app.posthog.com https://us.i.posthog.com https://us-assets.i.posthog.com${isDev ? ' ws://localhost:* http://localhost:*' : ''}`,
       "frame-src 'self' https://js.stripe.com https://hooks.stripe.com",
       "frame-ancestors 'none'",
       "base-uri 'self'",

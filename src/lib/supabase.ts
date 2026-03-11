@@ -9,31 +9,39 @@
  */
 
 import { createClient } from '@supabase/supabase-js'
+import { createBrowserClient } from '@supabase/ssr'
 
 // Re-export createClient for use in other files
 export { createClient }
 
-function requireEnv(name: string): string {
+// Lazy env access — this file may be imported client-side for types,
+// so we must not throw at module scope for server-only vars.
+function getEnv(name: string): string {
   const value = process.env[name]
   if (!value) throw new Error(`${name} environment variable is required`)
   return value
 }
 
-const supabaseUrl = requireEnv('NEXT_PUBLIC_SUPABASE_URL')
-const supabaseAnonKey = requireEnv('NEXT_PUBLIC_SUPABASE_ANON_KEY')
-const serviceRoleKey = requireEnv('SUPABASE_SERVICE_ROLE_KEY')
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
 
 /**
- * DEPRECATED: Server-side client with service role - bypasses RLS!
- * For new code, use createServerSupabaseClient from '@/lib/supabase-server' instead.
- * This uses service role key which bypasses Row Level Security.
+ * DEPRECATED: Use createServerSupabaseClient from '@/lib/supabase-server' for server-side,
+ * or supabaseBrowser from '@/lib/supabase-browser' for client-side.
+ *
+ * This export is used by many legacy components. On the server it uses the service role key
+ * (bypasses RLS). In the browser it uses createBrowserClient which handles cookies/sessions
+ * and respects RLS.
  */
-export const supabase = createClient(supabaseUrl, serviceRoleKey, {
-  auth: {
-    autoRefreshToken: false,
-    persistSession: false
-  }
-})
+const isBrowser = typeof window !== 'undefined'
+export const supabase = isBrowser
+  ? createBrowserClient(supabaseUrl, supabaseAnonKey)
+  : createClient(supabaseUrl, getEnv('SUPABASE_SERVICE_ROLE_KEY'), {
+      auth: {
+        autoRefreshToken: false,
+        persistSession: false,
+      }
+    })
 
 /**
  * DEPRECATED: Use createServerSupabaseClient from '@/lib/supabase-server' instead.
@@ -41,15 +49,7 @@ export const supabase = createClient(supabaseUrl, serviceRoleKey, {
  * This bypasses RLS - use with caution!
  */
 export function createServerSupabaseClient() {
-  if (!serviceRoleKey) {
-    throw new Error('SUPABASE_SERVICE_ROLE_KEY is required for server-side operations')
-  }
-
-  if (!supabaseUrl) {
-    throw new Error('NEXT_PUBLIC_SUPABASE_URL is required for server-side operations')
-  }
-
-  return createClient(supabaseUrl, serviceRoleKey, {
+  return createClient(getEnv('NEXT_PUBLIC_SUPABASE_URL'), getEnv('SUPABASE_SERVICE_ROLE_KEY'), {
     auth: {
       autoRefreshToken: false,
       persistSession: false

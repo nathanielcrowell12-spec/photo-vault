@@ -45,7 +45,7 @@ export default function DownloadDesktopAppPage() {
               </div>
             </div>
             <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
-              Windows Ready
+              Windows, Mac &amp; Linux
             </Badge>
           </div>
         </div>
@@ -77,11 +77,12 @@ export default function DownloadDesktopAppPage() {
                 <HardDrive className="h-12 w-12 text-green-400" />
               </div>
               <h1 className="text-4xl md:text-5xl font-semibold mb-4 text-foreground tracking-tight">
-                No More Zip Files. Ever.
+                Upload Entire Galleries in Minutes
               </h1>
               <p className="text-lg text-muted-foreground max-w-3xl mx-auto leading-relaxed font-light mb-8">
-                Remember when your photographer sent you a 4GB zip file? Remember trying to open it on your phone?
-                We fixed that. PhotoVault delivers photos directly to your camera roll. One tap. Full resolution.
+                Drop a zip file or select hundreds of photos — the desktop app handles the rest.
+                Resumable uploads, background processing, and no browser timeouts.
+                Your clients get a beautiful gallery without ever touching a zip file.
               </p>
               
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -118,7 +119,7 @@ export default function DownloadDesktopAppPage() {
                     <CheckCircle className="h-5 w-5 text-green-400 mt-0.5 flex-shrink-0" />
                     <div>
                       <h4 className="font-semibold text-foreground">No More &quot;I can&apos;t open the zip file&quot;</h4>
-                      <p className="text-sm text-muted-foreground">Photos go straight to your client&apos;s camera roll. Zero tech support calls.</p>
+                      <p className="text-sm text-muted-foreground">You upload once. Your client gets a gallery link — no downloads, no extraction, no tech support.</p>
                     </div>
                   </div>
                   <div className="flex items-start space-x-3">
@@ -131,15 +132,15 @@ export default function DownloadDesktopAppPage() {
                   <div className="flex items-start space-x-3">
                     <CheckCircle className="h-5 w-5 text-green-400 mt-0.5 flex-shrink-0" />
                     <div>
-                      <h4 className="font-semibold text-foreground">Memory Insurance for Clients</h4>
-                      <p className="text-sm text-muted-foreground">Their photos protected from hard drive crashes forever</p>
+                      <h4 className="font-semibold text-foreground">Zip Files or Individual Photos</h4>
+                      <p className="text-sm text-muted-foreground">Drop a zip archive or select individual files — the app extracts and uploads everything automatically.</p>
                     </div>
                   </div>
                   <div className="flex items-start space-x-3">
                     <CheckCircle className="h-5 w-5 text-green-400 mt-0.5 flex-shrink-0" />
                     <div>
-                      <h4 className="font-semibold text-foreground">Earn $4/Month Per Client</h4>
-                      <p className="text-sm text-muted-foreground">Passive income while you protect their memories</p>
+                      <h4 className="font-semibold text-foreground">Picks Up Where It Left Off</h4>
+                      <p className="text-sm text-muted-foreground">Connection dropped? Laptop went to sleep? The upload resumes automatically — no lost progress.</p>
                     </div>
                   </div>
                 </div>
@@ -158,7 +159,7 @@ export default function DownloadDesktopAppPage() {
                 <div className="space-y-3">
                   <div className="flex items-center space-x-3">
                     <Monitor className="h-5 w-5 text-blue-400" />
-                    <span className="font-medium text-muted-foreground">Windows 10 or later</span>
+                    <span className="font-medium text-muted-foreground">Windows 10+, macOS 11+, or Linux</span>
                   </div>
                   <div className="flex items-center space-x-3">
                     <HardDrive className="h-5 w-5 text-purple-400" />
@@ -283,7 +284,7 @@ export default function DownloadDesktopAppPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid md:grid-cols-2 gap-6">
+              <div className="max-w-md">
                 <div className="flex items-start space-x-4">
                   <div className="w-12 h-12 bg-green-400/10 rounded-full flex items-center justify-center flex-shrink-0">
                     <Smartphone className="h-6 w-6 text-green-400" />
@@ -295,20 +296,6 @@ export default function DownloadDesktopAppPage() {
                     </p>
                     <Button variant="outline" size="sm" asChild className="border-border text-muted-foreground hover:bg-muted">
                       <Link href="/client/upload">Try Web Upload</Link>
-                    </Button>
-                  </div>
-                </div>
-                <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 bg-blue-400/10 rounded-full flex items-center justify-center flex-shrink-0">
-                    <Monitor className="h-6 w-6 text-blue-400" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold mb-2 text-foreground">Import from Platforms</h4>
-                    <p className="text-sm text-muted-foreground mb-3">
-                      Connect your existing photo galleries from other photography platforms.
-                    </p>
-                    <Button variant="outline" size="sm" asChild className="border-border text-muted-foreground hover:bg-muted">
-                      <Link href="/client/upload">Upload Photos</Link>
                     </Button>
                   </div>
                 </div>
