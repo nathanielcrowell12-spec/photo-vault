@@ -64,6 +64,14 @@ export async function handlePaymentSucceeded(
 
   if (error) throw error
 
+  // Update user_profiles.last_payment_date for admin dashboard visibility
+  if (previousState?.user_id) {
+    await supabase
+      .from('user_profiles')
+      .update({ last_payment_date: new Date().toISOString() })
+      .eq('id', previousState.user_id)
+  }
+
   // If access was suspended, send restoration email (non-blocking)
   if (wasAccessSuspended && previousState?.user_id) {
     logger.info(`[Webhook] Access restored for subscription ${subscriptionId}`)
