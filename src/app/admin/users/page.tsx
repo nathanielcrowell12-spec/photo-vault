@@ -31,9 +31,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { 
-  Shield, 
-  Users, 
+import {
+  Shield,
+  Users,
   Search,
   Edit,
   Ban,
@@ -42,6 +42,7 @@ import {
   Camera,
   Heart,
   AlertTriangle,
+  Trash2,
 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import AccessGuard from '@/components/AccessGuard'
@@ -74,6 +75,8 @@ export default function UserProfilesPage() {
   const [suspendDialogOpen, setSuspendDialogOpen] = useState(false)
   const [suspensionReason, setSuspensionReason] = useState('')
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [deletingUser, setDeletingUser] = useState(false)
 
   useEffect(() => {
     if (!loading && !user) {
@@ -211,6 +214,31 @@ export default function UserProfilesPage() {
     } catch (error) {
       console.error('Error unsuspending user:', error)
       alert('Failed to unsuspend user')
+    }
+  }
+
+  const deleteUser = async (userId: string) => {
+    try {
+      setDeletingUser(true)
+      const response = await fetch(`/api/admin/users/${userId}`, {
+        method: 'DELETE',
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to delete user')
+      }
+
+      alert('User deleted successfully')
+      fetchUsers()
+      setDeleteDialogOpen(false)
+      setSelectedUser(null)
+    } catch (error) {
+      console.error('Error deleting user:', error)
+      alert(error instanceof Error ? error.message : 'Failed to delete user')
+    } finally {
+      setDeletingUser(false)
     }
   }
 
@@ -519,6 +547,20 @@ export default function UserProfilesPage() {
                                     Suspend
                                   </Button>
                                 )}
+                                {userProfile.user_type !== 'admin' && (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => {
+                                      setSelectedUser(userProfile)
+                                      setDeleteDialogOpen(true)
+                                    }}
+                                    className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                                  >
+                                    <Trash2 className="h-4 w-4 mr-1" />
+                                    Delete
+                                  </Button>
+                                )}
                               </div>
                             </TableCell>
                           </TableRow>
@@ -581,6 +623,38 @@ export default function UserProfilesPage() {
             <DialogFooter>
               <Button variant="outline" onClick={() => setEditDialogOpen(false)}>
                 Cancel
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Delete User Dialog */}
+        <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Delete User</DialogTitle>
+              <DialogDescription>
+                Permanently delete {selectedUser?.email}? This cannot be undone.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-800">
+              This will remove the user account, profile, and all associated data.
+              Users with active subscriptions cannot be deleted.
+            </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  if (selectedUser) {
+                    deleteUser(selectedUser.id)
+                  }
+                }}
+                disabled={deletingUser}
+              >
+                {deletingUser ? 'Deleting...' : 'Delete User'}
               </Button>
             </DialogFooter>
           </DialogContent>

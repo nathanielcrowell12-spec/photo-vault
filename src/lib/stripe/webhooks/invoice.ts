@@ -64,11 +64,15 @@ export async function handlePaymentSucceeded(
 
   if (error) throw error
 
-  // Update user_profiles.last_payment_date for admin dashboard visibility
+  // Sync user_profiles: payment active + last payment date
   if (previousState?.user_id) {
     await supabase
       .from('user_profiles')
-      .update({ last_payment_date: new Date().toISOString() })
+      .update({
+        payment_status: 'active',
+        last_payment_date: new Date().toISOString(),
+        suspension_reason: null,
+      })
       .eq('id', previousState.user_id)
   }
 
@@ -361,6 +365,22 @@ export async function handlePaymentFailed(
     .eq('stripe_subscription_id', subscriptionId)
 
   if (error) throw error
+
+  // Sync user_profiles.payment_status based on subscription state
+  const { data: subUser } = await supabase
+    .from('subscriptions')
+    .select('user_id')
+    .eq('stripe_subscription_id', subscriptionId)
+    .single()
+
+  if (subUser?.user_id) {
+    await supabase
+      .from('user_profiles')
+      .update({
+        payment_status: shouldSuspend ? 'suspended' : 'grace_period',
+      })
+      .eq('id', subUser.user_id)
+  }
 
   // Record failed payment in history
   // Note: paid_at left null for failed payments — UI must handle this
