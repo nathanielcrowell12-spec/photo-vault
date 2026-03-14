@@ -47,7 +47,7 @@ interface Subscription {
   cancel_at_period_end: boolean
   gallery_id: string
   gallery_name?: string
-  photographer_name?: string
+  photographer_name?: string | null
   // Grace period tracking
   last_payment_failure_at?: string
   payment_failure_count?: number
@@ -98,7 +98,7 @@ function ClientBillingContent() {
     try {
       setLoading(true)
 
-      // Fetch subscriptions - table may not exist yet if Stripe not configured
+      // Single query with joins — replaces N+1 pattern
       const { data: subData, error: subError } = await supabase
         .from('subscriptions')
         .select(`
@@ -112,7 +112,11 @@ function ClientBillingContent() {
           last_payment_failure_at,
           payment_failure_count,
           access_suspended,
-          access_suspended_at
+          access_suspended_at,
+          photo_galleries (
+            gallery_name,
+            photographer_id
+          )
         `)
         .eq('user_id', user?.id)
         .order('created_at', { ascending: false })
@@ -122,40 +126,60 @@ function ClientBillingContent() {
         console.warn('Subscriptions query issue:', subError.message)
       }
 
-      // Enrich with gallery data
-      const enrichedSubs = await Promise.all(
-        (subData || []).map(async (sub) => {
-          const { data: galleryData } = await supabase
-            .from('photo_galleries')
-            .select('gallery_name, photographer_id')
-            .eq('id', sub.gallery_id)
-            .single()
+      // Collect photographer IDs for batch lookup (from user_profiles, not photographers table)
+      const photographerIds = (subData || [])
+        .map((sub: any) => sub.photo_galleries?.photographer_id)
+        .filter((id: string | null): id is string => !!id)
 
-          let photographerName = 'Unknown'
-          if (galleryData?.photographer_id) {
-            const { data: photoData } = await supabase
-              .from('photographers')
-              .select('business_name')
-              .eq('id', galleryData.photographer_id)
-              .single()
-            photographerName = photoData?.business_name || 'Unknown'
-          }
+      // Single batch query for all photographer names
+      let photographerMap: Record<string, string> = {}
+      if (photographerIds.length > 0) {
+        const { data: profileData } = await supabase
+          .from('user_profiles')
+          .select('id, business_name, full_name')
+          .in('id', photographerIds)
 
-          return {
-            ...sub,
-            gallery_name: galleryData?.gallery_name || 'Unknown Gallery',
-            photographer_name: photographerName
+        if (profileData) {
+          for (const p of profileData) {
+            photographerMap[p.id] = p.business_name || p.full_name || 'Unknown'
           }
-        })
-      )
+        }
+      }
+
+      // Map subscriptions with enriched data
+      const enrichedSubs = (subData || []).map((sub: any) => {
+        const gallery = sub.photo_galleries
+        const isDirectSubscription = !sub.gallery_id
+
+        return {
+          id: sub.id,
+          stripe_subscription_id: sub.stripe_subscription_id,
+          status: sub.status,
+          current_period_start: sub.current_period_start,
+          current_period_end: sub.current_period_end,
+          cancel_at_period_end: sub.cancel_at_period_end,
+          gallery_id: sub.gallery_id,
+          last_payment_failure_at: sub.last_payment_failure_at,
+          payment_failure_count: sub.payment_failure_count,
+          access_suspended: sub.access_suspended,
+          access_suspended_at: sub.access_suspended_at,
+          gallery_name: isDirectSubscription
+            ? 'PhotoVault Monthly'
+            : (gallery?.gallery_name || 'Unknown Gallery'),
+          photographer_name: isDirectSubscription
+            ? null
+            : (photographerMap[gallery?.photographer_id] || 'Unknown'),
+        }
+      })
 
       setSubscriptions(enrichedSubs)
 
-      // Fetch payment history
+      // Fetch payment history — filtered by user_id (defense in depth with RLS)
       const { data: paymentData, error: paymentError } = await supabase
         .from('payment_history')
         .select('id, amount_paid_cents, currency, status, paid_at')
-        .order('paid_at', { ascending: false })
+        .eq('user_id', user?.id)
+        .order('paid_at', { ascending: false, nullsFirst: false })
         .limit(10)
 
       if (!paymentError) {
@@ -163,7 +187,6 @@ function ClientBillingContent() {
       }
     } catch (error) {
       // Silently handle - empty state UI will show
-      // This is expected when subscriptions/payment_history tables don't exist yet
       console.log('[Billing] No billing data available yet')
     } finally {
       setLoading(false)
@@ -502,9 +525,15 @@ function ClientBillingContent() {
                             <h3 className="text-lg font-semibold text-foreground">{sub.gallery_name}</h3>
                             {getStatusBadge(sub.status, sub.cancel_at_period_end)}
                           </div>
-                          <p className="text-sm text-muted-foreground mb-2">
-                            by {sub.photographer_name}
-                          </p>
+                          {sub.photographer_name ? (
+                            <p className="text-sm text-muted-foreground mb-2">
+                              by {sub.photographer_name}
+                            </p>
+                          ) : (
+                            <p className="text-sm text-muted-foreground mb-2">
+                              Direct subscription
+                            </p>
+                          )}
                           <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                             <div className="flex items-center gap-1">
                               <Calendar className="h-4 w-4" />
@@ -518,11 +547,19 @@ function ClientBillingContent() {
                         </div>
 
                         <div className="flex flex-col sm:flex-row gap-2">
-                          {!sub.access_suspended && (
+                          {!sub.access_suspended && sub.gallery_id && (
                             <Button asChild variant="outline" size="sm">
                               <Link href={`/gallery/${sub.gallery_id}`}>
                                 <Camera className="h-4 w-4 mr-2" />
                                 View Gallery
+                              </Link>
+                            </Button>
+                          )}
+                          {!sub.access_suspended && !sub.gallery_id && (
+                            <Button asChild variant="outline" size="sm">
+                              <Link href="/client/dashboard">
+                                <Camera className="h-4 w-4 mr-2" />
+                                Go to Dashboard
                               </Link>
                             </Button>
                           )}
@@ -676,7 +713,7 @@ function ClientBillingContent() {
                               {payment.status === 'succeeded' ? 'Payment Successful' : 'Payment Failed'}
                             </div>
                             <div className="text-sm text-muted-foreground">
-                              {formatDate(payment.paid_at)}
+                              {payment.paid_at ? formatDate(payment.paid_at) : 'Date unavailable'}
                             </div>
                           </div>
                         </div>

@@ -124,6 +124,7 @@ export async function handlePaymentSucceeded(
     .insert({
       stripe_invoice_id: invoice.id,
       stripe_subscription_id: subscriptionId,
+      user_id: previousState?.user_id || null,
       amount_paid_cents: invoice.amount_paid,
       currency: invoice.currency,
       status: 'succeeded',
@@ -354,12 +355,21 @@ export async function handlePaymentFailed(
   if (error) throw error
 
   // Record failed payment in history
+  // Note: paid_at left null for failed payments — UI must handle this
+  const { data: subForHistory } = await supabase
+    .from('subscriptions')
+    .select('user_id')
+    .eq('stripe_subscription_id', subscriptionId)
+    .single()
+
   await supabase.from('payment_history').insert({
     stripe_invoice_id: invoice.id,
     stripe_subscription_id: subscriptionId,
+    user_id: subForHistory?.user_id || null,
     amount_paid_cents: 0,
     currency: invoice.currency,
     status: 'failed',
+    paid_at: now.toISOString(),
     created_at: now.toISOString(),
   })
 

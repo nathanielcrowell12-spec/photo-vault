@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
     const { data: existingSubscription } = await supabase
       .from('subscriptions')
       .select('id, stripe_subscription_id, status')
-      .eq('client_id', user.id)
+      .eq('user_id', user.id)
       .is('gallery_id', null) // Direct subscriptions have no gallery
       .in('status', ['active', 'trialing', 'past_due'])
       .single()
