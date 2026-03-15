@@ -409,6 +409,11 @@ export function Footer({ hideOnPaths = [] }: NavigationProps) {
                   </Link>
                 </li>
                 <li>
+                  <Link href="/blog" className="text-muted-foreground hover:text-primary transition-colors">
+                    Blog
+                  </Link>
+                </li>
+                <li>
                   <Link href="/directory" className="text-muted-foreground hover:text-primary transition-colors">
                     Photo Location Directory
                   </Link>
@@ -497,6 +502,11 @@ export function Footer({ hideOnPaths = [] }: NavigationProps) {
               <li>
                 <Link href="/resources/madison-photography-guide" className="text-muted-foreground hover:text-primary transition-colors">
                   Madison Photography Guide
+                </Link>
+              </li>
+              <li>
+                <Link href="/blog" className="text-muted-foreground hover:text-primary transition-colors">
+                  Blog
                 </Link>
               </li>
             </ul>

@@ -126,6 +126,11 @@ export async function middleware(req: NextRequest) {
     return res
   }
 
+  // Blog pages are public (SEO/GEO/AEO content)
+  if (pathname.startsWith('/blog')) {
+    return res
+  }
+
   // Family invitation acceptance pages are public
   if (pathname.startsWith('/family/accept/')) {
     return res
