@@ -181,6 +181,42 @@ For ANY UI/visual changes (including "fixes"):
 
 ---
 
+## Resolved Decisions (Read Before Asking)
+
+**Read `DECISIONS.md` in this directory** before asking product/architecture questions. It contains pre-answered decisions on pricing, infrastructure, client behavior, and workflow. If the answer is there, do NOT re-ask.
+
+---
+
+## Absolute Paths — Use These Exactly (Added 2026-03-12)
+
+**Root Cause:** Dark factory review found 60% of sessions had tool errors, mostly from wrong paths.
+
+When reading files outside this repo, ALWAYS use full absolute paths. Do NOT guess or use relative paths.
+
+| Resource | Absolute Path |
+|----------|---------------|
+| **Current State** | `C:\Users\natha\Stone-Fence-Brain\VENTURES\PhotoVault\CURRENT_STATE.md` |
+| **Skill Index** | `C:\Users\natha\Stone-Fence-Brain\VENTURES\PhotoVault\claude\SKILL-INDEX.md` |
+| **Skills dir** | `C:\Users\natha\Stone-Fence-Brain\VENTURES\PhotoVault\claude\skills\` |
+| **Experts dir** | `C:\Users\natha\Stone-Fence-Brain\VENTURES\PhotoVault\claude\experts\` |
+| **QA Critic** | `C:\Users\natha\Stone-Fence-Brain\INFRASTRUCTURE\claude-skills\qa-critic-expert.md` |
+| **Infrastructure Skills** | `C:\Users\natha\Stone-Fence-Brain\INFRASTRUCTURE\claude-skills\` |
+| **Marketing Skills Index** | `C:\Users\natha\Stone-Fence-Brain\INFRASTRUCTURE\claude-skills\marketing-skills\MARKETING-SKILLS-INDEX.md` |
+| **Skills Collection Index** | `C:\Users\natha\Stone-Fence-Brain\INFRASTRUCTURE\claude-skills\SKILLS_COLLECTION.md` |
+| **UI/UX Skill** | `C:\Users\natha\Stone-Fence-Brain\DEPARTMENTS\Product\skills\ui-ux-design.md` |
+| **Handoff Skill** | `C:\Users\natha\Stone-Fence-Brain\VENTURES\PhotoVault\claude\skills\handoff-skill.md` |
+| **Hub CWD** | `C:\Users\natha\.cursor\Photo Vault\photovault-hub` |
+| **Desktop CWD** | `C:\Users\natha\.cursor\Photo Vault\photovault-desktop` |
+| **Stripe CLI** | `C:\Users\natha\stripe-cli\stripe.exe` |
+
+**Rules:**
+- If a file read fails, check the path ONCE then ask the user — do NOT search every directory
+- Stone-Fence-Brain is ALWAYS at `C:\Users\natha\Stone-Fence-Brain\` — never anywhere else
+- INFRASTRUCTURE skills use `SKILL.md` (uppercase), NOT `skill.md`
+- Security review skill has sub-files in `references/` and `examples/`, NOT at the root
+
+---
+
 ## Documentation (Read On-Demand)
 
 | Topic | File |
@@ -189,7 +225,8 @@ For ANY UI/visual changes (including "fixes"):
 | Stripe | `STRIPE-SETUP-GUIDE.md` |
 | Deployment | `DEPLOYMENT-CHECKLIST.md` |
 | Commissions | `COMMISSION-SYSTEM-IMPLEMENTATION.md` |
+| Decisions | `DECISIONS.md` |
 
 ---
 
-*~100 lines. Context retrieved on-demand via Stone-Fence-Brain SKILL-INDEX.md*
+*Context retrieved on-demand via Stone-Fence-Brain SKILL-INDEX.md*
