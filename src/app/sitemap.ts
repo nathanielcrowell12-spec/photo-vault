@@ -193,7 +193,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   })) || []
 
   // Blog pages
-  const posts = getAllPosts()
+  const posts = await getAllPosts()
   const blogIndex: MetadataRoute.Sitemap = [
     {
       url: `${baseUrl}/blog`,

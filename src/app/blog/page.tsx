@@ -54,8 +54,10 @@ const blogSchema = {
   },
 }
 
-export default function BlogIndexPage() {
-  const posts = getAllPosts()
+export const revalidate = 60
+
+export default async function BlogIndexPage() {
+  const posts = await getAllPosts()
 
   return (
     <>

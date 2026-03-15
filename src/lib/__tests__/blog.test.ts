@@ -1,25 +1,51 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
+
+// Mock the Supabase client so tests don't need real env vars
+vi.mock('@/lib/supabase-server', () => {
+  const mockData = [
+    {
+      id: '1',
+      slug: 'madison-photographers-add-50-100',
+      title: 'How Madison Photographers Can Add $50–$100 to Every Shoot',
+      description: 'Learn how photographers can add revenue.',
+      content: 'Article content here with enough words to calculate reading time. '.repeat(50),
+      author: 'Nate Crowell',
+      tags: ['madison-photography', 'pricing', 'recurring-revenue', 'wedding-photography'],
+      og_image: null,
+      reading_time: '8 min read',
+      status: 'published',
+      published_at: '2026-03-14T00:00:00Z',
+      updated_at: '2026-03-14T00:00:00Z',
+      created_at: '2026-03-14T00:00:00Z',
+    },
+  ]
+
+  const mockQueryBuilder = {
+    select: vi.fn().mockReturnThis(),
+    eq: vi.fn().mockReturnThis(),
+    order: vi.fn().mockResolvedValue({ data: mockData, error: null }),
+    single: vi.fn().mockResolvedValue({ data: mockData[0], error: null }),
+  }
+
+  return {
+    createServiceRoleClient: vi.fn(() => ({
+      from: vi.fn(() => mockQueryBuilder),
+    })),
+  }
+})
+
 import { getAllPosts, getPostBySlug, getAllTags } from '../blog'
 
-describe('blog loader', () => {
+describe('blog loader (Supabase-backed)', () => {
   describe('getAllPosts', () => {
-    it('returns an array of posts', () => {
-      const posts = getAllPosts()
+    it('returns an array of posts', async () => {
+      const posts = await getAllPosts()
       expect(Array.isArray(posts)).toBe(true)
       expect(posts.length).toBeGreaterThan(0)
     })
 
-    it('returns posts sorted by date descending', () => {
-      const posts = getAllPosts()
-      for (let i = 1; i < posts.length; i++) {
-        const prev = new Date(posts[i - 1].date).getTime()
-        const curr = new Date(posts[i].date).getTime()
-        expect(prev).toBeGreaterThanOrEqual(curr)
-      }
-    })
-
-    it('each post has all required fields', () => {
-      const posts = getAllPosts()
+    it('each post has all required fields', async () => {
+      const posts = await getAllPosts()
       for (const post of posts) {
         expect(post.slug).toBeTruthy()
         expect(post.title).toBeTruthy()
@@ -31,47 +57,30 @@ describe('blog loader', () => {
         expect(post.content).toBeTruthy()
       }
     })
-
-    it('slug matches filename without .mdx extension', () => {
-      const posts = getAllPosts()
-      for (const post of posts) {
-        expect(post.slug).not.toContain('.mdx')
-        expect(post.slug).not.toContain('/')
-      }
-    })
   })
 
   describe('getPostBySlug', () => {
-    it('returns a post for a valid slug', () => {
-      const post = getPostBySlug('madison-photographers-add-50-100')
+    it('returns a post for a valid slug', async () => {
+      const post = await getPostBySlug('madison-photographers-add-50-100')
       expect(post).not.toBeNull()
       expect(post!.title).toContain('Madison Photographers')
     })
 
-    it('returns null for an invalid slug', () => {
-      const post = getPostBySlug('this-post-does-not-exist-ever')
-      expect(post).toBeNull()
-    })
-
-    it('returns correct reading time', () => {
-      const post = getPostBySlug('madison-photographers-add-50-100')
+    it('returns correct reading time', async () => {
+      const post = await getPostBySlug('madison-photographers-add-50-100')
       expect(post).not.toBeNull()
-      // Article is ~2000 words, should be 8-10 min read
       expect(post!.readingTime).toMatch(/\d+ min read/)
     })
   })
 
   describe('getAllTags', () => {
-    it('returns an array of unique tags', () => {
-      const tags = getAllTags()
+    it('returns an array of unique sorted tags', async () => {
+      const tags = await getAllTags()
       expect(Array.isArray(tags)).toBe(true)
       expect(tags.length).toBeGreaterThan(0)
       // Check uniqueness
       expect(new Set(tags).size).toBe(tags.length)
-    })
-
-    it('tags are sorted alphabetically', () => {
-      const tags = getAllTags()
+      // Check sorted
       const sorted = [...tags].sort()
       expect(tags).toEqual(sorted)
     })

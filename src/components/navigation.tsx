@@ -85,6 +85,7 @@ export function Navigation({ hideOnPaths = [] }: NavigationProps) {
     { href: '/admin/image-effects', icon: Wand2, label: 'Image Effects' },
     { href: '/admin/image-upload', icon: ImageIcon, label: 'Image Upload' },
     { href: '/admin/photo-upload', icon: Upload, label: 'Photo Upload' },
+    { href: '/admin/blog', icon: FileText, label: 'Blog' },
     { href: '/admin/database', icon: Shield, label: 'Database' },
     { href: '/admin/security', icon: Shield, label: 'Security' }
   ]
