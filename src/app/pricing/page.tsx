@@ -209,7 +209,7 @@ export default function PricingPage() {
 
                 <Button asChild className="w-full">
                   <Link href="/photographers/signup">
-                    Join the Beta &mdash; Free for 12 Months
+                    Start Your Free Beta
                   </Link>
                 </Button>
               </CardContent>
@@ -348,7 +348,7 @@ export default function PricingPage() {
             <Button asChild size="lg">
               <Link href="/photographers/signup">
                 <Camera className="mr-2 h-5 w-5" />
-                Join the Beta Free
+                Start Your Free Beta
               </Link>
             </Button>
             <Button asChild variant="outline" size="lg">

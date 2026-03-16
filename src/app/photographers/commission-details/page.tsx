@@ -553,7 +553,7 @@ export default function CommissionDetailsPage() {
                     <Button asChild size="lg" className="bg-green-600 hover:bg-green-700">
                       <Link href="/photographers/signup">
                         <DollarSign className="h-5 w-5 mr-2" />
-                        Become a Guardian
+                        Start Your Free Beta
                       </Link>
                     </Button>
                   </div>
@@ -566,14 +566,14 @@ export default function CommissionDetailsPage() {
           <Card className="bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 border-2 border-green-200 dark:border-green-800">
             <CardContent className="pt-8 pb-8">
               <div className="text-center">
-                <h2 className="text-2xl font-bold mb-4">Ready to Become a Guardian?</h2>
+                <h2 className="text-2xl font-bold mb-4">Ready to Start Earning?</h2>
                 <p className="text-muted-foreground dark:text-muted-foreground mb-6 max-w-2xl mx-auto">
-                  You're not just delivering photos—you're protecting irreplaceable memories while building passive income. That's what being a Guardian means.
+                  Every past client is potential passive income. The platform is free during beta — no risk, no commitment.
                 </p>
                 <div className="flex justify-center">
                   <Button asChild size="lg" className="bg-green-600 hover:bg-green-700">
                     <Link href="/photographers/signup">
-                      Start Protecting Memories
+                      Start Your Free Beta
                     </Link>
                   </Button>
                 </div>

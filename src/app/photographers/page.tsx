@@ -495,7 +495,7 @@ export default function PhotographersPage() {
             </p>
             <Button asChild size="lg" className="btn-primary px-10 py-6">
               <Link href="/photographers/signup">
-                Join the Beta Free
+                Start Your Free Beta
                 <Camera className="ml-2 h-5 w-5" />
               </Link>
             </Button>

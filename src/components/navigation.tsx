@@ -466,7 +466,7 @@ export function Footer({ hideOnPaths = [] }: NavigationProps) {
               </li>
               <li>
                 <Link href="/photographers/signup" className="text-muted-foreground hover:text-primary transition-colors">
-                  Join the Beta
+                  Start Free Beta
                 </Link>
               </li>
               <li>
