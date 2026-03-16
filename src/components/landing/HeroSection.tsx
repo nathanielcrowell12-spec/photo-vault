@@ -24,7 +24,7 @@ export function HeroSection() {
             <div className="mt-6 sm:mt-8 flex flex-col sm:flex-row items-start gap-3">
               <Button asChild size="lg" className="min-h-[44px] text-base">
                 <Link href="/auth/signup">
-                  Join the Beta &mdash; It&apos;s Free for 12 Months
+                  Start Your Free Beta
                 </Link>
               </Button>
             </div>

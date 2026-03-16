@@ -152,7 +152,7 @@ export default async function BlogPostPage({ params }: Props) {
       '@id': url,
     },
     keywords: post.tags,
-    ...(post.ogImage && { image: post.ogImage }),
+    image: post.ogImage || 'https://www.photovault.photo/images/og-landing.webp',
   }
 
   return (

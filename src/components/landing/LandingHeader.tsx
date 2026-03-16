@@ -61,7 +61,7 @@ export function LandingHeader() {
                 asChild
                 className="hidden md:inline-flex"
               >
-                <Link href="/auth/signup">Join the Beta</Link>
+                <Link href="/auth/signup">Start Free Beta</Link>
               </Button>
 
               <button
@@ -101,7 +101,7 @@ export function LandingHeader() {
                   className="mt-2 min-h-[44px]"
                 >
                   <Link href="/auth/signup" onClick={() => setMobileMenuOpen(false)}>
-                    Join the Beta
+                    Start Free Beta
                   </Link>
                 </Button>
               </nav>

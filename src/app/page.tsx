@@ -50,63 +50,66 @@ export const metadata: Metadata = {
 
 const structuredData = {
   '@context': 'https://schema.org',
-  '@type': ['WebSite', 'Service'],
-  name: 'PhotoVault',
-  url: 'https://www.photovault.photo/',
-  description:
-    'PhotoVault helps professional photographers turn completed work into recurring passive income through client photo storage subscriptions.',
-  serviceType: 'Photography business platform',
-  provider: {
-    '@type': 'Organization',
-    name: 'PhotoVault LLC',
-    address: {
-      '@type': 'PostalAddress',
-      streetAddress: '3639 Old Stage Road',
-      addressLocality: 'Brooklyn',
-      addressRegion: 'WI',
-      postalCode: '53521',
-      addressCountry: 'US',
+  '@graph': [
+    {
+      '@type': 'Organization',
+      '@id': 'https://www.photovault.photo/#organization',
+      name: 'PhotoVault LLC',
+      url: 'https://www.photovault.photo',
+      logo: 'https://www.photovault.photo/images/logos/photovault logo.png',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: '3639 Old Stage Road',
+        addressLocality: 'Brooklyn',
+        addressRegion: 'WI',
+        postalCode: '53521',
+        addressCountry: 'US',
+      },
+      telephone: '+1-608-571-7532',
+      email: 'support@photovault.photo',
+      sameAs: [
+        'https://www.instagram.com/PhotoVault',
+        'https://www.facebook.com/PhotoVault',
+      ],
+      founder: {
+        '@type': 'Person',
+        name: 'Nate Crowell',
+      },
     },
-    telephone: '+1-608-571-7532',
-    email: 'support@photovault.photo',
-  },
-  offers: {
-    '@type': 'Offer',
-    priceCurrency: 'USD',
-    price: '0',
-    priceValidUntil: '2027-02-28',
-    description: 'Beta program: 12 months free ($22/month platform fee waived)',
-  },
-  areaServed: 'United States',
-}
-
-const softwareAppSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'SoftwareApplication',
-  name: 'PhotoVault',
-  applicationCategory: 'BusinessApplication',
-  operatingSystem: 'Web, Windows, macOS',
-  description:
-    'Gallery delivery platform for professional photographers that generates recurring passive income from client photo storage subscriptions.',
-  url: 'https://www.photovault.photo',
-  offers: {
-    '@type': 'Offer',
-    price: '0',
-    priceCurrency: 'USD',
-    description: 'Free for 12 months during beta. Then $22/month.',
-  },
-  provider: {
-    '@type': 'Organization',
-    name: 'PhotoVault LLC',
-  },
-  featureList: [
-    'Gallery delivery with client subscriptions',
-    '50% commission on every client payment',
-    'Stripe Connect direct deposit',
-    'Desktop app for large uploads',
-    'Orphan Protocol — galleries survive photographer cancellation',
-    'Family sharing for clients',
-    'Analytics and revenue tracking',
+    {
+      '@type': 'WebSite',
+      '@id': 'https://www.photovault.photo/#website',
+      name: 'PhotoVault',
+      url: 'https://www.photovault.photo/',
+      publisher: { '@id': 'https://www.photovault.photo/#organization' },
+      description:
+        'PhotoVault helps professional photographers turn completed work into recurring passive income through client photo storage subscriptions.',
+    },
+    {
+      '@type': 'SoftwareApplication',
+      name: 'PhotoVault',
+      applicationCategory: 'BusinessApplication',
+      operatingSystem: 'Web, Windows',
+      description:
+        'Gallery delivery platform for professional photographers that generates recurring passive income from client photo storage subscriptions.',
+      url: 'https://www.photovault.photo',
+      offers: {
+        '@type': 'Offer',
+        price: '0',
+        priceCurrency: 'USD',
+        description: 'Free for 12 months during beta. Then $22/month.',
+        availability: 'https://schema.org/InStock',
+      },
+      provider: { '@id': 'https://www.photovault.photo/#organization' },
+      featureList: [
+        'Gallery delivery with client subscriptions',
+        '50% commission on every client payment',
+        'Stripe Connect direct deposit',
+        'Desktop app for large uploads',
+        'Orphan Protocol — galleries survive photographer cancellation',
+        'Analytics and revenue tracking',
+      ],
+    },
   ],
 }
 
@@ -116,10 +119,6 @@ export default function HomePage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(softwareAppSchema) }}
       />
       <div className="flex flex-col min-h-screen bg-background text-foreground antialiased">
         <LandingHeader />

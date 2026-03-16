@@ -53,55 +53,45 @@ export default function PhotographersLayout({
         dangerouslySetInnerHTML={{
           __html: JSON.stringify({
             "@context": "https://schema.org",
-            "@type": ["SoftwareApplication", "Service"],
-            name: "PhotoVault",
-            url: "https://www.photovault.photo/photographers",
-            description: "PhotoVault helps photographers earn passive income from completed work. Clients pay for photo storage, photographers earn 50% commission.",
-            applicationCategory: "BusinessApplication",
-            operatingSystem: "Web, Windows",
-            areaServed: "United States",
-            serviceType: "Photo delivery and archival platform",
-            offers: {
-              "@type": "Offer",
-              priceCurrency: "USD",
-              price: "22",
-              priceValidUntil: "2027-12-31",
-              url: "https://www.photovault.photo/photographers",
-              description: "Photographer platform subscription",
-            },
-            sameAs: [
-              "https://www.instagram.com/PhotoVault",
-              "https://www.facebook.com/PhotoVault",
+            "@graph": [
+              {
+                "@type": "SoftwareApplication",
+                name: "PhotoVault",
+                url: "https://www.photovault.photo/photographers",
+                description: "Gallery delivery platform for photographers with passive income. Clients pay for storage, photographers earn 50% commission.",
+                applicationCategory: "BusinessApplication",
+                operatingSystem: "Web, Windows",
+                offers: {
+                  "@type": "Offer",
+                  priceCurrency: "USD",
+                  price: "22",
+                  priceValidUntil: "2027-12-31",
+                  url: "https://www.photovault.photo/photographers",
+                  description: "Monthly platform fee. Free during beta.",
+                  availability: "https://schema.org/InStock",
+                },
+                provider: {
+                  "@type": "Organization",
+                  name: "PhotoVault LLC",
+                  url: "https://www.photovault.photo",
+                },
+                featureList: [
+                  "Unlimited gallery uploads",
+                  "50% commission on every client payment",
+                  "Desktop app for large gallery uploads",
+                  "Automated client email sequences",
+                  "Stripe Connect direct deposit",
+                  "Analytics and revenue tracking",
+                ],
+              },
+              {
+                "@type": "BreadcrumbList",
+                itemListElement: [
+                  { "@type": "ListItem", position: 1, name: "Home", item: "https://www.photovault.photo" },
+                  { "@type": "ListItem", position: 2, name: "For Photographers", item: "https://www.photovault.photo/photographers" },
+                ],
+              },
             ],
-            mainEntityOfPage: {
-              "@type": "FAQPage",
-              mainEntity: [
-                {
-                  "@type": "Question",
-                  name: "How does PhotoVault help photographers?",
-                  acceptedAnswer: {
-                    "@type": "Answer",
-                    text: "PhotoVault stores client galleries permanently, automates engagement, and generates referral income.",
-                  },
-                },
-                {
-                  "@type": "Question",
-                  name: "Do I keep ownership of my photos?",
-                  acceptedAnswer: {
-                    "@type": "Answer",
-                    text: "Yes, photographers retain full copyright and control. Clients only access approved galleries.",
-                  },
-                },
-                {
-                  "@type": "Question",
-                  name: "Is there a referral program?",
-                  acceptedAnswer: {
-                    "@type": "Answer",
-                    text: "Yes, photographers earn commission for every client who renews through PhotoVault.",
-                  },
-                },
-              ],
-            },
           }),
         }}
       />

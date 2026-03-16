@@ -74,7 +74,7 @@ const plans: PricingPlan[] = [
     ],
     commission: '$50 upfront + $4/month per client',
     isPhotoVault: true,
-    cta: 'Become a Guardian',
+    cta: 'Start Free Beta',
     ctaLink: '/photographers/signup'
   }
 ]

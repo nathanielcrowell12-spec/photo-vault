@@ -64,7 +64,7 @@ export function PricingSection() {
 
             <Button asChild className="mt-6 w-full min-h-[44px]">
               <Link href="/auth/signup">
-                Join the Beta &mdash; Free for 12 Months
+                Start Your Free Beta
               </Link>
             </Button>
           </div>
