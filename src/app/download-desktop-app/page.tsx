@@ -20,9 +20,7 @@ import Image from 'next/image'
 
 export default function DownloadDesktopAppPage() {
   const handleDownload = () => {
-    // In production, this would download the actual installer
-    // For now, we'll show a message
-    alert('Desktop app installer will be available soon! The installer is currently being built.')
+    window.open('https://github.com/nathanielcrowell12-spec/Photovault-Uploader/releases/latest/download/PhotoVault.Desktop.Setup.1.0.3.exe', '_blank')
   }
 
   return (

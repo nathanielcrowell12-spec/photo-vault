@@ -15,7 +15,7 @@ import {
 
 /**
  * Map database gallery status to Helm API status
- * Database: draft, ready, live, archived
+ * Database: draft, ready, proofing, proofing_complete, payment_pending, delivered, archived
  * Helm API: draft, published, archived
  */
 function mapGalleryStatus(dbStatus: string): GalleryStatus {
@@ -23,7 +23,10 @@ function mapGalleryStatus(dbStatus: string): GalleryStatus {
     case 'draft':
       return 'draft'
     case 'ready':
-    case 'live':
+    case 'proofing':
+    case 'proofing_complete':
+    case 'payment_pending':
+    case 'delivered':
       return 'published'
     case 'archived':
       return 'archived'

@@ -2,7 +2,7 @@
 
 import { useAuth } from '@/contexts/AuthContext'
 import { useRouter } from 'next/navigation'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -27,9 +27,11 @@ import {
   Menu,
   X,
   Plus,
-  FolderOpen
+  FolderOpen,
+  Eye
 } from 'lucide-react'
 import Link from 'next/link'
+import { supabaseBrowser as supabase } from '@/lib/supabase-browser'
 import AccessGuard from '@/components/AccessGuard'
 import GalleryGrid from '@/components/GalleryGrid'
 import MessagesButton from '@/components/MessagesButton'
@@ -59,6 +61,7 @@ export default function PhotographerDashboardPage() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [showMessages, setShowMessages] = useState(false)
+  const [proofingAlerts, setProofingAlerts] = useState<{ id: string; gallery_name: string; has_proofing_changes: boolean | null }[]>([])
 
   useEffect(() => {
     if (!loading && !user) {
@@ -85,8 +88,24 @@ export default function PhotographerDashboardPage() {
       }
     }
 
+    const fetchProofingAlerts = async () => {
+      try {
+        const { data } = await supabase
+          .from('photo_galleries')
+          .select('id, gallery_name, has_proofing_changes')
+          .eq('photographer_id', user?.id)
+          .eq('gallery_status', 'proofing_complete')
+          .eq('is_deleted', false)
+
+        setProofingAlerts(data || [])
+      } catch {
+        // Non-critical — dashboard still works without proofing alerts
+      }
+    }
+
     if (user) {
       fetchStats()
+      fetchProofingAlerts()
     }
   }, [user])
 
@@ -441,6 +460,55 @@ export default function PhotographerDashboardPage() {
               </div>
               <p className="text-muted-foreground text-sm">Click the button above to view and respond to client messages.</p>
             </section>
+
+            {/* Proofing Alerts */}
+            {proofingAlerts.length > 0 && (
+              <section className="p-6 lg:p-8 rounded-3xl bg-amber-500/5 border border-amber-500/20 mb-10">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-10 h-10 bg-amber-500/20 rounded-full flex items-center justify-center">
+                    <Eye className="h-5 w-5 text-amber-500" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-medium text-foreground">Proofing Ready for Review</h3>
+                    <p className="text-sm text-muted-foreground">
+                      {proofingAlerts.length} {proofingAlerts.length === 1 ? 'gallery has' : 'galleries have'} client feedback waiting
+                    </p>
+                  </div>
+                </div>
+                <div className="grid gap-3">
+                  {proofingAlerts.map((gallery) => (
+                    <Link
+                      key={gallery.id}
+                      href={`/photographer/galleries/${gallery.id}/proofing-review`}
+                      className={`flex items-center justify-between p-4 rounded-xl bg-card border transition-colors group ${
+                        gallery.has_proofing_changes === false
+                          ? 'border-amber-500/50 hover:border-amber-500'
+                          : 'border-border hover:border-amber-500/30'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        {gallery.has_proofing_changes === false ? (
+                          <Badge className="bg-amber-500/30 text-amber-600 border-amber-500/50">Verify</Badge>
+                        ) : (
+                          <Badge className="bg-amber-500/20 text-amber-500 border-amber-500/30">New</Badge>
+                        )}
+                        <div>
+                          <span className="font-medium text-foreground group-hover:text-amber-500 transition-colors">
+                            {gallery.gallery_name}
+                          </span>
+                          {gallery.has_proofing_changes === false && (
+                            <p className="text-xs text-amber-500 mt-0.5">
+                              Customer made no change requests — verify with customer
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                      <span className="text-sm text-muted-foreground">Review selections →</span>
+                    </Link>
+                  ))}
+                </div>
+              </section>
+            )}
 
             {/* Gallery Grid */}
             <section className="p-6 lg:p-8 rounded-3xl bg-card border border-border">

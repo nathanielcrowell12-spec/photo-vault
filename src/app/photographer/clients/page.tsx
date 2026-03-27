@@ -194,7 +194,7 @@ export default function ClientsPage() {
         .from('clients')
         .select('*')
         .eq('email', email.toLowerCase())
-        .single()
+        .maybeSingle()
 
       if (data && data.photographer_id !== user?.id) {
         setExistingClientInfo(data)

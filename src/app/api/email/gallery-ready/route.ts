@@ -42,6 +42,7 @@ export async function POST(request: NextRequest) {
         total_amount,
         photo_count,
         email_sent_at,
+        payment_timing,
         clients (
           id,
           name,
@@ -76,32 +77,39 @@ export async function POST(request: NextRequest) {
 
     // CRITICAL: Check if photographer has Stripe Connect set up
     // Photographers cannot send gallery ready emails until they can receive payments
+    // EXCEPTION: Proofing-first and external galleries don't need Stripe at send time
+    const needsStripeAtSend = !gallery.payment_timing || gallery.payment_timing === 'before_access'
+
     const { data: photographerRecord, error: photographerError } = await supabase
       .from('photographers')
       .select('id, stripe_connect_account_id, stripe_connect_status')
       .eq('id', user.id)
       .single()
 
-    if (photographerError || !photographerRecord) {
-      logger.error('[GalleryReady] Photographer record not found:', photographerError)
-      return NextResponse.json({
-        error: 'Payment setup required',
-        message: 'You must complete your payment setup before sending gallery notifications. Please connect your Stripe account in Settings.',
-        code: 'PHOTOGRAPHER_STRIPE_MISSING'
-      }, { status: 400 })
-    }
+    if (needsStripeAtSend) {
+      if (photographerError || !photographerRecord) {
+        logger.error('[GalleryReady] Photographer record not found:', photographerError)
+        return NextResponse.json({
+          error: 'Payment setup required',
+          message: 'You must complete your payment setup before sending gallery notifications. Please connect your Stripe account in Settings.',
+          code: 'PHOTOGRAPHER_STRIPE_MISSING'
+        }, { status: 400 })
+      }
 
-    if (!photographerRecord.stripe_connect_account_id || photographerRecord.stripe_connect_status !== 'active') {
-      logger.error('[GalleryReady] Photographer missing Stripe Connect:', {
-        photographerId: user.id,
-        hasAccountId: !!photographerRecord.stripe_connect_account_id,
-        status: photographerRecord.stripe_connect_status
-      })
-      return NextResponse.json({
-        error: 'Payment setup required',
-        message: 'You must complete your payment setup before sending gallery notifications. Please connect your Stripe account in Settings.',
-        code: 'PHOTOGRAPHER_STRIPE_MISSING'
-      }, { status: 400 })
+      if (!photographerRecord.stripe_connect_account_id || photographerRecord.stripe_connect_status !== 'active') {
+        logger.error('[GalleryReady] Photographer missing Stripe Connect:', {
+          photographerId: user.id,
+          hasAccountId: !!photographerRecord.stripe_connect_account_id,
+          status: photographerRecord.stripe_connect_status
+        })
+        return NextResponse.json({
+          error: 'Payment setup required',
+          message: 'You must complete your payment setup before sending gallery notifications. Please connect your Stripe account in Settings.',
+          code: 'PHOTOGRAPHER_STRIPE_MISSING'
+        }, { status: 400 })
+      }
+    } else {
+      logger.info('[GalleryReady] Skipping Stripe check — payment_timing:', gallery.payment_timing)
     }
 
     // Handle both array and object formats from Supabase join

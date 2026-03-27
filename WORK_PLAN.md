@@ -2467,8 +2467,36 @@ This is a major competitive feature — Pic-Time has it, Pixieset does not. Adds
 
 # NEXT STORY TO WORK ON
 
-**Current:** 🚀 READY FOR BETA LAUNCH
-**Next:** Start recruiting photographers!
+**Current:** 🏗️ Gallery Creation Wizard & Proofing System
+**Plan:** `docs/claude/plans/gallery-wizard-proofing-epics.md`
+**QA Critique:** `docs/claude/plans/gallery-wizard-proofing-epics-critique.md`
+
+**Implementation Order:**
+```
+1. [x] Story 0 — DB migration (CHECK constraints + wizard columns)
+2. [x] Story 2.1 — Proofing data model & API
+3. [x] Story 1.1 — Wizard shell & presets
+4. [x] Story 2.2 — Client proofing UI
+5. [x] Story 1.2 — External payment bypass (Deliver and Done)
+6. [x] Story 2.3 — Photographer proofing review dashboard
+7. [x] Story 1.3 — Proof First Pay Later flow
+8. [x] Story E.1 — Email templates for proofing lifecycle
+9. [ ] Story A.1 — Admin stuck-gallery override tool ← NEXT (after proofing review UX fix)
+10. [ ] Story 3.1 — AI edits (Phase 2, deferred)
+```
+
+**Integration Test Findings (2026-03-22):**
+- Proofing review page needs UX fix: add "Manage Photos" for photo replacement before "Mark Revisions Complete"
+- Desktop app galleryId passthrough fixed but needs production deploy
+- Multiple access control bugs found and fixed during testing
+- Both DB migrations applied to Supabase
+
+---
+
+# PREVIOUS MILESTONE
+
+**Completed:** 🚀 BETA LAUNCH
+**Status:** Live and recruiting photographers!
 
 **Execution Order to Beta:**
 ```

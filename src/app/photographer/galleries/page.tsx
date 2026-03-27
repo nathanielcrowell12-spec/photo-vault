@@ -304,6 +304,8 @@ export default function GalleriesPage() {
         return <Badge className="bg-yellow-500/20 text-yellow-400 border-yellow-500/30">Pending</Badge>
       case 'failed':
         return <Badge className="bg-red-500/20 text-red-400 border-red-500/30">Failed</Badge>
+      case 'external':
+        return <Badge className="bg-blue-500/20 text-blue-400 border-blue-500/30">External Payment</Badge>
       default:
         return <Badge variant="outline">No Payment</Badge>
     }
@@ -426,8 +428,8 @@ export default function GalleriesPage() {
                           className="text-foreground hover:text-foreground focus:text-foreground cursor-pointer"
                           onClick={() => router.push(`/photographer/galleries/${gallery.id}/upload`)}
                         >
-                          <Upload className="h-4 w-4 mr-2" />
-                          Upload Photos
+                          <ImageIcon className="h-4 w-4 mr-2" />
+                          Manage Photos
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           className="text-foreground hover:text-foreground focus:text-foreground cursor-pointer"
@@ -531,8 +533,8 @@ export default function GalleriesPage() {
                       className="flex-1 bg-amber-500 hover:bg-amber-600 text-black font-medium"
                       onClick={() => router.push(`/photographer/galleries/${gallery.id}/upload`)}
                     >
-                      <Upload className="h-3 w-3 mr-1" />
-                      Upload
+                      <ImageIcon className="h-3 w-3 mr-1" />
+                      Manage Photos
                     </Button>
                   </div>
                 </CardContent>

@@ -85,6 +85,23 @@ import {
   type ClientMorePhotographersData,
 } from './drip-templates'
 import {
+  getProofingInvitationEmailHTML,
+  getProofingInvitationEmailText,
+  getProofingDeadlineReminderEmailHTML,
+  getProofingDeadlineReminderEmailText,
+  getRevisionsCompleteEmailHTML,
+  getRevisionsCompleteEmailText,
+  getProofingAutoClosedEmailHTML,
+  getProofingAutoClosedEmailText,
+  getProofingAutoClosedPhotographerEmailHTML,
+  getProofingAutoClosedPhotographerEmailText,
+  type ProofingInvitationEmailData,
+  type ProofingDeadlineReminderEmailData,
+  type RevisionsCompleteEmailData,
+  type ProofingAutoClosedEmailData,
+  type ProofingAutoClosedPhotographerEmailData,
+} from './proofing-templates'
+import {
   getSecondaryInvitationEmailHTML,
   getSecondaryInvitationEmailText,
   getGracePeriodAlertEmailHTML,
@@ -814,6 +831,115 @@ Update payment method: ${process.env.NEXT_PUBLIC_APP_URL}/billing
       return { success: true }
     } catch (error: any) {
       logger.error('[Email] Drip: Error sending more photographers:', error)
+      return { success: false, error: error.message }
+    }
+  }
+
+  // ============================================================================
+  // PROOFING LIFECYCLE EMAILS (Story E.1)
+  // ============================================================================
+
+  /**
+   * Send proofing invitation email to client
+   * Triggered when gallery enters proofing state
+   */
+  static async sendProofingInvitationEmail(data: ProofingInvitationEmailData): Promise<{ success: boolean; error?: string }> {
+    try {
+      await (await getClient()).emails.send({
+        from: await getFromEmail(),
+        to: data.clientEmail,
+        subject: `📸 ${data.photographerName} wants your feedback on "${data.galleryName}"`,
+        html: getProofingInvitationEmailHTML(data),
+        text: getProofingInvitationEmailText(data),
+      })
+
+      logger.info(`[Email] Proofing invitation sent to ${data.clientEmail}`)
+      return { success: true }
+    } catch (error: any) {
+      logger.error('[Email] Error sending proofing invitation:', error)
+      return { success: false, error: error.message }
+    }
+  }
+
+  /**
+   * Send proofing deadline reminder to client
+   * Triggered by cron or manual check before deadline
+   */
+  static async sendProofingDeadlineReminderEmail(data: ProofingDeadlineReminderEmailData): Promise<{ success: boolean; error?: string }> {
+    try {
+      await (await getClient()).emails.send({
+        from: await getFromEmail(),
+        to: data.clientEmail,
+        subject: `⏰ ${data.daysRemaining} days left to review "${data.galleryName}"`,
+        html: getProofingDeadlineReminderEmailHTML(data),
+        text: getProofingDeadlineReminderEmailText(data),
+      })
+
+      logger.info(`[Email] Proofing deadline reminder sent to ${data.clientEmail}`)
+      return { success: true }
+    } catch (error: any) {
+      logger.error('[Email] Error sending proofing deadline reminder:', error)
+      return { success: false, error: error.message }
+    }
+  }
+
+  /**
+   * Send revisions complete email to client
+   * Triggered when photographer marks revisions complete
+   */
+  static async sendRevisionsCompleteEmail(data: RevisionsCompleteEmailData): Promise<{ success: boolean; error?: string }> {
+    try {
+      const subject = data.paymentRequired
+        ? `✅ Your "${data.galleryName}" edits are ready — complete payment to download`
+        : `✅ Your "${data.galleryName}" photos are edited and ready to download!`
+
+      await (await getClient()).emails.send({
+        from: await getFromEmail(),
+        to: data.clientEmail,
+        subject,
+        html: getRevisionsCompleteEmailHTML(data),
+        text: getRevisionsCompleteEmailText(data),
+      })
+
+      logger.info(`[Email] Revisions complete email sent to ${data.clientEmail}`)
+      return { success: true }
+    } catch (error: any) {
+      logger.error('[Email] Error sending revisions complete email:', error)
+      return { success: false, error: error.message }
+    }
+  }
+
+  /**
+   * Send proofing auto-closed emails to client and photographer
+   * Triggered when proofing deadline expires
+   */
+  static async sendProofingAutoClosedEmails(
+    clientData: ProofingAutoClosedEmailData,
+    photographerData: ProofingAutoClosedPhotographerEmailData
+  ): Promise<{ success: boolean; error?: string }> {
+    try {
+      // Send to client
+      await (await getClient()).emails.send({
+        from: await getFromEmail(),
+        to: clientData.clientEmail,
+        subject: `Proofing closed for "${clientData.galleryName}"`,
+        html: getProofingAutoClosedEmailHTML(clientData),
+        text: getProofingAutoClosedEmailText(clientData),
+      })
+
+      // Send to photographer
+      await (await getClient()).emails.send({
+        from: await getFromEmail(),
+        to: photographerData.photographerEmail,
+        subject: `Proofing deadline reached for "${photographerData.galleryName}"`,
+        html: getProofingAutoClosedPhotographerEmailHTML(photographerData),
+        text: getProofingAutoClosedPhotographerEmailText(photographerData),
+      })
+
+      logger.info(`[Email] Proofing auto-closed emails sent for gallery ${photographerData.galleryId}`)
+      return { success: true }
+    } catch (error: any) {
+      logger.error('[Email] Error sending proofing auto-closed emails:', error)
       return { success: false, error: error.message }
     }
   }

@@ -13,7 +13,14 @@
 export type GalleryStatus = 'draft' | 'published' | 'archived'
 
 // Database gallery status (internal use)
-export type DatabaseGalleryStatus = 'draft' | 'ready' | 'live' | 'archived'
+export type DatabaseGalleryStatus =
+  | 'draft'
+  | 'ready'
+  | 'proofing'
+  | 'proofing_complete'
+  | 'payment_pending'
+  | 'delivered'
+  | 'archived'
 
 // Payment status per Helm API spec
 export type PaymentStatus = 'pending' | 'completed' | 'failed'

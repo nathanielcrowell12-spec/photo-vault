@@ -157,11 +157,13 @@ export default function GalleryGrid({ userId }: GalleryGridProps) {
 
         if (clientIds.length > 0) {
           // Client has photographer relationships - show those galleries plus self-uploaded
+          // Exclude draft galleries — clients should only see galleries the photographer has marked ready
           const result = await supabase
             .from('photo_galleries')
             .select('*')
             .or(`client_id.in.(${clientIds.join(',')}),user_id.eq.${userId}`)
             .eq('is_deleted', false)
+            .neq('gallery_status', 'draft')
             .order('created_at', { ascending: false })
 
           galleriesData = result.data || []

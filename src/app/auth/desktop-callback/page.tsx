@@ -68,11 +68,15 @@ function DesktopAuthCallbackContent() {
             console.log('[Desktop Callback] Could not fetch client_id (may not be a client)')
           }
 
+          // Check if a galleryId was passed in the URL (from upload page redirect)
+          const galleryIdParam = searchParams.get('galleryId')
+          console.log('[Desktop Callback] galleryId from URL:', galleryIdParam)
+
           // Send auth token to desktop app via protocol handler
           // Desktop app handles this in main.ts open-url and second-instance events
-          const protocolUrl = `photovault://auth?token=${encodeURIComponent(session.access_token)}&userId=${encodeURIComponent(session.user.id)}${clientId ? `&clientId=${encodeURIComponent(clientId)}` : ''}`
+          const protocolUrl = `photovault://auth?token=${encodeURIComponent(session.access_token)}&userId=${encodeURIComponent(session.user.id)}${clientId ? `&clientId=${encodeURIComponent(clientId)}` : ''}${galleryIdParam ? `&galleryId=${encodeURIComponent(galleryIdParam)}` : ''}`
 
-          console.log('[Desktop Callback] Redirecting to desktop app...')
+          console.log('[Desktop Callback] Redirecting to desktop app with galleryId:', galleryIdParam)
 
           // Small delay to show success message, then redirect
           setTimeout(() => {

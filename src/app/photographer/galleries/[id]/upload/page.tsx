@@ -353,10 +353,13 @@ export default function GalleryUploadPage({ params }: { params: Promise<{ id: st
                         variant="default"
                         onClick={async () => {
                           // Get current session and pass to desktop app
+                          console.log('[Desktop Launch] Starting...', { galleryId, clientId: gallery?.client_id, userId: user?.id })
                           const { data: { session } } = await supabase.auth.getSession()
+                          console.log('[Desktop Launch] Session:', { hasToken: !!session?.access_token, userId: user?.id, clientId: gallery?.client_id })
                           if (session?.access_token && user?.id && gallery?.client_id) {
                             // Try local API first (for dev testing)
                             try {
+                              console.log('[Desktop Launch] Trying local API with galleryId:', galleryId)
                               const response = await fetch('http://localhost:57123/auth', {
                                 method: 'POST',
                                 headers: {
@@ -371,16 +374,19 @@ export default function GalleryUploadPage({ params }: { params: Promise<{ id: st
                               })
 
                               if (response.ok) {
-                                console.log('Desktop app launched via local API')
+                                console.log('[Desktop Launch] SUCCESS via local API — galleryId:', galleryId)
                                 return
                               }
                             } catch (error) {
-                              console.log('Local API not available, trying protocol handler')
+                              console.log('[Desktop Launch] Local API not available, trying protocol handler')
                             }
 
                             // Fallback to protocol handler (for production)
-                            window.location.href = `photovault://auth?token=${encodeURIComponent(session.access_token)}&userId=${encodeURIComponent(user.id)}&clientId=${encodeURIComponent(gallery.client_id)}&galleryId=${encodeURIComponent(galleryId)}`
+                            const protocolUrl = `photovault://auth?token=${encodeURIComponent(session.access_token)}&userId=${encodeURIComponent(user.id)}&clientId=${encodeURIComponent(gallery.client_id)}&galleryId=${encodeURIComponent(galleryId)}`
+                            console.log('[Desktop Launch] Protocol URL galleryId:', galleryId)
+                            window.location.href = protocolUrl
                           } else {
+                            console.log('[Desktop Launch] FALLBACK — missing session/user/client, galleryId:', galleryId)
                             // Fallback to just opening the app
                             window.location.href = `photovault://upload?galleryId=${encodeURIComponent(galleryId)}`
                           }

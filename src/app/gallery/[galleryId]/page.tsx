@@ -30,6 +30,7 @@ import {
 import { supabaseBrowser as supabase } from '@/lib/supabase-browser'
 import Link from 'next/link'
 import ManualPhotoUpload from '@/components/ManualPhotoUpload'
+import ProofingPanel from '@/components/ProofingPanel'
 // Note: getTransformedImageUrl removed — thumbnails are now pre-generated at upload time
 
 interface Gallery {
@@ -53,6 +54,11 @@ interface Gallery {
   storage_fee?: number
   payment_option_id?: string
   billing_mode?: string
+  // Wizard fields
+  payment_timing?: string
+  proofing_enabled?: boolean
+  proofing_deadline?: string | null
+  gallery_status?: string
   // Joined data for access control
   clients?: { user_id: string } | { user_id: string }[] | null
 }
@@ -243,6 +249,14 @@ export default function GalleryViewerPage() {
 
     // Client - check access
     if (userType === 'client') {
+      // BLOCK: Draft galleries are never visible to clients
+      if (galleryData.gallery_status === 'draft') {
+        console.log('[Gallery] Draft gallery — not visible to clients')
+        setHasAccess(false)
+        setCheckingAccess(false)
+        return
+      }
+
       // FIRST: Check if this is a self-uploaded gallery (no photographer involved)
       // Self-uploaded galleries have photographer_id = NULL and user_id = auth.uid
       // Note: client_id is NULL for self-uploads, ownership is via user_id
@@ -253,15 +267,58 @@ export default function GalleryViewerPage() {
         return
       }
 
-      // SECOND: Check if client owns this gallery via client record but no pricing was set
-      // This handles galleries where photographer assigned to client but didn't set up payment
       // NOTE: client_id is FK to clients.id, we need to check clients.user_id = auth.uid
       const clientData = Array.isArray(galleryData.clients)
         ? galleryData.clients[0]
         : galleryData.clients
 
-      if (clientData?.user_id === user.id && !galleryData.total_amount) {
+      // PROOFING: After-proofing galleries — client can view to proof (check BEFORE no-pricing fallback)
+      if (clientData?.user_id === user.id &&
+          galleryData.payment_timing === 'after_proofing' &&
+          galleryData.proofing_enabled &&
+          (galleryData.gallery_status === 'proofing' || galleryData.gallery_status === 'ready')) {
+        console.log('[Gallery] After-proofing gallery - proofing access')
+
+        // Transition ready → proofing on first client access
+        if (galleryData.gallery_status === 'ready') {
+          console.log('[Gallery] Transitioning gallery from ready → proofing')
+          supabase
+            .from('photo_galleries')
+            .update({ gallery_status: 'proofing' })
+            .eq('id', galleryId)
+            .then(({ error: transitionError }) => {
+              if (transitionError) {
+                console.error('[Gallery] Status transition error:', transitionError)
+              } else {
+                // Send proofing invitation email
+                fetch(`/api/gallery/${galleryId}/proofing/notify`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ type: 'proofing_invitation' }),
+                }).catch(err => console.error('[Gallery] Proofing invitation email error:', err))
+              }
+            })
+        }
+
+        setHasAccess(true)
+        setCheckingAccess(false)
+        return
+      }
+
+      // PROOFING: Classic galleries with proofing enabled (pay first, then proof)
+      // After payment, if proofing_enabled, show proofing panel — handled in render
+
+      // NO PRICING: Gallery assigned to client but no pricing was set — free access
+      if (clientData?.user_id === user.id && !galleryData.total_amount && !galleryData.proofing_enabled) {
         console.log('[Gallery] Gallery assigned to client with no pricing - free access')
+        setHasAccess(true)
+        setCheckingAccess(false)
+        return
+      }
+
+      // EXTERNAL PAYMENT: No paywall — direct access
+      if (clientData?.user_id === user.id && galleryData.payment_timing === 'external') {
+        console.log('[Gallery] External payment gallery - direct access, no paywall')
         setHasAccess(true)
         setCheckingAccess(false)
         return
@@ -417,6 +474,32 @@ export default function GalleryViewerPage() {
       }
     }
   }, [gallery, user, userType, authLoading, checkAccess, paymentStatus, shareTokenParam, shareAccess, validateShareToken])
+
+  // Proofing deadline auto-close: on-read check
+  useEffect(() => {
+    if (!gallery || !gallery.proofing_enabled || !gallery.proofing_deadline) return
+    if (gallery.gallery_status !== 'proofing') return
+
+    const deadline = new Date(gallery.proofing_deadline)
+    if (deadline > new Date()) return // not expired yet
+
+    console.log('[Gallery] Proofing deadline expired, auto-closing')
+    supabase
+      .from('photo_galleries')
+      .update({ gallery_status: 'proofing_complete' })
+      .eq('id', galleryId)
+      .then(({ error }) => {
+        if (!error) {
+          setGallery(prev => prev ? { ...prev, gallery_status: 'proofing_complete' } : prev)
+          // Send auto-closed notification to client + photographer
+          fetch(`/api/gallery/${galleryId}/proofing/notify`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type: 'proofing_auto_closed' }),
+          }).catch(err => console.error('[Gallery] Auto-close email error:', err))
+        }
+      })
+  }, [gallery, galleryId])
 
   // Track gallery view when user has access (once per page load)
   useEffect(() => {
@@ -1089,6 +1172,31 @@ export default function GalleryViewerPage() {
       </header>
 
       <main className="container-pixieset py-8">
+        {/* Proofing Mode — show ProofingPanel instead of regular gallery */}
+        {gallery.proofing_enabled &&
+         (gallery.gallery_status === 'proofing' || gallery.gallery_status === 'ready') &&
+         userType === 'client' &&
+         photos.length > 0 && (
+          <ProofingPanel
+            galleryId={gallery.id}
+            galleryName={gallery.gallery_name}
+            photos={photos.map(p => ({
+              id: p.id,
+              photo_url: p.photo_url,
+              thumbnail_url: p.thumbnail_url,
+              medium_url: p.medium_url,
+              original_filename: p.original_filename,
+            }))}
+            proofingDeadline={gallery.proofing_deadline}
+          />
+        )}
+
+        {/* Regular gallery content — hidden during proofing for clients */}
+        {!(gallery.proofing_enabled &&
+           (gallery.gallery_status === 'proofing' || gallery.gallery_status === 'ready') &&
+           userType === 'client' &&
+           photos.length > 0) && (
+        <>
         {/* Gallery Not Imported Yet */}
         {photos.length === 0 && (
           <div className="space-y-6 mb-6">
@@ -1302,6 +1410,8 @@ export default function GalleryViewerPage() {
               </Button>
             )}
           </div>
+        )}
+        </>
         )}
       </main>
     </div>

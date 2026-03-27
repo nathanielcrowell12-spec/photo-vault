@@ -57,7 +57,7 @@ export async function GET(request: NextRequest) {
       topPhotographers
     ] = await Promise.all([
       countGalleries(supabase, start, end),
-      countGalleriesByStatus(supabase, 'live', start, end),
+      countGalleriesByStatus(supabase, 'delivered', start, end),
       countPhotos(supabase, start, end),
       getTotalRevenue(supabase, start, end),
       countNewClients(supabase, start, end),

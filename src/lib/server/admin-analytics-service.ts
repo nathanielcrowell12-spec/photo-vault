@@ -26,7 +26,7 @@ export type UserGrowthDataPoint = {
 }
 
 export type GalleryStatusBreakdown = {
-  status: string         // "Draft", "Ready", "Live", "Archived"
+  status: string         // "Draft", "Ready", "Proofing", "Proofing_complete", "Payment_pending", "Delivered", "Archived"
   count: number
   percentage: number
 }
@@ -104,7 +104,7 @@ async function fetchGalleryBreakdown(supabase: ReturnType<typeof createServiceRo
   const total = totalGalleries || 0
 
   // Get counts by status - using gallery_status column (not status)
-  const statuses = ['draft', 'ready', 'live', 'archived']
+  const statuses = ['draft', 'ready', 'proofing', 'proofing_complete', 'payment_pending', 'delivered', 'archived']
 
   for (const status of statuses) {
     const { count } = await supabase
