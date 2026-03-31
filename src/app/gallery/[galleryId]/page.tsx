@@ -249,20 +249,20 @@ export default function GalleryViewerPage() {
 
     // Client - check access
     if (userType === 'client') {
-      // BLOCK: Draft galleries are never visible to clients
-      if (galleryData.gallery_status === 'draft') {
-        console.log('[Gallery] Draft gallery — not visible to clients')
-        setHasAccess(false)
+      // FIRST: Check if this is a self-uploaded gallery (no photographer involved)
+      // Self-uploaded galleries have photographer_id = NULL and user_id = auth.uid
+      // Owners always have access regardless of gallery status (including draft)
+      if (!galleryData.photographer_id && galleryData.user_id === user.id) {
+        console.log('[Gallery] Self-uploaded gallery - owner has free access')
+        setHasAccess(true)
         setCheckingAccess(false)
         return
       }
 
-      // FIRST: Check if this is a self-uploaded gallery (no photographer involved)
-      // Self-uploaded galleries have photographer_id = NULL and user_id = auth.uid
-      // Note: client_id is NULL for self-uploads, ownership is via user_id
-      if (!galleryData.photographer_id && galleryData.user_id === user.id) {
-        console.log('[Gallery] Self-uploaded gallery - owner has free access')
-        setHasAccess(true)
+      // BLOCK: Draft galleries are never visible to non-owner clients
+      if (galleryData.gallery_status === 'draft') {
+        console.log('[Gallery] Draft gallery — not visible to clients')
+        setHasAccess(false)
         setCheckingAccess(false)
         return
       }
