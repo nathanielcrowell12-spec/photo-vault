@@ -1,15 +1,16 @@
 'use client'
 
+import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Separator } from '@/components/ui/separator'
-import { 
-  Download, 
-  CheckCircle, 
-  Clock, 
-  HardDrive, 
-  Wifi, 
+import {
+  Download,
+  CheckCircle,
+  Clock,
+  HardDrive,
+  Wifi,
   Shield,
   ArrowLeft,
   Monitor,
@@ -17,10 +18,44 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { detectOS, type DesktopOS } from '@/lib/detect-os'
+
+const RELEASES_BASE = 'https://github.com/nathanielcrowell12-spec/Photovault-Uploader/releases/latest/download'
+
+const DOWNLOADS: Record<Exclude<DesktopOS, 'unknown'>, { label: string; url: string; note: string }> = {
+  windows: {
+    label: 'Download for Windows',
+    url: `${RELEASES_BASE}/PhotoVault-Desktop-win-x64.exe`,
+    note: 'SmartScreen may warn — click "More info" → "Run anyway".',
+  },
+  mac: {
+    label: 'Download for macOS',
+    url: `${RELEASES_BASE}/PhotoVault-Desktop-mac-universal.dmg`,
+    note: 'First launch: right-click the app → Open → Open. (App is not yet notarized.)',
+  },
+  linux: {
+    label: 'Download for Linux (AppImage)',
+    url: `${RELEASES_BASE}/PhotoVault-Desktop-linux-x86_64.AppImage`,
+    note: 'After download: chmod +x the file, then double-click to launch.',
+  },
+}
 
 export default function DownloadDesktopAppPage() {
+  const [os, setOs] = useState<DesktopOS>('unknown')
+  const [showAll, setShowAll] = useState(false)
+
+  useEffect(() => {
+    setOs(detectOS())
+  }, [])
+
+  const primary = os !== 'unknown' ? DOWNLOADS[os] : null
+
   const handleDownload = () => {
-    window.open('https://github.com/nathanielcrowell12-spec/Photovault-Uploader/releases/latest/download/PhotoVault.Desktop.Setup.1.0.3.exe', '_blank')
+    if (primary) {
+      window.open(primary.url, '_blank')
+    } else {
+      setShowAll(true)
+    }
   }
 
   return (
@@ -90,13 +125,54 @@ export default function DownloadDesktopAppPage() {
                   onClick={handleDownload}
                 >
                   <Download className="h-5 w-5 mr-2" />
-                  Download for Windows
+                  {primary ? primary.label : 'Choose your platform'}
                 </Button>
                 <Button variant="outline" size="lg" asChild className="border-border text-muted-foreground hover:bg-muted">
                   <Link href="/client/upload">
                     Try Web Upload Instead
                   </Link>
                 </Button>
+              </div>
+
+              {primary?.note && (
+                <p className="text-sm text-muted-foreground mt-4 max-w-2xl mx-auto">
+                  {primary.note}
+                </p>
+              )}
+
+              <div className="mt-6">
+                <button
+                  type="button"
+                  className="text-sm text-muted-foreground underline hover:text-foreground"
+                  onClick={() => setShowAll((v) => !v)}
+                >
+                  {showAll ? 'Hide other platforms' : 'Show all downloads'}
+                </button>
+                {showAll && (
+                  <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3 mt-4 max-w-3xl mx-auto">
+                    {(Object.keys(DOWNLOADS) as Array<Exclude<DesktopOS, 'unknown'>>).map((key) => {
+                      const item = DOWNLOADS[key]
+                      const isPrimary = key === os
+                      return (
+                        <a
+                          key={key}
+                          href={item.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={`block text-left rounded-md border p-3 hover:bg-muted transition-colors ${
+                            isPrimary ? 'border-amber-500/60' : 'border-border'
+                          }`}
+                        >
+                          <div className="font-medium text-foreground text-sm flex items-center gap-2">
+                            <Download className="h-4 w-4" />
+                            {item.label}
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-1">{item.note}</p>
+                        </a>
+                      )
+                    })}
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>

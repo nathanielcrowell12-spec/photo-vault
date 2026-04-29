@@ -31,6 +31,7 @@ import {
 import Link from 'next/link'
 import PaymentGuard from '@/components/PaymentGuard'
 import { supabaseBrowser as supabase } from '@/lib/supabase-browser'
+import { filterDroppedImages } from './accept-files'
 
 export default function PhotoImportPage() {
   const { user, userType, loading } = useAuth()
@@ -50,6 +51,7 @@ export default function PhotoImportPage() {
   const [uploadProgress, setUploadProgress] = useState(0)
   const [uploadStatus, setUploadStatus] = useState('')
   const [showDesktopAppHelp, setShowDesktopAppHelp] = useState(false)
+  const [isDragging, setIsDragging] = useState(false)
 
   useEffect(() => {
     if (!loading && userType !== 'client' && userType !== null) {
@@ -57,6 +59,22 @@ export default function PhotoImportPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loading, userType])
+
+  // Window-level suppressor: prevents browser from navigating to a dropped
+  // image file if the user misses the dropzone. Only fires for File drags.
+  useEffect(() => {
+    const prevent = (e: DragEvent) => {
+      if (e.dataTransfer?.types?.includes('Files')) {
+        e.preventDefault()
+      }
+    }
+    window.addEventListener('dragover', prevent)
+    window.addEventListener('drop', prevent)
+    return () => {
+      window.removeEventListener('dragover', prevent)
+      window.removeEventListener('drop', prevent)
+    }
+  }, [])
 
   if (loading) {
     return (
@@ -73,11 +91,22 @@ export default function PhotoImportPage() {
     return null
   }
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      setFiles(Array.from(event.target.files))
-    }
+  const acceptFiles = (fileList: FileList | null) => {
+    const images = filterDroppedImages(fileList)
+    if (images.length === 0) return
+    setFiles((prev) => [...prev, ...images])
   }
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    acceptFiles(event.target.files)
+    event.target.value = ''
+  }
+
+  const removeFile = (index: number) => {
+    setFiles((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  const clearFiles = () => setFiles([])
 
   const handleDesktopAppClick = () => {
     // Track if window loses focus (app opened)
@@ -560,13 +589,28 @@ export default function PhotoImportPage() {
                 {/* File Upload */}
                 <div>
                   <Label className="text-muted-foreground mb-2 block">Select Photos *</Label>
-                  <div className="flex justify-center px-6 pt-5 pb-6 border-2 border-border border-dashed rounded-md hover:border-green-500/50 transition-colors">
-                    <div className="space-y-1 text-center">
+                  <div
+                    role="region"
+                    aria-label="Photo drop zone. Drag files here or use the Upload files button to choose files."
+                    onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setIsDragging(true) }}
+                    onDragEnter={(e) => { e.preventDefault(); e.stopPropagation(); setIsDragging(true) }}
+                    onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setIsDragging(false) }}
+                    onDrop={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      setIsDragging(false)
+                      acceptFiles(e.dataTransfer.files)
+                    }}
+                    className={`flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-md transition-colors ${
+                      isDragging ? 'border-green-500 bg-green-500/5' : 'border-border hover:border-green-500/50'
+                    }`}
+                  >
+                    <div className="space-y-1 text-center pointer-events-none">
                       <ImageIcon className="mx-auto h-12 w-12 text-muted-foreground" />
                       <div className="flex text-sm text-muted-foreground">
                         <label
                           htmlFor="file-upload"
-                          className="relative cursor-pointer rounded-md font-medium text-green-400 hover:text-green-300 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-green-500"
+                          className="pointer-events-auto relative cursor-pointer rounded-md font-medium text-green-400 hover:text-green-300 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-green-500"
                         >
                           <span>Upload files</span>
                           <input
@@ -589,12 +633,39 @@ export default function PhotoImportPage() {
                 {/* Selected Files Preview */}
                 {files.length > 0 && (
                   <div className="bg-background border border-border rounded-lg p-4">
-                    <h3 className="text-sm font-medium mb-2 text-foreground">Selected Files ({files.length}):</h3>
+                    <div className="flex items-center justify-between mb-2">
+                      <h3 className="text-sm font-medium text-foreground" aria-live="polite">
+                        Selected Files ({files.length})
+                      </h3>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={clearFiles}
+                        disabled={uploading}
+                      >
+                        Clear all
+                      </Button>
+                    </div>
                     <ul className="space-y-1 max-h-32 overflow-y-auto">
                       {files.map((file, index) => (
-                        <li key={index} className="text-sm text-muted-foreground flex items-center">
-                          <ImageIcon className="h-3 w-3 mr-2" />
-                          {file.name}
+                        <li
+                          key={`${file.name}-${index}`}
+                          className="text-sm text-muted-foreground flex items-center justify-between"
+                        >
+                          <span className="flex items-center min-w-0">
+                            <ImageIcon className="h-3 w-3 mr-2 flex-shrink-0" />
+                            <span className="truncate">{file.name}</span>
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => removeFile(index)}
+                            disabled={uploading}
+                            aria-label={`Remove ${file.name}`}
+                            className="ml-2 p-1 rounded hover:bg-muted flex-shrink-0"
+                          >
+                            <X className="h-3 w-3" />
+                          </button>
                         </li>
                       ))}
                     </ul>
@@ -678,13 +749,13 @@ export default function PhotoImportPage() {
                 </Button>
                 <Button
                   className="flex-1 bg-blue-600 hover:bg-blue-700 text-foreground"
-                  onClick={() => {
-                    window.open('https://github.com/nathanielcrowell12-spec/Photovault-Uploader/releases/latest/download/PhotoVault.Desktop.Setup.1.0.3.exe', '_blank')
-                    setShowDesktopAppHelp(false)
-                  }}
+                  asChild
+                  onClick={() => setShowDesktopAppHelp(false)}
                 >
-                  <Download className="h-4 w-4 mr-2" />
-                  Download App
+                  <Link href="/download-desktop-app">
+                    <Download className="h-4 w-4 mr-2" />
+                    Download App
+                  </Link>
                 </Button>
               </div>
               <p className="text-xs text-muted-foreground text-center">
