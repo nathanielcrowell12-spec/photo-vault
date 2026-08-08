@@ -1,0 +1,301 @@
+{
+  "photovault.photo": {
+    "target": "photovault.photo",
+    "first_seen": "2026-02-05 03:32:47 +00:00",
+    "lost_date": null,
+    "rank": 0,
+    "backlinks": 4,
+    "backlinks_spam_score": 55,
+    "crawled_pages": 0,
+    "info": {
+      "server": null,
+      "cms": null,
+      "platform_type": null,
+      "ip_address": null,
+      "country": null,
+      "is_ip": false,
+      "target_spam_score": 0
+    },
+    "internal_links_count": 0,
+    "external_links_count": 0,
+    "broken_backlinks": 0,
+    "broken_pages": 0,
+    "referring_domains": 4,
+    "referring_domains_nofollow": 3,
+    "referring_main_domains": 4,
+    "referring_main_domains_nofollow": 3,
+    "referring_ips": 4,
+    "referring_subnets": 4,
+    "referring_pages": 4,
+    "referring_pages_nofollow": 3,
+    "referring_links_tld": {
+      "us.com": 1
+    },
+    "referring_links_types": {
+      "anchor": 4
+    },
+    "referring_links_attributes": {
+      "nofollow": 3
+    },
+    "referring_links_platform_types": {
+      "unknown": 4
+    },
+    "referring_links_semantic_locations": {
+      "": 3
+    },
+    "referring_links_countries": {
+      "": 4
+    }
+  },
+  "pixieset.com": {
+    "target": "pixieset.com",
+    "first_seen": "2019-01-15 23:04:19 +00:00",
+    "lost_date": null,
+    "rank": 602,
+    "backlinks": 5243295,
+    "backlinks_spam_score": 22,
+    "crawled_pages": 1034146,
+    "info": {
+      "server": "cloudflare",
+      "cms": null,
+      "platform_type": [
+        "unknown"
+      ],
+      "ip_address": "104.16.185.173",
+      "country": "US",
+      "is_ip": false,
+      "target_spam_score": 9
+    },
+    "internal_links_count": 23231718,
+    "external_links_count": 867763,
+    "broken_backlinks": 192140,
+    "broken_pages": 34900,
+    "referring_domains": 122869,
+    "referring_domains_nofollow": 6986,
+    "referring_main_domains": 85645,
+    "referring_main_domains_nofollow": 6178,
+    "referring_ips": 22588,
+    "referring_subnets": 11930,
+    "referring_pages": 4011696,
+    "referring_pages_nofollow": 94005,
+    "referring_links_tld": {
+      "com": 2335070
+    },
+    "referring_links_types": {
+      "anchor": 3672829
+    },
+    "referring_links_attributes": {
+      "noopener": 1513555
+    },
+    "referring_links_platform_types": {
+      "unknown": 2269727
+    },
+    "referring_links_semantic_locations": {
+      "": 1582566
+    },
+    "referring_links_countries": {
+      "": 2152580
+    }
+  },
+  "pic-time.com": {
+    "target": "pic-time.com",
+    "first_seen": "2019-01-16 11:48:50 +00:00",
+    "lost_date": null,
+    "rank": 503,
+    "backlinks": 702780,
+    "backlinks_spam_score": 8,
+    "crawled_pages": 97781,
+    "info": {
+      "server": "cloudflare",
+      "cms": "wordpress",
+      "platform_type": [
+        "unknown"
+      ],
+      "ip_address": "52.191.249.70",
+      "country": "US",
+      "is_ip": false,
+      "target_spam_score": 39
+    },
+    "internal_links_count": 27064,
+    "external_links_count": 40142,
+    "broken_backlinks": 37,
+    "broken_pages": 141,
+    "referring_domains": 13027,
+    "referring_domains_nofollow": 1189,
+    "referring_main_domains": 12239,
+    "referring_main_domains_nofollow": 1015,
+    "referring_ips": 5154,
+    "referring_subnets": 3210,
+    "referring_pages": 349264,
+    "referring_pages_nofollow": 7638,
+    "referring_links_tld": {
+      "com": 213695
+    },
+    "referring_links_types": {
+      "anchor": 330226
+    },
+    "referring_links_attributes": {
+      "noopener": 32872
+    },
+    "referring_links_platform_types": {
+      "cms": 241500
+    },
+    "referring_links_semantic_locations": {
+      "nav": 181720
+    },
+    "referring_links_countries": {
+      "": 175926
+    }
+  },
+  "lightfolio.com": {
+    "target": "lightfolio.com",
+    "first_seen": "2019-01-22 02:14:58 +00:00",
+    "lost_date": null,
+    "rank": 373,
+    "backlinks": 23210,
+    "backlinks_spam_score": 11,
+    "crawled_pages": 14840,
+    "info": {
+      "server": "Microsoft-IIS/8.5",
+      "cms": null,
+      "platform_type": [
+        "unknown"
+      ],
+      "ip_address": "149.28.37.65",
+      "country": "US",
+      "is_ip": false,
+      "target_spam_score": 4
+    },
+    "internal_links_count": 77530,
+    "external_links_count": 27578,
+    "broken_backlinks": 474,
+    "broken_pages": 2150,
+    "referring_domains": 961,
+    "referring_domains_nofollow": 229,
+    "referring_main_domains": 881,
+    "referring_main_domains_nofollow": 220,
+    "referring_ips": 524,
+    "referring_subnets": 411,
+    "referring_pages": 17027,
+    "referring_pages_nofollow": 2537,
+    "referring_links_tld": {
+      "com": 9410
+    },
+    "referring_links_types": {
+      "anchor": 15530
+    },
+    "referring_links_attributes": {
+      "nofollow": 2536
+    },
+    "referring_links_platform_types": {
+      "cms": 6481
+    },
+    "referring_links_semantic_locations": {
+      "nav": 9413
+    },
+    "referring_links_countries": {
+      "": 5177
+    }
+  },
+  "picdrop.com": {
+    "target": "picdrop.com",
+    "first_seen": "2019-01-16 04:03:11 +00:00",
+    "lost_date": null,
+    "rank": 480,
+    "backlinks": 171280,
+    "backlinks_spam_score": 11,
+    "crawled_pages": 673,
+    "info": {
+      "server": "cloudflare",
+      "cms": "methode",
+      "platform_type": [
+        "cms",
+        "organization"
+      ],
+      "ip_address": "54.230.228.43",
+      "country": "WW",
+      "is_ip": false,
+      "target_spam_score": 0
+    },
+    "internal_links_count": 18265,
+    "external_links_count": 2412,
+    "broken_backlinks": 28,
+    "broken_pages": 21,
+    "referring_domains": 6379,
+    "referring_domains_nofollow": 744,
+    "referring_main_domains": 5698,
+    "referring_main_domains_nofollow": 645,
+    "referring_ips": 3790,
+    "referring_subnets": 2255,
+    "referring_pages": 137943,
+    "referring_pages_nofollow": 24991,
+    "referring_links_tld": {
+      "com": 69238
+    },
+    "referring_links_types": {
+      "anchor": 116451
+    },
+    "referring_links_attributes": {
+      "nofollow": 24971
+    },
+    "referring_links_platform_types": {
+      "cms": 47282
+    },
+    "referring_links_semantic_locations": {
+      "footer": 45175
+    },
+    "referring_links_countries": {
+      "DE": 96658
+    }
+  },
+  "cloudspot.io": {
+    "target": "cloudspot.io",
+    "first_seen": "2019-01-21 01:11:04 +00:00",
+    "lost_date": null,
+    "rank": 368,
+    "backlinks": 18578,
+    "backlinks_spam_score": 5,
+    "crawled_pages": 2161,
+    "info": {
+      "server": "cloudflare",
+      "cms": null,
+      "platform_type": [
+        "organization"
+      ],
+      "ip_address": "104.18.6.190",
+      "country": "IO",
+      "is_ip": false,
+      "target_spam_score": 0
+    },
+    "internal_links_count": 3916,
+    "external_links_count": 6360,
+    "broken_backlinks": 14985,
+    "broken_pages": 1245,
+    "referring_domains": 977,
+    "referring_domains_nofollow": 167,
+    "referring_main_domains": 926,
+    "referring_main_domains_nofollow": 165,
+    "referring_ips": 440,
+    "referring_subnets": 379,
+    "referring_pages": 15646,
+    "referring_pages_nofollow": 553,
+    "referring_links_tld": {
+      "com": 14863
+    },
+    "referring_links_types": {
+      "anchor": 15471
+    },
+    "referring_links_attributes": {
+      "noopener": 985
+    },
+    "referring_links_platform_types": {
+      "organization": 12140
+    },
+    "referring_links_semantic_locations": {
+      "nav": 10190
+    },
+    "referring_links_countries": {
+      "US": 10293
+    }
+  }
+}

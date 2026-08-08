@@ -10,6 +10,9 @@ import type { LocationWithDetails } from '@/types/directory'
 export const metadata: Metadata = {
   title: 'Photo Location Directory | PhotoVault',
   description: 'Discover the best photography locations with insider tips, permit information, and seasonal guides. Find your perfect shoot location.',
+  alternates: {
+    canonical: 'https://www.photovault.photo/directory',
+  },
 }
 
 async function getFeaturedLocations(): Promise<LocationWithDetails[]> {

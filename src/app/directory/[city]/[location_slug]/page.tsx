@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import type { Metadata } from 'next'
 import type { LocationWithDetails } from '@/types/directory'
+import { buildLocationTitle } from '@/lib/directory-seo'
 
 type LocationPageProps = {
   params: Promise<{
@@ -40,18 +41,22 @@ export async function generateMetadata({ params }: LocationPageProps): Promise<M
   const supabase = createServerSupabaseClient()
   const { data: location } = await supabase
     .from('locations')
-    .select('name, city, description')
+    .select('name, city, state, description')
     .eq('slug', location_slug)
     .single()
 
   if (!location) {
-    return { title: 'Location Not Found | PhotoVault Directory' }
+    return { title: 'Location Not Found | PhotoVault' }
   }
 
   const citySlug = location.city.toLowerCase().replace(/ /g, '-')
 
   return {
-    title: `${location.name} - Photography Location in ${location.city} | PhotoVault Directory`,
+    title: buildLocationTitle({
+      name: location.name,
+      city: location.city,
+      state: location.state,
+    }),
     description: location.description || `Photography location guide for ${location.name} in ${location.city}. Get permit info, insider tips, and more.`,
     openGraph: {
       type: 'website',

@@ -18,8 +18,14 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
+  // www is the canonical host (photovault.photo 308s -> www.photovault.photo).
+  // metadataBase lets every page declare relative canonicals/OG URLs safely.
+  metadataBase: new URL("https://www.photovault.photo"),
   title: "Find and Keep Your Photos Forever | PhotoVault",
   description: "PhotoVault helps you find, organize, and save every professional photo ever taken — all in one secure family gallery.",
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     type: "website",
     title: "Find and Keep Every Photo You Love — Forever | PhotoVault",

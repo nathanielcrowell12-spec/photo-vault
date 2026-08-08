@@ -1,0 +1,2195 @@
+[
+  {
+    "name": "labs.ranked_keywords",
+    "endpoint": "dataforseo_labs/google/ranked_keywords/live",
+    "cost": 0.0132,
+    "error": null,
+    "sample": {
+      "se_type": "google",
+      "target": "lightfolio.com",
+      "location_code": 2840,
+      "language_code": "en",
+      "total_count": 1528,
+      "items_count": 10,
+      "metrics": {
+        "organic": {
+          "pos_1": 63,
+          "pos_2_3": 121,
+          "pos_4_10": 282,
+          "pos_11_20": 244,
+          "pos_21_30": 207,
+          "pos_31_40": 192,
+          "pos_41_50": 134,
+          "pos_51_60": 104,
+          "pos_61_70": 61,
+          "pos_71_80": 76,
+          "pos_81_90": 34,
+          "pos_91_100": 10,
+          "etv": 10371.937546467409,
+          "count": 1528,
+          "estimated_paid_traffic_cost": 60748.12786055973,
+          "is_new": 779,
+          "is_up": 410,
+          "is_down": 258,
+          "is_lost": 0,
+          "clickstream_etv": null,
+          "clickstream_gender_distribution": null,
+          "clickstream_age_distribution": null
+        },
+        "paid": {
+          "pos_1": 0,
+          "pos_2_3": 0,
+          "pos_4_10": 0,
+          "pos_11_20": 0,
+          "pos_21_30": 0,
+          "pos_31_40": 0,
+          "pos_41_50": 0,
+          "pos_51_60": 0,
+          "pos_61_70": 0,
+          "pos_71_80": 0,
+          "pos_81_90": 0,
+          "pos_91_100": 0,
+          "etv": 0,
+          "count": 0,
+          "estimated_paid_traffic_cost": 0,
+          "is_new": 0,
+          "is_up": 0,
+          "is_down": 0,
+          "is_lost": 0,
+          "clickstream_etv": null,
+          "clickstream_gender_distribution": null,
+          "clickstream_age_distribution": null
+        },
+        "featured_snippet": null,
+        "local_pack": null,
+        "ai_overview_reference": null
+      },
+      "metrics_absolute": null,
+      "items": [
+        {
+          "se_type": "google",
+          "keyword_data": {
+            "se_type": "google",
+            "keyword": "definition of sports photography",
+            "location_code": 2840,
+            "language_code": "en",
+            "keyword_info": {
+              "se_type": "google",
+              "last_updated_time": "2026-07-11 20:45:11 +00:00",
+              "competition": 0,
+              "competition_level": "LOW",
+              "cpc": null,
+              "search_volume": 140,
+              "low_top_of_page_bid": null,
+              "high_top_of_page_bid": null,
+              "categories": [
+                10108
+              ],
+              "monthly_searches": [
+                {
+                  "year": 2026,
+                  "month": 6,
+                  "search_volume": 10
+                },
+                {
+                  "year": 2026,
+                  "month": 5,
+                  "search_volume": 170
+                },
+                {
+                  "year": 2026,
+                  "month": 4,
+                  "search_volume": 90
+                },
+                {
+                  "year": 2026,
+                  "month": 3,
+                  "search_volume": 110
+                },
+                {
+                  "year": 2026,
+                  "month": 2,
+                  "search_volume": 110
+                },
+                {
+                  "year": 2026,
+                  "month": 1,
+                  "search_volume": 140
+                },
+                {
+                  "year": 2025,
+                  "month": 12,
+                  "search_volume": 70
+                },
+                {
+                  "year": 2025,
+                  "month": 11,
+                  "search_volume": 110
+                },
+                {
+                  "year": 2025,
+                  "month": 10,
+                  "search_volume": 210
+                },
+                {
+                  "year": 2025,
+                  "month": 9,
+                  "search_volume": 390
+                },
+                {
+                  "year": 2025,
+                  "month": 8,
+                  "search_volume": 170
+                },
+                {
+                  "year": 2025,
+                  "month": 7,
+                  "search_volume": 10
+                }
+              ],
+              "search_volume_trend": {
+                "monthly": -94,
+                "quarterly": -89,
+                "yearly": 0
+              }
+            },
+            "keyword_info_normalized_with_bing": null,
+            "keyword_info_normalized_with_clickstream": null,
+            "clickstream_keyword_info": null,
+            "keyword_properties": {
+              "se_type": "google",
+              "core_keyword": "sports photography definition",
+              "synonym_clustering_algorithm": "text_processing",
+              "keyword_difficulty": 0,
+              "detected_language": "en",
+              "is_another_language": false
+            },
+            "serp_info": {
+              "se_type": "google",
+              "check_url": "https://www.google.com/search?q=definition%20of%20sports%20photography&hl=en&gl=US&ie=UTF-8&uule=w+CAIQIFISCQs2MuSEtepUEUK33kOSuTsc",
+              "serp_item_types": [
+                "ai_overview",
+                "people_also_ask",
+                "organic",
+                "related_searches",
+                "images"
+              ],
+              "se_results_count": 131,
+              "last_updated_time": "2026-07-11 17:27:27 +00:00",
+              "previous_updated_time": "2026-05-03 18:00:08 +00:00"
+            },
+            "avg_backlinks_info": {
+              "se_type": "google",
+              "backlinks": 19.899999618530273,
+              "dofollow": 12.5,
+              "referring_pages": 19,
+              "referring_domains": 10.899999618530273,
+              "referring_main_domains": 10.399999618530273,
+              "rank": 59.599998474121094,
+              "main_domain_rank": 448.20001220703125,
+              "last_updated_time": "2026-07-11 17:28:12 +00:00"
+            },
+            "search_intent_info": {
+              "se_type": "google",
+              "main_intent": "informational",
+              "foreign_intent": null,
+              "last_updated_time": "2026-05-06 14:22:49 +00:00"
+            }
+          },
+          "ranked_serp_element": {
+            "se_type": "google",
+            "serp_item": {
+              "se_type": "google",
+              "type": "organic",
+              "rank_group": 1,
+              "rank_absolute": 3,
+              "position": "left",
+              "xpath": "/html[1]/body[1]/div[3]/div[1]/div[12]/div[2]/div[1]/div[2]/div[1]/div[1]/div[4]/div[1]/div[1]",
+              "domain": "www.lightfolio.com",
+              "title": "Sports Photography A Guide for Beginners",
+              "url": "https://www.lightfolio.com/guides/sports-photography",
+              "breadcrumb": "https://www.lightfolio.com › guides › sports-photography",
+              "website_name": "Lightfolio",
+              "is_image": false,
+              "is_video": false,
+              "is_featured_snippet": false,
+              "is_malicious": false,
+              "description": "Sports photography is the visual documentation of athletic activity. This includes game action, sideline emotion, behind-the-scenes storytelling, editorial ... Read more",
+              "pre_snippet": null,
+              "extended_snippet": null,
+              "amp_version": false,
+              "rating": null,
+              "highlighted": [
+                "visual documentation of athletic activity"
+              ],
+              "links": null,
+              "about_this_result": null,
+              "main_domain": "lightfolio.com",
+              "relative_url": "/guides/sports-photography",
+              "etv": 42.560001373291016,
+              "estimated_paid_traffic_cost": null,
+              "clickstream_etv": null,
+              "rank_changes": {
+                "previous_rank_absolute": 5,
+                "is_new": false,
+                "is_up": true,
+                "is_down": false
+              },
+              "backlinks_info": null,
+              "rank_info": {
+                "page_rank": 0,
+                "main_domain_rank": 370
+              }
+            },
+            "check_url": "https://www.google.com/search?q=definition%20of%20sports%20photography&hl=en&gl=US&ie=UTF-8&uule=w+CAIQIFISCQs2MuSEtepUEUK33kOSuTsc",
+            "serp_item_types": [
+              "ai_overview",
+              "people_also_ask",
+              "organic",
+              "related_searches",
+              "images"
+            ],
+            "se_results_count": 131,
+            "keyword_difficulty": 0,
+            "is_lost": false,
+            "last_updated_time": "2026-07-11 17:27:27 +00:00",
+            "previous_updated_time": "2026-05-03 18:00:08 +00:00"
+          }
+        },
+        {
+          "se_type": "google",
+          "keyword_data": {
+            "se_type": "google",
+            "keyword": "f4 photos",
+            "location_code": 2840,
+            "language_code": "en",
+            "keyword_info": {
+              "se_type": "google",
+              "last_updated_time": "2026-07-13 04:04:34 +00:00",
+              "competition": 0.019999999552965164,
+              "competition_level": "LOW",
+              "cpc": null,
+              "search_volume": 30,
+              "low_top_of_page_bid": null,
+              "high_top_of_page_bid": null,
+              "categories": [
+                10015,
+                10132,
+                13596
+              ],
+              "monthly_searches": [
+                {
+                  "year": 2026,
+                  "month": 6,
+                  "search_volume": 30
+                },
+                {
+                  "year": 2026,
+                  "month": 5,
+                  "search_volume": 30
+                },
+                {
+                  "year": 2026,
+                  "month": 4,
+                  "search_volume": 30
+                },
+                {
+                  "year": 2026,
+                  "month": 3,
+                  "search_volume": 30
+                },
+                {
+                  "year": 2026,
+                  "month": 2,
+                  "search_volume": 20
+                },
+                {
+                  "year": 2026,
+                  "month": 1,
+                  "search_volume": 30
+                },
+                {
+                  "year": 2025,
+                  "month": 12,
+                  "search_volume": 20
+                },
+                {
+                  "year": 2025,
+                  "month": 11,
+                  "search_volume": 40
+                },
+                {
+                  "year": 2025,
+                  "month": 10,
+                  "search_volume": 40
+                },
+                {
+                  "year": 2025,
+                  "month": 9,
+                  "search_volume": 30
+                },
+                {
+                  "year": 2025,
+                  "month": 8,
+                  "search_volume": 30
+                },
+                {
+                  "year": 2025,
+                  "month": 7,
+                  "search_volume": 50
+                }
+              ],
+              "search_volume_trend": {
+                "monthly": 0,
+                "quarterly": 0,
+                "yearly": -25
+              }
+            },
+            "keyword_info_normalized_with_bing": null,
+            "keyword_info_normalized_with_clickstream": null,
+            "clickstream_keyword_info": null,
+            "keyword_properties": {
+              "se_type": "google",
+              "core_keyword": null,
+              "synonym_clustering_algorithm": "text_processing",
+              "keyword_difficulty": 0,
+              "detected_language": "uk",
+              "is_another_language": true
+            },
+            "serp_info": {
+              "se_type": "google",
+              "check_url": "https://www.google.com/search?q=f4%20photos&hl=en&gl=US&ie=UTF-8&uule=w+CAIQIFISCQs2MuSEtepUEUK33kOSuTsc",
+              "serp_item_types": [
+                "images",
+                "organic",
+                "video",
+                "people_also_ask",
+                "related_searches"
+              ],
+              "se_results_count": 39900000,
+              "last_updated_time": "2026-05-12 11:14:53 +00:00",
+              "previous_updated_time": "2026-03-27 05:25:25 +00:00"
+            },
+            "avg_backlinks_info": {
+              "se_type": "google",
+              "backlinks": 1.7999999523162842,
+              "dofollow": 1.7000000476837158,
+              "referring_pages": 1.7000000476837158,
+              "referring_domains": 0.8999999761581421,
+              "referring_main_domains": 0.8999999761581421,
+              "rank": 31.200000762939453,
+              "main_domain_rank": 646.9000244140625,
+              "last_updated_time": "2026-05-12 11:14:53 +00:00"
+            },
+            "search_intent_info": {
+              "se_type": "google",
+              "main_intent": "informational",
+              "foreign_intent": [
+                "transactional"
+              ],
+              "last_updated_time": "2026-04-29 07:12:09 +00:00"
+            }
+          },
+          "ranked_serp_element": {
+            "se_type": "google",
+            "serp_item": {
+              "se_type": "google",
+              "type": "organic",
+              "rank_group": 1,
+              "rank_absolute": 2,
+              "position": "left",
+              "xpath": "/html[1]/body[1]/div[3]/div[1]/div[12]/div[2]/div[1]/div[2]/div[1]/div[1]/div[1]/div[1]/div[1]",
+              "domain": "f4photo.lightfolio.com",
+              "title": "F4 Photography",
+              "url": "https://f4photo.lightfolio.com/",
+              "breadcrumb": "https://f4photo.lightfolio.com",
+              "website_name": "F4 Photography",
+              "is_image": true,
+              "is_video": false,
+              "is_featured_snippet": false,
+              "is_malicious": false,
+              "description": "F4 Photography · View Gallery. The great escape. 05/01/2026 · View Gallery. Fast Mr. Wilson. 05/01/2026 · View Gallery. RIP Dave Morales. 04/25/2026 · View ... Read more",
+              "pre_snippet": null,
+              "extended_snippet": null,
+              "amp_version": false,
+              "rating": null,
+              "highlighted": [
+                "F4 Photography"
+              ],
+              "links": null,
+              "about_this_result": null,
+              "main_domain": "lightfolio.com",
+              "relative_url": "/",
+              "etv": 9.119999885559082,
+              "estimated_paid_traffic_cost": null,
+              "clickstream_etv": null,
+              "rank_changes": {
+                "previous_rank_absolute": 8,
+                "is_new": false,
+                "is_up": true,
+                "is_down": false
+              },
+              "backlinks_info": {
+                "referring_domains": 1,
+                "referring_main_domains": 1,
+                "referring_pages": 1,
+                "dofollow": 1,
+                "backlinks": 2,
+                "time_update": "2026-07-21 03:58:43 +00:00"
+              },
+              "rank_info": {
+                "page_rank": 41,
+                "main_domain_rank": 372
+              }
+            },
+            "check_url": "https://www.google.com/search?q=f4%20photos&hl=en&gl=US&ie=UTF-8&uule=w+CAIQIFISCQs2MuSEtepUEUK33kOSuTsc",
+            "serp_item_types": [
+              "images",
+              "organic",
+              "video",
+              "people_also_ask",
+              "related_searches"
+            ],
+            "se_results_count": 39900000,
+            "keyword_difficulty": 0,
+            "is_lost": false,
+            "last_updated_time": "2026-05-12 11:14:53 +00:00",
+            "previous_updated_time": "2026-03-27 05:25:25 +00:00"
+          }
+        },
+        {
+          "se_type": "google",
+          "keyword_data": {
+            "se_type": "google",
+            "keyword": "free photo galleries for photographers",
+            "location_code": 2840,
+            "language_code": "en",
+            "keyword_info": {
+              "se_type": "google",
+              "last_updated_time": "2026-07-11 04:29:45 +00:00",
+              "competition": 0.6299999952316284,
+              "competition_level": "MEDIUM",
+              "cpc": 10.600000381469727,
+              "search_volume": 40,
+              "low_top_of_page_bid": 4.460000038146973,
+              "high_top_of_page_bid": 11.100000381469727,
+              "categories": [
+                10015,
+                10132,
+                13596
+              ],
+              "monthly_searches": [
+                {
+                  "year": 2026,
+                  "month": 6,
+                  "search_volume": 40
+                },
+                {
+                  "year": 2026,
+                  "month": 5,
+                  "search_volume": 90
+                },
+                {
+                  "year": 2026,
+                  "month": 4,
+                  "search_volume": 70
+                },
+                {
+                  "year": 2026,
+                  "month": 3,
+                  "search_volume": 70
+                },
+                {
+                  "year": 2026,
+                  "month": 2,
+                  "search_volume": 30
+                },
+                {
+                  "year": 2026,
+                  "month": 1,
+                  "search_volume": 20
+                },
+                {
+                  "year": 2025,
+                  "month": 12,
+                  "search_volume": 40
+                },
+                {
+                  "year": 2025,
+                  "month": 11,
+                  "search_volume": 40
+                },
+                {
+                  "year": 2025,
+                  "month": 10,
+                  "search_volume": 30
+                },
+                {
+                  "year": 2025,
+                  "month": 9,
+                  "search_volume": 20
+                },
+                {
+                  "year": 2025,
+                  "month": 8,
+                  "search_volume": 10
+                },
+                {
+                  "year": 2025,
+                  "month": 7,
+                  "search_volume": 30
+                }
+              ],
+              "search_volume_trend": {
+                "monthly": -56,
+                "quarterly": -43,
+                "yearly": 33
+              }
+            },
+            "keyword_info_normalized_with_bing": null,
+            "keyword_info_normalized_with_clickstream": null,
+            "clickstream_keyword_info": null,
+            "keyword_properties": {
+              "se_type": "google",
+              "core_keyword": "free photo gallery for photographers",
+              "synonym_clustering_algorithm": "text_processing",
+              "keyword_difficulty": 39,
+              "detected_language": "en",
+              "is_another_language": false
+            },
+            "serp_info": {
+              "se_type": "google",
+              "check_url": "https://www.google.com/search?q=free%20photo%20galleries%20for%20photographers&hl=en&gl=US&ie=UTF-8&uule=w+CAIQIFISCQs2MuSEtepUEUK33kOSuTsc",
+              "serp_item_types": [
+                "organic",
+                "ai_overview",
+                "images",
+                "related_searches"
+              ],
+              "se_results_count": 9520000,
+              "last_updated_time": "2026-05-12 09:32:14 +00:00",
+              "previous_updated_time": "2026-03-08 17:35:50 +00:00"
+            },
+            "avg_backlinks_info": {
+              "se_type": "google",
+              "backlinks": 1793.800048828125,
+              "dofollow": 1225,
+              "referring_pages": 1521.5,
+              "referring_domains": 340.8999938964844,
+              "referring_main_domains": 265.6000061035156,
+              "rank": 228.8000030517578,
+              "main_domain_rank": 539.7999877929688,
+              "last_updated_time": "2026-05-12 09:32:15 +00:00"
+            },
+            "search_intent_info": {
+              "se_type": "google",
+              "main_intent": "informational",
+              "foreign_intent": null,
+              "last_updated_time": "2026-04-29 07:19:53 +00:00"
+            }
+          },
+          "ranked_serp_element": {
+            "se_type": "google",
+            "serp_item": {
+              "se_type": "google",
+              "type": "organic",
+              "rank_group": 1,
+              "rank_absolute": 1,
+              "position": "left",
+              "xpath": "/html[1]/body[1]/div[3]/div[1]/div[12]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[1]/div[1]",
+              "domain": "www.lightfolio.com",
+              "title": "Lightfolio: Client Photo Gallery for Photographers",
+              "url": "https://www.lightfolio.com/",
+              "breadcrumb": "https://www.lightfolio.com",
+              "website_name": "Lightfolio",
+              "is_image": false,
+              "is_video": false,
+              "is_featured_snippet": false,
+              "is_malicious": false,
+              "description": "A client photo gallery platform for modern photographers. Client photo proofing, favorites, downloads and online store. Create your free account.",
+              "pre_snippet": null,
+              "extended_snippet": null,
+              "amp_version": false,
+              "rating": null,
+              "highlighted": [
+                "A client photo gallery platform for modern photographers"
+              ],
+              "links": null,
+              "about_this_result": null,
+              "main_domain": "lightfolio.com",
+              "relative_url": "/",
+              "etv": 12.15999984741211,
+              "estimated_paid_traffic_cost": 128.89599609375,
+              "clickstream_etv": null,
+              "rank_changes": {
+                "previous_rank_absolute": null,
+                "is_new": true,
+                "is_up": false,
+                "is_down": false
+              },
+              "backlinks_info": {
+                "referring_domains": 266,
+                "referring_main_domains": 52,
+                "referring_pages": 4253,
+                "dofollow": 3830,
+                "backlinks": 4276,
+                "time_update": "2026-07-21 04:14:04 +00:00"
+              },
+              "rank_info": {
+                "page_rank": 491,
+                "main_domain_rank": 372
+              }
+            },
+            "check_url": "https://www.google.com/search?q=free%20photo%20galleries%20for%20photographers&hl=en&gl=US&ie=UTF-8&uule=w+CAIQIFISCQs2MuSEtepUEUK33kOSuTsc",
+            "serp_item_types": [
+              "organic",
+              "ai_overview",
+              "images",
+              "related_searches"
+            ],
+            "se_results_count": 9520000,
+            "keyword_difficulty": 39,
+            "is_lost": false,
+            "last_updated_time": "2026-05-12 09:32:14 +00:00",
+            "previous_updated_time": "2026-03-08 17:35:50 +00:00"
+          }
+        },
+        {
+          "se_type": "google",
+          "keyword_data": {
+            "se_type": "google",
+            "keyword": "free photography contract",
+            "location_code": 2840,
+            "language_code": "en",
+            "keyword_info": {
+              "se_type": "google",
+              "last_updated_time": "2026-07-11 01:02:40 +00:00",
+              "competition": 0.75,
+              "competition_level": "HIGH",
+              "cpc": 10.029999732971191,
+              "search_volume": 110,
+              "low_top_of_page_bid": 2.8600001335144043,
+              "high_top_of_page_bid": 12.59000015258789,
+              "categories": [
+                10015,
+                10132,
+                13596
+              ],
+              "monthly_searches": [
+                {
+                  "year": 2026,
+                  "month": 6,
+                  "search_volume": 70
+                },
+                {
+                  "year": 2026,
+                  "month": 5,
+                  "search_volume": 70
+                },
+                {
+                  "year": 2026,
+                  "month": 4,
+                  "search_volume": 90
+                },
+                {
+                  "year": 2026,
+                  "month": 3,
+                  "search_volume": 110
+                },
+                {
+                  "year": 2026,
+                  "month": 2,
+                  "search_volume": 50
+                },
+                {
+                  "year": 2026,
+                  "month": 1,
+                  "search_volume": 90
+                },
+                {
+                  "year": 2025,
+                  "month": 12,
+                  "search_volume": 90
+                },
+                {
+                  "year": 2025,
+                  "month": 11,
+                  "search_volume": 70
+                },
+                {
+                  "year": 2025,
+                  "month": 10,
+                  "search_volume": 110
+                },
+                {
+                  "year": 2025,
+                  "month": 9,
+                  "search_volume": 320
+                },
+                {
+                  "year": 2025,
+                  "month": 8,
+                  "search_volume": 140
+                },
+                {
+                  "year": 2025,
+                  "month": 7,
+                  "search_volume": 110
+                }
+              ],
+              "search_volume_trend": {
+                "monthly": 0,
+                "quarterly": -22,
+                "yearly": -59
+              }
+            },
+            "keyword_info_normalized_with_bing": null,
+            "keyword_info_normalized_with_clickstream": null,
+            "clickstream_keyword_info": null,
+            "keyword_properties": {
+              "se_type": "google",
+              "core_keyword": null,
+              "synonym_clustering_algorithm": "text_processing",
+              "keyword_difficulty": 0,
+              "detected_language": "en",
+              "is_another_language": false
+            },
+            "serp_info": {
+              "se_type": "google",
+              "check_url": "https://www.google.com/search?q=free%20photography%20contract&hl=en&gl=US&ie=UTF-8&uule=w+CAIQIFISCQs2MuSEtepUEUK33kOSuTsc",
+              "serp_item_types": [
+                "organic",
+                "ai_overview",
+                "related_searches",
+                "images"
+              ],
+              "se_results_count": 113,
+              "last_updated_time": "2026-07-13 15:12:40 +00:00",
+              "previous_updated_time": "2026-04-04 15:33:03 +00:00"
+            },
+            "avg_backlinks_info": {
+              "se_type": "google",
+              "backlinks": 253.89999389648438,
+              "dofollow": 4.400000095367432,
+              "referring_pages": 250,
+              "referring_domains": 4.199999809265137,
+              "referring_main_domains": 3.799999952316284,
+              "rank": 34.900001525878906,
+              "main_domain_rank": 568.0999755859375,
+              "last_updated_time": "2026-07-13 15:12:42 +00:00"
+            },
+            "search_intent_info": {
+              "se_type": "google",
+              "main_intent": "commercial",
+              "foreign_intent": [
+                "transactional"
+              ],
+              "last_updated_time": "2026-04-29 13:50:04 +00:00"
+            }
+          },
+          "ranked_serp_element": {
+            "se_type": "google",
+            "serp_item": {
+              "se_type": "google",
+              "type": "organic",
+              "rank_group": 1,
+              "rank_absolute": 1,
+              "position": "left",
+              "xpath": "/html[1]/body[1]/div[3]/div[1]/div[12]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[1]/div[1]",
+              "domain": "www.lightfolio.com",
+              "title": "12 Free Photography Contract Templates",
+              "url": "https://www.lightfolio.com/photography-contracts",
+              "breadcrumb": "https://www.lightfolio.com › photography-contracts",
+              "website_name": "Lightfolio",
+              "is_image": false,
+              "is_video": false,
+              "is_featured_snippet": false,
+              "is_malicious": false,
+              "description": "Lightfolio has over a dozen free contract templates covering wedding photography, second shooters, print releases and more. Read more",
+              "pre_snippet": null,
+              "extended_snippet": null,
+              "amp_version": false,
+              "rating": null,
+              "highlighted": [
+                "Lightfolio has over a dozen free contract templates"
+              ],
+              "links": null,
+              "about_this_result": null,
+              "main_domain": "lightfolio.com",
+              "relative_url": "/photography-contracts",
+              "etv": 33.439998626708984,
+              "estimated_paid_traffic_cost": 335.4031982421875,
+              "clickstream_etv": null,
+              "rank_changes": {
+                "previous_rank_absolute": 3,
+                "is_new": false,
+                "is_up": true,
+                "is_down": false
+              },
+              "backlinks_info": {
+                "referring_domains": 4,
+                "referring_main_domains": 4,
+                "referring_pages": 404,
+                "dofollow": 2,
+                "backlinks": 405,
+                "time_update": "2026-07-21 03:07:51 +00:00"
+              },
+              "rank_info": {
+                "page_rank": 65,
+                "main_domain_rank": 370
+              }
+            },
+            "check_url": "https://www.google.com/search?q=free%20photography%20contract&hl=en&gl=US&ie=UTF-8&uule=w+CAIQIFISCQs2MuSEtepUEUK33kOSuTsc",
+            "serp_item_types": [
+              "organic",
+              "ai_overview",
+              "related_searches",
+              "images"
+            ],
+            "se_results_count": 113,
+            "keyword_difficulty": 0,
+            "is_lost": false,
+            "last_updated_time": "2026-07-13 15:12:40 +00:00",
+            "previous_updated_time": "2026-04-04 15:33:03 +00:00"
+          }
+        },
+        {
+          "se_type": "google",
+          "keyword_data": {
+            "se_type": "google",
+            "keyword": "free photography contracts",
+            "location_code": 2840,
+            "language_code": "en",
+            "keyword_info": {
+              "se_type": "google",
+              "last_updated_time": "2026-07-15 18:49:53 +00:00",
+              "competition": 0.75,
+              "competition_level": "HIGH",
+              "cpc": 10.029999732971191,
+              "search_volume": 110,
+              "low_top_of_page_bid": 2.8600001335144043,
+              "high_top_of_page_bid": 12.59000015258789,
+              "categories": [
+                10015,
+                10132,
+                13596
+              ],
+              "monthly_searches": [
+                {
+                  "year": 2026,
+                  "month": 6,
+                  "search_volume": 70
+                },
+                {
+                  "year": 2026,
+                  "month": 5,
+                  "search_volume": 70
+                },
+                {
+                  "year": 2026,
+                  "month": 4,
+                  "search_volume": 90
+                },
+                {
+                  "year": 2026,
+                  "month": 3,
+                  "search_volume": 110
+                },
+                {
+                  "year": 2026,
+                  "month": 2,
+                  "search_volume": 50
+                },
+                {
+                  "year": 2026,
+                  "month": 1,
+                  "search_volume": 90
+                },
+                {
+                  "year": 2025,
+                  "month": 12,
+                  "search_volume": 90
+                },
+                {
+                  "year": 2025,
+                  "month": 11,
+                  "search_volume": 70
+                },
+                {
+                  "year": 2025,
+                  "month": 10,
+                  "search_volume": 110
+                },
+                {
+                  "year": 2025,
+                  "month": 9,
+                  "search_volume": 320
+                },
+                {
+                  "year": 2025,
+                  "month": 8,
+                  "search_volume": 140
+                },
+                {
+                  "year": 2025,
+                  "month": 7,
+                  "search_volume": 110
+                }
+              ],
+              "search_volume_trend": {
+                "monthly": 0,
+                "quarterly": -22,
+                "yearly": -59
+              }
+            },
+            "keyword_info_normalized_with_bing": null,
+            "keyword_info_normalized_with_clickstream": null,
+            "clickstream_keyword_info": null,
+            "keyword_properties": {
+              "se_type": "google",
+              "core_keyword": "free photography contract",
+              "synonym_clustering_algorithm": "text_processing",
+              "keyword_difficulty": 0,
+              "detected_language": "en",
+              "is_another_language": false
+            },
+            "serp_info": {
+              "se_type": "google",
+              "check_url": "https://www.google.com/search?q=free%20photography%20contracts&hl=en&gl=US&ie=UTF-8&uule=w+CAIQIFISCQs2MuSEtepUEUK33kOSuTsc",
+              "serp_item_types": [
+                "organic",
+                "ai_overview",
+                "images",
+                "related_searches"
+              ],
+              "se_results_count": 120,
+              "last_updated_time": "2026-07-13 15:12:36 +00:00",
+              "previous_updated_time": "2026-04-30 22:21:16 +00:00"
+            },
+            "avg_backlinks_info": {
+              "se_type": "google",
+              "backlinks": 254.5,
+              "dofollow": 5,
+              "referring_pages": 250.60000610351562,
+              "referring_domains": 4.599999904632568,
+              "referring_main_domains": 4.199999809265137,
+              "rank": 46.599998474121094,
+              "main_domain_rank": 575.2999877929688,
+              "last_updated_time": "2026-07-13 15:12:37 +00:00"
+            },
+            "search_intent_info": {
+              "se_type": "google",
+              "main_intent": "commercial",
+              "foreign_intent": null,
+              "last_updated_time": "2026-04-29 08:37:25 +00:00"
+            }
+          },
+          "ranked_serp_element": {
+            "se_type": "google",
+            "serp_item": {
+              "se_type": "google",
+              "type": "organic",
+              "rank_group": 1,
+              "rank_absolute": 1,
+              "position": "left",
+              "xpath": "/html[1]/body[1]/div[3]/div[1]/div[12]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[1]/div[1]",
+              "domain": "www.lightfolio.com",
+              "title": "12 Free Photography Contract Templates",
+              "url": "https://www.lightfolio.com/photography-contracts",
+              "breadcrumb": "https://www.lightfolio.com › photography-contracts",
+              "website_name": "Lightfolio",
+              "is_image": false,
+              "is_video": false,
+              "is_featured_snippet": false,
+              "is_malicious": false,
+              "description": "Lightfolio has over a dozen free contract templates covering wedding photography, second shooters, print releases and more. Read more",
+              "pre_snippet": null,
+              "extended_snippet": null,
+              "amp_version": false,
+              "rating": null,
+              "highlighted": [
+                "Lightfolio has over a dozen free contract templates"
+              ],
+              "links": null,
+              "about_this_result": null,
+              "main_domain": "lightfolio.com",
+              "relative_url": "/photography-contracts",
+              "etv": 33.439998626708984,
+              "estimated_paid_traffic_cost": 335.4031982421875,
+              "clickstream_etv": null,
+              "rank_changes": {
+                "previous_rank_absolute": 1,
+                "is_new": false,
+                "is_up": false,
+                "is_down": false
+              },
+              "backlinks_info": {
+                "referring_domains": 4,
+                "referring_main_domains": 4,
+                "referring_pages": 404,
+                "dofollow": 2,
+                "backlinks": 405,
+                "time_update": "2026-07-21 03:07:51 +00:00"
+              },
+              "rank_info": {
+                "page_rank": 65,
+                "main_domain_rank": 370
+              }
+            },
+            "check_url": "https://www.google.com/search?q=free%20photography%20contracts&hl=en&gl=US&ie=UTF-8&uule=w+CAIQIFISCQs2MuSEtepUEUK33kOSuTsc",
+            "serp_item_types": [
+              "organic",
+              "ai_overview",
+              "images",
+              "related_searches"
+            ],
+            "se_results_count": 120,
+            "keyword_difficulty": 0,
+            "is_lost": false,
+            "last_updated_time": "2026-07-13 15:12:36 +00:00",
+            "previous_updated_time": "2026-04-30 22:21:16 +00:00"
+          }
+        },
+        {
+          "se_type": "google",
+          "keyword_data": {
+            "se_type": "google",
+            "keyword": "free wedding contract template",
+            "location_code": 2840,
+            "language_code": "en",
+            "keyword_info": {
+              "se_type": "google",
+              "last_updated_time": "2026-07-11 00:51:44 +00:00",
+              "competition": 0.6899999976158142,
+              "competition_level": "HIGH",
+              "cpc": 8.100000381469727,
+              "search_volume": 70,
+              "low_top_of_page_bid": 1.25,
+              "high_top_of_page_bid": 8.050000190734863,
+              "categories": [
+                10006,
+                10369,
+                11472,
+                13493
+              ],
+              "monthly_searches": [
+                {
+                  "year": 2026,
+                  "month": 6,
+                  "search_volume": 70
+                },
+                {
+                  "year": 2026,
+                  "month": 5,
+                  "search_volume": 50
+                },
+                {
+                  "year": 2026,
+                  "month": 4,
+                  "search_volume": 70
+                },
+                {
+                  "year": 2026,
+                  "month": 3,
+                  "search_volume": 90
+                },
+                {
+                  "year": 2026,
+                  "month": 2,
+                  "search_volume": 70
+                },
+                {
+                  "year": 2026,
+                  "month": 1,
+                  "search_volume": 140
+                },
+                {
+                  "year": 2025,
+                  "month": 12,
+                  "search_volume": 50
+                },
+                {
+                  "year": 2025,
+                  "month": 11,
+                  "search_volume": 50
+                },
+                {
+                  "year": 2025,
+                  "month": 10,
+                  "search_volume": 90
+                },
+                {
+                  "year": 2025,
+                  "month": 9,
+                  "search_volume": 90
+                },
+                {
+                  "year": 2025,
+                  "month": 8,
+                  "search_volume": 70
+                },
+                {
+                  "year": 2025,
+                  "month": 7,
+                  "search_volume": 50
+                }
+              ],
+              "search_volume_trend": {
+                "monthly": 40,
+                "quarterly": 0,
+                "yearly": 75
+              }
+            },
+            "keyword_info_normalized_with_bing": null,
+            "keyword_info_normalized_with_clickstream": null,
+            "clickstream_keyword_info": null,
+            "keyword_properties": {
+              "se_type": "google",
+              "core_keyword": null,
+              "synonym_clustering_algorithm": "text_processing",
+              "keyword_difficulty": 0,
+              "detected_language": "en",
+              "is_another_language": false
+            },
+            "serp_info": {
+              "se_type": "google",
+              "check_url": "https://www.google.com/search?q=free%20wedding%20contract%20template&hl=en&gl=US&ie=UTF-8&uule=w+CAIQIFISCQs2MuSEtepUEUK33kOSuTsc",
+              "serp_item_types": [
+                "organic",
+                "images",
+                "ai_overview",
+                "related_searches"
+              ],
+              "se_results_count": 58,
+              "last_updated_time": "2026-07-19 22:49:36 +00:00",
+              "previous_updated_time": "2026-04-06 21:56:30 +00:00"
+            },
+            "avg_backlinks_info": {
+              "se_type": "google",
+              "backlinks": 153.10000610351562,
+              "dofollow": 3,
+              "referring_pages": 144.60000610351562,
+              "referring_domains": 2.700000047683716,
+              "referring_main_domains": 2.700000047683716,
+              "rank": 28.399999618530273,
+              "main_domain_rank": 424.5,
+              "last_updated_time": "2026-07-19 22:49:36 +00:00"
+            },
+            "search_intent_info": {
+              "se_type": "google",
+              "main_intent": "informational",
+              "foreign_intent": [
+                "transactional"
+              ],
+              "last_updated_time": "2026-04-27 19:23:25 +00:00"
+            }
+          },
+          "ranked_serp_element": {
+            "se_type": "google",
+            "serp_item": {
+              "se_type": "google",
+              "type": "organic",
+              "rank_group": 1,
+              "rank_absolute": 1,
+              "position": "left",
+              "xpath": "/html[1]/body[1]/div[3]/div[1]/div[12]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[1]/div[1]",
+              "domain": "www.lightfolio.com",
+              "title": "Wedding Photography Contract Template - Lightfolio",
+              "url": "https://www.lightfolio.com/wedding-photography-contract",
+              "breadcrumb": "https://www.lightfolio.com › wedding-photography-co...",
+              "website_name": "Lightfolio",
+              "is_image": true,
+              "is_video": false,
+              "is_featured_snippet": false,
+              "is_malicious": false,
+              "description": "Use this simple, free wedding contract for use with your clients. Includes legal clauses covering payments, scheduling, copyright, photo delivery and more.",
+              "pre_snippet": null,
+              "extended_snippet": null,
+              "amp_version": false,
+              "rating": null,
+              "highlighted": [
+                "Use this simple",
+                "free wedding contract for use with your clients"
+              ],
+              "links": null,
+              "about_this_result": null,
+              "main_domain": "lightfolio.com",
+              "relative_url": "/wedding-photography-contract",
+              "etv": 21.280000686645508,
+              "estimated_paid_traffic_cost": 172.3679962158203,
+              "clickstream_etv": null,
+              "rank_changes": {
+                "previous_rank_absolute": 5,
+                "is_new": false,
+                "is_up": true,
+                "is_down": false
+              },
+              "backlinks_info": {
+                "referring_domains": 4,
+                "referring_main_domains": 4,
+                "referring_pages": 389,
+                "dofollow": 4,
+                "backlinks": 392,
+                "time_update": "2026-07-21 03:19:31 +00:00"
+              },
+              "rank_info": {
+                "page_rank": 40,
+                "main_domain_rank": 370
+              }
+            },
+            "check_url": "https://www.google.com/search?q=free%20wedding%20contract%20template&hl=en&gl=US&ie=UTF-8&uule=w+CAIQIFISCQs2MuSEtepUEUK33kOSuTsc",
+            "serp_item_types": [
+              "organic",
+              "images",
+              "ai_overview",
+              "related_searches"
+            ],
+            "se_results_count": 58,
+            "keyword_difficulty": 0,
+            "is_lost": false,
+            "last_updated_time": "2026-07-19 22:49:36 +00:00",
+            "previous_updated_time": "2026-04-06 21:56:30 +00:00"
+          }
+        },
+        {
+          "se_type": "google",
+          "keyword_data": {
+            "se_type": "google",
+            "keyword": "free wedding contract templates",
+            "location_code": 2840,
+            "language_code": "en",
+            "keyword_info": {
+              "se_type": "google",
+              "last_updated_time": "2026-07-13 23:11:49 +00:00",
+              "competition": 0.6899999976158142,
+              "competition_level": "HIGH",
+              "cpc": 8.100000381469727,
+              "search_volume": 70,
+              "low_top_of_page_bid": 1.25,
+              "high_top_of_page_bid": 8.050000190734863,
+              "categories": [
+                10018,
+                10161,
+                10163,
+                10833
+              ],
+              "monthly_searches": [
+                {
+                  "year": 2026,
+                  "month": 6,
+                  "search_volume": 70
+                },
+                {
+                  "year": 2026,
+                  "month": 5,
+                  "search_volume": 50
+                },
+                {
+                  "year": 2026,
+                  "month": 4,
+                  "search_volume": 70
+                },
+                {
+                  "year": 2026,
+                  "month": 3,
+                  "search_volume": 90
+                },
+                {
+                  "year": 2026,
+                  "month": 2,
+                  "search_volume": 70
+                },
+                {
+                  "year": 2026,
+                  "month": 1,
+                  "search_volume": 140
+                },
+                {
+                  "year": 2025,
+                  "month": 12,
+                  "search_volume": 50
+                },
+                {
+                  "year": 2025,
+                  "month": 11,
+                  "search_volume": 50
+                },
+                {
+                  "year": 2025,
+                  "month": 10,
+                  "search_volume": 90
+                },
+                {
+                  "year": 2025,
+                  "month": 9,
+                  "search_volume": 90
+                },
+                {
+                  "year": 2025,
+                  "month": 8,
+                  "search_volume": 70
+                },
+                {
+                  "year": 2025,
+                  "month": 7,
+                  "search_volume": 50
+                }
+              ],
+              "search_volume_trend": {
+                "monthly": 40,
+                "quarterly": 0,
+                "yearly": 75
+              }
+            },
+            "keyword_info_normalized_with_bing": null,
+            "keyword_info_normalized_with_clickstream": null,
+            "clickstream_keyword_info": null,
+            "keyword_properties": {
+              "se_type": "google",
+              "core_keyword": "free wedding contract template",
+              "synonym_clustering_algorithm": "text_processing",
+              "keyword_difficulty": 0,
+              "detected_language": "en",
+              "is_another_language": false
+            },
+            "serp_info": {
+              "se_type": "google",
+              "check_url": "https://www.google.com/search?q=free%20wedding%20contract%20templates&hl=en&gl=US&ie=UTF-8&uule=w+CAIQIFISCQs2MuSEtepUEUK33kOSuTsc",
+              "serp_item_types": [
+                "organic",
+                "images",
+                "related_searches"
+              ],
+              "se_results_count": 115,
+              "last_updated_time": "2026-05-31 03:46:14 +00:00",
+              "previous_updated_time": null
+            },
+            "avg_backlinks_info": {
+              "se_type": "google",
+              "backlinks": 131.3000030517578,
+              "dofollow": 5.400000095367432,
+              "referring_pages": 126,
+              "referring_domains": 4.699999809265137,
+              "referring_main_domains": 4,
+              "rank": 40.29999923706055,
+              "main_domain_rank": 441.3999938964844,
+              "last_updated_time": "2026-05-31 03:46:56 +00:00"
+            },
+            "search_intent_info": {
+              "se_type": "google",
+              "main_intent": "informational",
+              "foreign_intent": [
+                "transactional",
+                "commercial"
+              ],
+              "last_updated_time": "2026-04-29 07:19:54 +00:00"
+            }
+          },
+          "ranked_serp_element": {
+            "se_type": "google",
+            "serp_item": {
+              "se_type": "google",
+              "type": "organic",
+              "rank_group": 1,
+              "rank_absolute": 1,
+              "position": "left",
+              "xpath": "/html[1]/body[1]/div[3]/div[1]/div[12]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[1]/div[1]",
+              "domain": "www.lightfolio.com",
+              "title": "Wedding Photography Contract (Free Template)",
+              "url": "https://www.lightfolio.com/wedding-photography-contract",
+              "breadcrumb": "https://www.lightfolio.com › wedding-photography-co...",
+              "website_name": "Lightfolio",
+              "is_image": false,
+              "is_video": false,
+              "is_featured_snippet": false,
+              "is_malicious": false,
+              "description": "Free wedding photography contract for use with your clients. Remove any clauses you don't need, update the cover page and send out for signing online.",
+              "pre_snippet": null,
+              "extended_snippet": null,
+              "amp_version": false,
+              "rating": null,
+              "highlighted": [
+                "Free wedding photography contract"
+              ],
+              "links": null,
+              "about_this_result": null,
+              "main_domain": "lightfolio.com",
+              "relative_url": "/wedding-photography-contract",
+              "etv": 21.280000686645508,
+              "estimated_paid_traffic_cost": 172.3679962158203,
+              "clickstream_etv": null,
+              "rank_changes": {
+                "previous_rank_absolute": null,
+                "is_new": true,
+                "is_up": false,
+                "is_down": false
+              },
+              "backlinks_info": {
+                "referring_domains": 4,
+                "referring_main_domains": 4,
+                "referring_pages": 389,
+                "dofollow": 4,
+                "backlinks": 392,
+                "time_update": "2026-07-21 03:19:31 +00:00"
+              },
+              "rank_info": {
+                "page_rank": 46,
+                "main_domain_rank": 372
+              }
+            },
+            "check_url": "https://www.google.com/search?q=free%20wedding%20contract%20templates&hl=en&gl=US&ie=UTF-8&uule=w+CAIQIFISCQs2MuSEtepUEUK33kOSuTsc",
+            "serp_item_types": [
+              "organic",
+              "images",
+              "related_searches"
+            ],
+            "se_results_count": 115,
+            "keyword_difficulty": 0,
+            "is_lost": false,
+            "last_updated_time": "2026-05-31 03:46:14 +00:00",
+            "previous_updated_time": null
+          }
+        },
+        {
+          "se_type": "google",
+          "keyword_data": {
+            "se_type": "google",
+            "keyword": "invoice for photography",
+            "location_code": 2840,
+            "language_code": "en",
+            "keyword_info": {
+              "se_type": "google",
+              "last_updated_time": "2026-07-10 15:18:00 +00:00",
+              "competition": 0.9300000071525574,
+              "competition_level": "HIGH",
+              "cpc": 7.25,
+              "search_volume": 390,
+              "low_top_of_page_bid": 3.549999952316284,
+              "high_top_of_page_bid": 13.579999923706055,
+              "categories": [
+                10015,
+                10132,
+                13596
+              ],
+              "monthly_searches": [
+                {
+                  "year": 2026,
+                  "month": 6,
+                  "search_volume": 320
+                },
+                {
+                  "year": 2026,
+                  "month": 5,
+                  "search_volume": 390
+                },
+                {
+                  "year": 2026,
+                  "month": 4,
+                  "search_volume": 480
+                },
+                {
+                  "year": 2026,
+                  "month": 3,
+                  "search_volume": 480
+                },
+                {
+                  "year": 2026,
+                  "month": 2,
+                  "search_volume": 390
+                },
+                {
+                  "year": 2026,
+                  "month": 1,
+                  "search_volume": 320
+                },
+                {
+                  "year": 2025,
+                  "month": 12,
+                  "search_volume": 320
+                },
+                {
+                  "year": 2025,
+                  "month": 11,
+                  "search_volume": 320
+                },
+                {
+                  "year": 2025,
+                  "month": 10,
+                  "search_volume": 480
+                },
+                {
+                  "year": 2025,
+                  "month": 9,
+                  "search_volume": 590
+                },
+                {
+                  "year": 2025,
+                  "month": 8,
+                  "search_volume": 390
+                },
+                {
+                  "year": 2025,
+                  "month": 7,
+                  "search_volume": 480
+                }
+              ],
+              "search_volume_trend": {
+                "monthly": -18,
+                "quarterly": -33,
+                "yearly": -46
+              }
+            },
+            "keyword_info_normalized_with_bing": null,
+            "keyword_info_normalized_with_clickstream": null,
+            "clickstream_keyword_info": null,
+            "keyword_properties": {
+              "se_type": "google",
+              "core_keyword": "photography invoice",
+              "synonym_clustering_algorithm": "text_processing",
+              "keyword_difficulty": 0,
+              "detected_language": "en",
+              "is_another_language": false
+            },
+            "serp_info": {
+              "se_type": "google",
+              "check_url": "https://www.google.com/search?q=invoice%20for%20photography&hl=en&gl=US&ie=UTF-8&uule=w+CAIQIFISCQs2MuSEtepUEUK33kOSuTsc",
+              "serp_item_types": [
+                "images",
+                "organic",
+                "people_also_search",
+                "people_also_ask",
+                "related_searches"
+              ],
+              "se_results_count": 183,
+              "last_updated_time": "2026-05-22 00:05:23 +00:00",
+              "previous_updated_time": "2026-01-30 03:31:37 +00:00"
+            },
+            "avg_backlinks_info": {
+              "se_type": "google",
+              "backlinks": 0.20000000298023224,
+              "dofollow": 0.20000000298023224,
+              "referring_pages": 0.20000000298023224,
+              "referring_domains": 0.20000000298023224,
+              "referring_main_domains": 0.20000000298023224,
+              "rank": 9.100000381469727,
+              "main_domain_rank": 603.7999877929688,
+              "last_updated_time": "2026-05-22 00:05:24 +00:00"
+            },
+            "search_intent_info": {
+              "se_type": "google",
+              "main_intent": "transactional",
+              "foreign_intent": null,
+              "last_updated_time": "2026-04-29 17:07:49 +00:00"
+            }
+          },
+          "ranked_serp_element": {
+            "se_type": "google",
+            "serp_item": {
+              "se_type": "google",
+              "type": "organic",
+              "rank_group": 1,
+              "rank_absolute": 2,
+              "position": "left",
+              "xpath": "/html[1]/body[1]/div[3]/div[1]/div[12]/div[2]/div[1]/div[2]/div[1]/div[1]/div[2]/div[1]/div[1]",
+              "domain": "www.lightfolio.com",
+              "title": "Photography Invoices (12 Templates)",
+              "url": "https://www.lightfolio.com/photography-invoices",
+              "breadcrumb": "https://www.lightfolio.com › photography-invoices",
+              "website_name": "Lightfolio",
+              "is_image": true,
+              "is_video": false,
+              "is_featured_snippet": false,
+              "is_malicious": false,
+              "description": "Use our photography invoice templates to bill clients. Edit the design, use your logo and collect payments online.",
+              "pre_snippet": null,
+              "extended_snippet": null,
+              "amp_version": false,
+              "rating": null,
+              "highlighted": [
+                "Use our photography invoice templates"
+              ],
+              "links": null,
+              "about_this_result": null,
+              "main_domain": "lightfolio.com",
+              "relative_url": "/photography-invoices",
+              "etv": 118.55999755859375,
+              "estimated_paid_traffic_cost": 859.5599975585938,
+              "clickstream_etv": null,
+              "rank_changes": {
+                "previous_rank_absolute": 3,
+                "is_new": false,
+                "is_up": true,
+                "is_down": false
+              },
+              "backlinks_info": null,
+              "rank_info": {
+                "page_rank": 0,
+                "main_domain_rank": 372
+              }
+            },
+            "check_url": "https://www.google.com/search?q=invoice%20for%20photography&hl=en&gl=US&ie=UTF-8&uule=w+CAIQIFISCQs2MuSEtepUEUK33kOSuTsc",
+            "serp_item_types": [
+              "images",
+              "organic",
+              "people_also_search",
+              "people_also_ask",
+              "related_searches"
+            ],
+            "se_results_count": 183,
+            "keyword_difficulty": 0,
+            "is_lost": false,
+            "last_updated_time": "2026-05-22 00:05:23 +00:00",
+            "previous_updated_time": "2026-01-30 03:31:37 +00:00"
+          }
+        },
+        {
+          "se_type": "google",
+          "keyword_data": {
+            "se_type": "google",
+            "keyword": "invoice for photography services",
+            "location_code": 2840,
+            "language_code": "en",
+            "keyword_info": {
+              "se_type": "google",
+              "last_updated_time": "2026-07-12 14:43:49 +00:00",
+              "competition": 1,
+              "competition_level": "HIGH",
+              "cpc": 8.15999984741211,
+              "search_volume": 40,
+              "low_top_of_page_bid": 4.860000133514404,
+              "high_top_of_page_bid": 23.350000381469727,
+              "categories": [
+                10012,
+                11093,
+                12388
+              ],
+              "monthly_searches": [
+                {
+                  "year": 2026,
+                  "month": 6,
+                  "search_volume": 20
+                },
+                {
+                  "year": 2026,
+                  "month": 5,
+                  "search_volume": 50
+                },
+                {
+                  "year": 2026,
+                  "month": 4,
+                  "search_volume": 40
+                },
+                {
+                  "year": 2026,
+                  "month": 3,
+                  "search_volume": 70
+                },
+                {
+                  "year": 2026,
+                  "month": 2,
+                  "search_volume": 30
+                },
+                {
+                  "year": 2026,
+                  "month": 1,
+                  "search_volume": 30
+                },
+                {
+                  "year": 2025,
+                  "month": 12,
+                  "search_volume": 20
+                },
+                {
+                  "year": 2025,
+                  "month": 11,
+                  "search_volume": 40
+                },
+                {
+                  "year": 2025,
+                  "month": 10,
+                  "search_volume": 40
+                },
+                {
+                  "year": 2025,
+                  "month": 9,
+                  "search_volume": 30
+                },
+                {
+                  "year": 2025,
+                  "month": 8,
+                  "search_volume": 30
+                },
+                {
+                  "year": 2025,
+                  "month": 7,
+                  "search_volume": 30
+                }
+              ],
+              "search_volume_trend": {
+                "monthly": -60,
+                "quarterly": -50,
+                "yearly": -33
+              }
+            },
+            "keyword_info_normalized_with_bing": null,
+            "keyword_info_normalized_with_clickstream": null,
+            "clickstream_keyword_info": null,
+            "keyword_properties": {
+              "se_type": "google",
+              "core_keyword": "photography service invoice",
+              "synonym_clustering_algorithm": "text_processing",
+              "keyword_difficulty": 0,
+              "detected_language": "en",
+              "is_another_language": false
+            },
+            "serp_info": {
+              "se_type": "google",
+              "check_url": "https://www.google.com/search?q=invoice%20for%20photography%20services&hl=en&gl=US&ie=UTF-8&uule=w+CAIQIFISCQs2MuSEtepUEUK33kOSuTsc",
+              "serp_item_types": [
+                "images",
+                "organic",
+                "people_also_ask",
+                "people_also_search",
+                "discussions_and_forums",
+                "related_searches"
+              ],
+              "se_results_count": 189,
+              "last_updated_time": "2026-05-12 02:13:50 +00:00",
+              "previous_updated_time": "2026-03-27 00:28:02 +00:00"
+            },
+            "avg_backlinks_info": {
+              "se_type": "google",
+              "backlinks": 16.200000762939453,
+              "dofollow": 0.4000000059604645,
+              "referring_pages": 15.300000190734863,
+              "referring_domains": 0.699999988079071,
+              "referring_main_domains": 0.699999988079071,
+              "rank": 8.5,
+              "main_domain_rank": 599.7999877929688,
+              "last_updated_time": "2026-05-12 02:13:50 +00:00"
+            },
+            "search_intent_info": {
+              "se_type": "google",
+              "main_intent": "transactional",
+              "foreign_intent": [
+                "commercial"
+              ],
+              "last_updated_time": "2026-04-28 16:19:15 +00:00"
+            }
+          },
+          "ranked_serp_element": {
+            "se_type": "google",
+            "serp_item": {
+              "se_type": "google",
+              "type": "organic",
+              "rank_group": 1,
+              "rank_absolute": 2,
+              "position": "left",
+              "xpath": "/html[1]/body[1]/div[3]/div[1]/div[12]/div[2]/div[1]/div[2]/div[1]/div[1]/div[2]/div[1]/div[1]",
+              "domain": "www.lightfolio.com",
+              "title": "Photography Invoices (12 Templates)",
+              "url": "https://www.lightfolio.com/photography-invoices",
+              "breadcrumb": "https://www.lightfolio.com › photography-invoices",
+              "website_name": "Lightfolio",
+              "is_image": false,
+              "is_video": false,
+              "is_featured_snippet": false,
+              "is_malicious": false,
+              "description": "Use our photography invoice templates to bill clients. Edit the design, use your logo and collect payments online.",
+              "pre_snippet": null,
+              "extended_snippet": null,
+              "amp_version": false,
+              "rating": null,
+              "highlighted": [
+                "Use our photography invoice templates"
+              ],
+              "links": null,
+              "about_this_result": null,
+              "main_domain": "lightfolio.com",
+              "relative_url": "/photography-invoices",
+              "etv": 12.15999984741211,
+              "estimated_paid_traffic_cost": 99.22560119628906,
+              "clickstream_etv": null,
+              "rank_changes": {
+                "previous_rank_absolute": 2,
+                "is_new": false,
+                "is_up": false,
+                "is_down": false
+              },
+              "backlinks_info": null,
+              "rank_info": {
+                "page_rank": 0,
+                "main_domain_rank": 372
+              }
+            },
+            "check_url": "https://www.google.com/search?q=invoice%20for%20photography%20services&hl=en&gl=US&ie=UTF-8&uule=w+CAIQIFISCQs2MuSEtepUEUK33kOSuTsc",
+            "serp_item_types": [
+              "images",
+              "organic",
+              "people_also_ask",
+              "people_also_search",
+              "discussions_and_forums",
+              "related_searches"
+            ],
+            "se_results_count": 189,
+            "keyword_difficulty": 0,
+            "is_lost": false,
+            "last_updated_time": "2026-05-12 02:13:50 +00:00",
+            "previous_updated_time": "2026-03-27 00:28:02 +00:00"
+          }
+        },
+        {
+          "se_type": "google",
+          "keyword_data": {
+            "se_type": "google",
+            "keyword": "lightfolio",
+            "location_code": 2840,
+            "language_code": "en",
+            "keyword_info": {
+              "se_type": "google",
+              "last_updated_time": "2026-07-10 01:53:36 +00:00",
+              "competition": 0.07000000029802322,
+              "competition_level": "LOW",
+              "cpc": 16.18000030517578,
+              "search_volume": 1300,
+              "low_top_of_page_bid": 2.259999990463257,
+              "high_top_of_page_bid": 9.680000305175781,
+              "categories": [
+                10108,
+                11866
+              ],
+              "monthly_searches": [
+                {
+                  "year": 2026,
+                  "month": 6,
+                  "search_volume": 880
+                },
+                {
+                  "year": 2026,
+                  "month": 5,
+                  "search_volume": 1300
+                },
+                {
+                  "year": 2026,
+                  "month": 4,
+                  "search_volume": 1300
+                },
+                {
+                  "year": 2026,
+                  "month": 3,
+                  "search_volume": 1300
+                },
+                {
+                  "year": 2026,
+                  "month": 2,
+                  "search_volume": 1000
+                },
+                {
+                  "year": 2026,
+                  "month": 1,
+                  "search_volume": 1300
+                },
+                {
+                  "year": 2025,
+                  "month": 12,
+                  "search_volume": 1300
+                },
+                {
+                  "year": 2025,
+                  "month": 11,
+                  "search_volume": 1600
+                },
+                {
+                  "year": 2025,
+                  "month": 10,
+                  "search_volume": 1900
+                },
+                {
+                  "year": 2025,
+                  "month": 9,
+                  "search_volume": 1600
+                },
+                {
+                  "year": 2025,
+                  "month": 8,
+                  "search_volume": 1300
+                },
+                {
+                  "year": 2025,
+                  "month": 7,
+                  "search_volume": 1300
+                }
+              ],
+              "search_volume_trend": {
+                "monthly": -32,
+                "quarterly": -32,
+                "yearly": -32
+              }
+            },
+            "keyword_info_normalized_with_bing": null,
+            "keyword_info_normalized_with_clickstream": null,
+            "clickstream_keyword_info": null,
+            "keyword_properties": {
+              "se_type": "google",
+              "core_keyword": null,
+              "synonym_clustering_algorithm": "text_processing",
+              "keyword_difficulty": 13,
+              "detected_language": "en",
+              "is_another_language": false
+            },
+            "serp_info": {
+              "se_type": "google",
+              "check_url": "https://www.google.com/search?q=lightfolio&hl=en&gl=US&ie=UTF-8&uule=w+CAIQIFISCQs2MuSEtepUEUK33kOSuTsc",
+              "serp_item_types": [
+                "organic",
+                "people_also_ask",
+                "related_searches",
+                "google_reviews",
+                "knowledge_graph",
+                "images"
+              ],
+              "se_results_count": 103,
+              "last_updated_time": "2026-05-19 00:00:56 +00:00",
+              "previous_updated_time": "2026-03-15 12:32:25 +00:00"
+            },
+            "avg_backlinks_info": {
+              "se_type": "google",
+              "backlinks": 535.7999877929688,
+              "dofollow": 444.70001220703125,
+              "referring_pages": 514.7000122070312,
+              "referring_domains": 27,
+              "referring_main_domains": 5.5,
+              "rank": 93.4000015258789,
+              "main_domain_rank": 687.4000244140625,
+              "last_updated_time": "2026-05-19 00:03:46 +00:00"
+            },
+            "search_intent_info": {
+              "se_type": "google",
+              "main_intent": "navigational",
+              "foreign_intent": [
+                "informational",
+                "transactional"
+              ],
+              "last_updated_time": "2026-04-29 12:51:41 +00:00"
+            }
+          },
+          "ranked_serp_element": {
+            "se_type": "google",
+            "serp_item": {
+              "se_type": "google",
+              "type": "organic",
+              "rank_group": 1,
+              "rank_absolute": 1,
+              "position": "left",
+              "xpath": "/html[1]/body[1]/div[3]/div[1]/div[12]/div[1]/div[2]/div[2]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[7]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]/div[1]",
+              "domain": "www.lightfolio.com",
+              "title": "Lightfolio: Client Photo Gallery for Photographers",
+              "url": "https://www.lightfolio.com/",
+              "breadcrumb": "https://www.lightfolio.com",
+              "website_name": "Lightfolio",
+              "is_image": false,
+              "is_video": false,
+              "is_featured_snippet": false,
+              "is_malicious": false,
+              "description": "A client photo gallery platform for modern photographers. Client photo proofing, favorites, downloads and online store. Create your free account.",
+              "pre_snippet": null,
+              "extended_snippet": null,
+              "amp_version": false,
+              "rating": null,
+              "highlighted": null,
+              "links": [
+                {
+                  "type": "link_element",
+                  "title": "Login",
+                  "description": null,
+                  "url": "https://www.lightfolio.com/login"
+                },
+                {
+                  "type": "link_element",
+                  "title": "Pricing",
+                  "description": null,
+                  "url": "https://www.lightfolio.com/pricing"
+                },
+                {
+                  "type": "link_element",
+                  "title": "Client Galleries - Feature List",
+                  "description": null,
+                  "url": "https://www.lightfolio.com/features"
+                },
+                {
+                  "type": "link_element",
+                  "title": "Build Your Photography Website",
+                  "description": null,
+                  "url": "https://www.lightfolio.com/websites"
+                },
+                {
+                  "type": "link_element",
+                  "title": "Lightfolio Logo",
+                  "description": null,
+                  "url": "https://app.lightfolio.com/galleries/"
+                }
+              ],
+              "about_this_result": null,
+              "main_domain": "lightfolio.com",
+              "relative_url": "/",
+              "etv": 395.20001220703125,
+              "estimated_paid_traffic_cost": 6394.3359375,
+              "clickstream_etv": null,
+              "rank_changes": {
+                "previous_rank_absolute": 1,
+                "is_new": false,
+                "is_up": false,
+                "is_down": false
+              },
+              "backlinks_info": {
+                "referring_domains": 266,
+                "referring_main_domains": 52,
+                "referring_pages": 4253,
+                "dofollow": 3830,
+                "backlinks": 4276,
+                "time_update": "2026-07-21 04:14:04 +00:00"
+              },
+              "rank_info": {
+                "page_rank": 493,
+                "main_domain_rank": 372
+              }
+            },
+            "check_url": "https://www.google.com/search?q=lightfolio&hl=en&gl=US&ie=UTF-8&uule=w+CAIQIFISCQs2MuSEtepUEUK33kOSuTsc",
+            "serp_item_types": [
+              "organic",
+              "people_also_ask",
+              "related_searches",
+              "google_reviews",
+              "knowledge_graph",
+              "images"
+            ],
+            "se_results_count": 103,
+            "keyword_difficulty": 13,
+            "is_lost": false,
+            "last_updated_time": "2026-05-19 00:00:56 +00:00",
+            "previous_updated_time": "2026-03-15 12:32:25 +00:00"
+          }
+        }
+      ]
+    }
+  },
+  {
+    "name": "labs.keyword_difficulty",
+    "endpoint": "dataforseo_labs/google/bulk_keyword_difficulty/live",
+    "cost": 0.0132,
+    "error": null,
+    "sample": {
+      "se_type": "google",
+      "location_code": 2840,
+      "language_code": "en",
+      "total_count": 10,
+      "items_count": 10,
+      "items": [
+        {
+          "se_type": "google",
+          "keyword": "best way for photographers to share photos with clients",
+          "keyword_difficulty": 31
+        },
+        {
+          "se_type": "google",
+          "keyword": "client photo gallery for photographers",
+          "keyword_difficulty": 37
+        },
+        {
+          "se_type": "google",
+          "keyword": "free client gallery for photographers",
+          "keyword_difficulty": 35
+        },
+        {
+          "se_type": "google",
+          "keyword": "how to deliver digital photos to clients",
+          "keyword_difficulty": null
+        },
+        {
+          "se_type": "google",
+          "keyword": "how to deliver photos to clients",
+          "keyword_difficulty": 18
+        },
+        {
+          "se_type": "google",
+          "keyword": "photo proofing website",
+          "keyword_difficulty": 28
+        },
+        {
+          "se_type": "google",
+          "keyword": "photographer client gallery",
+          "keyword_difficulty": 39
+        },
+        {
+          "se_type": "google",
+          "keyword": "photography client gallery",
+          "keyword_difficulty": 54
+        },
+        {
+          "se_type": "google",
+          "keyword": "website for photographers to upload photos for clients",
+          "keyword_difficulty": 49
+        },
+        {
+          "se_type": "google",
+          "keyword": "photo sharing for photographers",
+          "keyword_difficulty": 33
+        }
+      ]
+    }
+  },
+  {
+    "name": "backlinks.summary",
+    "endpoint": "backlinks/summary/live",
+    "cost": 0.024035999999999995,
+    "error": null,
+    "sample": {
+      "target": "photovault.photo",
+      "first_seen": "2026-02-05 03:32:47 +00:00",
+      "lost_date": null,
+      "rank": 0,
+      "backlinks": 4,
+      "backlinks_spam_score": 55,
+      "crawled_pages": 0,
+      "info": {
+        "server": null,
+        "cms": null,
+        "platform_type": null,
+        "ip_address": null,
+        "country": null,
+        "is_ip": false,
+        "target_spam_score": 0
+      },
+      "internal_links_count": 0,
+      "external_links_count": 0,
+      "broken_backlinks": 0,
+      "broken_pages": 0,
+      "referring_domains": 4,
+      "referring_domains_nofollow": 3,
+      "referring_main_domains": 4,
+      "referring_main_domains_nofollow": 3,
+      "referring_ips": 4,
+      "referring_subnets": 4,
+      "referring_pages": 4,
+      "referring_pages_nofollow": 3,
+      "referring_links_tld": {
+        "us.com": 1
+      },
+      "referring_links_types": {
+        "anchor": 4
+      },
+      "referring_links_attributes": {
+        "nofollow": 3
+      },
+      "referring_links_platform_types": {
+        "unknown": 4
+      },
+      "referring_links_semantic_locations": {
+        "": 3
+      },
+      "referring_links_countries": {
+        "": 4
+      }
+    }
+  }
+]

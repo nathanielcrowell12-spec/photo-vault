@@ -97,6 +97,12 @@ export async function middleware(req: NextRequest) {
     '/connect',
     '/logout',
     '/login',
+    // Public policy page. It has its own canonical and metadata but was missing here,
+    // so it 302'd to /login for anonymous users — including Googlebot. Search Console
+    // logged it under "Page with redirect", and the resulting
+    // /login?redirectTo=/cancellation under "Duplicate without user-selected canonical".
+    '/cancellation',
+    '/signout',
     '/reset-password',
     '/sitemap.xml',
     '/robots.txt',
@@ -168,6 +174,36 @@ export async function middleware(req: NextRequest) {
   // Signup payment page is public (user just signed up, not yet authenticated)
   if (pathname === '/signup/payment') {
     return res
+  }
+
+  // === UNKNOWN ROUTES → 404 (must come BEFORE the auth check) ===
+  //
+  // Anything reaching this point is either a genuinely protected route or a URL that does
+  // not exist. Previously both fell through to the auth check below, so an anonymous
+  // request for a non-existent path got `302 -> /login?redirectTo=<path>`. Googlebot is
+  // always anonymous, so every bad URL Google ever discovered became BOTH a "Page with
+  // redirect" entry and an indexable /login?redirectTo= duplicate. `/month` — a path that
+  // exists nowhere in this codebase — was found in Search Console doing exactly that on
+  // 2026-08-08. This generalises the older one-off `ghostPages` list above.
+  //
+  // Deliberately a check on the FIRST PATH SEGMENT only, and deliberately placed after all
+  // the public-route checks. It cannot make a protected page public: an unknown segment
+  // 404s, and every known segment falls through to exactly the auth logic it did before.
+  // Erring toward including a segment is safe; omitting a real one would 404 a live page.
+  const KNOWN_ROOT_SEGMENTS = new Set([
+    'about', 'admin', 'api', 'application', 'auth', 'blog', 'cancellation', 'client',
+    'connect', 'contact', 'dashboard', 'debug', 'dev-dashboard', 'directory',
+    'download-desktop-app', 'family', 'faq', 'features', 'financial-model', 'gallery',
+    'how-it-works', 'invite', 'login', 'logout', 'op', 'payment', 'photographer',
+    'photographers', 'pricing', 'privacy', 'reset-password', 'resources', 'signout',
+    'signup', 'terms', 'test-dashboard', 'test-images',
+    // Route handlers and static files served from the app root
+    'sitemap.xml', 'robots.txt', 'llms.txt', 'llms-full.txt', 'favicon.ico',
+  ])
+
+  const rootSegment = pathname.split('/')[1] ?? ''
+  if (rootSegment && !KNOWN_ROOT_SEGMENTS.has(rootSegment)) {
+    return new NextResponse('Not Found', { status: 404 })
   }
 
   // === AUTHENTICATED ROUTES (Supabase call required) ===

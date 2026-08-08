@@ -486,6 +486,11 @@ export function Footer({ hideOnPaths = [] }: NavigationProps) {
             <h3 className="font-semibold mb-4">Resources</h3>
             <ul className="space-y-2 text-sm">
               <li>
+                <Link href="/resources" className="text-muted-foreground hover:text-primary transition-colors">
+                  All Resources
+                </Link>
+              </li>
+              <li>
                 <Link href="/resources/photographer-recurring-revenue" className="text-muted-foreground hover:text-primary transition-colors">
                   Recurring Revenue Guide
                 </Link>

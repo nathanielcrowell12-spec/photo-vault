@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Photography Invoice Template</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+         color: #111; max-width: 800px; margin: 0 auto; padding: 48px 32px; line-height: 1.5; }
+  .hint { background: #f4f4f5; border-left: 3px solid #a1a1aa; padding: 12px 16px; font-size: 13px;
+          color: #52525b; margin-bottom: 32px; }
+  header { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px;
+           border-bottom: 2px solid #111; padding-bottom: 24px; margin-bottom: 32px; }
+  h1 { font-size: 32px; margin: 0 0 4px; letter-spacing: -0.5px; }
+  .muted { color: #71717a; }
+  .cols { display: flex; gap: 48px; margin-bottom: 32px; flex-wrap: wrap; }
+  .col { flex: 1; min-width: 200px; }
+  h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: #71717a;
+       margin: 0 0 8px; }
+  table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+  th { text-align: left; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px;
+       color: #71717a; border-bottom: 1px solid #d4d4d8; padding: 8px 0; }
+  td { padding: 12px 0; border-bottom: 1px solid #f4f4f5; vertical-align: top; }
+  .right { text-align: right; }
+  .totals { margin-left: auto; width: 280px; }
+  .totals td { border: none; padding: 6px 0; }
+  .total-row td { border-top: 2px solid #111; font-weight: 700; font-size: 18px; padding-top: 12px; }
+  .terms { margin-top: 40px; border-top: 1px solid #e4e4e7; padding-top: 24px; font-size: 14px; }
+  .terms h2 { margin-bottom: 12px; }
+  .terms p { margin: 0 0 10px; color: #3f3f46; }
+  footer { margin-top: 40px; text-align: center; font-size: 12px; color: #a1a1aa; }
+  footer a { color: #a1a1aa; }
+  @media print { .hint, footer { display: none; } body { padding: 0; } }
+</style>
+</head>
+<body>
+
+<div class="hint">
+  <strong>How to use:</strong> replace every bracketed placeholder with your own details, then
+  print to PDF (Ctrl/Cmd&nbsp;+&nbsp;P → Save as PDF). This box does not appear in the printed
+  version. Keep a copy of every invoice you send — you will need them at tax time.
+</div>
+
+<header>
+  <div>
+    <h1>INVOICE</h1>
+    <div class="muted">Invoice #[0001]</div>
+  </div>
+  <div class="right">
+    <strong>[Your Business Name]</strong><br>
+    <span class="muted">
+      [Your Name]<br>
+      [Street Address]<br>
+      [City, State ZIP]<br>
+      [email@example.com]<br>
+      [Phone]
+    </span>
+  </div>
+</header>
+
+<div class="cols">
+  <div class="col">
+    <h2>Bill To</h2>
+    [Client Name]<br>
+    <span class="muted">
+      [Company, if any]<br>
+      [Street Address]<br>
+      [City, State ZIP]<br>
+      [client@example.com]
+    </span>
+  </div>
+  <div class="col">
+    <h2>Details</h2>
+    <table>
+      <tr><td class="muted">Issue date</td><td class="right">[DD Month YYYY]</td></tr>
+      <tr><td class="muted">Due date</td><td class="right">[DD Month YYYY]</td></tr>
+      <tr><td class="muted">Session date</td><td class="right">[DD Month YYYY]</td></tr>
+      <tr><td class="muted">Terms</td><td class="right">[Net 14]</td></tr>
+    </table>
+  </div>
+</div>
+
+<table>
+  <thead>
+    <tr>
+      <th style="width:52%">Description</th>
+      <th class="right">Qty</th>
+      <th class="right">Rate</th>
+      <th class="right">Amount</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <strong>[Wedding photography — full day coverage]</strong><br>
+        <span class="muted">[8 hours, one photographer, on location at [venue]]</span>
+      </td>
+      <td class="right">1</td>
+      <td class="right">$[2,400.00]</td>
+      <td class="right">$[2,400.00]</td>
+    </tr>
+    <tr>
+      <td>
+        <strong>[Second photographer]</strong><br>
+        <span class="muted">[6 hours]</span>
+      </td>
+      <td class="right">1</td>
+      <td class="right">$[600.00]</td>
+      <td class="right">$[600.00]</td>
+    </tr>
+    <tr>
+      <td>
+        <strong>[Editing and gallery delivery]</strong><br>
+        <span class="muted">[Colour correction, online gallery, permanent hosting]</span>
+      </td>
+      <td class="right">1</td>
+      <td class="right">$[300.00]</td>
+      <td class="right">$[300.00]</td>
+    </tr>
+    <tr>
+      <td>
+        <strong>[Travel]</strong><br>
+        <span class="muted">[Mileage, [X] miles at [rate]]</span>
+      </td>
+      <td class="right">[120]</td>
+      <td class="right">$[0.67]</td>
+      <td class="right">$[80.40]</td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="totals">
+  <tr><td>Subtotal</td><td class="right">$[3,380.40]</td></tr>
+  <tr><td>Sales tax [if applicable] ([0]%)</td><td class="right">$[0.00]</td></tr>
+  <tr><td>Retainer already paid</td><td class="right">−$[1,000.00]</td></tr>
+  <tr class="total-row"><td>Balance due</td><td class="right">$[2,380.40]</td></tr>
+</table>
+
+<div class="terms">
+  <h2>Payment Details</h2>
+  <p>[Bank name] · Account [XXXX] · Routing [XXXX]<br>
+     or pay online at [payment link]</p>
+
+  <h2>Terms</h2>
+  <p><strong>Payment is due by [due date], [14] days from the issue date.</strong>
+     Late payments may incur a fee of [1.5]% per month on the outstanding balance.</p>
+  <p>Final images are delivered within [4–6] weeks of the session date, and are released once
+     the balance is paid in full.</p>
+  <p>[Add your own retainer, cancellation, and usage-rights terms here, matching whatever your
+     signed agreement with this client already says.]</p>
+  <p class="muted" style="font-size:13px">
+     This template is a starting point for billing, not legal or tax advice. Payment terms, sales
+     tax treatment, and late fees vary by jurisdiction — check what applies where you work.
+  </p>
+</div>
+
+<footer>
+  Free photography invoice template — <a href="https://www.photovault.photo/resources/photography-invoice-template">photovault.photo</a>
+</footer>
+
+</body>
+</html>

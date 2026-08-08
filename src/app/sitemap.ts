@@ -1,6 +1,7 @@
 import { MetadataRoute } from 'next'
 import { createServiceRoleClient } from '@/lib/supabase-server'
 import { getAllPosts } from '@/lib/blog'
+import { logger } from '@/lib/logger'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://www.photovault.photo'
@@ -44,12 +45,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly',
       priority: 0.4,
     },
-    {
-      url: `${baseUrl}/cancellation`,
-      lastModified: new Date(),
-      changeFrequency: 'monthly',
-      priority: 0.3,
-    },
+    // NOTE: /cancellation is deliberately NOT listed. It is auth-gated and 302s to
+    // /login?redirectTo=%2Fcancellation. A sitemap must not advertise auth-gated URLs.
     {
       url: `${baseUrl}/privacy`,
       lastModified: new Date(),
@@ -66,6 +63,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Resource pages (GEO content for AI search)
   const resourcePages: MetadataRoute.Sitemap = [
+    {
+      // The hub. Every resource page's BreadcrumbList points here.
+      url: `${baseUrl}/resources`,
+      lastModified: new Date(),
+      changeFrequency: 'weekly',
+      priority: 0.8,
+    },
     {
       url: `${baseUrl}/resources/photo-storage-guide`,
       lastModified: new Date(),
@@ -120,6 +124,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       changeFrequency: 'monthly',
       priority: 0.8,
     },
+    {
+      url: `${baseUrl}/resources/wedding-guest-photo-sharing`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/resources/photography-invoice-template`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
+    {
+      url: `${baseUrl}/resources/how-to-start-a-photography-business`,
+      lastModified: new Date(),
+      changeFrequency: 'monthly',
+      priority: 0.8,
+    },
   ]
 
   // Conversion pages
@@ -156,15 +178,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     },
   ]
 
-  // Fetch all locations from database
-  const { data: locations, error } = await supabase
-    .from('locations')
-    .select('city, slug, updated_at')
-    .order('city')
+  // Fetch all locations from database.
+  //
+  // This block degrades to an empty array on failure rather than returning early. The
+  // previous `return staticPages` silently dropped EVERY resource, conversion and blog
+  // URL — all of them hand-written pages that do not depend on this query at all — the
+  // moment Supabase hiccuped. Each DB-dependent block now fails independently.
+  let locations: { city: string; slug: string; updated_at: string | null }[] = []
+  try {
+    const { data, error } = await supabase
+      .from('locations')
+      .select('city, slug, updated_at')
+      .order('city')
 
-  if (error) {
-    console.error('Sitemap: Failed to fetch locations', error)
-    return staticPages
+    if (error) throw error
+    locations = data || []
+  } catch (err) {
+    logger.error('Sitemap: failed to fetch locations; omitting directory URLs', { error: err })
+    locations = []
   }
 
   // Build unique city pages
@@ -192,8 +223,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.8, // High priority - these are our long-tail SEO targets
   })) || []
 
-  // Blog pages
-  const posts = await getAllPosts()
+  // Blog pages. Also DB-backed, so it gets its own guard — an outage here must not take
+  // the hand-written pages down with it.
   const blogIndex: MetadataRoute.Sitemap = [
     {
       url: `${baseUrl}/blog`,
@@ -202,12 +233,19 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       priority: 0.8,
     },
   ]
-  const blogPages: MetadataRoute.Sitemap = posts.map(post => ({
-    url: `${baseUrl}/blog/${post.slug}`,
-    lastModified: new Date(post.updatedDate || post.date),
-    changeFrequency: 'monthly' as const,
-    priority: 0.7,
-  }))
+  let blogPages: MetadataRoute.Sitemap = []
+  try {
+    const posts = await getAllPosts()
+    blogPages = posts.map(post => ({
+      url: `${baseUrl}/blog/${post.slug}`,
+      lastModified: new Date(post.updatedDate || post.date),
+      changeFrequency: 'monthly' as const,
+      priority: 0.7,
+    }))
+  } catch (err) {
+    logger.error('Sitemap: failed to fetch blog posts; omitting blog post URLs', { error: err })
+    blogPages = []
+  }
 
   return [...staticPages, ...resourcePages, ...conversionPages, ...blogIndex, ...blogPages, ...cityPages, ...locationPages]
 }
