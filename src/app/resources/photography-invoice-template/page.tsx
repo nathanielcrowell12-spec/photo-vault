@@ -7,7 +7,9 @@ import { buildResourceBreadcrumb, SITE_URL } from '@/lib/resource-schema'
 import { FaqAccordion, buildFaqSchema, type FaqItem } from '@/components/resources/FaqAccordion'
 
 const SLUG = 'photography-invoice-template'
-const ASSET = '/resources/photography-invoice-template.html'
+// Route handler, not a public/*.html file — Vercel cleanUrls 308-redirects every
+// public *.html to its extensionless path, which here is this very page.
+const ASSET = '/resources/photography-invoice-template/download'
 
 export const metadata: Metadata = {
   title: 'Free Photography Invoice Template | PhotoVault',

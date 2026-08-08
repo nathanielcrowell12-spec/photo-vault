@@ -42,3 +42,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# MCP config — contains Supabase access token, never commit
+.mcp.json
+
+# DataForSEO raw dumps that are large, regenerable, and not read by any script.
+# The analyze-*.js scripts read only the small derived files, which stay tracked.
+#   phase35-ranked-keywords.json — 24MB of full API responses; ~1% of its fields were
+#     ever used, and the used part is already in phase35-keyword-universe.json.
+#     Regenerate with: node scripts/seo/competitor-keywords.js  (~$0.53 of API spend)
+#   phase35-user-data.json — account balance check; contains the account login email.
+docs/seo/raw/phase35-ranked-keywords.json
+docs/seo/raw/phase35-user-data.json
